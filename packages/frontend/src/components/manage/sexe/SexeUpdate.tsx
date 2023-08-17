@@ -9,7 +9,13 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import SexeEdit from "./SexeEdit";
 
-const SexeUpdate: FunctionComponent = () => {
+type SexeUpdateProps = {
+  id: string;
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +88,7 @@ const SexeUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <SexeEdit title={t("sexEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <SexeEdit title={t("sexEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
       )}
     </>
   );

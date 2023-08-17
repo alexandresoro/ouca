@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import CommuneEdit from "./CommuneEdit";
 
-const CommuneUpdate: FunctionComponent = () => {
+type CommuneUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,7 @@ const CommuneUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <CommuneEdit title={t("townEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <CommuneEdit title={t("townEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
       )}
     </>
   );

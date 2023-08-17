@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type ObservateurEditProps = {
   title: string;
   defaultValues?: UpsertObserverInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertObserverInput>;
 };
 
 const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

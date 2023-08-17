@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import SexeEdit from "./SexeEdit";
 
-const SexeCreate: FunctionComponent = () => {
+type SexeCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const SexeCreate: FunctionComponent<SexeCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const SexeCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <SexeEdit title={t("sexCreationTitle")} onSubmit={onSubmit} />;
+  return <SexeEdit title={t("sexCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default SexeCreate;

@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EstimationNombreEdit from "./EstimationNombreEdit";
 
-const EstimationNombreCreate: FunctionComponent = () => {
+type EstimationNombreCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const EstimationNombreCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <EstimationNombreEdit title={t("numberPrecisionCreationTitle")} onSubmit={onSubmit} />;
+  return <EstimationNombreEdit title={t("numberPrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default EstimationNombreCreate;

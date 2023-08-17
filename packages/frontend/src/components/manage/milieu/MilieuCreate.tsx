@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import MilieuEdit from "./MilieuEdit";
 
-const MilieuCreate: FunctionComponent = () => {
+type MilieuCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const MilieuCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <MilieuEdit title={t("environmentCreationTitle")} onSubmit={onSubmit} />;
+  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default MilieuCreate;

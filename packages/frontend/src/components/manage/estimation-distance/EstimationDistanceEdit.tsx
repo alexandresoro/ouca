@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type EstimationDistanceEditProps = {
   title: string;
   defaultValues?: UpsertDistanceEstimateInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertDistanceEstimateInput>;
 };
 
 const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

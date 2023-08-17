@@ -10,7 +10,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import LieuDitEdit from "./LieuDitEdit";
 
-const LieuDitUpdate: FunctionComponent = () => {
+type LieuDitUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -118,6 +123,7 @@ const LieuDitUpdate: FunctionComponent = () => {
           title={t("localityEditionTitle")}
           defaultValues={defaultValues}
           defaultDepartmentId={departmentId}
+          onCancel={onCancel}
           onSubmit={onSubmit}
         />
       )}

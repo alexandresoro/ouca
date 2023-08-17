@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ClasseEdit from "./ClasseEdit";
 
-const ClasseUpdate: FunctionComponent = () => {
+type ClasseUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const ClasseUpdate: FunctionComponent<ClasseUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,12 @@ const ClasseUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <ClasseEdit title={t("speciesClassEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <ClasseEdit
+          title={t("speciesClassEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+        />
       )}
     </>
   );

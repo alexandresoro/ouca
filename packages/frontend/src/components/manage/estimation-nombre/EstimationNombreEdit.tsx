@@ -13,11 +13,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type EstimationNombreEditProps = {
   title: string;
   defaultValues?: UpsertNumberEstimateInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertNumberEstimateInput>;
 };
 
 const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

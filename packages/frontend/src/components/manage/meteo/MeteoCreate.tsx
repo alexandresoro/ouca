@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import MeteoEdit from "./MeteoEdit";
 
-const MeteoCreate: FunctionComponent = () => {
+type MeteoCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const MeteoCreate: FunctionComponent<MeteoCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const MeteoCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <MeteoEdit title={t("weatherCreationTitle")} onSubmit={onSubmit} />;
+  return <MeteoEdit title={t("weatherCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default MeteoCreate;

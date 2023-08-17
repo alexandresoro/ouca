@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type MeteoEditProps = {
   title: string;
   defaultValues?: UpsertWeatherInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertWeatherInput>;
 };
 
 const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

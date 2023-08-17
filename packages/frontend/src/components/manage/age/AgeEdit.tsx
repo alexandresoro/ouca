@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type AgeEditProps = {
   title: string;
   defaultValues?: UpsertAgeInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertAgeInput>;
 };
 
 const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

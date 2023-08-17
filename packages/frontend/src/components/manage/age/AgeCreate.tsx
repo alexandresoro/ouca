@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import AgeEdit from "./AgeEdit";
 
-const AgeCreate: FunctionComponent = () => {
+type AgeCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const AgeCreate: FunctionComponent<AgeCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const AgeCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <AgeEdit title={t("ageCreationTitle")} onSubmit={onSubmit} />;
+  return <AgeEdit title={t("ageCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default AgeCreate;

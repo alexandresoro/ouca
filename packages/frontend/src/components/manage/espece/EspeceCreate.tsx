@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EspeceEdit from "./EspeceEdit";
 
-const EspeceCreate: FunctionComponent = () => {
+type EspeceCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const EspeceCreate: FunctionComponent<EspeceCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const EspeceCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <EspeceEdit title={t("speciesCreationTitle")} onSubmit={onSubmit} />;
+  return <EspeceEdit title={t("speciesCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default EspeceCreate;

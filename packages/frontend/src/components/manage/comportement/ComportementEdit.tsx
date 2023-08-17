@@ -14,11 +14,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type ComportementEditProps = {
   title: string;
   defaultValues?: UpsertBehaviorInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertBehaviorInput>;
 };
 
 const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

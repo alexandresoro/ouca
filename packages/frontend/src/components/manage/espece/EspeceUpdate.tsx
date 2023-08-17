@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EspeceEdit from "./EspeceEdit";
 
-const EspeceUpdate: FunctionComponent = () => {
+type EspeceUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const EspeceUpdate: FunctionComponent<EspeceUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -85,6 +90,7 @@ const EspeceUpdate: FunctionComponent = () => {
         <EspeceEdit
           title={t("speciesEditionTitle")}
           defaultValues={{ ...data, classId: data.classId ?? undefined }}
+          onCancel={onCancel}
           onSubmit={onSubmit}
         />
       )}

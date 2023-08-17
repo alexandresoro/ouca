@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type SexeEditProps = {
   title: string;
   defaultValues?: UpsertSexInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertSexInput>;
 };
 
 const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

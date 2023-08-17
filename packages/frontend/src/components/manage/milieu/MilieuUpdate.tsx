@@ -13,7 +13,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import MilieuEdit from "./MilieuEdit";
 
-const MilieuUpdate: FunctionComponent = () => {
+type MilieuUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -86,7 +91,7 @@ const MilieuUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <MilieuEdit title={t("environmentEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <MilieuEdit title={t("environmentEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
       )}
     </>
   );

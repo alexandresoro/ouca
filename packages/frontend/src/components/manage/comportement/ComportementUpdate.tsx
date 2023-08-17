@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ComportementEdit from "./ComportementEdit";
 
-const ComportementUpdate: FunctionComponent = () => {
+type ComportementUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const ComportementUpdate: FunctionComponent<ComportementUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,12 @@ const ComportementUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <ComportementEdit title={t("behaviorEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <ComportementEdit
+          title={t("behaviorEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+        />
       )}
     </>
   );

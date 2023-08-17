@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ClasseEdit from "./ClasseEdit";
 
-const ClasseCreate: FunctionComponent = () => {
+type ClasseCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const ClasseCreate: FunctionComponent<ClasseCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const ClasseCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <ClasseEdit title={t("speciesClassCreationTitle")} onSubmit={onSubmit} />;
+  return <ClasseEdit title={t("speciesClassCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default ClasseCreate;

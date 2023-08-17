@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import LieuDitEdit from "./LieuDitEdit";
 
-const LieuDitCreate: FunctionComponent = () => {
+type LieuDitCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const LieuDitCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <LieuDitEdit title={t("localityCreationTitle")} onSubmit={onSubmit} />;
+  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default LieuDitCreate;

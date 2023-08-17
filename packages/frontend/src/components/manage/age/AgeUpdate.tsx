@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import AgeEdit from "./AgeEdit";
 
-const AgeUpdate: FunctionComponent = () => {
+type AgeUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,7 @@ const AgeUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <AgeEdit title={t("ageEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <AgeEdit title={t("ageEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
       )}
     </>
   );

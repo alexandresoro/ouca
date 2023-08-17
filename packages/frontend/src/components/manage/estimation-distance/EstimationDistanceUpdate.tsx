@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EstimationDistanceEdit from "./EstimationDistanceEdit";
 
-const EstimationDistanceUpdate: FunctionComponent = () => {
+type EstimationDistanceUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const EstimationDistanceUpdate: FunctionComponent<EstimationDistanceUpdateProps> = ({onCancel, onSuccess}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,7 @@ const EstimationDistanceUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <EstimationDistanceEdit title={t("distancePrecisionEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <EstimationDistanceEdit title={t("distancePrecisionEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
       )}
     </>
   );

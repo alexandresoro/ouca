@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ObservateurEdit from "./ObservateurEdit";
 
-const ObservateurCreate: FunctionComponent = () => {
+type ObservateurCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const ObservateurCreate: FunctionComponent<ObservateurCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const ObservateurCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <ObservateurEdit title={t("observerCreationTitle")} onSubmit={onSubmit} />;
+  return <ObservateurEdit title={t("observerCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default ObservateurCreate;

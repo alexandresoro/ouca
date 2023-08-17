@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type DepartementEditProps = {
   title: string;
   defaultValues?: UpsertDepartmentInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertDepartmentInput>;
 };
 
 const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

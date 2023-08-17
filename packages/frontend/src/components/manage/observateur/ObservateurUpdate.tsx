@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ObservateurEdit from "./ObservateurEdit";
 
-const ObservateurUpdate: FunctionComponent = () => {
+type ObservateurUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const ObservateurUpdate: FunctionComponent<ObservateurUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,12 @@ const ObservateurUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <ObservateurEdit title={t("observerEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <ObservateurEdit
+          title={t("observerEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+        />
       )}
     </>
   );

@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import CommuneEdit from "./CommuneEdit";
 
-const CommuneCreate: FunctionComponent = () => {
+type CommuneCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const CommuneCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <CommuneEdit title={t("townCreationTitle")} onSubmit={onSubmit} />;
+  return <CommuneEdit title={t("townCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default CommuneCreate;

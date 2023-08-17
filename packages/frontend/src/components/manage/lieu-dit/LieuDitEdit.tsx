@@ -20,11 +20,12 @@ type LieuDitEditProps = {
   title: string;
   defaultValues?: UpsertLocalityInput | null;
   defaultDepartmentId?: string;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertLocalityInput>;
 };
 
 const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
-  const { title, defaultValues, defaultDepartmentId, onSubmit } = props;
+  const { title, defaultValues, defaultDepartmentId, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

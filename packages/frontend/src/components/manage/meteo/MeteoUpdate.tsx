@@ -9,7 +9,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import MeteoEdit from "./MeteoEdit";
 
-const MeteoUpdate: FunctionComponent = () => {
+type MeteoUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -82,7 +87,7 @@ const MeteoUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <MeteoEdit title={t("weatherEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <MeteoEdit title={t("weatherEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
       )}
     </>
   );

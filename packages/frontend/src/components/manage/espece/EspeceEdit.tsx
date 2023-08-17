@@ -16,11 +16,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type EspeceEditProps = {
   title: string;
   defaultValues?: (Omit<UpsertSpeciesInput, "classId"> & { classId?: string }) | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertSpeciesInput>;
 };
 
 const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

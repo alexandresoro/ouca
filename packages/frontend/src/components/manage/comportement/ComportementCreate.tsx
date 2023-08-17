@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ComportementEdit from "./ComportementEdit";
 
-const ComportementCreate: FunctionComponent = () => {
+type ComportementCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const ComportementCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <ComportementEdit title={t("behaviorCreationTitle")} onSubmit={onSubmit} />;
+  return <ComportementEdit title={t("behaviorCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default ComportementCreate;

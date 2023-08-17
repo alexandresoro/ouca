@@ -13,7 +13,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EstimationNombreEdit from "./EstimationNombreEdit";
 
-const EstimationNombreUpdate: FunctionComponent = () => {
+type EstimationNombreProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const EstimationNombreUpdate: FunctionComponent<EstimationNombreProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -86,7 +91,12 @@ const EstimationNombreUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <EstimationNombreEdit title={t("numberPrecisionEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <EstimationNombreEdit
+          title={t("numberPrecisionEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+        />
       )}
     </>
   );

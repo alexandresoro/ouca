@@ -16,11 +16,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type CommuneEditProps = {
   title: string;
   defaultValues?: UpsertTownInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertTownInput>;
 };
 
 const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();

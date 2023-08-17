@@ -13,7 +13,12 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DepartementEdit from "./DepartementEdit";
 
-const DepartementUpdate: FunctionComponent = () => {
+type DepartementUpdateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -86,7 +91,12 @@ const DepartementUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <DepartementEdit title={t("departmentEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <DepartementEdit
+          title={t("departmentEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+        />
       )}
     </>
   );

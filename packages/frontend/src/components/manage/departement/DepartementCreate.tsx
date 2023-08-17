@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DepartementEdit from "./DepartementEdit";
 
-const DepartementCreate: FunctionComponent = () => {
+type DepartementCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel, onSuccess }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const DepartementCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <DepartementEdit title={t("departmentCreationTitle")} onSubmit={onSubmit} />;
+  return <DepartementEdit title={t("departmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default DepartementCreate;

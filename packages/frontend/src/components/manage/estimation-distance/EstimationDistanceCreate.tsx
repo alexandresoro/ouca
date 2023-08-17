@@ -7,7 +7,12 @@ import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EstimationDistanceEdit from "./EstimationDistanceEdit";
 
-const EstimationDistanceCreate: FunctionComponent = () => {
+type EstimationDistanceCreateProps = {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+};
+
+const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps> = ({onCancel, onSuccess}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -47,7 +52,7 @@ const EstimationDistanceCreate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
-  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onSubmit={onSubmit} />;
+  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
 };
 
 export default EstimationDistanceCreate;

@@ -12,11 +12,12 @@ import ManageTopBar from "../common/ManageTopBar";
 type MilieuEditProps = {
   title: string;
   defaultValues?: UpsertEnvironmentInput | null;
+  onCancel?: () => void;
   onSubmit: SubmitHandler<UpsertEnvironmentInput>;
 };
 
 const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
-  const { title, defaultValues, onSubmit } = props;
+  const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
