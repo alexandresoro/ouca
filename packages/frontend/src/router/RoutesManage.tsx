@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 
 const ObservateurManage = lazy(() => import("../components/manage/observateur/ObservateurManage"));
 const DepartementManage = lazy(() => import("../components/manage/departement/DepartementManage"));
-const CommuneManage = lazy(() => import("../components/manage/commune/CommuneManage"));
 const LieuDitManage = lazy(() => import("../components/manage/lieu-dit/LieuDitManage"));
 const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"));
 const EspeceManage = lazy(() => import("../components/manage/espece/EspeceManage"));
@@ -34,14 +33,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <DepartementManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="commune/*"
-        element={
-          <Suspense fallback={<></>}>
-            <CommuneManage />
           </Suspense>
         }
       />

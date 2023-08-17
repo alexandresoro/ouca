@@ -8,19 +8,16 @@ import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
-import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
-import ManageTopBar from "../common/ManageTopBar";
 
 type CommuneEditProps = {
-  title: string;
   defaultValues?: UpsertTownInput | null;
   onCancel: () => void;
   onSubmit: SubmitHandler<UpsertTownInput>;
 };
 
 const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
-  const { title, defaultValues, onCancel, onSubmit } = props;
+  const { defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
 
@@ -69,36 +66,25 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   }, [errorDepartements, displayNotification, t]);
 
   return (
-    <>
-      <ManageTopBar title={t("towns")} showButtons={false} />
-      <ContentContainerLayout>
-        <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
-          <div className="card-body">
-            <h2 className="card-title my-4">{title}</h2>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormSelect
+        name="departmentId"
+        label={t("department")}
+        required
+        control={control}
+        data={departments?.data}
+        renderValue={({ code }) => code}
+      />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <FormSelect
-                name="departmentId"
-                label={t("department")}
-                required
-                control={control}
-                data={departments?.data}
-                renderValue={({ code }) => code}
-              />
+      <TextInput label={t("townCode")} type="text" required {...register("code")} />
+      <TextInput label={t("townName")} type="text" required {...register("nom")} />
 
-              <TextInput label={t("townCode")} type="text" required {...register("code")} />
-              <TextInput label={t("townName")} type="text" required {...register("nom")} />
-
-              <EntityUpsertFormActionButtons
-                className="mt-6"
-                onCancelClick={onCancel}
-                disabled={fetchingDepartements || !isValid || !isDirty}
-              />
-            </form>
-          </div>
-        </div>
-      </ContentContainerLayout>
-    </>
+      <EntityUpsertFormActionButtons
+        className="mt-6"
+        onCancelClick={onCancel}
+        disabled={fetchingDepartements || !isValid || !isDirty}
+      />
+    </form>
   );
 };
 

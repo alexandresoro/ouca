@@ -10,10 +10,10 @@ export const routesManage: RouteObject[] = [
     path: "classe",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "ClassePage"),
   },
-  // {
-  //   path: "commune",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "CommunePage"),
-  // },
+  {
+    path: "commune",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "CommunePage"),
+  },
   // {
   //   path: "comportement",
   //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "ComportementPage"),
