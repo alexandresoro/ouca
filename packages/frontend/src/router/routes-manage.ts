@@ -18,10 +18,10 @@ export const routesManage: RouteObject[] = [
     path: "comportement",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "ComportementPage"),
   },
-  // {
-  //   path: "departement",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "DepartementPage"),
-  // },
+  {
+    path: "departement",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "DepartementPage"),
+  },
   // {
   //   path: "espece",
   //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "EspecePage"),

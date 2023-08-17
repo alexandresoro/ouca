@@ -2,7 +2,6 @@ import { Suspense, lazy, type FunctionComponent } from "react";
 import { Route, Routes } from "react-router-dom";
 
 const ObservateurManage = lazy(() => import("../components/manage/observateur/ObservateurManage"));
-const DepartementManage = lazy(() => import("../components/manage/departement/DepartementManage"));
 const LieuDitManage = lazy(() => import("../components/manage/lieu-dit/LieuDitManage"));
 const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"));
 const EspeceManage = lazy(() => import("../components/manage/espece/EspeceManage"));
@@ -24,14 +23,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <ObservateurManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="departement/*"
-        element={
-          <Suspense fallback={<></>}>
-            <DepartementManage />
           </Suspense>
         }
       />
@@ -80,14 +71,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <EstimationDistanceManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="comportement/*"
-        element={
-          <Suspense fallback={<></>}>
-            <ComportementManage />
           </Suspense>
         }
       />
