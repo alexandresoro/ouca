@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import ClasseCreate from "./ClasseCreate";
 import ClasseDeleteDialog from "./ClasseDeleteDialog";
 import ClasseTable from "./ClasseTable";
+import ClasseUpdate from "./ClasseUpdate";
 
 const ClassePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const ClassePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertSpeciesClassDialog({ mode: "update", id });
+    // setUpsertSpeciesClassDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -148,6 +151,24 @@ const ClassePage: FunctionComponent = () => {
           onClickDeleteSpeciesClass={setSpeciesClassToDelete}
         />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertSpeciesClassDialog != null}
+        onClose={() => setUpsertSpeciesClassDialog(null)}
+        title={
+          upsertSpeciesClassDialog?.mode === "create"
+            ? t("speciesClassCreationTitle")
+            : upsertSpeciesClassDialog?.mode === "update"
+            ? t("speciesClassEditionTitle")
+            : undefined
+        }
+      >
+        {upsertSpeciesClassDialog?.mode === "create" && (
+          <ClasseCreate onCancel={() => setUpsertSpeciesClassDialog(null)} onSubmit={handleCreateSpeciesClass} />
+        )}
+        {upsertSpeciesClassDialog?.mode === "update" && (
+          <ClasseUpdate onCancel={() => setUpsertSpeciesClassDialog(null)} onSubmit={handleUpdateSpeciesClass} />
+        )}
+      </EntityUpsertDialog>
       <ClasseDeleteDialog
         speciesClassToDelete={speciesClassToDelete}
         onCancelDeletion={() => setSpeciesClassToDelete(null)}

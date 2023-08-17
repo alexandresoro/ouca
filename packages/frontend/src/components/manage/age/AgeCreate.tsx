@@ -9,10 +9,10 @@ import AgeEdit from "./AgeEdit";
 
 type AgeCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const AgeCreate: FunctionComponent<AgeCreateProps> = ({ onCancel, onSuccess }) => {
+const AgeCreate: FunctionComponent<AgeCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const AgeCreate: FunctionComponent<AgeCreateProps> = ({ onCancel, onSuccess }) =
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertAgeInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertAgeInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <AgeEdit title={t("ageCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <AgeEdit title={t("ageCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default AgeCreate;

@@ -11,10 +11,10 @@ import SexeEdit from "./SexeEdit";
 
 type SexeUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertSexInput) => void;
 };
 
-const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSuccess }) => {
+const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSuccess })
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertSexInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertSexInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -87,7 +87,7 @@ const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSuccess })
   return (
     <>
       {!isLoading && !isError && data && (
-        <SexeEdit title={t("sexEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
+        <SexeEdit title={t("sexEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
       )}
     </>
   );

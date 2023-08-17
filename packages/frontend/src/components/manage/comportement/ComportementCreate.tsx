@@ -9,10 +9,10 @@ import ComportementEdit from "./ComportementEdit";
 
 type ComportementCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCancel, onSuccess }) => {
+const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCanc
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertBehaviorInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertBehaviorInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <ComportementEdit title={t("behaviorCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <ComportementEdit title={t("behaviorCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default ComportementCreate;

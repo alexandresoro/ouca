@@ -8,8 +8,11 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import ObservateurCreate from "./ObservateurCreate";
 import ObservateurDeleteDialog from "./ObservateurDeleteDialog";
+import ObservateurEdit from "./ObservateurEdit";
 import ObservateurTable from "./ObservateurTable";
 
 const ObservateurPage: FunctionComponent = () => {
@@ -119,7 +122,7 @@ const ObservateurPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertObserverDialog({ mode: "update", id });
+    // setUpsertObserverDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const ObservateurPage: FunctionComponent = () => {
       <ContentContainerLayout>
         <ObservateurTable onClickUpdateObserver={handleUpdateClick} onClickDeleteObserver={setObserverToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertObserverDialog != null}
+        onClose={() => setUpsertObserverDialog(null)}
+        title={
+          upsertObserverDialog?.mode === "create"
+            ? t("observerCreationTitle")
+            : upsertObserverDialog?.mode === "update"
+            ? t("observerEditionTitle")
+            : undefined
+        }
+      >
+        {upsertObserverDialog?.mode === "create" && (
+          <ObservateurCreate onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleCreateObserver} />
+        )}
+        {upsertObserverDialog?.mode === "update" && (
+          <ObservateurEdit onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleUpdateObserver} />
+        )}
+      </EntityUpsertDialog>
       <ObservateurDeleteDialog
         observerToDelete={observerToDelete}
         onCancelDeletion={() => setObserverToDelete(null)}

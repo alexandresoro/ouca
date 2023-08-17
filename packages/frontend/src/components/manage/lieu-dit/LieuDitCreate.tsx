@@ -9,10 +9,10 @@ import LieuDitEdit from "./LieuDitEdit";
 
 type LieuDitCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSuccess }) => {
+const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSucc
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertLocalityInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertLocalityInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default LieuDitCreate;

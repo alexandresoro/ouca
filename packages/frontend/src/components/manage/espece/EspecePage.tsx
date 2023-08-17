@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import EspeceCreate from "./EspeceCreate";
 import EspeceDeleteDialog from "./EspeceDeleteDialog";
 import EspeceTable from "./EspeceTable";
+import EspeceUpdate from "./EspeceUpdate";
 
 const EspecePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const EspecePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertSpeciesDialog({ mode: "update", id });
+    // setUpsertSpeciesDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const EspecePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <EspeceTable onClickUpdateSpecies={handleUpdateClick} onClickDeleteSpecies={setSpeciesToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertSpeciesDialog != null}
+        onClose={() => setUpsertSpeciesDialog(null)}
+        title={
+          upsertSpeciesDialog?.mode === "create"
+            ? t("speciesCreationTitle")
+            : upsertSpeciesDialog?.mode === "update"
+            ? t("speciesEditionTitle")
+            : undefined
+        }
+      >
+        {upsertSpeciesDialog?.mode === "create" && (
+          <EspeceCreate onCancel={() => setUpsertSpeciesDialog(null)} onSubmit={handleCreateSpecies} />
+        )}
+        {upsertSpeciesDialog?.mode === "update" && (
+          <EspeceUpdate onCancel={() => setUpsertSpeciesDialog(null)} onSubmit={handleUpdateSpecies} />
+        )}
+      </EntityUpsertDialog>
       <EspeceDeleteDialog
         speciesToDelete={speciesToDelete}
         onCancelDeletion={() => setSpeciesToDelete(null)}

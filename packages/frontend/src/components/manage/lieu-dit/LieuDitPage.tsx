@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import LieuDitCreate from "./LieuDitCreate";
 import LieuDitDeleteDialog from "./LieuDitDeleteDialog";
 import LieuDitTable from "./LieuDitTable";
+import LieuDitUpdate from "./LieuDitUpdate";
 
 const LieuDitPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const LieuDitPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertLocalityDialog({ mode: "update", id });
+    // setUpsertLocalityDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const LieuDitPage: FunctionComponent = () => {
       <ContentContainerLayout>
         <LieuDitTable onClickUpdateLocality={handleUpdateClick} onClickDeleteLocality={setLocalityToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertLocalityDialog != null}
+        onClose={() => setUpsertLocalityDialog(null)}
+        title={
+          upsertLocalityDialog?.mode === "create"
+            ? t("localityCreationTitle")
+            : upsertLocalityDialog?.mode === "update"
+            ? t("localityEditionTitle")
+            : undefined
+        }
+      >
+        {upsertLocalityDialog?.mode === "create" && (
+          <LieuDitCreate onCancel={() => setUpsertLocalityDialog(null)} onSubmit={handleCreateLocality} />
+        )}
+        {upsertLocalityDialog?.mode === "update" && (
+          <LieuDitUpdate onCancel={() => setUpsertLocalityDialog(null)} onSubmit={handleUpdateLocality} />
+        )}
+      </EntityUpsertDialog>
       <LieuDitDeleteDialog
         localityToDelete={localityToDelete}
         onCancelDeletion={() => setLocalityToDelete(null)}

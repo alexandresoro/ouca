@@ -11,10 +11,10 @@ import MeteoEdit from "./MeteoEdit";
 
 type MeteoUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertWeatherInput) => void;
 };
 
-const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSuccess }) => {
+const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSuccess 
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertWeatherInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertWeatherInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -87,7 +87,12 @@ const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSuccess 
   return (
     <>
       {!isLoading && !isError && data && (
-        <MeteoEdit title={t("weatherEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
+        <MeteoEdit
+          title={t("weatherEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmitLegacy}
+        />
       )}
     </>
   );

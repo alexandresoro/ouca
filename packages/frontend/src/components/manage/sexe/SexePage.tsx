@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import SexeCreate from "./SexeCreate";
 import SexeDeleteDialog from "./SexeDeleteDialog";
 import SexeTable from "./SexeTable";
+import SexeUpdate from "./SexeUpdate";
 
 const SexePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const SexePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertSexDialog({ mode: "update", id });
+    // setUpsertSexDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const SexePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <SexeTable onClickUpdateSex={handleUpdateClick} onClickDeleteSex={setSexToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertSexDialog != null}
+        onClose={() => setUpsertSexDialog(null)}
+        title={
+          upsertSexDialog?.mode === "create"
+            ? t("sexCreationTitle")
+            : upsertSexDialog?.mode === "update"
+            ? t("sexEditionTitle")
+            : undefined
+        }
+      >
+        {upsertSexDialog?.mode === "create" && (
+          <SexeCreate onCancel={() => setUpsertSexDialog(null)} onSubmit={handleCreateSex} />
+        )}
+        {upsertSexDialog?.mode === "update" && (
+          <SexeUpdate onCancel={() => setUpsertSexDialog(null)} onSubmit={handleUpdateSex} />
+        )}
+      </EntityUpsertDialog>
       <SexeDeleteDialog
         sexToDelete={sexToDelete}
         onCancelDeletion={() => setSexToDelete(null)}

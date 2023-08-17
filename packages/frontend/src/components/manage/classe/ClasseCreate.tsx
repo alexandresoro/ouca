@@ -9,10 +9,10 @@ import ClasseEdit from "./ClasseEdit";
 
 type ClasseCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const ClasseCreate: FunctionComponent<ClasseCreateProps> = ({ onCancel, onSuccess }) => {
+const ClasseCreate: FunctionComponent<ClasseCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const ClasseCreate: FunctionComponent<ClasseCreateProps> = ({ onCancel, onSucces
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertClassInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertClassInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <ClasseEdit title={t("speciesClassCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <ClasseEdit title={t("speciesClassCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default ClasseCreate;

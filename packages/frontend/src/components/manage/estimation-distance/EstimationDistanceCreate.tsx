@@ -9,10 +9,10 @@ import EstimationDistanceEdit from "./EstimationDistanceEdit";
 
 type EstimationDistanceCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps> = ({onCancel, onSuccess}) => {
+const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps> = ({onCancel, onSubmit}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps>
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default EstimationDistanceCreate;

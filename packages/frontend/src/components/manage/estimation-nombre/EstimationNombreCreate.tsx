@@ -9,10 +9,10 @@ import EstimationNombreEdit from "./EstimationNombreEdit";
 
 type EstimationNombreCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = ({ onCancel, onSuccess }) => {
+const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,13 @@ const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = (
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertNumberEstimateInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertNumberEstimateInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <EstimationNombreEdit title={t("numberPrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return (
+    <EstimationNombreEdit title={t("numberPrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />
+  );
 };
 
 export default EstimationNombreCreate;

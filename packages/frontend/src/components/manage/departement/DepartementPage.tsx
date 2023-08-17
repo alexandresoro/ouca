@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import DepartementCreate from "./DepartementCreate";
 import DepartementDeleteDialog from "./DepartementDeleteDialog";
 import DepartementTable from "./DepartementTable";
+import DepartementUpdate from "./DepartementUpdate";
 
 const DepartementPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const DepartementPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertDepartmentDialog({ mode: "update", id });
+    // setUpsertDepartmentDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const DepartementPage: FunctionComponent = () => {
       <ContentContainerLayout>
         <DepartementTable onClickUpdateDepartment={handleUpdateClick} onClickDeleteDepartment={setDepartmentToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertDepartmentDialog != null}
+        onClose={() => setUpsertDepartmentDialog(null)}
+        title={
+          upsertDepartmentDialog?.mode === "create"
+            ? t("departmentCreationTitle")
+            : upsertDepartmentDialog?.mode === "update"
+            ? t("departmentEditionTitle")
+            : undefined
+        }
+      >
+        {upsertDepartmentDialog?.mode === "create" && (
+          <DepartementCreate onCancel={() => setUpsertDepartmentDialog(null)} onSubmit={handleCreateDepartment} />
+        )}
+        {upsertDepartmentDialog?.mode === "update" && (
+          <DepartementUpdate onCancel={() => setUpsertDepartmentDialog(null)} onSubmit={handleUpdateDepartment} />
+        )}
+      </EntityUpsertDialog>
       <DepartementDeleteDialog
         departmentToDelete={departmentToDelete}
         onCancelDeletion={() => setDepartmentToDelete(null)}

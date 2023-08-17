@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import EstimationDistanceCreate from "./EstimationDistanceCreate";
 import EstimationDistanceDeleteDialog from "./EstimationDistanceDeleteDialog";
 import EstimationDistanceTable from "./EstimationDistanceTable";
+import EstimationDistanceUpdate from "./EstimationDistanceUpdate";
 
 const EstimationDistancePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const EstimationDistancePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertDistanceEstimateDialog({ mode: "update", id });
+    // setUpsertDistanceEstimateDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const EstimationDistancePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <EstimationDistanceTable onClickUpdateDistanceEstimate={handleUpdateClick} onClickDeleteDistanceEstimate={setDistanceEstimateToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertDistanceEstimateDialog != null}
+        onClose={() => setUpsertDistanceEstimateDialog(null)}
+        title={
+          upsertDistanceEstimateDialog?.mode === "create"
+            ? t("distancePrecisionCreationTitle")
+            : upsertDistanceEstimateDialog?.mode === "update"
+            ? t("distancePrecisionEditionTitle")
+            : undefined
+        }
+      >
+        {upsertDistanceEstimateDialog?.mode === "create" && (
+          <EstimationDistanceCreate onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleCreateDistanceEstimate} />
+        )}
+        {upsertDistanceEstimateDialog?.mode === "update" && (
+          <EstimationDistanceUpdate onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleUpdateDistanceEstimate} />
+        )}
+      </EntityUpsertDialog>
       <EstimationDistanceDeleteDialog
         distanceEstimateToDelete={distanceEstimateToDelete}
         onCancelDeletion={() => setDistanceEstimateToDelete(null)}

@@ -9,10 +9,10 @@ import DepartementEdit from "./DepartementEdit";
 
 type DepartementCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel, onSuccess }) => {
+const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertDepartmentInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertDepartmentInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <DepartementEdit title={t("departmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <DepartementEdit title={t("departmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default DepartementCreate;

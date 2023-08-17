@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import EstimationNombreCreate from "./EstimationNombreCreate";
 import EstimationNombreDeleteDialog from "./EstimationNombreDeleteDialog";
 import EstimationNombreTable from "./EstimationNombreTable";
+import EstimationNombreUpdate from "./EstimationNombreUpdate";
 
 const EstimationNombrePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const EstimationNombrePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertNumberEstimateDialog({ mode: "update", id });
+    // setUpsertNumberEstimateDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -148,6 +151,30 @@ const EstimationNombrePage: FunctionComponent = () => {
           onClickDeleteNumberEstimate={setNumberEstimateToDelete}
         />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertNumberEstimateDialog != null}
+        onClose={() => setUpsertNumberEstimateDialog(null)}
+        title={
+          upsertNumberEstimateDialog?.mode === "create"
+            ? t("numberPrecisionCreationTitle")
+            : upsertNumberEstimateDialog?.mode === "update"
+            ? t("numberPrecisionEditionTitle")
+            : undefined
+        }
+      >
+        {upsertNumberEstimateDialog?.mode === "create" && (
+          <EstimationNombreCreate
+            onCancel={() => setUpsertNumberEstimateDialog(null)}
+            onSubmit={handleCreateNumberEstimate}
+          />
+        )}
+        {upsertNumberEstimateDialog?.mode === "update" && (
+          <EstimationNombreUpdate
+            onCancel={() => setUpsertNumberEstimateDialog(null)}
+            onSubmit={handleUpdateNumberEstimate}
+          />
+        )}
+      </EntityUpsertDialog>
       <EstimationNombreDeleteDialog
         numberEstimateToDelete={numberEstimateToDelete}
         onCancelDeletion={() => setNumberEstimateToDelete(null)}

@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import CommuneCreate from "./CommuneCreate";
 import CommuneDeleteDialog from "./CommuneDeleteDialog";
 import CommuneTable from "./CommuneTable";
+import CommuneUpdate from "./CommuneUpdate";
 
 const CommunePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const CommunePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertTownDialog({ mode: "update", id });
+    // setUpsertTownDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const CommunePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <CommuneTable onClickUpdateTown={handleUpdateClick} onClickDeleteTown={setTownToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertTownDialog != null}
+        onClose={() => setUpsertTownDialog(null)}
+        title={
+          upsertTownDialog?.mode === "create"
+            ? t("townCreationTitle")
+            : upsertTownDialog?.mode === "update"
+            ? t("townEditionTitle")
+            : undefined
+        }
+      >
+        {upsertTownDialog?.mode === "create" && (
+          <CommuneCreate onCancel={() => setUpsertTownDialog(null)} onSubmit={handleCreateTown} />
+        )}
+        {upsertTownDialog?.mode === "update" && (
+          <CommuneUpdate onCancel={() => setUpsertTownDialog(null)} onSubmit={handleUpdateTown} />
+        )}
+      </EntityUpsertDialog>
       <CommuneDeleteDialog
         townToDelete={townToDelete}
         onCancelDeletion={() => setTownToDelete(null)}

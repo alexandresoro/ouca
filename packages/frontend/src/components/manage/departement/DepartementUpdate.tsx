@@ -15,10 +15,10 @@ import DepartementEdit from "./DepartementEdit";
 
 type DepartementUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertDepartmentInput) => void;
 };
 
-const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel, onSuccess }) => {
+const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -80,7 +80,7 @@ const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertDepartmentInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertDepartmentInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -95,7 +95,7 @@ const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel
           title={t("departmentEditionTitle")}
           defaultValues={data}
           onCancel={onCancel}
-          onSubmit={onSubmit}
+          onSubmit={onSubmitLegacy}
         />
       )}
     </>

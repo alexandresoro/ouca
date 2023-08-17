@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import ComportementCreate from "./ComportementCreate";
 import ComportementDeleteDialog from "./ComportementDeleteDialog";
 import ComportementTable from "./ComportementTable";
+import ComportementUpdate from "./ComportementUpdate";
 
 const ComportementPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const ComportementPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertBehaviorDialog({ mode: "update", id });
+    // setUpsertBehaviorDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const ComportementPage: FunctionComponent = () => {
       <ContentContainerLayout>
         <ComportementTable onClickUpdateBehavior={handleUpdateClick} onClickDeleteBehavior={setBehaviorToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertBehaviorDialog != null}
+        onClose={() => setUpsertBehaviorDialog(null)}
+        title={
+          upsertBehaviorDialog?.mode === "create"
+            ? t("behaviorCreationTitle")
+            : upsertBehaviorDialog?.mode === "update"
+            ? t("behaviorEditionTitle")
+            : undefined
+        }
+      >
+        {upsertBehaviorDialog?.mode === "create" && (
+          <ComportementCreate onCancel={() => setUpsertBehaviorDialog(null)} onSubmit={handleCreateBehavior} />
+        )}
+        {upsertBehaviorDialog?.mode === "update" && (
+          <ComportementUpdate onCancel={() => setUpsertBehaviorDialog(null)} onSubmit={handleUpdateBehavior} />
+        )}
+      </EntityUpsertDialog>
       <ComportementDeleteDialog
         behaviorToDelete={behaviorToDelete}
         onCancelDeletion={() => setBehaviorToDelete(null)}

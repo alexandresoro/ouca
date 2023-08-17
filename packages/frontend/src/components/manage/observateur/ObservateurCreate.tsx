@@ -9,10 +9,10 @@ import ObservateurEdit from "./ObservateurEdit";
 
 type ObservateurCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const ObservateurCreate: FunctionComponent<ObservateurCreateProps> = ({ onCancel, onSuccess }) => {
+const ObservateurCreate: FunctionComponent<ObservateurCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const ObservateurCreate: FunctionComponent<ObservateurCreateProps> = ({ onCancel
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertObserverInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertObserverInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <ObservateurEdit title={t("observerCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <ObservateurEdit title={t("observerCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default ObservateurCreate;

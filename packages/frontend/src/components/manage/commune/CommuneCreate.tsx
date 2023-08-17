@@ -9,10 +9,10 @@ import CommuneEdit from "./CommuneEdit";
 
 type CommuneCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSuccess }) => {
+const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSucc
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertTownInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertTownInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <CommuneEdit title={t("townCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <CommuneEdit title={t("townCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default CommuneCreate;

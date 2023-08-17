@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import AgeCreate from "./AgeCreate";
 import AgeDeleteDialog from "./AgeDeleteDialog";
 import AgeTable from "./AgeTable";
+import AgeUpdate from "./AgeUpdate";
 
 const AgePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const AgePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertAgeDialog({ mode: "update", id });
+    // setUpsertAgeDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const AgePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <AgeTable onClickUpdateAge={handleUpdateClick} onClickDeleteAge={setAgeToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertAgeDialog != null}
+        onClose={() => setUpsertAgeDialog(null)}
+        title={
+          upsertAgeDialog?.mode === "create"
+            ? t("ageCreationTitle")
+            : upsertAgeDialog?.mode === "update"
+            ? t("ageEditionTitle")
+            : undefined
+        }
+      >
+        {upsertAgeDialog?.mode === "create" && (
+          <AgeCreate onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleCreateAge} />
+        )}
+        {upsertAgeDialog?.mode === "update" && (
+          <AgeUpdate onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleUpdateAge} />
+        )}
+      </EntityUpsertDialog>
       <AgeDeleteDialog
         ageToDelete={ageToDelete}
         onCancelDeletion={() => setAgeToDelete(null)}

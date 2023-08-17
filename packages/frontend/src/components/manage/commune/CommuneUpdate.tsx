@@ -11,10 +11,10 @@ import CommuneEdit from "./CommuneEdit";
 
 type CommuneUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertTownInput) => void;
 };
 
-const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSuccess }) => {
+const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSucc
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertTownInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertTownInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -87,7 +87,7 @@ const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSucc
   return (
     <>
       {!isLoading && !isError && data && (
-        <CommuneEdit title={t("townEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
+        <CommuneEdit title={t("townEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
       )}
     </>
   );

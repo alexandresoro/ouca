@@ -11,10 +11,10 @@ import EspeceEdit from "./EspeceEdit";
 
 type EspeceUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertSpeciesInput) => void;
 };
 
-const EspeceUpdate: FunctionComponent<EspeceUpdateProps> = ({ onCancel, onSuccess }) => {
+const EspeceUpdate: FunctionComponent<EspeceUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const EspeceUpdate: FunctionComponent<EspeceUpdateProps> = ({ onCancel, onSucces
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertSpeciesInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertSpeciesInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const EspeceUpdate: FunctionComponent<EspeceUpdateProps> = ({ onCancel, onSucces
           title={t("speciesEditionTitle")}
           defaultValues={{ ...data, classId: data.classId ?? undefined }}
           onCancel={onCancel}
-          onSubmit={onSubmit}
+          onSubmit={onSubmitLegacy}
         />
       )}
     </>

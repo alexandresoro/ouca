@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import MeteoCreate from "./MeteoCreate";
 import MeteoDeleteDialog from "./MeteoDeleteDialog";
 import MeteoTable from "./MeteoTable";
+import MeteoUpdate from "./MeteoUpdate";
 
 const MeteoPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const MeteoPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertWeatherDialog({ mode: "update", id });
+    // setUpsertWeatherDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const MeteoPage: FunctionComponent = () => {
       <ContentContainerLayout>
         <MeteoTable onClickUpdateWeather={handleUpdateClick} onClickDeleteWeather={setWeatherToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertWeatherDialog != null}
+        onClose={() => setUpsertWeatherDialog(null)}
+        title={
+          upsertWeatherDialog?.mode === "create"
+            ? t("weatherCreationTitle")
+            : upsertWeatherDialog?.mode === "update"
+            ? t("weatherEditionTitle")
+            : undefined
+        }
+      >
+        {upsertWeatherDialog?.mode === "create" && (
+          <MeteoCreate onCancel={() => setUpsertWeatherDialog(null)} onSubmit={handleCreateWeather} />
+        )}
+        {upsertWeatherDialog?.mode === "update" && (
+          <MeteoUpdate onCancel={() => setUpsertWeatherDialog(null)} onSubmit={handleUpdateWeather} />
+        )}
+      </EntityUpsertDialog>
       <MeteoDeleteDialog
         weatherToDelete={weatherToDelete}
         onCancelDeletion={() => setWeatherToDelete(null)}

@@ -8,9 +8,12 @@ import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
+import MilieuCreate from "./MilieuCreate";
 import MilieuDeleteDialog from "./MilieuDeleteDialog";
 import MilieuTable from "./MilieuTable";
+import MilieuUpdate from "./MilieuUpdate";
 
 const MilieuPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const MilieuPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    setUpsertEnvironmentDialog({ mode: "update", id });
+    //setUpsertEnvironmentDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
@@ -145,6 +148,24 @@ const MilieuPage: FunctionComponent = () => {
       <ContentContainerLayout>
         <MilieuTable onClickUpdateEnvironment={handleUpdateClick} onClickDeleteEnvironment={setEnvironmentToDelete} />
       </ContentContainerLayout>
+      <EntityUpsertDialog
+        open={upsertEnvironmentDialog != null}
+        onClose={() => setUpsertEnvironmentDialog(null)}
+        title={
+          upsertEnvironmentDialog?.mode === "create"
+            ? t("environmentCreationTitle")
+            : upsertEnvironmentDialog?.mode === "update"
+            ? t("environmentEditionTitle")
+            : undefined
+        }
+      >
+        {upsertEnvironmentDialog?.mode === "create" && (
+          <MilieuCreate onCancel={() => setUpsertEnvironmentDialog(null)} onSubmit={handleCreateEnvironment} />
+        )}
+        {upsertEnvironmentDialog?.mode === "update" && (
+          <MilieuUpdate onCancel={() => setUpsertEnvironmentDialog(null)} onSubmit={handleUpdateEnvironment} />
+        )}
+      </EntityUpsertDialog>
       <MilieuDeleteDialog
         environmentToDelete={environmentToDelete}
         onCancelDeletion={() => setEnvironmentToDelete(null)}

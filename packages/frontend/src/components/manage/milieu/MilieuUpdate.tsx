@@ -15,10 +15,10 @@ import MilieuEdit from "./MilieuEdit";
 
 type MilieuUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertEnvironmentInput) => void;
 };
 
-const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSuccess }) => {
+const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -80,7 +80,7 @@ const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSucces
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertEnvironmentInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertEnvironmentInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,12 @@ const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSucces
   return (
     <>
       {!isLoading && !isError && data && (
-        <MilieuEdit title={t("environmentEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
+        <MilieuEdit
+          title={t("environmentEditionTitle")}
+          defaultValues={data}
+          onCancel={onCancel}
+          onSubmit={onSubmitLegacy}
+        />
       )}
     </>
   );

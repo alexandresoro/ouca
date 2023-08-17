@@ -9,10 +9,10 @@ import MilieuEdit from "./MilieuEdit";
 
 type MilieuCreateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: () => void;
 };
 
-const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSuccess }) => {
+const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -48,11 +48,11 @@ const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSucces
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertEnvironmentInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertEnvironmentInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmit} />;
+  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
 };
 
 export default MilieuCreate;

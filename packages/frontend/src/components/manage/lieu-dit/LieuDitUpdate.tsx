@@ -12,10 +12,10 @@ import LieuDitEdit from "./LieuDitEdit";
 
 type LieuDitUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertLocalityInput) => void;
 };
 
-const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSuccess }) => {
+const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -97,7 +97,7 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSucc
 
   const departmentId = dataTown?.departmentId;
 
-  const onSubmit: SubmitHandler<UpsertLocalityInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertLocalityInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -124,7 +124,7 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSucc
           defaultValues={defaultValues}
           defaultDepartmentId={departmentId}
           onCancel={onCancel}
-          onSubmit={onSubmit}
+          onSubmit={onSubmitLegacy}
         />
       )}
     </>

@@ -11,10 +11,10 @@ import AgeEdit from "./AgeEdit";
 
 type AgeUpdateProps = {
   onCancel?: () => void;
-  onSuccess?: () => void;
+  onSubmit?: (id: string, input: UpsertAgeInput) => void;
 };
 
-const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSuccess }) => {
+const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSubmit }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSuccess }) =
     }
   );
 
-  const onSubmit: SubmitHandler<UpsertAgeInput> = (input) => {
+  const onSubmitLegacy: SubmitHandler<UpsertAgeInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -87,7 +87,7 @@ const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSuccess }) =
   return (
     <>
       {!isLoading && !isError && data && (
-        <AgeEdit title={t("ageEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmit} />
+        <AgeEdit title={t("ageEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
       )}
     </>
   );
