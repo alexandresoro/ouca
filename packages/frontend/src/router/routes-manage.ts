@@ -38,10 +38,10 @@ export const routesManage: RouteObject[] = [
     path: "lieudit",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "LieuDitPage"),
   },
-  // {
-  //   path: "meteo",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "MeteoPage"),
-  // },
+  {
+    path: "meteo",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "MeteoPage"),
+  },
   // {
   //   path: "milieu",
   //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "MilieuPage"),
