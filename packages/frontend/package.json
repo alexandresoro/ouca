@@ -33,7 +33,7 @@
     "@floating-ui/react": "0.25.1",
     "@fontsource-variable/nunito": "5.0.9",
     "@fontsource/carter-one": "5.0.8",
-    "@headlessui/react": "1.7.16",
+    "@headlessui/react": "1.7.17",
     "@hookform/resolvers": "3.2.0",
     "@ou-ca/common": "workspace:*",
     "@sentry/integrations": "7.64.0",
