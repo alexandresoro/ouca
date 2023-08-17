@@ -1,3 +1,4 @@
+import { upsertSexResponse } from "@ou-ca/common/api/sex";
 import { type SexExtended } from "@ou-ca/common/entities/sex";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const SexePage: FunctionComponent = () => {
     null
   );
   const [sexToDelete, setSexToDelete] = useState<SexExtended | null>(null);
+
+  const { mutate: createSex } = useApiMutation(
+    {
+      path: "/sexes",
+      method: "POST",
+      schema: upsertSexResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "sexTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertSexDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("sexAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateSex } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertSexResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "sexTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertSexDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("sexAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteSex } = useApiMutation(
     { method: "DELETE" },

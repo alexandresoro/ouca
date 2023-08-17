@@ -1,3 +1,4 @@
+import { upsertTownResponse } from "@ou-ca/common/api/town";
 import { type TownExtended } from "@ou-ca/common/entities/town";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const CommunePage: FunctionComponent = () => {
     null
   );
   const [townToDelete, setTownToDelete] = useState<TownExtended | null>(null);
+
+  const { mutate: createTown } = useApiMutation(
+    {
+      path: "/towns",
+      method: "POST",
+      schema: upsertTownResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "townTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertTownDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("townAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateTown } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertTownResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "townTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertTownDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("townAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteTown } = useApiMutation(
     { method: "DELETE" },

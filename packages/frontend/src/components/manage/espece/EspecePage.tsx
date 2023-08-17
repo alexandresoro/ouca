@@ -1,3 +1,4 @@
+import { upsertSpeciesResponse } from "@ou-ca/common/api/species";
 import { type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const EspecePage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; id: string }
   >(null);
   const [speciesToDelete, setSpeciesToDelete] = useState<SpeciesExtended | null>(null);
+
+  const { mutate: createSpecies } = useApiMutation(
+    {
+      path: "/species",
+      method: "POST",
+      schema: upsertSpeciesResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "speciesTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertSpeciesDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("speciesAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateSpecies } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertSpeciesResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "speciesTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertSpeciesDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("speciesAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteSpecies } = useApiMutation(
     { method: "DELETE" },

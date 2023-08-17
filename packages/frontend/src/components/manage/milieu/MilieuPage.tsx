@@ -1,3 +1,4 @@
+import { upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
 import { type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const MilieuPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; id: string }
   >(null);
   const [environmentToDelete, setEnvironmentToDelete] = useState<EnvironmentExtended | null>(null);
+
+  const { mutate: createEnvironment } = useApiMutation(
+    {
+      path: "/environments",
+      method: "POST",
+      schema: upsertEnvironmentResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "environmentTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertEnvironmentDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("environmentAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateEnvironment } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertEnvironmentResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "environmentTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertEnvironmentDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("environmentAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteEnvironment } = useApiMutation(
     { method: "DELETE" },

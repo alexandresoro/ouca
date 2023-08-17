@@ -1,3 +1,4 @@
+import { upsertLocalityResponse } from "@ou-ca/common/api/locality";
 import { type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const LieuDitPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; id: string }
   >(null);
   const [localityToDelete, setLocalityToDelete] = useState<LocalityExtended | null>(null);
+
+  const { mutate: createLocality } = useApiMutation(
+    {
+      path: "/localities",
+      method: "POST",
+      schema: upsertLocalityResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "localityTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertLocalityDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("localityAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateLocality } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertLocalityResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "localityTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertLocalityDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("localityAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteLocality } = useApiMutation(
     { method: "DELETE" },

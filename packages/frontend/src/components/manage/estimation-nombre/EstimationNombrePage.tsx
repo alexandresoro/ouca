@@ -1,3 +1,4 @@
+import { upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
 import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const EstimationNombrePage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; id: string }
   >(null);
   const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimateExtended | null>(null);
+
+  const { mutate: createNumberEstimate } = useApiMutation(
+    {
+      path: "/number-estimates",
+      method: "POST",
+      schema: upsertNumberEstimateResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "numberEstimateTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertNumberEstimateDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("numberPrecisionAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateNumberEstimate } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertNumberEstimateResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "numberEstimateTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertNumberEstimateDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("numberPrecisionAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteNumberEstimate } = useApiMutation(
     { method: "DELETE" },

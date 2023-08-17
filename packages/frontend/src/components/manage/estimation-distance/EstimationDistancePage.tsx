@@ -1,3 +1,4 @@
+import { upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const EstimationDistancePage: FunctionComponent = () => {
     null
   );
   const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimateExtended | null>(null);
+
+  const { mutate: createDistanceEstimate } = useApiMutation(
+    {
+      path: "/distance-estimates",
+      method: "POST",
+      schema: upsertDistanceEstimateResponse,
+    },
+    {      
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertDistanceEstimateDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("distancePrecisionAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateDistanceEstimate } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertDistanceEstimateResponse,
+    },
+    {      
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertDistanceEstimateDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("distancePrecisionAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteDistanceEstimate } = useApiMutation(
     { method: "DELETE" },

@@ -1,3 +1,4 @@
+import { upsertObserverResponse } from "@ou-ca/common/api/observer";
 import { type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const ObservateurPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; id: string }
   >(null);
   const [observerToDelete, setObserverToDelete] = useState<ObserverExtended | null>(null);
+
+  const { mutate: createObserver } = useApiMutation(
+    {
+      path: "/observers",
+      method: "POST",
+      schema: upsertObserverResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "observerTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertObserverDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("observerAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: mutateObserver } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertObserverResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "observerTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertObserverDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("observerAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteObserver } = useApiMutation(
     { method: "DELETE" },

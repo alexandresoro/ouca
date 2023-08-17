@@ -1,3 +1,4 @@
+import { upsertAgeResponse } from "@ou-ca/common/api/age";
 import { type AgeExtended } from "@ou-ca/common/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const AgePage: FunctionComponent = () => {
     null
   );
   const [ageToDelete, setAgeToDelete] = useState<AgeExtended | null>(null);
+
+  const { mutate: createAge } = useApiMutation(
+    {
+      path: "/ages",
+      method: "POST",
+      schema: upsertAgeResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "ageTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertAgeDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("ageAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateAge } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertAgeResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "ageTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertAgeDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("ageAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteAge } = useApiMutation(
     { method: "DELETE" },

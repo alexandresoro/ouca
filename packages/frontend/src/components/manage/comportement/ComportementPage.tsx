@@ -1,3 +1,4 @@
+import { upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
 import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -23,6 +24,71 @@ const ComportementPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; id: string }
   >(null);
   const [behaviorToDelete, setBehaviorToDelete] = useState<BehaviorExtended | null>(null);
+
+  const { mutate: createBehavior } = useApiMutation(
+    {
+      path: "/behaviors",
+      method: "POST",
+      schema: upsertBehaviorResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "behaviorTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertBehaviorDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("behaviorAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const { mutate: updateBehavior } = useApiMutation(
+    {
+      method: "PUT",
+      schema: upsertBehaviorResponse,
+    },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "behaviorTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertBehaviorDialog(null);
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("behaviorAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
 
   const { mutate: deleteBehavior } = useApiMutation(
     { method: "DELETE" },
