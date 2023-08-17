@@ -19,6 +19,9 @@ const CommunePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertTownDialog, setUpsertTownDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+    null
+  );
   const [townToDelete, setTownToDelete] = useState<TownExtended | null>(null);
 
   const { mutate: deleteTown } = useApiMutation(

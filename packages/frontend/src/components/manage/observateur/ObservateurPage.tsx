@@ -19,6 +19,9 @@ const ObservateurPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertObserverDialog, setUpsertObserverDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [observerToDelete, setObserverToDelete] = useState<ObserverExtended | null>(null);
 
   const { mutate: deleteObserver } = useApiMutation(

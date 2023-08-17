@@ -19,6 +19,9 @@ const MilieuPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertEnvironmentDialog, setUpsertEnvironmentDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [environmentToDelete, setEnvironmentToDelete] = useState<EnvironmentExtended | null>(null);
 
   const { mutate: deleteEnvironment } = useApiMutation(

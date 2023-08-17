@@ -19,6 +19,9 @@ const SexePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertSexDialog, setUpsertSexDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+    null
+  );
   const [sexToDelete, setSexToDelete] = useState<SexExtended | null>(null);
 
   const { mutate: deleteSex } = useApiMutation(

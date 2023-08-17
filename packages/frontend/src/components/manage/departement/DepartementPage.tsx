@@ -19,6 +19,9 @@ const DepartementPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertDepartmentDialog, setUpsertDepartmentDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [departmentToDelete, setDepartmentToDelete] = useState<DepartmentExtended | null>(null);
 
   const { mutate: deleteDepartment } = useApiMutation(

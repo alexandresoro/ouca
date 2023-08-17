@@ -19,6 +19,9 @@ const EspecePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertSpeciesDialog, setUpsertSpeciesDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [speciesToDelete, setSpeciesToDelete] = useState<SpeciesExtended | null>(null);
 
   const { mutate: deleteSpecies } = useApiMutation(

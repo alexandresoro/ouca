@@ -19,6 +19,9 @@ const ComportementPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertBehaviorDialog, setUpsertBehaviorDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [behaviorToDelete, setBehaviorToDelete] = useState<BehaviorExtended | null>(null);
 
   const { mutate: deleteBehavior } = useApiMutation(

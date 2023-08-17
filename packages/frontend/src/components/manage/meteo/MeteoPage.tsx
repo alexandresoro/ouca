@@ -19,6 +19,9 @@ const MeteoPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertWeatherDialog, setUpsertWeatherDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [weatherToDelete, setWeatherToDelete] = useState<WeatherExtended | null>(null);
 
   const { mutate: deleteWeather } = useApiMutation(

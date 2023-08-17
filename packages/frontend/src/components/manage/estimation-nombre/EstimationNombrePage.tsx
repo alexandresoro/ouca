@@ -19,6 +19,9 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertNumberEstimateDialog, setUpsertNumberEstimateDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimateExtended | null>(null);
 
   const { mutate: deleteNumberEstimate } = useApiMutation(

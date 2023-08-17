@@ -19,6 +19,9 @@ const AgePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertAgeDialog, setUpsertAgeDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+    null
+  );
   const [ageToDelete, setAgeToDelete] = useState<AgeExtended | null>(null);
 
   const { mutate: deleteAge } = useApiMutation(

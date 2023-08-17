@@ -19,6 +19,9 @@ const LieuDitPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertLocalityDialog, setUpsertLocalityDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [localityToDelete, setLocalityToDelete] = useState<LocalityExtended | null>(null);
 
   const { mutate: deleteLocality } = useApiMutation(

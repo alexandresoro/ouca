@@ -19,6 +19,9 @@ const ClassePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertSpeciesClassDialog, setUpsertSpeciesClassDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; id: string }
+  >(null);
   const [speciesClassToDelete, setSpeciesClassToDelete] = useState<SpeciesClassExtended | null>(null);
 
   const { mutate: deleteSpeciesClass } = useApiMutation(

@@ -19,6 +19,9 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const [upsertDistanceEstimateDialog, setUpsertDistanceEstimateDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+    null
+  );
   const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimateExtended | null>(null);
 
   const { mutate: deleteDistanceEstimate } = useApiMutation(
