@@ -130,8 +130,8 @@ const MeteoPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/weathers" });
   };
 
-  const handleCreateWeather = () => {
-    createWeather({});
+  const handleCreateWeather = (input: UpsertWeatherInput) => {
+    createWeather({ body: input });
   };
 
   const handleUpdateWeather = (id: string, input: UpsertWeatherInput) => {

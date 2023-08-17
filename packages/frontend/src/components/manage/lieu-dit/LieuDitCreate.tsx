@@ -9,7 +9,7 @@ import LieuDitEdit from "./LieuDitEdit";
 
 type LieuDitCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertLocalityInput) => void;
 };
 
 const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSubmit }) => {

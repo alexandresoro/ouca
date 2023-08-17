@@ -9,7 +9,7 @@ import ClasseEdit from "./ClasseEdit";
 
 type ClasseCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertClassInput) => void;
 };
 
 const ClasseCreate: FunctionComponent<ClasseCreateProps> = ({ onCancel, onSubmit }) => {

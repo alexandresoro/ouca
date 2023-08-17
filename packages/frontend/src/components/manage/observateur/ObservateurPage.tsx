@@ -130,8 +130,8 @@ const ObservateurPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/observers" });
   };
 
-  const handleCreateObserver = () => {
-    createObserver({});
+  const handleCreateObserver = (input: UpsertObserverInput) => {
+    createObserver({ body: input });
   };
 
   const handleUpdateObserver = (id: string, input: UpsertObserverInput) => {

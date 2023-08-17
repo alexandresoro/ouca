@@ -130,8 +130,8 @@ const EstimationDistancePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/distance-estimates" });
   };
 
-  const handleCreateDistanceEstimate = () => {
-    createDistanceEstimate({});
+  const handleCreateDistanceEstimate = (input: UpsertDistanceEstimateInput) => {
+    createDistanceEstimate({ body: input });
   };
 
   const handleUpdateDistanceEstimate = (id: string, input: UpsertDistanceEstimateInput) => {

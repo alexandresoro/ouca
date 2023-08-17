@@ -9,7 +9,7 @@ import EspeceEdit from "./EspeceEdit";
 
 type EspeceCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertSpeciesInput) => void;
 };
 
 const EspeceCreate: FunctionComponent<EspeceCreateProps> = ({ onCancel, onSubmit }) => {

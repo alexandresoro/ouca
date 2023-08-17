@@ -9,7 +9,7 @@ import DepartementEdit from "./DepartementEdit";
 
 type DepartementCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertDepartmentInput) => void;
 };
 
 const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel, onSubmit }) => {

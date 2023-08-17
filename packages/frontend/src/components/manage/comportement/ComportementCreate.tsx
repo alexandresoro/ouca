@@ -9,7 +9,7 @@ import ComportementEdit from "./ComportementEdit";
 
 type ComportementCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertBehaviorInput) => void;
 };
 
 const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCancel, onSubmit }) => {

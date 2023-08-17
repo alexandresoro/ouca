@@ -9,7 +9,7 @@ import CommuneEdit from "./CommuneEdit";
 
 type CommuneCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertTownInput) => void;
 };
 
 const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSubmit }) => {

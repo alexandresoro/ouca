@@ -130,8 +130,8 @@ const EspecePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/species" });
   };
 
-  const handleCreateSpecies = () => {
-    createSpecies({});
+  const handleCreateSpecies = (input: UpsertSpeciesInput) => {
+    createSpecies({ body: input });
   };
 
   const handleUpdateSpecies = (id: string, input: UpsertSpeciesInput) => {

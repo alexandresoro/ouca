@@ -130,8 +130,8 @@ const DepartementPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/departments" });
   };
 
-  const handleCreateDepartment = () => {
-    createDepartment({});
+  const handleCreateDepartment = (input: UpsertDepartmentInput) => {
+    createDepartment({ body: input });
   };
 
   const handleUpdateDepartment = (id: string, input: UpsertDepartmentInput) => {

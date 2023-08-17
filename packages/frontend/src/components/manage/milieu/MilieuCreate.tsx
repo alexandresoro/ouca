@@ -9,7 +9,7 @@ import MilieuEdit from "./MilieuEdit";
 
 type MilieuCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertEnvironmentInput) => void;
 };
 
 const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSubmit }) => {

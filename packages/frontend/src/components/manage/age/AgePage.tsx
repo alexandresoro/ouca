@@ -130,8 +130,8 @@ const AgePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/ages" });
   };
 
-  const handleCreateAge = () => {
-    createAge({});
+  const handleCreateAge = (input: UpsertAgeInput) => {
+    createAge({ body: input });
   };
 
   const handleUpdateAge = (id: string, input: UpsertAgeInput) => {

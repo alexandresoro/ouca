@@ -9,7 +9,7 @@ import AgeEdit from "./AgeEdit";
 
 type AgeCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertAgeInput) => void;
 };
 
 const AgeCreate: FunctionComponent<AgeCreateProps> = ({ onCancel, onSubmit }) => {

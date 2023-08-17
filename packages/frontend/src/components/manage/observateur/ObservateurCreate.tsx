@@ -9,7 +9,7 @@ import ObservateurEdit from "./ObservateurEdit";
 
 type ObservateurCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertObserverInput) => void;
 };
 
 const ObservateurCreate: FunctionComponent<ObservateurCreateProps> = ({ onCancel, onSubmit }) => {

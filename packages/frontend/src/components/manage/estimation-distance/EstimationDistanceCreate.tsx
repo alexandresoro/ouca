@@ -9,7 +9,7 @@ import EstimationDistanceEdit from "./EstimationDistanceEdit";
 
 type EstimationDistanceCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertDistanceEstimateInput) => void;
 };
 
 const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps> = ({onCancel, onSubmit}) => {

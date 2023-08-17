@@ -130,8 +130,8 @@ const MilieuPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/environments" });
   };
 
-  const handleCreateEnvironment = () => {
-    createEnvironment({});
+  const handleCreateEnvironment = (input: UpsertEnvironmentInput) => {
+    createEnvironment({ body: input });
   };
 
   const handleUpdateEnvironment = (id: string, input: UpsertEnvironmentInput) => {

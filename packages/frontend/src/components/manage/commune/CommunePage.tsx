@@ -130,8 +130,8 @@ const CommunePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/towns" });
   };
 
-  const handleCreateTown = () => {
-    createTown({});
+  const handleCreateTown = (input: UpsertTownInput) => {
+    createTown({ body: input });
   };
 
   const handleUpdateTown = (id: string, input: UpsertTownInput) => {

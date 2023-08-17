@@ -130,8 +130,8 @@ const LieuDitPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/localities" });
   };
 
-  const handleCreateLocality = () => {
-    createLocality({});
+  const handleCreateLocality = (input: UpsertLocalityInput) => {
+    createLocality({ body: input });
   };
 
   const handleUpdateLocality = (id: string, input: UpsertLocalityInput) => {

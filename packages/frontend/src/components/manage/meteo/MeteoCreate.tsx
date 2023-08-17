@@ -9,7 +9,7 @@ import MeteoEdit from "./MeteoEdit";
 
 type MeteoCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertWeatherInput) => void;
 };
 
 const MeteoCreate: FunctionComponent<MeteoCreateProps> = ({ onCancel, onSubmit }) => {

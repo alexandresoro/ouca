@@ -9,7 +9,7 @@ import SexeEdit from "./SexeEdit";
 
 type SexeCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertSexInput) => void;
 };
 
 const SexeCreate: FunctionComponent<SexeCreateProps> = ({ onCancel, onSubmit }) => {

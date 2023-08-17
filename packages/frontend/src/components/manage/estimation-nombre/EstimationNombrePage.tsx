@@ -130,8 +130,8 @@ const EstimationNombrePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/number-estimates" });
   };
 
-  const handleCreateNumberEstimate = () => {
-    createNumberEstimate({});
+  const handleCreateNumberEstimate = (input: UpsertNumberEstimateInput) => {
+    createNumberEstimate({ body: input });
   };
 
   const handleUpdateNumberEstimate = (id: string, input: UpsertNumberEstimateInput) => {

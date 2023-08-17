@@ -130,8 +130,8 @@ const SexePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/sexes" });
   };
 
-  const handleCreateSex = () => {
-    createSex({});
+  const handleCreateSex = (input: UpsertSexInput) => {
+    createSex({ body: input });
   };
 
   const handleUpdateSex = (id: string, input: UpsertSexInput) => {

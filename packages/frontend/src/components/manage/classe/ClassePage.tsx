@@ -130,8 +130,8 @@ const ClassePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/classes" });
   };
 
-  const handleCreateSpeciesClass = () => {
-    createSpeciesClass({});
+  const handleCreateSpeciesClass = (input: UpsertClassInput) => {
+    createSpeciesClass({ body: input });
   };
 
   const handleUpdateSpeciesClass = (id: string, input: UpsertClassInput) => {

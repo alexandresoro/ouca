@@ -130,8 +130,8 @@ const ComportementPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/behaviors" });
   };
 
-  const handleCreateBehavior = () => {
-    createBehavior({});
+  const handleCreateBehavior = (input: UpsertBehaviorInput) => {
+    createBehavior({ body: input });
   };
 
   const handleUpdateBehavior = (id: string, input: UpsertBehaviorInput) => {

@@ -9,7 +9,7 @@ import EstimationNombreEdit from "./EstimationNombreEdit";
 
 type EstimationNombreCreateProps = {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (input: UpsertNumberEstimateInput) => void;
 };
 
 const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = ({ onCancel, onSubmit }) => {
