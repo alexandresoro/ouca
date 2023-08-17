@@ -4,7 +4,6 @@ import { Route, Routes } from "react-router-dom";
 const ObservateurManage = lazy(() => import("../components/manage/observateur/ObservateurManage"));
 const LieuDitManage = lazy(() => import("../components/manage/lieu-dit/LieuDitManage"));
 const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"));
-const EspeceManage = lazy(() => import("../components/manage/espece/EspeceManage"));
 const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
 const EstimationNombreManage = lazy(() => import("../components/manage/estimation-nombre/EstimationNombreManage"));
 const EstimationDistanceManage = lazy(
@@ -39,14 +38,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <MeteoManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="espece/*"
-        element={
-          <Suspense fallback={<></>}>
-            <EspeceManage />
           </Suspense>
         }
       />

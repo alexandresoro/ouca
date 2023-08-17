@@ -42,10 +42,6 @@ const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ id, onCa
     onSubmit(id, input);
   };
 
-  if (!id) {
-    return null;
-  }
-
   return (
     <>
       {!isLoading && !isError && data && (

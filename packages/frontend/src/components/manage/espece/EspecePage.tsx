@@ -3,7 +3,6 @@ import { type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import EspeceUpdate from "./EspeceUpdate";
 
 const EspecePage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const EspecePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertSpeciesDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertSpeciesDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const EspecePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("species")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("species")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <EspeceTable onClickUpdateSpecies={handleUpdateClick} onClickDeleteSpecies={setSpeciesToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const EspecePage: FunctionComponent = () => {
           <EspeceCreate onCancel={() => setUpsertSpeciesDialog(null)} onSubmit={handleCreateSpecies} />
         )}
         {upsertSpeciesDialog?.mode === "update" && (
-          <EspeceUpdate onCancel={() => setUpsertSpeciesDialog(null)} onSubmit={handleUpdateSpecies} />
+          <EspeceUpdate
+            id={upsertSpeciesDialog.id}
+            onCancel={() => setUpsertSpeciesDialog(null)}
+            onSubmit={handleUpdateSpecies}
+          />
         )}
       </EntityUpsertDialog>
       <EspeceDeleteDialog
