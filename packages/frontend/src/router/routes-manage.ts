@@ -50,8 +50,8 @@ export const routesManage: RouteObject[] = [
     path: "observateur",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "ObservateurPage"),
   },
-  // {
-  //   path: "sexe",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "SexePage"),
-  // },
+  {
+    path: "sexe",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "SexePage"),
+  },
 ];
