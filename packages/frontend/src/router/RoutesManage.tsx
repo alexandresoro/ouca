@@ -9,7 +9,6 @@ const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"))
 const ClasseManage = lazy(() => import("../components/manage/classe/ClasseManage"));
 const EspeceManage = lazy(() => import("../components/manage/espece/EspeceManage"));
 const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
-const AgeManage = lazy(() => import("../components/manage/age/AgeManage"));
 const EstimationNombreManage = lazy(() => import("../components/manage/estimation-nombre/EstimationNombreManage"));
 const EstimationDistanceManage = lazy(
   () => import("../components/manage/estimation-distance/EstimationDistanceManage")
@@ -84,14 +83,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <SexeManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="age/*"
-        element={
-          <Suspense fallback={<></>}>
-            <AgeManage />
           </Suspense>
         }
       />

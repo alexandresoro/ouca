@@ -4,6 +4,7 @@ import LastInventory from "../components/inventory/last-inventory/LastInventory"
 import UserSettingsProvider from "../contexts/UserSettingsContext";
 import { lazyRoute } from "../utils/lazy-route";
 import RoutesManage from "./RoutesManage";
+import { routesManage } from "./routes-manage";
 
 export const routes: RouteObject[] = [
   {
@@ -38,6 +39,7 @@ export const routes: RouteObject[] = [
         path: "manage",
         Component: Outlet,
         children: [
+          ...routesManage,
           {
             path: "*",
             Component: RoutesManage,
