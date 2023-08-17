@@ -3,7 +3,6 @@ import { type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import MilieuUpdate from "./MilieuUpdate";
 
 const MilieuPage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const MilieuPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    //setUpsertEnvironmentDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertEnvironmentDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const MilieuPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("environments")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("environments")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <MilieuTable onClickUpdateEnvironment={handleUpdateClick} onClickDeleteEnvironment={setEnvironmentToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const MilieuPage: FunctionComponent = () => {
           <MilieuCreate onCancel={() => setUpsertEnvironmentDialog(null)} onSubmit={handleCreateEnvironment} />
         )}
         {upsertEnvironmentDialog?.mode === "update" && (
-          <MilieuUpdate onCancel={() => setUpsertEnvironmentDialog(null)} onSubmit={handleUpdateEnvironment} />
+          <MilieuUpdate
+            id={upsertEnvironmentDialog.id}
+            onCancel={() => setUpsertEnvironmentDialog(null)}
+            onSubmit={handleUpdateEnvironment}
+          />
         )}
       </EntityUpsertDialog>
       <MilieuDeleteDialog

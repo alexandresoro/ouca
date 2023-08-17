@@ -3,7 +3,6 @@ import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-e
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import EstimationDistanceUpdate from "./EstimationDistanceUpdate";
 
 const EstimationDistancePage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const EstimationDistancePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertDistanceEstimateDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertDistanceEstimateDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("distancePrecisions")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("distancePrecisions")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <EstimationDistanceTable onClickUpdateDistanceEstimate={handleUpdateClick} onClickDeleteDistanceEstimate={setDistanceEstimateToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           <EstimationDistanceCreate onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleCreateDistanceEstimate} />
         )}
         {upsertDistanceEstimateDialog?.mode === "update" && (
-          <EstimationDistanceUpdate onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleUpdateDistanceEstimate} />
+          <EstimationDistanceUpdate id={upsertDistanceEstimateDialog.id} onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleUpdateDistanceEstimate} />
         )}
       </EntityUpsertDialog>
       <EstimationDistanceDeleteDialog

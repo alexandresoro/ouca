@@ -6,19 +6,16 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
-import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
-import ManageTopBar from "../common/ManageTopBar";
 
 type ComportementEditProps = {
-  title: string;
   defaultValues?: UpsertBehaviorInput | null;
   onCancel: () => void;
   onSubmit: SubmitHandler<UpsertBehaviorInput>;
 };
 
 const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
-  const { title, defaultValues, onCancel, onSubmit } = props;
+  const { defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
 
@@ -56,38 +53,23 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
   ] satisfies { label: string; value: NicheurCode | null }[];
 
   return (
-    <>
-      <ManageTopBar title={t("behaviors")} showButtons={false} />
-      <ContentContainerLayout>
-        <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
-          <div className="card-body">
-            <h2 className="card-title my-4">{title}</h2>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <TextInput label={t("code")} type="text" required {...register("code")} />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput label={t("code")} type="text" required {...register("code")} />
+      <TextInput label={t("label")} type="text" required {...register("libelle")} />
 
-              <TextInput label={t("label")} type="text" required {...register("libelle")} />
+      <FormSelect
+        name="nicheur"
+        label={t("breeding")}
+        required
+        control={control}
+        data={breedingStatuses}
+        by="value"
+        renderValue={({ label }) => label}
+      />
 
-              <FormSelect
-                name="nicheur"
-                label={t("breeding")}
-                required
-                control={control}
-                data={breedingStatuses}
-                by="value"
-                renderValue={({ label }) => label}
-              />
-
-              <EntityUpsertFormActionButtons
-                className="mt-6"
-                onCancelClick={onCancel}
-                disabled={!isValid || !isDirty}
-              />
-            </form>
-          </div>
-        </div>
-      </ContentContainerLayout>
-    </>
+      <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
+    </form>
   );
 };
 

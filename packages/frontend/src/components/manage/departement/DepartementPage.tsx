@@ -3,7 +3,6 @@ import { type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import DepartementUpdate from "./DepartementUpdate";
 
 const DepartementPage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const DepartementPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertDepartmentDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertDepartmentDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const DepartementPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("departments")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("departments")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <DepartementTable onClickUpdateDepartment={handleUpdateClick} onClickDeleteDepartment={setDepartmentToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const DepartementPage: FunctionComponent = () => {
           <DepartementCreate onCancel={() => setUpsertDepartmentDialog(null)} onSubmit={handleCreateDepartment} />
         )}
         {upsertDepartmentDialog?.mode === "update" && (
-          <DepartementUpdate onCancel={() => setUpsertDepartmentDialog(null)} onSubmit={handleUpdateDepartment} />
+          <DepartementUpdate
+            id={upsertDepartmentDialog.id}
+            onCancel={() => setUpsertDepartmentDialog(null)}
+            onSubmit={handleUpdateDepartment}
+          />
         )}
       </EntityUpsertDialog>
       <DepartementDeleteDialog

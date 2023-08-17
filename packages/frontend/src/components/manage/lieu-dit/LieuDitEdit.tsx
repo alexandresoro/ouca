@@ -11,12 +11,9 @@ import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import Select from "../../common/styled/select/Select";
-import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
-import ManageTopBar from "../common/ManageTopBar";
 
 type LieuDitEditProps = {
-  title: string;
   defaultValues?: UpsertLocalityInput | null;
   defaultDepartmentId?: string;
   onCancel?: () => void;
@@ -24,7 +21,7 @@ type LieuDitEditProps = {
 };
 
 const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
-  const { title, defaultValues, defaultDepartmentId, onCancel, onSubmit } = props;
+  const { defaultValues, defaultDepartmentId, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
 
@@ -118,86 +115,75 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     }) ?? null;
 
   return (
-    <>
-      <ManageTopBar title={t("localities")} showButtons={false} />
-      <ContentContainerLayout>
-        <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
-          <div className="card-body">
-            <h2 className="card-title my-4">{title}</h2>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex gap-4">
+        <Select
+          selectClassName="basis-1/4"
+          label={t("department")}
+          data={departments?.data}
+          value={selectedDepartment}
+          onChange={handleOnChangeDepartment}
+          renderValue={(dept) => {
+            return dept?.code ?? "";
+          }}
+        />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex gap-4">
-                <Select
-                  selectClassName="basis-1/4"
-                  label={t("department")}
-                  data={departments?.data}
-                  value={selectedDepartment}
-                  onChange={handleOnChangeDepartment}
-                  renderValue={(dept) => {
-                    return dept?.code ?? "";
-                  }}
-                />
+        <FormSelect
+          selectClassName="basis-3/4"
+          name="townId"
+          label={t("town")}
+          required
+          control={control}
+          data={dataTowns?.data}
+          renderValue={({ code, nom }) => `${code} - ${nom}`}
+        />
+      </div>
 
-                <FormSelect
-                  selectClassName="basis-3/4"
-                  name="townId"
-                  label={t("town")}
-                  required
-                  control={control}
-                  data={dataTowns?.data}
-                  renderValue={({ code, nom }) => `${code} - ${nom}`}
-                />
-              </div>
+      <TextInput label={t("localityName")} type="text" required {...register("nom")} />
 
-              <TextInput label={t("localityName")} type="text" required {...register("nom")} />
+      <h3 className="font-semibold mt-6">{t("localityCoordinates")}</h3>
 
-              <h3 className="font-semibold mt-6">{t("localityCoordinates")}</h3>
+      <div className="flex gap-4">
+        <TextInput
+          textInputClassName="basis-1/3"
+          label={t("latitudeWithUnit")}
+          type="number"
+          step="any"
+          required
+          {...register("latitude", {
+            valueAsNumber: true,
+          })}
+        />
 
-              <div className="flex gap-4">
-                <TextInput
-                  textInputClassName="basis-1/3"
-                  label={t("latitudeWithUnit")}
-                  type="number"
-                  step="any"
-                  required
-                  {...register("latitude", {
-                    valueAsNumber: true,
-                  })}
-                />
+        <TextInput
+          textInputClassName="basis-1/3"
+          label={t("longitudeWithUnit")}
+          type="number"
+          step="any"
+          required
+          {...register("longitude", {
+            valueAsNumber: true,
+          })}
+        />
 
-                <TextInput
-                  textInputClassName="basis-1/3"
-                  label={t("longitudeWithUnit")}
-                  type="number"
-                  step="any"
-                  required
-                  {...register("longitude", {
-                    valueAsNumber: true,
-                  })}
-                />
+        <TextInput
+          textInputClassName="basis-1/3"
+          label={t("altitudeWithUnit")}
+          type="number"
+          step="any"
+          required
+          {...register("altitude", {
+            valueAsNumber: true,
+          })}
+        />
+      </div>
 
-                <TextInput
-                  textInputClassName="basis-1/3"
-                  label={t("altitudeWithUnit")}
-                  type="number"
-                  step="any"
-                  required
-                  {...register("altitude", {
-                    valueAsNumber: true,
-                  })}
-                />
-              </div>
-
-              <EntityUpsertFormActionButtons
-                className="mt-6"
-                onCancelClick={onCancel}
-                disabled={fetchingTowns || fetchingDepartements || !isValid || !isDirty}
-              />
-            </form>
-          </div>
-        </div>
-      </ContentContainerLayout>
-    </>
+      <EntityUpsertFormActionButtons
+        className="mt-6"
+        onCancelClick={onCancel}
+        disabled={fetchingTowns || fetchingDepartements || !isValid || !isDirty}
+      />
+    </form>
   );
 };
 

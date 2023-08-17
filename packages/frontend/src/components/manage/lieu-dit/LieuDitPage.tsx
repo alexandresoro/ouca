@@ -3,7 +3,6 @@ import { type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import LieuDitUpdate from "./LieuDitUpdate";
 
 const LieuDitPage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const LieuDitPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertLocalityDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertLocalityDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const LieuDitPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("localities")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("localities")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <LieuDitTable onClickUpdateLocality={handleUpdateClick} onClickDeleteLocality={setLocalityToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const LieuDitPage: FunctionComponent = () => {
           <LieuDitCreate onCancel={() => setUpsertLocalityDialog(null)} onSubmit={handleCreateLocality} />
         )}
         {upsertLocalityDialog?.mode === "update" && (
-          <LieuDitUpdate onCancel={() => setUpsertLocalityDialog(null)} onSubmit={handleUpdateLocality} />
+          <LieuDitUpdate
+            id={upsertLocalityDialog.id}
+            onCancel={() => setUpsertLocalityDialog(null)}
+            onSubmit={handleUpdateLocality}
+          />
         )}
       </EntityUpsertDialog>
       <LieuDitDeleteDialog

@@ -3,7 +3,6 @@ import { type TownExtended } from "@ou-ca/common/entities/town";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import CommuneUpdate from "./CommuneUpdate";
 
 const CommunePage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const CommunePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertTownDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertTownDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const CommunePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("towns")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("towns")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <CommuneTable onClickUpdateTown={handleUpdateClick} onClickDeleteTown={setTownToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const CommunePage: FunctionComponent = () => {
           <CommuneCreate onCancel={() => setUpsertTownDialog(null)} onSubmit={handleCreateTown} />
         )}
         {upsertTownDialog?.mode === "update" && (
-          <CommuneUpdate onCancel={() => setUpsertTownDialog(null)} onSubmit={handleUpdateTown} />
+          <CommuneUpdate
+            id={upsertTownDialog.id}
+            onCancel={() => setUpsertTownDialog(null)}
+            onSubmit={handleUpdateTown}
+          />
         )}
       </EntityUpsertDialog>
       <CommuneDeleteDialog

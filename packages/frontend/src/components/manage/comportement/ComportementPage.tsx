@@ -3,7 +3,6 @@ import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import ComportementUpdate from "./ComportementUpdate";
 
 const ComportementPage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const ComportementPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertBehaviorDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertBehaviorDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const ComportementPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("behaviors")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("behaviors")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <ComportementTable onClickUpdateBehavior={handleUpdateClick} onClickDeleteBehavior={setBehaviorToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const ComportementPage: FunctionComponent = () => {
           <ComportementCreate onCancel={() => setUpsertBehaviorDialog(null)} onSubmit={handleCreateBehavior} />
         )}
         {upsertBehaviorDialog?.mode === "update" && (
-          <ComportementUpdate onCancel={() => setUpsertBehaviorDialog(null)} onSubmit={handleUpdateBehavior} />
+          <ComportementUpdate
+            id={upsertBehaviorDialog.id}
+            onCancel={() => setUpsertBehaviorDialog(null)}
+            onSubmit={handleUpdateBehavior}
+          />
         )}
       </EntityUpsertDialog>
       <ComportementDeleteDialog

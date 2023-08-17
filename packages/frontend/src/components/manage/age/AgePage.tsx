@@ -3,7 +3,6 @@ import { type AgeExtended } from "@ou-ca/common/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import AgeUpdate from "./AgeUpdate";
 
 const AgePage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const AgePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertAgeDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertAgeDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const AgePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("ages")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("ages")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <AgeTable onClickUpdateAge={handleUpdateClick} onClickDeleteAge={setAgeToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,7 @@ const AgePage: FunctionComponent = () => {
           <AgeCreate onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleCreateAge} />
         )}
         {upsertAgeDialog?.mode === "update" && (
-          <AgeUpdate onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleUpdateAge} />
+          <AgeUpdate id={upsertAgeDialog.id} onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleUpdateAge} />
         )}
       </EntityUpsertDialog>
       <AgeDeleteDialog

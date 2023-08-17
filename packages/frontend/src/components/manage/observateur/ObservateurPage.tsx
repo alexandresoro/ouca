@@ -3,7 +3,6 @@ import { type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import ObservateurUpdate from "./ObservateurUpdate";
 
 const ObservateurPage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const ObservateurPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertObserverDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertObserverDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const ObservateurPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("observers")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("observers")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <ObservateurTable onClickUpdateObserver={handleUpdateClick} onClickDeleteObserver={setObserverToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const ObservateurPage: FunctionComponent = () => {
           <ObservateurCreate onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleCreateObserver} />
         )}
         {upsertObserverDialog?.mode === "update" && (
-          <ObservateurUpdate onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleUpdateObserver} />
+          <ObservateurUpdate
+            id={upsertObserverDialog.id}
+            onCancel={() => setUpsertObserverDialog(null)}
+            onSubmit={handleUpdateObserver}
+          />
         )}
       </EntityUpsertDialog>
       <ObservateurDeleteDialog

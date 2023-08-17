@@ -3,7 +3,6 @@ import { type SpeciesClassExtended } from "@ou-ca/common/entities/species-class"
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import ClasseUpdate from "./ClasseUpdate";
 
 const ClassePage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const ClassePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertSpeciesClassDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertSpeciesClassDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const ClassePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("speciesClasses")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("speciesClasses")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <ClasseTable
           onClickUpdateSpeciesClass={handleUpdateClick}
@@ -166,7 +163,11 @@ const ClassePage: FunctionComponent = () => {
           <ClasseCreate onCancel={() => setUpsertSpeciesClassDialog(null)} onSubmit={handleCreateSpeciesClass} />
         )}
         {upsertSpeciesClassDialog?.mode === "update" && (
-          <ClasseUpdate onCancel={() => setUpsertSpeciesClassDialog(null)} onSubmit={handleUpdateSpeciesClass} />
+          <ClasseUpdate
+            id={upsertSpeciesClassDialog.id}
+            onCancel={() => setUpsertSpeciesClassDialog(null)}
+            onSubmit={handleUpdateSpeciesClass}
+          />
         )}
       </EntityUpsertDialog>
       <ClasseDeleteDialog

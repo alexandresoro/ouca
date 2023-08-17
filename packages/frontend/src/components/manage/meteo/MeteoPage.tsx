@@ -3,7 +3,6 @@ import { type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import MeteoUpdate from "./MeteoUpdate";
 
 const MeteoPage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const MeteoPage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertWeatherDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertWeatherDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const MeteoPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("weathers")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("weathers")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <MeteoTable onClickUpdateWeather={handleUpdateClick} onClickDeleteWeather={setWeatherToDelete} />
       </ContentContainerLayout>
@@ -163,7 +160,11 @@ const MeteoPage: FunctionComponent = () => {
           <MeteoCreate onCancel={() => setUpsertWeatherDialog(null)} onSubmit={handleCreateWeather} />
         )}
         {upsertWeatherDialog?.mode === "update" && (
-          <MeteoUpdate onCancel={() => setUpsertWeatherDialog(null)} onSubmit={handleUpdateWeather} />
+          <MeteoUpdate
+            id={upsertWeatherDialog.id}
+            onCancel={() => setUpsertWeatherDialog(null)}
+            onSubmit={handleUpdateWeather}
+          />
         )}
       </EntityUpsertDialog>
       <MeteoDeleteDialog
