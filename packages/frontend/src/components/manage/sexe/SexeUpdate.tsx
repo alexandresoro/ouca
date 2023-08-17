@@ -10,7 +10,6 @@ import useSnackbar from "../../../hooks/useSnackbar";
 import SexeEdit from "./SexeEdit";
 
 type SexeUpdateProps = {
-  id: string;
   onCancel?: () => void;
   onSuccess?: () => void;
 };
