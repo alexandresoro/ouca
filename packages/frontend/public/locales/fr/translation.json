@@ -194,6 +194,10 @@
   "genders": "Sexes",
   "latitude": "Latitude",
   "latitudeWithUnit": "Latitude en degrés",
+  "loading": {
+    "loadingOngoing": "Chargement en cours",
+    "settingsOngoing": "Récupération des réglages en cours"
+  },
   "localityName": "Nom du lieu-dit",
   "localityCoordinates": "Coordonnées du lieu-dit",
   "localityAlreadyExistingError": "Il existe déjà un lieu-dit identique.",

@@ -1,5 +1,6 @@
 import { getSettingsResponse, type GetSettingsResponse } from "@ou-ca/common/api/settings";
 import { createContext, useEffect, type FunctionComponent, type PropsWithChildren } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import useApiQuery from "../hooks/api/useApiQuery";
 
@@ -14,6 +15,7 @@ export const UserSettingsContext = createContext<{
 });
 
 const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
@@ -52,7 +54,14 @@ const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }
         refetchSettings: () => refetch,
       }}
     >
-      {isLoading && <progress className="progress progress-primary w-56" />}
+      {isLoading && (
+        <div className="flex h-[100dvh] justify-center items-center">
+          <div className="flex flex-col gap-2 items-center">
+            <span className="text-xl text-primary">{t("loading.settingsOngoing")}</span>
+            <span className="loading loading-lg loading-ring text-primary" />
+          </div>
+        </div>
+      )}
       {userSettings && children}
     </UserSettingsContext.Provider>
   );
