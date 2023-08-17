@@ -114,7 +114,12 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("numberPrecisions") });
 
+  const handleCreateClick = () => {
+    setUpsertNumberEstimateDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertNumberEstimateDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

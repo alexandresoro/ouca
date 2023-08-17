@@ -114,7 +114,12 @@ const CommunePage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("towns") });
 
+  const handleCreateClick = () => {
+    setUpsertTownDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertTownDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

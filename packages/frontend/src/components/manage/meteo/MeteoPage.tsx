@@ -114,7 +114,12 @@ const MeteoPage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("weathers") });
 
+  const handleCreateClick = () => {
+    setUpsertWeatherDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertWeatherDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

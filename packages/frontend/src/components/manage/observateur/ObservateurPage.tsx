@@ -114,7 +114,12 @@ const ObservateurPage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("observer") });
 
+  const handleCreateClick = () => {
+    setUpsertObserverDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertObserverDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

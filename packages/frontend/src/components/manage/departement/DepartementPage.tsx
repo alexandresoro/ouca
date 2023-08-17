@@ -114,7 +114,12 @@ const DepartementPage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("departments") });
 
+  const handleCreateClick = () => {
+    setUpsertDepartmentDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertDepartmentDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

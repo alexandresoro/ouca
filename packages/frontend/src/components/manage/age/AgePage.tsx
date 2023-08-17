@@ -114,7 +114,12 @@ const AgePage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("ages") });
 
+  const handleCreateClick = () => {
+    setUpsertAgeDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertAgeDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

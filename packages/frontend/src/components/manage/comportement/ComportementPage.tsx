@@ -114,7 +114,12 @@ const ComportementPage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("behaviors") });
 
+  const handleCreateClick = () => {
+    setUpsertBehaviorDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertBehaviorDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

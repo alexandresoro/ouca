@@ -114,7 +114,12 @@ const MilieuPage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("environments") });
 
+  const handleCreateClick = () => {
+    setUpsertEnvironmentDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertEnvironmentDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

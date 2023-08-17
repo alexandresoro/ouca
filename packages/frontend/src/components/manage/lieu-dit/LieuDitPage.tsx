@@ -114,7 +114,12 @@ const LieuDitPage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("localities") });
 
+  const handleCreateClick = () => {
+    setUpsertLocalityDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertLocalityDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

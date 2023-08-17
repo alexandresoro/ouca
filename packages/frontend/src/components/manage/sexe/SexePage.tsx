@@ -114,7 +114,12 @@ const SexePage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("genders") });
 
+  const handleCreateClick = () => {
+    setUpsertSexDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertSexDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

@@ -114,7 +114,12 @@ const ClassePage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("speciesClasses") });
 
+  const handleCreateClick = () => {
+    setUpsertSpeciesClassDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertSpeciesClassDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 

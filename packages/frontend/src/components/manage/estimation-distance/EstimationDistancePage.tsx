@@ -114,7 +114,12 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("distancePrecisions") });
 
+  const handleCreateClick = () => {
+    setUpsertDistanceEstimateDialog({ mode: "create" });
+  };
+
   const handleUpdateClick = (id: string) => {
+    setUpsertDistanceEstimateDialog({ mode: "update", id });
     navigate(`edit/${id}`);
   };
 
