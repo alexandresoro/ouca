@@ -11,7 +11,6 @@ const EstimationNombreManage = lazy(() => import("../components/manage/estimatio
 const EstimationDistanceManage = lazy(
   () => import("../components/manage/estimation-distance/EstimationDistanceManage")
 );
-const ComportementManage = lazy(() => import("../components/manage/comportement/ComportementManage"));
 const MilieuManage = lazy(() => import("../components/manage/milieu/MilieuManage"));
 
 /**

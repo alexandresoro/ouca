@@ -42,10 +42,6 @@ const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ id, onCancel, on
     onSubmit(id, input);
   };
 
-  if (!id) {
-    return null;
-  }
-
   return (
     <>
       {!isLoading && !isError && data && (
