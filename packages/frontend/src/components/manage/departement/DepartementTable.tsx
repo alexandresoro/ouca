@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type DepartementTableProps = {
-  onClickUpdateDepartment: (id: string) => void;
+  onClickUpdateDepartment: (department: DepartmentExtended) => void;
   onClickDeleteDepartment: (department: DepartmentExtended) => void;
 };
 
@@ -101,7 +101,7 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!departement.editable}
-                        onEditClicked={() => onClickUpdateDepartment(departement?.id)}
+                        onEditClicked={() => onClickUpdateDepartment(departement)}
                         onDeleteClicked={() => onClickDeleteDepartment(departement)}
                       />
                     </td>

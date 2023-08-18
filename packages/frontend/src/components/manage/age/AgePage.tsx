@@ -1,5 +1,5 @@
 import { upsertAgeResponse, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type AgeExtended } from "@ou-ca/common/entities/age";
+import { type Age, type AgeExtended } from "@ou-ca/common/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +21,7 @@ const AgePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const [upsertAgeDialog, setUpsertAgeDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+  const [upsertAgeDialog, setUpsertAgeDialog] = useState<null | { mode: "create" } | { mode: "update"; age: Age }>(
     null
   );
   const [ageToDelete, setAgeToDelete] = useState<AgeExtended | null>(null);
@@ -119,8 +119,8 @@ const AgePage: FunctionComponent = () => {
     setUpsertAgeDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertAgeDialog({ mode: "update", id });
+  const handleUpdateClick = (age: Age) => {
+    setUpsertAgeDialog({ mode: "update", age });
   };
 
   const handleExportClick = () => {
@@ -160,7 +160,7 @@ const AgePage: FunctionComponent = () => {
           <AgeCreate onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleCreateAge} />
         )}
         {upsertAgeDialog?.mode === "update" && (
-          <AgeUpdate id={upsertAgeDialog.id} onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleUpdateAge} />
+          <AgeUpdate age={upsertAgeDialog.age} onCancel={() => setUpsertAgeDialog(null)} onSubmit={handleUpdateAge} />
         )}
       </EntityUpsertDialog>
       <AgeDeleteDialog

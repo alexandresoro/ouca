@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type LieuDitTableProps = {
-  onClickUpdateLocality: (id: string) => void;
+  onClickUpdateLocality: (locality: LocalityExtended) => void;
   onClickDeleteLocality: (locality: LocalityExtended) => void;
 };
 
@@ -118,7 +118,7 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!lieuDit.editable}
-                        onEditClicked={() => onClickUpdateLocality(lieuDit?.id)}
+                        onEditClicked={() => onClickUpdateLocality(lieuDit)}
                         onDeleteClicked={() => onClickDeleteLocality(lieuDit)}
                       />
                     </td>

@@ -1,54 +1,21 @@
-import { getObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { type Observer } from "@ou-ca/common/entities/observer";
+import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
 import ObservateurEdit from "./ObservateurEdit";
 
 type ObservateurUpdateProps = {
-  id: string;
+  observer: Observer;
   onCancel: () => void;
   onSubmit: (id: string, input: UpsertObserverInput) => void;
 };
 
-const ObservateurUpdate: FunctionComponent<ObservateurUpdateProps> = ({ id, onCancel, onSubmit }) => {
-  const { t } = useTranslation();
-
-  const { displayNotification } = useSnackbar();
-
-  const [enabledQuery, setEnabledQuery] = useState(true);
-  const { data, isLoading, isError } = useApiQuery(
-    { path: `/observers/${id}`, schema: getObserverResponse },
-    {
-      enabled: enabledQuery,
-    }
-  );
-
-  useEffect(() => {
-    setEnabledQuery(false);
-  }, [data]);
-
-  useEffect(() => {
-    if (isError) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [isError, displayNotification, t]);
-
+const ObservateurUpdate: FunctionComponent<ObservateurUpdateProps> = ({ observer, onCancel, onSubmit }) => {
   const handleSubmit: SubmitHandler<UpsertObserverInput> = (input) => {
-    onSubmit(id, input);
+    onSubmit(observer.id, input);
   };
 
-  return (
-    <>
-      {!isLoading && !isError && data && (
-        <ObservateurEdit defaultValues={data} onCancel={onCancel} onSubmit={handleSubmit} />
-      )}
-    </>
-  );
+  return <ObservateurEdit defaultValues={observer} onCancel={onCancel} onSubmit={handleSubmit} />;
 };
 
 export default ObservateurUpdate;

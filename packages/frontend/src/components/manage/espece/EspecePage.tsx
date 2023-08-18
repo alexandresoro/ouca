@@ -1,5 +1,5 @@
 import { upsertSpeciesResponse, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
-import { type SpeciesExtended } from "@ou-ca/common/entities/species";
+import { type Species, type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const EspecePage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertSpeciesDialog, setUpsertSpeciesDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; species: Species }
   >(null);
   const [speciesToDelete, setSpeciesToDelete] = useState<SpeciesExtended | null>(null);
 
@@ -119,8 +119,8 @@ const EspecePage: FunctionComponent = () => {
     setUpsertSpeciesDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertSpeciesDialog({ mode: "update", id });
+  const handleUpdateClick = (species: Species) => {
+    setUpsertSpeciesDialog({ mode: "update", species });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const EspecePage: FunctionComponent = () => {
         )}
         {upsertSpeciesDialog?.mode === "update" && (
           <EspeceUpdate
-            id={upsertSpeciesDialog.id}
+            species={upsertSpeciesDialog.species}
             onCancel={() => setUpsertSpeciesDialog(null)}
             onSubmit={handleUpdateSpecies}
           />

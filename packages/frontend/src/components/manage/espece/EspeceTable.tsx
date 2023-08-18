@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type EspeceTableProps = {
-  onClickUpdateSpecies: (id: string) => void;
+  onClickUpdateSpecies: (species: SpeciesExtended) => void;
   onClickDeleteSpecies: (species: SpeciesExtended) => void;
 };
 
@@ -103,7 +103,7 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!espece.editable}
-                        onEditClicked={() => onClickUpdateSpecies(espece?.id)}
+                        onEditClicked={() => onClickUpdateSpecies(espece)}
                         onDeleteClicked={() => onClickDeleteSpecies(espece)}
                       />
                     </td>

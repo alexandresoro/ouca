@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type EstimationNombreTableProps = {
-  onClickUpdateNumberEstimate: (id: string) => void;
+  onClickUpdateNumberEstimate: (numberEstimate: NumberEstimateExtended) => void;
   onClickDeleteNumberEstimate: (numberEstimate: NumberEstimateExtended) => void;
 };
 
@@ -97,7 +97,7 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!estimationNombre.editable}
-                        onEditClicked={() => onClickUpdateNumberEstimate(estimationNombre?.id)}
+                        onEditClicked={() => onClickUpdateNumberEstimate(estimationNombre)}
                         onDeleteClicked={() => onClickDeleteNumberEstimate(estimationNombre)}
                       />
                     </td>

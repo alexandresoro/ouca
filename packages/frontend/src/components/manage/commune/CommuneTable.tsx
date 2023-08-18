@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type CommuneTableProps = {
-  onClickUpdateTown: (id: string) => void;
+  onClickUpdateTown: (town: TownExtended) => void;
   onClickDeleteTown: (town: TownExtended) => void;
 };
 
@@ -103,7 +103,7 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!commune.editable}
-                        onEditClicked={() => onClickUpdateTown(commune?.id)}
+                        onEditClicked={() => onClickUpdateTown(commune)}
                         onDeleteClicked={() => onClickDeleteTown(commune)}
                       />
                     </td>

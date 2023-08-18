@@ -11,7 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type EstimationDistanceTableProps = {
-  onClickUpdateDistanceEstimate: (id: string) => void;
+  onClickUpdateDistanceEstimate: (distanceEstimate: DistanceEstimateExtended) => void;
   onClickDeleteDistanceEstimate: (distanceEstimate: DistanceEstimateExtended) => void;
 };
 
@@ -87,7 +87,7 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
                   <td align="right" className="pr-6">
                     <TableCellActionButtons
                       disabled={!estimationDistance.editable}
-                      onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance?.id)}
+                      onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance)}
                       onDeleteClicked={() => onClickDeleteDistanceEstimate(estimationDistance)}
                     />
                   </td>

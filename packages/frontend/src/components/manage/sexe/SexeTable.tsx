@@ -11,7 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type SexeTableProps = {
-  onClickUpdateSex: (id: string) => void;
+  onClickUpdateSex: (sex: SexExtended) => void;
   onClickDeleteSex: (sex: SexExtended) => void;
 };
 
@@ -90,7 +90,7 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!sexe.editable}
-                        onEditClicked={() => onClickUpdateSex(sexe?.id)}
+                        onEditClicked={() => onClickUpdateSex(sexe)}
                         onDeleteClicked={() => onClickDeleteSex(sexe)}
                       />
                     </td>

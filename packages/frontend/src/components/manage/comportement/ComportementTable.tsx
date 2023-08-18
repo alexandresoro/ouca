@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ComportementTableProps = {
-  onClickUpdateBehavior: (id: string) => void;
+  onClickUpdateBehavior: (behavior: BehaviorExtended) => void;
   onClickDeleteBehavior: (behavior: BehaviorExtended) => void;
 };
 
@@ -101,7 +101,7 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!comportement.editable}
-                        onEditClicked={() => onClickUpdateBehavior(comportement?.id)}
+                        onEditClicked={() => onClickUpdateBehavior(comportement)}
                         onDeleteClicked={() => onClickDeleteBehavior(comportement)}
                       />
                     </td>

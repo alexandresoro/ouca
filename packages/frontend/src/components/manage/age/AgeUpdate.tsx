@@ -1,52 +1,21 @@
-import { getAgeResponse, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type Age } from "@ou-ca/common/entities/age";
+import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
 import AgeEdit from "./AgeEdit";
 
 type AgeUpdateProps = {
-  id: string;
+  age: Age;
   onCancel: () => void;
   onSubmit: (id: string, input: UpsertAgeInput) => void;
 };
 
-const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ id, onCancel, onSubmit }) => {
-  const { t } = useTranslation();
-
-  const { displayNotification } = useSnackbar();
-
-  const [enabledQuery, setEnabledQuery] = useState(true);
-  const { data, isLoading, isError } = useApiQuery(
-    { path: `/ages/${id}`, schema: getAgeResponse },
-    {
-      enabled: enabledQuery,
-    }
-  );
-
-  useEffect(() => {
-    setEnabledQuery(false);
-  }, [data]);
-
-  useEffect(() => {
-    if (isError) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [isError, displayNotification, t]);
-
+const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ age, onCancel, onSubmit }) => {
   const handleSubmit: SubmitHandler<UpsertAgeInput> = (input) => {
-    onSubmit(id, input);
+    onSubmit(age.id, input);
   };
 
-  return (
-    <>
-      {!isLoading && !isError && data && <AgeEdit defaultValues={data} onCancel={onCancel} onSubmit={handleSubmit} />}
-    </>
-  );
+  return <AgeEdit defaultValues={age} onCancel={onCancel} onSubmit={handleSubmit} />;
 };
 
 export default AgeUpdate;

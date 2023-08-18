@@ -11,7 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type MeteoTableProps = {
-  onClickUpdateWeather: (id: string) => void;
+  onClickUpdateWeather: (weather: WeatherExtended) => void;
   onClickDeleteWeather: (weather: WeatherExtended) => void;
 };
 
@@ -90,7 +90,7 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!meteo.editable}
-                        onEditClicked={() => onClickUpdateWeather(meteo?.id)}
+                        onEditClicked={() => onClickUpdateWeather(meteo)}
                         onDeleteClicked={() => onClickDeleteWeather(meteo)}
                       />
                     </td>

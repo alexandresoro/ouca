@@ -1,5 +1,5 @@
 import { upsertBehaviorResponse, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
-import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
+import { type Behavior, type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const ComportementPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertBehaviorDialog, setUpsertBehaviorDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; behavior: Behavior }
   >(null);
   const [behaviorToDelete, setBehaviorToDelete] = useState<BehaviorExtended | null>(null);
 
@@ -119,8 +119,8 @@ const ComportementPage: FunctionComponent = () => {
     setUpsertBehaviorDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertBehaviorDialog({ mode: "update", id });
+  const handleUpdateClick = (behavior: Behavior) => {
+    setUpsertBehaviorDialog({ mode: "update", behavior });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const ComportementPage: FunctionComponent = () => {
         )}
         {upsertBehaviorDialog?.mode === "update" && (
           <ComportementUpdate
-            id={upsertBehaviorDialog.id}
+            behavior={upsertBehaviorDialog.behavior}
             onCancel={() => setUpsertBehaviorDialog(null)}
             onSubmit={handleUpdateBehavior}
           />

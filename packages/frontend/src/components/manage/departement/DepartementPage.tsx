@@ -1,5 +1,5 @@
 import { upsertDepartmentResponse, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
-import { type DepartmentExtended } from "@ou-ca/common/entities/department";
+import { type Department, type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const DepartementPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertDepartmentDialog, setUpsertDepartmentDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; department: Department }
   >(null);
   const [departmentToDelete, setDepartmentToDelete] = useState<DepartmentExtended | null>(null);
 
@@ -119,8 +119,8 @@ const DepartementPage: FunctionComponent = () => {
     setUpsertDepartmentDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertDepartmentDialog({ mode: "update", id });
+  const handleUpdateClick = (department: Department) => {
+    setUpsertDepartmentDialog({ mode: "update", department });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const DepartementPage: FunctionComponent = () => {
         )}
         {upsertDepartmentDialog?.mode === "update" && (
           <DepartementUpdate
-            id={upsertDepartmentDialog.id}
+            department={upsertDepartmentDialog.department}
             onCancel={() => setUpsertDepartmentDialog(null)}
             onSubmit={handleUpdateDepartment}
           />

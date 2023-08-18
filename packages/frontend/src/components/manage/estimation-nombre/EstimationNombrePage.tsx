@@ -1,5 +1,5 @@
 import { upsertNumberEstimateResponse, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
-import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
+import { type NumberEstimate, type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const EstimationNombrePage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertNumberEstimateDialog, setUpsertNumberEstimateDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; numberEstimate: NumberEstimate }
   >(null);
   const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimateExtended | null>(null);
 
@@ -119,8 +119,8 @@ const EstimationNombrePage: FunctionComponent = () => {
     setUpsertNumberEstimateDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertNumberEstimateDialog({ mode: "update", id });
+  const handleUpdateClick = (numberEstimate: NumberEstimate) => {
+    setUpsertNumberEstimateDialog({ mode: "update", numberEstimate });
   };
 
   const handleExportClick = () => {
@@ -167,7 +167,7 @@ const EstimationNombrePage: FunctionComponent = () => {
         )}
         {upsertNumberEstimateDialog?.mode === "update" && (
           <EstimationNombreUpdate
-            id={upsertNumberEstimateDialog.id}
+            numberEstimate={upsertNumberEstimateDialog.numberEstimate}
             onCancel={() => setUpsertNumberEstimateDialog(null)}
             onSubmit={handleUpdateNumberEstimate}
           />

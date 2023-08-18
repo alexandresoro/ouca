@@ -1,5 +1,5 @@
 import { upsertEnvironmentResponse, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
-import { type EnvironmentExtended } from "@ou-ca/common/entities/environment";
+import { type Environment, type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const MilieuPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertEnvironmentDialog, setUpsertEnvironmentDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; environment: Environment }
   >(null);
   const [environmentToDelete, setEnvironmentToDelete] = useState<EnvironmentExtended | null>(null);
 
@@ -119,8 +119,8 @@ const MilieuPage: FunctionComponent = () => {
     setUpsertEnvironmentDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertEnvironmentDialog({ mode: "update", id });
+  const handleUpdateClick = (environment: Environment) => {
+    setUpsertEnvironmentDialog({ mode: "update", environment });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const MilieuPage: FunctionComponent = () => {
         )}
         {upsertEnvironmentDialog?.mode === "update" && (
           <MilieuUpdate
-            id={upsertEnvironmentDialog.id}
+            environment={upsertEnvironmentDialog.environment}
             onCancel={() => setUpsertEnvironmentDialog(null)}
             onSubmit={handleUpdateEnvironment}
           />
