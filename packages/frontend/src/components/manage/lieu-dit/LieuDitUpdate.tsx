@@ -1,5 +1,6 @@
-import { getLocalityResponse, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { getTownResponse } from "@ou-ca/common/api/town";
+import { type Locality } from "@ou-ca/common/entities/locality";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -8,27 +9,15 @@ import useSnackbar from "../../../hooks/useSnackbar";
 import LieuDitEdit from "./LieuDitEdit";
 
 type LieuDitUpdateProps = {
-  id: string;
+  locality: Locality;
   onCancel: () => void;
   onSubmit: (id: string, input: UpsertLocalityInput) => void;
 };
 
-const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ id, onCancel, onSubmit }) => {
+const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ locality, onCancel, onSubmit }) => {
   const { t } = useTranslation();
 
   const { displayNotification } = useSnackbar();
-
-  const [enabledQuery, setEnabledQuery] = useState(true);
-  const { data, isLoading, isError } = useApiQuery(
-    { path: `/localities/${id}`, schema: getLocalityResponse },
-    {
-      enabled: enabledQuery,
-    }
-  );
-
-  useEffect(() => {
-    setEnabledQuery(false);
-  }, [data]);
 
   const [enabledQueryTown, setEnabledQueryTown] = useState(true);
   const {
@@ -36,9 +25,9 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ id, onCancel, on
     isLoading: isLoadingTown,
     isError: isErrorTown,
   } = useApiQuery(
-    { path: `/towns/${data?.townId ?? ""}`, schema: getTownResponse },
+    { path: `/towns/${locality.townId}`, schema: getTownResponse },
     {
-      enabled: enabledQueryTown && data?.townId != null,
+      enabled: enabledQueryTown,
     }
   );
 
@@ -49,34 +38,34 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ id, onCancel, on
   }, [dataTown]);
 
   useEffect(() => {
-    if (isError || isErrorTown) {
+    if (isErrorTown) {
       displayNotification({
         type: "error",
         message: t("retrieveGenericError"),
       });
     }
-  }, [isError, isErrorTown, displayNotification, t]);
+  }, [isErrorTown, displayNotification, t]);
 
   const departmentId = dataTown?.departmentId;
 
   const handleSubmit: SubmitHandler<UpsertLocalityInput> = (input) => {
-    onSubmit(id, input);
+    onSubmit(locality.id, input);
   };
 
   const defaultValues =
-    data != null
+    locality != null
       ? ({
-          nom: data.nom,
-          townId: data.townId,
-          latitude: data.coordinates.latitude,
-          longitude: data.coordinates.longitude,
-          altitude: data.coordinates.altitude,
+          nom: locality.nom,
+          townId: locality.townId,
+          latitude: locality.coordinates.latitude,
+          longitude: locality.coordinates.longitude,
+          altitude: locality.coordinates.altitude,
         } satisfies UpsertLocalityInput)
       : undefined;
 
   return (
     <>
-      {!isLoading && !isLoadingTown && !isError && data && departmentId != null && (
+      {!isLoadingTown && departmentId != null && (
         <LieuDitEdit
           defaultValues={defaultValues}
           defaultDepartmentId={departmentId}

@@ -1,5 +1,5 @@
 import { upsertLocalityResponse, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
-import { type LocalityExtended } from "@ou-ca/common/entities/locality";
+import { type Locality, type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const LieuDitPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertLocalityDialog, setUpsertLocalityDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; locality: Locality }
   >(null);
   const [localityToDelete, setLocalityToDelete] = useState<LocalityExtended | null>(null);
 
@@ -119,8 +119,8 @@ const LieuDitPage: FunctionComponent = () => {
     setUpsertLocalityDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertLocalityDialog({ mode: "update", id });
+  const handleUpdateClick = (locality: Locality) => {
+    setUpsertLocalityDialog({ mode: "update", locality });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const LieuDitPage: FunctionComponent = () => {
         )}
         {upsertLocalityDialog?.mode === "update" && (
           <LieuDitUpdate
-            id={upsertLocalityDialog.id}
+            locality={upsertLocalityDialog.locality}
             onCancel={() => setUpsertLocalityDialog(null)}
             onSubmit={handleUpdateLocality}
           />

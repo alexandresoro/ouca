@@ -1,6 +1,6 @@
 import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { type AgeExtended } from "@ou-ca/common/entities/age";
+import { type Age, type AgeExtended } from "@ou-ca/common/entities/age";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
@@ -11,7 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type AgeTableProps = {
-  onClickUpdateAge: (id: string) => void;
+  onClickUpdateAge: (age: Age) => void;
   onClickDeleteAge: (age: AgeExtended) => void;
 };
 
@@ -90,7 +90,7 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!age.editable}
-                        onEditClicked={() => onClickUpdateAge(age.id)}
+                        onEditClicked={() => onClickUpdateAge(age)}
                         onDeleteClicked={() => onClickDeleteAge(age)}
                       />
                     </td>

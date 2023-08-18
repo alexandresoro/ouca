@@ -10,7 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type MilieuTableProps = {
-  onClickUpdateEnvironment: (id: string) => void;
+  onClickUpdateEnvironment: (environment: EnvironmentExtended) => void;
   onClickDeleteEnvironment: (environment: EnvironmentExtended) => void;
 };
 
@@ -93,7 +93,7 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!milieu.editable}
-                        onEditClicked={() => onClickUpdateEnvironment(milieu?.id)}
+                        onEditClicked={() => onClickUpdateEnvironment(milieu)}
                         onDeleteClicked={() => onClickDeleteEnvironment(milieu)}
                       />
                     </td>

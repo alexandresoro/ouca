@@ -1,5 +1,5 @@
 import { upsertObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { type ObserverExtended } from "@ou-ca/common/entities/observer";
+import { type Observer, type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const ObservateurPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertObserverDialog, setUpsertObserverDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; observer: Observer }
   >(null);
   const [observerToDelete, setObserverToDelete] = useState<ObserverExtended | null>(null);
 
@@ -119,8 +119,8 @@ const ObservateurPage: FunctionComponent = () => {
     setUpsertObserverDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertObserverDialog({ mode: "update", id });
+  const handleUpdateClick = (observer: Observer) => {
+    setUpsertObserverDialog({ mode: "update", observer });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const ObservateurPage: FunctionComponent = () => {
         )}
         {upsertObserverDialog?.mode === "update" && (
           <ObservateurUpdate
-            id={upsertObserverDialog.id}
+            observer={upsertObserverDialog.observer}
             onCancel={() => setUpsertObserverDialog(null)}
             onSubmit={handleUpdateObserver}
           />

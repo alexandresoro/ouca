@@ -1,5 +1,5 @@
 import { upsertSexResponse, type UpsertSexInput } from "@ou-ca/common/api/sex";
-import { type SexExtended } from "@ou-ca/common/entities/sex";
+import { type Sex, type SexExtended } from "@ou-ca/common/entities/sex";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +21,7 @@ const SexePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const [upsertSexDialog, setUpsertSexDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+  const [upsertSexDialog, setUpsertSexDialog] = useState<null | { mode: "create" } | { mode: "update"; sex: Sex }>(
     null
   );
   const [sexToDelete, setSexToDelete] = useState<SexExtended | null>(null);
@@ -119,8 +119,8 @@ const SexePage: FunctionComponent = () => {
     setUpsertSexDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertSexDialog({ mode: "update", id });
+  const handleUpdateClick = (sex: Sex) => {
+    setUpsertSexDialog({ mode: "update", sex });
   };
 
   const handleExportClick = () => {
@@ -160,7 +160,7 @@ const SexePage: FunctionComponent = () => {
           <SexeCreate onCancel={() => setUpsertSexDialog(null)} onSubmit={handleCreateSex} />
         )}
         {upsertSexDialog?.mode === "update" && (
-          <SexeUpdate id={upsertSexDialog.id} onCancel={() => setUpsertSexDialog(null)} onSubmit={handleUpdateSex} />
+          <SexeUpdate sex={upsertSexDialog.sex} onCancel={() => setUpsertSexDialog(null)} onSubmit={handleUpdateSex} />
         )}
       </EntityUpsertDialog>
       <SexeDeleteDialog

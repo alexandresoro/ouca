@@ -1,52 +1,21 @@
-import { getSexResponse, type UpsertSexInput } from "@ou-ca/common/api/sex";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type UpsertSexInput } from "@ou-ca/common/api/sex";
+import { type Sex } from "@ou-ca/common/entities/sex";
+import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
 import SexeEdit from "./SexeEdit";
 
 type SexeUpdateProps = {
-  id: string;
+  sex: Sex;
   onCancel: () => void;
   onSubmit: (id: string, input: UpsertSexInput) => void;
 };
 
-const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ id, onCancel, onSubmit }) => {
-  const { t } = useTranslation();
-
-  const { displayNotification } = useSnackbar();
-
-  const [enabledQuery, setEnabledQuery] = useState(true);
-  const { data, isLoading, isError } = useApiQuery(
-    { path: `/sexes/${id}`, schema: getSexResponse },
-    {
-      enabled: enabledQuery,
-    }
-  );
-
-  useEffect(() => {
-    setEnabledQuery(false);
-  }, [data]);
-
-  useEffect(() => {
-    if (isError) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [isError, displayNotification, t]);
-
+const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ sex, onCancel, onSubmit }) => {
   const handleSubmit: SubmitHandler<UpsertSexInput> = (input) => {
-    onSubmit(id, input);
+    onSubmit(sex.id, input);
   };
 
-  return (
-    <>
-      {!isLoading && !isError && data && <SexeEdit defaultValues={data} onCancel={onCancel} onSubmit={handleSubmit} />}
-    </>
-  );
+  return <SexeEdit defaultValues={sex} onCancel={onCancel} onSubmit={handleSubmit} />;
 };
 
 export default SexeUpdate;

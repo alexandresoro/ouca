@@ -11,7 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ObservateurTableProps = {
-  onClickUpdateObserver: (id: string) => void;
+  onClickUpdateObserver: (observer: ObserverExtended) => void;
   onClickDeleteObserver: (observer: ObserverExtended) => void;
 };
 
@@ -93,7 +93,7 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!observateur.editable}
-                        onEditClicked={() => onClickUpdateObserver(observateur?.id)}
+                        onEditClicked={() => onClickUpdateObserver(observateur)}
                         onDeleteClicked={() => onClickDeleteObserver(observateur)}
                       />
                     </td>

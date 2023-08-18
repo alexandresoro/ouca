@@ -1,5 +1,5 @@
 import { upsertTownResponse, type UpsertTownInput } from "@ou-ca/common/api/town";
-import { type TownExtended } from "@ou-ca/common/entities/town";
+import { type Town, type TownExtended } from "@ou-ca/common/entities/town";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +21,7 @@ const CommunePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const [upsertTownDialog, setUpsertTownDialog] = useState<null | { mode: "create" } | { mode: "update"; id: string }>(
+  const [upsertTownDialog, setUpsertTownDialog] = useState<null | { mode: "create" } | { mode: "update"; town: Town }>(
     null
   );
   const [townToDelete, setTownToDelete] = useState<TownExtended | null>(null);
@@ -119,8 +119,8 @@ const CommunePage: FunctionComponent = () => {
     setUpsertTownDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertTownDialog({ mode: "update", id });
+  const handleUpdateClick = (town: Town) => {
+    setUpsertTownDialog({ mode: "update", town });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const CommunePage: FunctionComponent = () => {
         )}
         {upsertTownDialog?.mode === "update" && (
           <CommuneUpdate
-            id={upsertTownDialog.id}
+            town={upsertTownDialog.town}
             onCancel={() => setUpsertTownDialog(null)}
             onSubmit={handleUpdateTown}
           />

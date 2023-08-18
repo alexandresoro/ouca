@@ -1,5 +1,5 @@
 import { upsertWeatherResponse, type UpsertWeatherInput } from "@ou-ca/common/api/weather";
-import { type WeatherExtended } from "@ou-ca/common/entities/weather";
+import { type Weather, type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const MeteoPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertWeatherDialog, setUpsertWeatherDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; id: string }
+    null | { mode: "create" } | { mode: "update"; weather: Weather }
   >(null);
   const [weatherToDelete, setWeatherToDelete] = useState<WeatherExtended | null>(null);
 
@@ -119,8 +119,8 @@ const MeteoPage: FunctionComponent = () => {
     setUpsertWeatherDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (id: string) => {
-    setUpsertWeatherDialog({ mode: "update", id });
+  const handleUpdateClick = (weather: Weather) => {
+    setUpsertWeatherDialog({ mode: "update", weather });
   };
 
   const handleExportClick = () => {
@@ -161,7 +161,7 @@ const MeteoPage: FunctionComponent = () => {
         )}
         {upsertWeatherDialog?.mode === "update" && (
           <MeteoUpdate
-            id={upsertWeatherDialog.id}
+            weather={upsertWeatherDialog.weather}
             onCancel={() => setUpsertWeatherDialog(null)}
             onSubmit={handleUpdateWeather}
           />
