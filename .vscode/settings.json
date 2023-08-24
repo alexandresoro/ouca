@@ -12,5 +12,8 @@
   },
   "[json]": {
     "editor.defaultFormatter": "rome.rome"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
   }
 }
