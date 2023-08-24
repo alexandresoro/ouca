@@ -102,7 +102,8 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
                     <td>{espece.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!espece.editable}
+                        disabledEdit={!espece.editable}
+                        disabledDelete={!espece.editable || espece.entriesCount > 0}
                         onEditClicked={() => onClickUpdateSpecies(espece)}
                         onDeleteClicked={() => onClickDeleteSpecies(espece)}
                       />

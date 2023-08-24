@@ -96,7 +96,8 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
                     <td>{estimationNombre.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!estimationNombre.editable}
+                        disabledEdit={!estimationNombre.editable}
+                        disabledDelete={!estimationNombre.editable || estimationNombre.entriesCount > 0}
                         onEditClicked={() => onClickUpdateNumberEstimate(estimationNombre)}
                         onDeleteClicked={() => onClickDeleteNumberEstimate(estimationNombre)}
                       />

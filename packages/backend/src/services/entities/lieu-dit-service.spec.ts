@@ -5,6 +5,7 @@ import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock, mockDeep } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -14,12 +15,14 @@ import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from ".
 import { buildLieuditService } from "./lieu-dit-service.js";
 
 const lieuditRepository = mock<LieuditRepository>({});
+const inventaireRepository = mock<InventaireRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const lieuditService = buildLieuditService({
   logger,
   lieuditRepository,
+  inventaireRepository,
   donneeRepository,
 });
 
@@ -71,6 +74,21 @@ describe("Find locality", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(lieuditService.findLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(lieuditRepository.findLieuditById).not.toHaveBeenCalled();
+  });
+});
+
+describe("Inventory count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await lieuditService.getInventoriesCountByLocality("12", loggedUser);
+
+    expect(inventaireRepository.getCountByLocality).toHaveBeenCalledTimes(1);
+    expect(inventaireRepository.getCountByLocality).toHaveBeenLastCalledWith(12);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(lieuditService.getInventoriesCountByLocality("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

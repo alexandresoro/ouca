@@ -89,7 +89,8 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
                     <td>{sexe?.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!sexe.editable}
+                        disabledEdit={!sexe.editable}
+                        disabledDelete={!sexe.editable || sexe.entriesCount > 0}
                         onEditClicked={() => onClickUpdateSex(sexe)}
                         onDeleteClicked={() => onClickDeleteSex(sexe)}
                       />

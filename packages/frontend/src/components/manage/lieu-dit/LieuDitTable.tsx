@@ -117,7 +117,8 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
                     <td>{lieuDit.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!lieuDit.editable}
+                        disabledEdit={!lieuDit.editable}
+                        disabledDelete={!lieuDit.editable || lieuDit.inventoriesCount > 0}
                         onEditClicked={() => onClickUpdateLocality(lieuDit)}
                         onDeleteClicked={() => onClickDeleteLocality(lieuDit)}
                       />

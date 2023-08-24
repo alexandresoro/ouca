@@ -92,7 +92,8 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
                     <td>{milieu.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!milieu.editable}
+                        disabledEdit={!milieu.editable}
+                        disabledDelete={!milieu.editable}
                         onEditClicked={() => onClickUpdateEnvironment(milieu)}
                         onDeleteClicked={() => onClickDeleteEnvironment(milieu)}
                       />

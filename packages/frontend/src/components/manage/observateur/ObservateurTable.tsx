@@ -92,7 +92,8 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
                     <td>{observateur.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!observateur.editable}
+                        disabledEdit={!observateur.editable}
+                        disabledDelete={!observateur.editable || observateur.inventoriesCount > 0}
                         onEditClicked={() => onClickUpdateObserver(observateur)}
                         onDeleteClicked={() => onClickDeleteObserver(observateur)}
                       />

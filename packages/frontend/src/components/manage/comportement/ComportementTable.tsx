@@ -100,7 +100,8 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
                     <td>{comportement.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!comportement.editable}
+                        disabledEdit={!comportement.editable}
+                        disabledDelete={!comportement.editable}
                         onEditClicked={() => onClickUpdateBehavior(comportement)}
                         onDeleteClicked={() => onClickDeleteBehavior(comportement)}
                       />

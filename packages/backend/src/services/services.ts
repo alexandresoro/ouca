@@ -182,6 +182,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const lieuditService = buildLieuditService({
     logger,
     lieuditRepository,
+    inventaireRepository,
     donneeRepository,
   });
 
@@ -200,6 +201,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const observateurService = buildObservateurService({
     logger,
     observateurRepository,
+    inventaireRepository,
     donneeRepository,
   });
 

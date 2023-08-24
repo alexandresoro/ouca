@@ -92,7 +92,8 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
                     <td>{classe.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!classe.editable}
+                        disabledEdit={!classe.editable}
+                        disabledDelete={!classe.editable || classe.speciesCount > 0}
                         onEditClicked={() => onClickUpdateSpeciesClass(classe)}
                         onDeleteClicked={() => onClickDeleteSpeciesClass(classe)}
                       />

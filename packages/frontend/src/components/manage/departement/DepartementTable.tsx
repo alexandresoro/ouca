@@ -100,7 +100,8 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
                     <td>{departement.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!departement.editable}
+                        disabledEdit={!departement.editable}
+                        disabledDelete={!departement.editable || departement.townsCount > 0}
                         onEditClicked={() => onClickUpdateDepartment(departement)}
                         onDeleteClicked={() => onClickDeleteDepartment(departement)}
                       />

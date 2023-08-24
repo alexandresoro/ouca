@@ -89,7 +89,8 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
                     <td>{meteo.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!meteo.editable}
+                        disabledEdit={!meteo.editable}
+                        disabledDelete={!meteo.editable}
                         onEditClicked={() => onClickUpdateWeather(meteo)}
                         onDeleteClicked={() => onClickDeleteWeather(meteo)}
                       />

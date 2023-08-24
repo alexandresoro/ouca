@@ -3,6 +3,7 @@ import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import {
   type LieuditCreateInput,
   type LieuditWithCommuneAndDepartementCode,
@@ -18,15 +19,26 @@ import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from ".
 type LieuditServiceDependencies = {
   logger: Logger;
   lieuditRepository: LieuditRepository;
+  inventaireRepository: InventaireRepository;
   donneeRepository: DonneeRepository;
 };
 
-export const buildLieuditService = ({ lieuditRepository, donneeRepository }: LieuditServiceDependencies) => {
+export const buildLieuditService = ({
+  lieuditRepository,
+  inventaireRepository,
+  donneeRepository,
+}: LieuditServiceDependencies) => {
   const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
     const locality = await lieuditRepository.findLieuditById(id);
     return reshapeLocalityRepositoryToApi(locality, loggedUser);
+  };
+
+  const getInventoriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return inventaireRepository.getCountByLocality(parseInt(id));
   };
 
   const getDonneesCountByLieuDit = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
@@ -176,6 +188,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
 
   return {
     findLieuDit,
+    getInventoriesCountByLocality,
     getDonneesCountByLieuDit,
     findLieuDitOfInventaireId,
     findAllLieuxDits,
