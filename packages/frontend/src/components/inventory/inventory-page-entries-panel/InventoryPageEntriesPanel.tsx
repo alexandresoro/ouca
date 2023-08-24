@@ -1,14 +1,15 @@
-import { type getEntriesExtendedResponse, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type UpsertEntryInput, type getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
 import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { type z } from "zod";
-import { useApiEntryCreate, useApiEntryDelete, useApiEntryUpdate } from "../../../hooks/api/queries/api-entry-queries";
+import { useApiEntryDelete, useApiEntryUpdate } from "../../../hooks/api/queries/api-entry-queries";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
-import NewEntryDialogContainer from "../../entry/new-entry-dialog-container/NewEntryDialogContainer";
+import { ENTRY_STEP } from "../../entry/new-entry-page/new-entry-hash-step-mapper";
 import UpdateEntryDialogContainer from "../../entry/update-entry-dialog-container/UpdateEntryDialogContainer";
 import DeletionConfirmationDialog from "../../manage/common/DeletionConfirmationDialog";
 import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
@@ -35,27 +36,8 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
   const queryClient = useQueryClient();
 
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
-  const [newEntryDialogOpen, setNewEntryDialogOpen] = useState(false);
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
   const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<EntryExtended | null>(null);
-
-  const { mutate: createEntry } = useApiEntryCreate({
-    onSettled: onCreateEntrySettled,
-    onSuccess: (createdEntry) => {
-      queryClient.setQueryData(["API", `/entries/${createdEntry.id}`], createdEntry);
-      setNewEntryDialogOpen(false);
-      displayNotification({
-        type: "success",
-        message: t("inventoryForm.entries.createSuccess"),
-      });
-    },
-    onError: () => {
-      displayNotification({
-        type: "error",
-        message: t("inventoryForm.entries.createError"),
-      });
-    },
-  });
 
   const { mutate: updateEntry } = useApiEntryUpdate({
     onSettled: onUpdateEntrySettled,
@@ -92,12 +74,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
     },
   });
 
-  const handleSubmitNewEntryForm = (entryFormData: UpsertEntryInput) => {
-    createEntry({
-      body: entryFormData,
-    });
-  };
-
   const handleSubmitUpdateExistingEntryForm = (entryFormData: UpsertEntryInput, entryId: string) => {
     updateEntry({
       entryId,
@@ -118,10 +94,13 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
           </h2>
           <span className="badge badge-primary badge-outline font-semibold">{entries?.pages[0].meta.count}</span>
         </div>
-        <button type="button" className="btn btn-sm btn-secondary" onClick={() => setNewEntryDialogOpen(true)}>
+        <Link
+          to={`/create-new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`}
+          className="btn btn-sm btn-secondary"
+        >
           <Plus className="w-5 h-5" />
           {t("inventoryPage.entriesPanel.addNewEntry")}
-        </button>
+        </Link>
       </div>
       <ul className="flex flex-col justify-evenly gap-x-4 gap-y-2">
         {entries?.pages.map((page) => {
@@ -147,12 +126,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
         entry={viewEntryDialogEntry}
         open={viewEntryDialogEntry != null}
         onClose={() => setViewEntryDialogEntry(undefined)}
-      />
-      <NewEntryDialogContainer
-        open={newEntryDialogOpen}
-        onClose={() => setNewEntryDialogOpen(false)}
-        onSubmitNewEntryForm={handleSubmitNewEntryForm}
-        inventoryId={inventoryId}
       />
       <UpdateEntryDialogContainer
         entry={updateEntryDialogEntry}
