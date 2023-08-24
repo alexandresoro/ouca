@@ -63,8 +63,8 @@ importers:
         specifier: 5.4.1
         version: 5.4.1
       csv-stringify:
-        specifier: 6.4.0
-        version: 6.4.0
+        specifier: 6.4.1
+        version: 6.4.1
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -2988,8 +2988,8 @@ packages:
     resolution: {integrity: sha512-DL6gLkEatPgB8Fkwf5igeiSIBTY2MVDWb0Edp+cdbK/U+5IXVvVEEOjno9yA8+Dgyu0HaRZ5P/kOVqgUzGJGUA==}
     dev: false
 
-  /csv-stringify@6.4.0:
-    resolution: {integrity: sha512-HQsw0QXiN5fdlO+R8/JzCZnR3Fqp8E87YVnhHlaPtNGJjt6ffbV0LpOkieIb1x6V1+xt878IYq77SpXHWAqKkA==}
+  /csv-stringify@6.4.1:
+    resolution: {integrity: sha512-py56qXoqB0z8UZGbqIopgS34H7twT0Tmxigg6S+g/M9xSz7Y4unyXPrrU2fHPqEDcdxJTMs/xJBPF5zQ7LHeoQ==}
     dev: false
 
   /daisyui@3.6.1:
