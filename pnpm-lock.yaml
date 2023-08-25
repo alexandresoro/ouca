@@ -90,8 +90,8 @@ importers:
         specifier: 10.2.0
         version: 10.2.0
       serialize-error:
-        specifier: 11.0.1
-        version: 11.0.1
+        specifier: 11.0.2
+        version: 11.0.2
       slonik:
         specifier: 34.1.0
         version: 34.1.0(zod@3.22.2)
@@ -6163,8 +6163,8 @@ packages:
     dependencies:
       lru-cache: 6.0.0
 
-  /serialize-error@11.0.1:
-    resolution: {integrity: sha512-B5yw3/Lg+Daspbs0f+iO3Qim0+lALnaLS8aZUAy8Y0tO92tkOoMEuwtKo4jpZ5XO16CTwMi4tYN8cZQI3QF2Qw==}
+  /serialize-error@11.0.2:
+    resolution: {integrity: sha512-o43i0jLcA0LXA5Uu+gI1Vj+lF66KR9IAcy0ThbGq1bAMPN+k5IgSHsulfnqf/ddKAz6dWf+k8PD5hAr9oCSHEQ==}
     engines: {node: '>=14.16'}
     dependencies:
       type-fest: 2.19.0
