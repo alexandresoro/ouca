@@ -38,7 +38,7 @@
     "bullmq": "4.8.0",
     "camelcase": "8.0.0",
     "content-disposition": "0.5.4",
-    "csv-parse": "5.4.1",
+    "csv-parse": "5.5.0",
     "csv-stringify": "6.4.2",
     "date-fns": "2.30.0",
     "es-main": "1.2.0",
