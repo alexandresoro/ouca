@@ -9,6 +9,7 @@ export const observerSchema = z.object({
 export type Observer = z.infer<typeof observerSchema>;
 
 export const observerExtendedSchema = observerSchema.extend({
+  inventoriesCount: z.number(),
   entriesCount: z.number(),
 });
 

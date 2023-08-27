@@ -89,7 +89,8 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
                     <td>{age.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!age.editable}
+                        disabledEdit={!age.editable}
+                        disabledDelete={!age.editable || age.entriesCount > 0}
                         onEditClicked={() => onClickUpdateAge(age)}
                         onDeleteClicked={() => onClickDeleteAge(age)}
                       />

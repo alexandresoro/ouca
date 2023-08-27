@@ -4,20 +4,21 @@ import { useTranslation } from "react-i18next";
 import IconButton from "../../common/styled/IconButton";
 
 type TableCellActionButtonsProps = {
-  disabled?: boolean;
+  disabledEdit?: boolean;
+  disabledDelete?: boolean;
   onEditClicked?: () => void;
   onDeleteClicked?: () => void;
 };
 
 const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (props) => {
-  const { disabled, onEditClicked, onDeleteClicked } = props;
+  const { disabledEdit, disabledDelete, onEditClicked, onDeleteClicked } = props;
   const { t } = useTranslation();
 
   return (
     <>
       <IconButton
         className="mx-1 text-primary dark:text-white"
-        disabled={disabled}
+        disabled={disabledEdit}
         aria-label={t("aria-editButton")}
         onClick={onEditClicked}
       >
@@ -25,7 +26,7 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
       </IconButton>
       <IconButton
         className="mx-1 text-error"
-        disabled={disabled}
+        disabled={disabledDelete}
         aria-label={t("aria-deleteButton")}
         onClick={onDeleteClicked}
       >

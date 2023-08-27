@@ -133,6 +133,32 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return slonik.oneFirst(query);
   };
 
+  const getCountByLocality = async (localityId: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.inventaire
+      WHERE
+        inventaire.lieudit_id = ${localityId}
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
+  const getCountByObserver = async (observerId: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.inventaire
+      WHERE
+        inventaire.observateur_id = ${observerId}
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const findInventaireByDonneeId = async (
     donneeId: number | undefined,
     transaction?: DatabaseTransactionConnection
@@ -301,6 +327,8 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     findInventoryIndex,
     findInventaires,
     getCount,
+    getCountByLocality,
+    getCountByObserver,
     findExistingInventaire,
     createInventaire,
     updateInventaire,

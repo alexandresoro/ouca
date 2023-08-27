@@ -3,6 +3,7 @@ import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type ObservateurCreateInput } from "../../repositories/observateur/observateur-repository-types.js";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -13,12 +14,14 @@ import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-uti
 
 type ObservateurServiceDependencies = {
   logger: Logger;
+  inventaireRepository: InventaireRepository;
   observateurRepository: ObservateurRepository;
   donneeRepository: DonneeRepository;
 };
 
 export const buildObservateurService = ({
   observateurRepository,
+  inventaireRepository,
   donneeRepository,
 }: ObservateurServiceDependencies) => {
   const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer | null> => {
@@ -26,6 +29,12 @@ export const buildObservateurService = ({
 
     const observer = await observateurRepository.findObservateurById(id);
     return enrichEntityWithEditableStatus(observer, loggedUser);
+  };
+
+  const getInventoriesCountByObserver = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return inventaireRepository.getCountByObserver(parseInt(id));
   };
 
   const getDonneesCountByObservateur = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
@@ -190,6 +199,7 @@ export const buildObservateurService = ({
 
   return {
     findObservateur,
+    getInventoriesCountByObserver,
     getDonneesCountByObservateur,
     findObservateurOfInventaireId,
     findAssociesOfInventaireId,

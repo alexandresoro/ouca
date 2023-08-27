@@ -52,9 +52,11 @@ const observersController: FastifyPluginCallback<{
     if (extended) {
       data = await Promise.all(
         observersData.map(async (observerData) => {
+          const inventoriesCount = await observateurService.getInventoriesCountByObserver(observerData.id, req.user);
           const entriesCount = await observateurService.getDonneesCountByObservateur(observerData.id, req.user);
           return {
             ...observerData,
+            inventoriesCount,
             entriesCount,
           };
         })

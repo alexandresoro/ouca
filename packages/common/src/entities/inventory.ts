@@ -20,7 +20,7 @@ export const inventorySchema = z.object({
 export type Inventory = z.infer<typeof inventorySchema>;
 
 export const inventoryExtendedSchema = inventorySchema.omit({ locality: true }).extend({
-  locality: localityExtendedSchema.omit({ entriesCount: true }),
+  locality: localityExtendedSchema.omit({ inventoriesCount: true, entriesCount: true }),
 });
 
 export type InventoryExtended = z.infer<typeof inventoryExtendedSchema>;

@@ -102,7 +102,8 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
                     <td>{commune.entriesCount}</td>
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
-                        disabled={!commune.editable}
+                        disabledEdit={!commune.editable}
+                        disabledDelete={!commune.editable || commune.localitiesCount > 0}
                         onEditClicked={() => onClickUpdateTown(commune)}
                         onDeleteClicked={() => onClickDeleteTown(commune)}
                       />

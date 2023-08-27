@@ -3,6 +3,7 @@ import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import {
   type Observateur,
   type ObservateurCreateInput,
@@ -14,12 +15,14 @@ import { OucaError } from "../../utils/errors.js";
 import { buildObservateurService } from "./observateur-service.js";
 
 const observateurRepository = mock<ObservateurRepository>({});
+const inventaireRepository = mock<InventaireRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const observateurService = buildObservateurService({
   logger,
   observateurRepository,
+  inventaireRepository,
   donneeRepository,
 });
 
@@ -58,6 +61,23 @@ describe("Find observer", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(observateurService.findObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(observateurRepository.findObservateurById).not.toHaveBeenCalled();
+  });
+});
+
+describe("Inventory count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await observateurService.getInventoriesCountByObserver("12", loggedUser);
+
+    expect(inventaireRepository.getCountByObserver).toHaveBeenCalledTimes(1);
+    expect(inventaireRepository.getCountByObserver).toHaveBeenLastCalledWith(12);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(observateurService.getInventoriesCountByObserver("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 

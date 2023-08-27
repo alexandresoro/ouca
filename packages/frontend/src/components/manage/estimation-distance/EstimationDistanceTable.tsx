@@ -86,7 +86,8 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
                   <td>{estimationDistance.entriesCount}</td>
                   <td align="right" className="pr-6">
                     <TableCellActionButtons
-                      disabled={!estimationDistance.editable}
+                      disabledEdit={!estimationDistance.editable}
+                      disabledDelete={!estimationDistance.editable || estimationDistance.entriesCount > 0}
                       onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance)}
                       onDeleteClicked={() => onClickDeleteDistanceEstimate(estimationDistance)}
                     />
