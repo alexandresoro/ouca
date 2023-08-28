@@ -34,7 +34,7 @@
     "@fontsource-variable/nunito": "5.0.9",
     "@fontsource/carter-one": "5.0.8",
     "@headlessui/react": "1.7.17",
-    "@hookform/resolvers": "3.3.0",
+    "@hookform/resolvers": "3.3.1",
     "@ou-ca/common": "workspace:*",
     "@sentry/integrations": "7.64.0",
     "@sentry/react": "7.64.0",
