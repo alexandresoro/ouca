@@ -1,20 +1,31 @@
 import { useEffect, type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { hasAuthParams, useAuth } from "react-oidc-context";
+import { useNavigate } from "react-router-dom";
 import useAppContext from "../hooks/useAppContext";
 
 export const AuthHandler = ({ children }: { children: ReactElement }): ReactElement => {
   const { t } = useTranslation();
   const auth = useAuth();
 
+  const navigate = useNavigate();
+
   const appContext = useAppContext();
 
   useEffect(() => {
     if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading) {
+      void auth.clearStaleState();
       void auth.signinRedirect();
     }
     // eslint-disable-next-line @typescript-eslint/unbound-method
   }, [auth.isAuthenticated, auth.activeNavigator, auth.isLoading, auth.signinRedirect, auth]);
+
+  useEffect(() => {
+    // Redirect to expiration page whenever the current token has expired
+    return auth.events.addAccessTokenExpired(() => {
+      navigate("/session-expired", { replace: true });
+    });
+  }, [auth.events, navigate]);
 
   useEffect(() => {
     if (appContext.isSentryEnabled) {

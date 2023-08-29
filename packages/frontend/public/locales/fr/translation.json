@@ -408,5 +408,9 @@
   "saveSettingsError": "Une erreur est survenue lors de la sauvegarde de vos préférences. Veuillez réessayer",
   "exportDatabaseButton": "Sauvegarde de la base",
   "importFromFile": "Import depuis un fichier",
-  "logout": "Déconnexion"
+  "logout": "Déconnexion",
+  "sessionExpired": {
+    "description": "Votre session utilisateur a expiré. Veuillez vous reconnecter.",
+    "reconnectButton": "Me reconnecter"
+  }
 }

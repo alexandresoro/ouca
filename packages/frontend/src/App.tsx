@@ -1,10 +1,9 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { type UserManagerSettings } from "oidc-client-ts";
+import { WebStorageStateStore, type UserManagerSettings } from "oidc-client-ts";
 import { Suspense, useEffect, useMemo, useState, type FunctionComponent } from "react";
 import { AuthProvider } from "react-oidc-context";
 import { RouterProvider, type createBrowserRouter } from "react-router-dom";
-import { AuthHandler } from "./components/AuthHandler";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
 import { queryClient } from "./query/query-client";
 import loadAnalytics from "./services/load-analytics";
@@ -37,6 +36,8 @@ const App: FunctionComponent<AppProps> = ({ config, router }) => {
       ...config.oidc,
       redirect_uri: `${window.location.protocol}//${window.location.host}/`,
       scope: "openid email profile",
+      userStore: new WebStorageStateStore({ store: window.localStorage }),
+      automaticSilentRenew: false, // Disable renew as we don't use refresh tokens for now
     } satisfies UserManagerSettings;
   }, [config]);
 
@@ -50,13 +51,11 @@ const App: FunctionComponent<AppProps> = ({ config, router }) => {
       >
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools />
-          <AuthHandler>
-            <div className="bg-base-100">
-              <Suspense fallback="">
-                <RouterProvider router={router} />
-              </Suspense>
-            </div>
-          </AuthHandler>
+          <div className="bg-base-100">
+            <Suspense fallback="">
+              <RouterProvider router={router} />
+            </Suspense>
+          </div>
         </QueryClientProvider>
       </AuthProvider>
     </AppContext.Provider>
