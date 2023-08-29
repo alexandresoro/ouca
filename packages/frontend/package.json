@@ -60,7 +60,7 @@
     "react-i18next": "13.2.0",
     "react-intersection-observer": "9.5.2",
     "react-map-gl": "7.1.5",
-    "react-oidc-context": "2.2.2",
+    "react-oidc-context": "2.3.0",
     "react-router-dom": "6.15.0",
     "zod": "3.22.2"
   },
