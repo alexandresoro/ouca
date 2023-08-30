@@ -37,7 +37,6 @@ const App: FunctionComponent<AppProps> = ({ config, router }) => {
       redirect_uri: `${window.location.protocol}//${window.location.host}/`,
       scope: "openid email profile",
       userStore: new WebStorageStateStore({ store: window.localStorage }),
-      automaticSilentRenew: false, // Disable renew as we don't use refresh tokens for now
     } satisfies UserManagerSettings;
   }, [config]);
 
