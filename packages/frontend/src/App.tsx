@@ -35,7 +35,7 @@ const App: FunctionComponent<AppProps> = ({ config, router }) => {
     return {
       ...config.oidc,
       redirect_uri: `${window.location.protocol}//${window.location.host}/`,
-      scope: "openid email profile",
+      scope: "openid email profile offline_access",
       userStore: new WebStorageStateStore({ store: window.localStorage }),
     } satisfies UserManagerSettings;
   }, [config]);
