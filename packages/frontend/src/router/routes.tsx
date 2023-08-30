@@ -1,4 +1,5 @@
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
+import { AuthHandler } from "../components/AuthHandler";
 import Layout from "../components/Layout";
 import LastInventory from "../components/inventory/last-inventory/LastInventory";
 import UserSettingsProvider from "../contexts/UserSettingsContext";
@@ -9,9 +10,11 @@ export const routes: RouteObject[] = [
   {
     path: "/",
     element: (
-      <UserSettingsProvider>
-        <Layout />
-      </UserSettingsProvider>
+      <AuthHandler>
+        <UserSettingsProvider>
+          <Layout />
+        </UserSettingsProvider>
+      </AuthHandler>
     ),
     children: [
       {
@@ -56,5 +59,9 @@ export const routes: RouteObject[] = [
   {
     path: "new-account",
     lazy: lazyRoute(() => import("../components/new-account/NewAccount")),
+  },
+  {
+    path: "session-expired",
+    lazy: lazyRoute(() => import("../components/session-expired/SessionExpired")),
   },
 ];
