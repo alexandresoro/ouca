@@ -19,13 +19,13 @@
     "lint": "pnpm -r run lint",
     "frontend": "pnpm --dir './packages/frontend'",
     "backend": "pnpm --dir './packages/backend'",
-    "rome:ci": "rome ci *",
+    "biome:ci": "biome ci *",
     "build:ci": "pnpm -r run build"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.0.0",
     "husky": "8.0.3",
-    "lint-staged": "14.0.1",
-    "rome": "12.1.3"
+    "lint-staged": "14.0.1"
   },
   "engines": {
     "pnpm": ">=8"

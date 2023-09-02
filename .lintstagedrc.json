@@ -1,4 +1,4 @@
 {
-  "*.{ts,tsx,js}": ["rome ci"],
+  "*.{ts,tsx,js}": ["biome ci"],
   "*.{ts,tsx}": ["eslint"]
 }

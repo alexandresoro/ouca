@@ -1,7 +1,7 @@
 {
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
-		"rome.rome",
+		"biomejs.biome",
 		"bradlc.vscode-tailwindcss",
 		"zixuanchen.vitest-explorer"
 	],

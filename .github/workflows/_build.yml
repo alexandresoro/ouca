@@ -46,8 +46,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Rome
-        run: pnpm run rome:ci
+      - name: Biome
+        run: pnpm run biome:ci
 
       - name: Test
         run: pnpm --aggregate-output --recursive run test
