@@ -47,7 +47,7 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
         <ReactMapGl
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
-          // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           mapStyle={MAP_STYLE_PROVIDERS[mapStyle].mapboxStyle as any}
           style={{
             borderRadius: "14px",

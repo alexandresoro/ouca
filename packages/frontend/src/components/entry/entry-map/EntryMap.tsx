@@ -292,7 +292,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
           {...viewState}
           onLoad={handleOnMapLoad}
           onMove={(evt) => setViewState(evt.viewState)}
-          // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           mapStyle={MAP_STYLE_PROVIDERS[mapStyle].mapboxStyle as any}
           interactiveLayerIds={[clusterLayer.id!, singleLocalityLayer.id!]}
           onMouseMove={onHoverMap}

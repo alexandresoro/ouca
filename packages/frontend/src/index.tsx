@@ -10,7 +10,7 @@ import "./index.css";
 import { routes } from "./router/routes";
 import { initApp } from "./utils/init-app";
 
-// rome-ignore lint/style/noNonNullAssertion: <explanation>
+// biome-ignore lint/style/noNonNullAssertion: <explanation>
 const Root = createRoot(document.getElementById("root")!);
 
 initApp()
