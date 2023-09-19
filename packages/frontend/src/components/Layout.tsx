@@ -10,7 +10,7 @@ const Layout: FunctionComponent = () => {
   const [notifications, displayNotification] = useNotifications();
 
   return (
-    // rome-ignore lint/complexity/noUselessFragments: <explanation>
+    // biome-ignore lint/complexity/noUselessFragments: <explanation>
     <Suspense fallback={<></>}>
       <SnackbarContext.Provider value={{ displayNotification }}>
         <div className="flex flex-col h-[100dvh]">

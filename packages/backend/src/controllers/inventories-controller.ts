@@ -138,7 +138,7 @@ const inventoriesController: FastifyPluginCallback<{
       return await reply.send(response);
     } catch (e) {
       // TODO handle duplicate inventory
-      // rome-ignore lint/complexity/noUselessCatch: <explanation>
+      // biome-ignore lint/complexity/noUselessCatch: <explanation>
       throw e;
     }
   });
@@ -165,7 +165,7 @@ const inventoriesController: FastifyPluginCallback<{
       return await reply.send(response);
     } catch (e) {
       // TODO handle duplicate inventory
-      // rome-ignore lint/complexity/noUselessCatch: <explanation>
+      // biome-ignore lint/complexity/noUselessCatch: <explanation>
       throw e;
     }
   });

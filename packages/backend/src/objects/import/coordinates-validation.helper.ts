@@ -3,6 +3,7 @@ import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 const ALTITUDE_MIN_VALUE = 0;
 const ALTITUDE_MAX_VALUE = 65535;
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class CoordinatesValidatorHelper {
   public static checkAltitudeValidity(altitudeStr: string): string | null {
     if (!altitudeStr) {
