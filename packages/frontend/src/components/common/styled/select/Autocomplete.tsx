@@ -18,7 +18,7 @@ type AutocompleteProps<T> = {
   autocompleteClassName?: string;
   labelClassName?: string;
   labelTextClassName?: string;
-  decorationKey?: ConditionalKeys<T, Key> & string;
+  decorationKey?: ConditionalKeys<T, string | number>;
   decorationKeyClassName?: string;
   inputProps?: Omit<ComponentPropsWithoutRef<"input">, "value" | "defaultValue">;
 } & (
@@ -116,7 +116,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
                   decorationKeyClassName ?? ""
                 }`}
               >
-                {value?.[decorationKey] as Key}
+                {value?.[decorationKey] as string | number}
               </span>
             )}
             <Combobox.Button className="absolute z-[1] inset-y-0 right-0 flex items-center pr-2">

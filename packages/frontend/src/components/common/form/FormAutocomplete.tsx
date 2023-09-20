@@ -22,7 +22,7 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> =
   labelTextClassName?: string;
   onInputChange?: (value: string) => void;
   inputProps?: Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue">;
-  decorationKey?: ConditionalKeys<T, Key> & string;
+  decorationKey?: ConditionalKeys<T, string | number> & Key;
 } & (
     | {
         data: T[] | null | undefined;
