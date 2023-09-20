@@ -47,7 +47,7 @@ jobs:
         run: pnpm install
 
       - name: Biome
-        run: pnpm run biome:ci
+        run: pnpm --aggregate-output --recursive run biome:ci
 
       - name: Test
         run: pnpm --aggregate-output --recursive run test

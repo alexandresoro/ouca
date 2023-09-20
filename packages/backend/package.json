@@ -19,6 +19,7 @@
     "start:tsc": "pnpm run compile:tsc:dev && node -r dotenv/config dist/main",
     "test": "vitest run",
     "lint": "eslint .",
+    "biome:ci": "biome ci *",
     "compile:tsc": "tsc --build tsconfig.build.json",
     "compile:tsc:dev": "tsc --build tsconfig.dev.json",
     "umzug": "node dist/umzug",
@@ -54,6 +55,7 @@
     "zod": "3.22.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.2.2",
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.6",
     "@types/node": "18.17.18",

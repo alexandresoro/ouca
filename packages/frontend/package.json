@@ -16,7 +16,8 @@
     "build": "tsc --build tsconfig.build.json && vite build",
     "serve": "vite preview",
     "test": "vitest run",
-    "lint": "wireit"
+    "lint": "wireit",
+    "biome:ci": "biome ci *"
   },
   "wireit": {
     "lint": {
@@ -65,6 +66,7 @@
     "zod": "3.22.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.2.2",
     "@ou-ca/eslint-config": "workspace:*",
     "@sentry/vite-plugin": "2.7.1",
     "@tanstack/react-query-devtools": "4.29.25",

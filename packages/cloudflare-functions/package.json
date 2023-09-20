@@ -13,9 +13,11 @@
   "license": "MPL-2.0-no-copyleft-exception",
   "private": true,
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "biome:ci": "biome ci *"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.2.2",
     "@cloudflare/workers-types": "4.20230914.0",
     "@ou-ca/eslint-config": "workspace:*",
     "typescript": "5.2.2"

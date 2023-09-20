@@ -17,13 +17,12 @@
     "prepare": "husky install",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",
+    "biome:ci": "pnpm -r run biome:ci",
     "frontend": "pnpm --dir './packages/frontend'",
     "backend": "pnpm --dir './packages/backend'",
-    "biome:ci": "biome ci *",
     "build:ci": "pnpm -r run build"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.2.2",
     "husky": "8.0.3",
     "lint-staged": "14.0.1"
   },
