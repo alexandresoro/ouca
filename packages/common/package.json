@@ -35,7 +35,7 @@
     "@types/proj4": "2.5.2",
     "@vitest/coverage-v8": "0.34.4",
     "typescript": "5.2.2",
-    "vitest": "0.34.4",
+    "vitest": "0.34.5",
     "vitest-mock-extended": "1.2.1"
   }
 }
