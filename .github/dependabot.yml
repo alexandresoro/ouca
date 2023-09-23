@@ -37,6 +37,10 @@ updates:
         update-types:
           - "major"
           - "minor"
+      react-query:
+        patterns:
+          - "@tanstack/react-query"
+          - "@tanstack/react-query-devtools"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
