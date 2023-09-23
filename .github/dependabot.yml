@@ -1,5 +1,42 @@
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      timezone: "Europe/Paris"
+    commit-message:
+       prefix: "chore(deps)"
+    groups:
+      fastify:
+        patterns:
+          - "fastify"
+          - "@fastify/*"
+        update-types:
+          - "major"
+          - "minor"
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+        update-types:
+          - "major"
+          - "minor"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+        update-types:
+          - "major"
+          - "minor"
+      i18next:
+        patterns:
+          - "i18next"
+          - "i18next-*"
+          - "*-i18next"
+        update-types:
+          - "major"
+          - "minor"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
