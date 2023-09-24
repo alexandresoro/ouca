@@ -11,6 +11,10 @@
       "enabled": false
     },
     {
+      "matchManagers": ["npm"],
+      "enabled": false
+    },
+    {
       "matchDepTypes": ["devDependencies"],
       "excludePackageNames": ["typescript"],
       "matchPackagePatterns": ["*"],
