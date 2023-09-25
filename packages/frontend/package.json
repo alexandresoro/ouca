@@ -37,7 +37,7 @@
     "@headlessui/react": "1.7.17",
     "@hookform/resolvers": "3.3.1",
     "@ou-ca/common": "workspace:*",
-    "@sentry/integrations": "7.70.0",
+    "@sentry/integrations": "7.71.0",
     "@sentry/react": "7.70.0",
     "@sentry/tracing": "7.70.0",
     "@styled-icons/boxicons-regular": "10.47.0",
