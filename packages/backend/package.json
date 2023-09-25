@@ -34,7 +34,7 @@
     "@fastify/under-pressure": "8.3.0",
     "@ou-ca/common": "workspace:*",
     "@sentry/node": "7.70.0",
-    "@sentry/tracing": "7.70.0",
+    "@sentry/tracing": "7.71.0",
     "@turf/helpers": "6.5.0",
     "bullmq": "4.11.4",
     "camelcase": "8.0.0",
