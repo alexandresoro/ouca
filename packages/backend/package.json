@@ -33,7 +33,7 @@
     "@fastify/static": "6.11.2",
     "@fastify/under-pressure": "8.3.0",
     "@ou-ca/common": "workspace:*",
-    "@sentry/node": "7.70.0",
+    "@sentry/node": "7.71.0",
     "@sentry/tracing": "7.70.0",
     "@turf/helpers": "6.5.0",
     "bullmq": "4.11.4",
