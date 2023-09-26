@@ -50,7 +50,7 @@
     "pino": "8.15.1",
     "pino-pretty": "10.2.0",
     "serialize-error": "11.0.2",
-    "slonik": "34.1.1",
+    "slonik": "34.3.0",
     "umzug": "3.3.1",
     "zod": "3.22.2"
   },
