@@ -41,6 +41,9 @@ updates:
         patterns:
           - "@tanstack/react-query"
           - "@tanstack/react-query-devtools"
+      sentry:
+        patterns:
+          - "@sentry/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
