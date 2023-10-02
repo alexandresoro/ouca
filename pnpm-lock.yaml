@@ -293,8 +293,8 @@ importers:
         specifier: 7.1.6
         version: 7.1.6(maplibre-gl@3.3.1)(react-dom@18.2.0)(react@18.2.0)
       react-oidc-context:
-        specifier: 2.3.0
-        version: 2.3.0(oidc-client-ts@2.2.5)(react@18.2.0)
+        specifier: 2.3.1
+        version: 2.3.1(oidc-client-ts@2.2.5)(react@18.2.0)
       react-router-dom:
         specifier: 6.16.0
         version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
@@ -5757,8 +5757,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /react-oidc-context@2.3.0(oidc-client-ts@2.2.5)(react@18.2.0):
-    resolution: {integrity: sha512-xT8HOliaQ3H2Q+1+nppAyOX9TlhC+ZXWkR5UDHPEfIZU+yJou1JGypUWPn1SMeFhhzovT+K7IP71/9ahVCL0+g==}
+  /react-oidc-context@2.3.1(oidc-client-ts@2.2.5)(react@18.2.0):
+    resolution: {integrity: sha512-WdhmEU6odNzMk9pvOScxUkf6/1aduiI/nQryr7+iCl2VDnYLASDTIV/zy58KuK4VXG3fBaRKukc/mRpMjF9a3Q==}
     engines: {node: '>=12.13.0'}
     peerDependencies:
       oidc-client-ts: ^2.2.1
