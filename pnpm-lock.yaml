@@ -267,7 +267,7 @@ importers:
         version: 2.2.2
       jotai:
         specifier: 2.4.3
-        version: 2.4.3(@types/react@18.2.23)(react@18.2.0)
+        version: 2.4.3(@types/react@18.2.24)(react@18.2.0)
       maplibre-gl:
         specifier: 3.3.1
         version: 3.3.1
@@ -327,8 +327,8 @@ importers:
         specifier: 18.18.1
         version: 18.18.1
       '@types/react':
-        specifier: 18.2.23
-        version: 18.2.23
+        specifier: 18.2.24
+        version: 18.2.24
       '@types/react-dom':
         specifier: 18.2.8
         version: 18.2.8
@@ -1922,11 +1922,11 @@ packages:
   /@types/react-dom@18.2.8:
     resolution: {integrity: sha512-bAIvO5lN/U8sPGvs1Xm61rlRHHaq5rp5N3kp9C+NJ/Q41P8iqjkXSu0+/qu8POsjH9pNWb0OYabFez7taP7omw==}
     dependencies:
-      '@types/react': 18.2.23
+      '@types/react': 18.2.24
     dev: true
 
-  /@types/react@18.2.23:
-    resolution: {integrity: sha512-qHLW6n1q2+7KyBEYnrZpcsAmU/iiCh9WGCKgXvMxx89+TYdJWRjZohVIo9XTcoLhfX3+/hP0Pbulu3bCZQ9PSA==}
+  /@types/react@18.2.24:
+    resolution: {integrity: sha512-Ee0Jt4sbJxMu1iDcetZEIKQr99J1Zfb6D4F3qfUWoR1JpInkY1Wdg4WwCyBjL257D0+jGqSl1twBjV8iCaC0Aw==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.3
@@ -4429,7 +4429,7 @@ packages:
     hasBin: true
     dev: true
 
-  /jotai@2.4.3(@types/react@18.2.23)(react@18.2.0):
+  /jotai@2.4.3(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-CSAHX9LqWG5WCrU8OgBoZbBJ+Bo9rQU0mPusEF4e0CZ/SNFgurG26vb3UpgvCSJZgYVcUQNiUBM5q86PA8rstQ==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
@@ -4441,7 +4441,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': 18.2.23
+      '@types/react': 18.2.24
       react: 18.2.0
     dev: false
 
