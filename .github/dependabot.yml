@@ -45,6 +45,8 @@ updates:
       sentry:
         patterns:
           - "@sentry/*"
+        exclude-patterns:
+          - "@sentry/vite-plugin"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
