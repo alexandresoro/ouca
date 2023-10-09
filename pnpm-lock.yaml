@@ -206,8 +206,8 @@ importers:
         specifier: 0.26.0
         version: 0.26.0(react-dom@18.2.0)(react@18.2.0)
       '@fontsource-variable/nunito':
-        specifier: 5.0.13
-        version: 5.0.13
+        specifier: 5.0.14
+        version: 5.0.14
       '@fontsource/carter-one':
         specifier: 5.0.8
         version: 5.0.8
@@ -1209,8 +1209,8 @@ packages:
     resolution: {integrity: sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==}
     dev: false
 
-  /@fontsource-variable/nunito@5.0.13:
-    resolution: {integrity: sha512-F/XyvEFXtRTkAG5dEb7kZl95a4XxkTqRn5BTJdcYftun9ZHKXno5BmYANXUCy9i0DXXskDt1NXUdGRGs4aFssg==}
+  /@fontsource-variable/nunito@5.0.14:
+    resolution: {integrity: sha512-xnmZuyxe77YVOScYw9Wjw6zEqL/EPE708tG42rl39GVoJuhDQl60iFfZl6FQBZATNKeMswQsb+fGeAYeHbS+4Q==}
     dev: false
 
   /@fontsource/carter-one@5.0.8:
