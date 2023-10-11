@@ -124,8 +124,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       undici:
-        specifier: 5.25.4
-        version: 5.25.4
+        specifier: 5.26.0
+        version: 5.26.0
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -6787,8 +6787,8 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
-  /undici@5.25.4:
-    resolution: {integrity: sha512-450yJxT29qKMf3aoudzFpIciqpx6Pji3hEWaXqXmanbXF58LTAGCKxcJjxMXWu3iG+Mudgo3ZUfDB6YDFd/dAw==}
+  /undici@5.26.0:
+    resolution: {integrity: sha512-MLqGMyaJk2ubSl7FrmWuV7ZOsYWmdF7gcBHDRxm4AR8NoodQhgy3vO/D1god79HoetxR0uAeVNB65yj2lNRQnQ==}
     engines: {node: '>=14.0'}
     dependencies:
       '@fastify/busboy': 2.0.0
