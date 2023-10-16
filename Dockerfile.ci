@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 ARG NODE_IMAGE_VERSION=18
-ARG PNPM_VERSION=latest
 
 FROM node:${NODE_IMAGE_VERSION}-alpine
 
+ARG PNPM_VERSION=latest
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Sets to production, it also sets the install script to install deps only

@@ -84,7 +84,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
             "NODE_IMAGE_VERSION=${{ env.NODE_VERSION }}"
-            "PNPM_VERSION"=${{ env.PNPM_VERSION }}
+            "PNPM_VERSION=${{ env.PNPM_VERSION }}"
             "GIT_SHA=${{ github.sha }}"
           context: .
           file: Dockerfile.ci
