@@ -14,9 +14,6 @@ on:
         description: "The node.js version used for the build"
         value: ${{ jobs.validate-test-build.outputs.nodeVersion }}
 
-env:
-  NODE_VERSION: 18
-
 jobs:
   validate-test-build:
     runs-on: ubuntu-latest
@@ -25,20 +22,20 @@ jobs:
       nodeVersion: ${{ steps.nodeVersion.outputs.nodeVersion }}
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Setup Node version
         id: nodeVersion
         run: |
-          echo "nodeVersion=$NODE_VERSION" >> $GITHUB_OUTPUT
-
-      - uses: actions/checkout@v4
+          echo "node_version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: $(jq -r .engines.pnpm package.json)
 
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ steps.nodeVersion.outputs.nodeVersion }}
           cache: "pnpm"
 
       - uses: google/wireit@setup-github-actions-caching/v1

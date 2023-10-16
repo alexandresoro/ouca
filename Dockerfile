@@ -5,7 +5,7 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@8.6.11 --activate
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY ./ /app/
 
@@ -19,14 +19,12 @@ ENV NODE_ENV=production
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@8.6.11 --activate
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 ENV OUCA_SERVER_HOST 0.0.0.0
 
 COPY migrations/ /app/migrations/
 COPY package.json pnpm-lock.yaml /app/
-
-RUN corepack enable && corepack prepare pnpm@latest --activate
 
 RUN npm pkg delete scripts.prepare && \
   pnpm i --frozen-lockfile && \
