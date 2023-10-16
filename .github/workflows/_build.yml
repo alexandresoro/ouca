@@ -32,7 +32,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: S{{ env.PNPM_VERSION }}
+          version: ${{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@v3
         with:
