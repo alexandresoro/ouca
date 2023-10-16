@@ -19,7 +19,7 @@ jobs:
 
       - name: Setup versions
         run: |
-          echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
           echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json)" >> $GITHUB_ENV
 
       - uses: pnpm/action-setup@v2
