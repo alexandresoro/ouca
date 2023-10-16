@@ -12,7 +12,7 @@ const EntryFormComment: FunctionComponent<EntryFormCommentProps> = ({ register }
   return (
     <TextArea
       {...register("comment", {
-        setValueAs: (v: string) => (v?.length ? v : null),
+        setValueAs: (v: string) => (v?.trim().length ? v : null),
       })}
       label={t("comments")}
       className="h-16"
