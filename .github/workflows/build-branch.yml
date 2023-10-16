@@ -36,6 +36,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup versions
+        run: |
+          echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
+          echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json)" >> $GITHUB_ENV
+
       - name: Retrieve artifact
         uses: actions/download-artifact@v3
         with:
@@ -78,8 +83,8 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
-            "NODE_IMAGE_VERSION=${{ needs.build.outputs.nodeVersion }}"
-            "PNPM_VERSION"=$(jq -r .engines.node package.json)
+            "NODE_IMAGE_VERSION=${{ env.NODE_VERSION }}"
+            "PNPM_VERSION"=${{ env.PNPM_VERSION }}
             "GIT_SHA=${{ github.sha }}"
           context: .
           file: Dockerfile.ci

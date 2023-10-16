@@ -9,25 +9,17 @@ on:
       upload-backend:
         required: false
         type: boolean
-    outputs:
-      nodeVersion:
-        description: "The node.js version used for the build"
-        value: ${{ jobs.validate-test-build.outputs.nodeVersion }}
 
 jobs:
   validate-test-build:
     runs-on: ubuntu-latest
 
-    outputs:
-      nodeVersion: ${{ steps.nodeVersion.outputs.nodeVersion }}
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup versions
-        id: nodeVersion
         run: |
-          echo "nodeVersion=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
+          echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
           echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json)" >> $GITHUB_ENV
 
       - uses: pnpm/action-setup@v2
@@ -36,7 +28,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ steps.nodeVersion.outputs.nodeVersion }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
       - uses: google/wireit@setup-github-actions-caching/v1
