@@ -24,14 +24,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node version
+      - name: Setup versions
         id: nodeVersion
         run: |
           echo "node_version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
+          echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json)" >> $GITHUB_ENV
 
       - uses: pnpm/action-setup@v2
         with:
-          version: $(jq -r .engines.pnpm package.json)
+          version: S{{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@v3
         with:
