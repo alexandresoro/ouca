@@ -47,6 +47,9 @@ updates:
           - "@sentry/*"
         exclude-patterns:
           - "@sentry/vite-plugin"
+      typescript-eslint:
+        patterns:
+          - "@typescript-eslint/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
