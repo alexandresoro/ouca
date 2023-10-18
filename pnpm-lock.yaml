@@ -167,8 +167,8 @@ importers:
         specifier: workspace:*
         version: link:../eslint-config
       '@types/proj4':
-        specifier: 2.5.3
-        version: 2.5.3
+        specifier: 2.5.4
+        version: 2.5.4
       '@vitest/coverage-v8':
         specifier: 0.34.6
         version: 0.34.6(vitest@0.34.6)
@@ -1935,8 +1935,8 @@ packages:
       pg-types: 4.0.1
     dev: false
 
-  /@types/proj4@2.5.3:
-    resolution: {integrity: sha512-J6b/EYl9XZ46245D5jM8A7zJ6MNcsvlTHHo7g2NwTsPtviz5zdYhfLXu05A6zTZYbV697ebvdYd6UczF4n+lqg==}
+  /@types/proj4@2.5.4:
+    resolution: {integrity: sha512-AAqZQKgOGuEmhlfLgues7anx0vcZg+0xKE8UggfVnWJSKk4xdVm+Rg1q2q7YmqoZS51BJ5jTcCyYQqIGdxa8FQ==}
     dev: true
 
   /@types/prop-types@15.7.5:
