@@ -321,8 +321,8 @@ importers:
         specifier: 14.5.1
         version: 14.5.1(@testing-library/dom@9.3.3)
       '@types/geojson':
-        specifier: 7946.0.11
-        version: 7946.0.11
+        specifier: 7946.0.12
+        version: 7946.0.12
       '@types/node':
         specifier: 18.18.6
         version: 18.18.6
@@ -1879,8 +1879,8 @@ packages:
     resolution: {integrity: sha512-V9/5u21RHFR1zfdm3rQ6pJUKV+zSSVQt+yq16i1YhdivVzWgPEoKedc3GdT8aFjsqQbakdxuy3FnEdePUQOamQ==}
     dev: true
 
-  /@types/geojson@7946.0.11:
-    resolution: {integrity: sha512-L7A0AINMXQpVwxHJ4jxD6/XjZ4NDufaRlUJHjNIFKYUFBH1SvOW+neaqb0VTRSLW5suSrSu19ObFEFnfNcr+qg==}
+  /@types/geojson@7946.0.12:
+    resolution: {integrity: sha512-uK2z1ZHJyC0nQRbuovXFt4mzXDwf27vQeUWNhfKGwRcWW429GOhP8HxUHlM6TLH4bzmlv/HlEjpvJh3JfmGsAA==}
 
   /@types/geojson@7946.0.8:
     resolution: {integrity: sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==}
@@ -1901,7 +1901,7 @@ packages:
   /@types/mapbox-gl@2.7.13:
     resolution: {integrity: sha512-qNffhTdYkeFl8QG9Q1zPPJmcs8PvHgmLa1PcwP1rxvcfMsIgcFr/FnrCttG0ZnH7Kzdd7xfECSRNTWSr4jC3PQ==}
     dependencies:
-      '@types/geojson': 7946.0.11
+      '@types/geojson': 7946.0.12
     dev: false
 
   /@types/mapbox__point-geometry@0.1.2:
@@ -1911,7 +1911,7 @@ packages:
   /@types/mapbox__vector-tile@1.3.1:
     resolution: {integrity: sha512-RpwGE57xM4a/YCH6XWzfcPVRPAu/jiCll0bEGRn6a4iubN2k4xZizskQoRj8fuXyo9BpI7F3bwz3uxs0pWbGNw==}
     dependencies:
-      '@types/geojson': 7946.0.11
+      '@types/geojson': 7946.0.12
       '@types/mapbox__point-geometry': 0.1.2
       '@types/pbf': 3.0.3
     dev: false
@@ -1965,7 +1965,7 @@ packages:
   /@types/supercluster@7.1.1:
     resolution: {integrity: sha512-dNK02GO1UApgo+1KpY4jOfm3uWb2eBCMB/VMM2y8cMoF49FiqVVcOawEg19wxYcaX7SvEs370incOuFtFGrVLg==}
     dependencies:
-      '@types/geojson': 7946.0.11
+      '@types/geojson': 7946.0.12
     dev: false
 
   /@typescript-eslint/eslint-plugin@6.8.0(@typescript-eslint/parser@6.8.0)(eslint@8.51.0)(typescript@5.2.2):
@@ -4825,7 +4825,7 @@ packages:
       '@mapbox/vector-tile': 1.3.1
       '@mapbox/whoots-js': 3.1.0
       '@maplibre/maplibre-gl-style-spec': 19.3.2
-      '@types/geojson': 7946.0.11
+      '@types/geojson': 7946.0.12
       '@types/mapbox__point-geometry': 0.1.2
       '@types/mapbox__vector-tile': 1.3.1
       '@types/pbf': 3.0.3
