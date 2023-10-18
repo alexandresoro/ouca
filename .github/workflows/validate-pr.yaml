@@ -44,9 +44,9 @@ jobs:
 
 
       # From https://github.com/dependabot/fetch-metadata
-      - name: Approve a PR if not already approved - Patches
+      - name: Approve a PR if not already approved
         id: dependabot-approve
-        if: ${{ steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' }}
+        if: ${{ steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' || ( steps.dependabot-metadata.outputs.dependency-type == 'direct:development' && steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor') }}
         run: |
           gh pr checkout "$PR_URL" # sets the upstream metadata for `gh pr status`
           if [ "$(gh pr status --json reviewDecision -q .currentBranch.reviewDecision)" != "APPROVED" ];
