@@ -50,7 +50,7 @@
     "@turf/convex": "6.5.0",
     "@turf/helpers": "6.5.0",
     "date-fns": "2.30.0",
-    "i18next": "23.5.1",
+    "i18next": "23.6.0",
     "i18next-http-backend": "2.2.2",
     "jotai": "2.4.3",
     "maplibre-gl": "3.5.1",
