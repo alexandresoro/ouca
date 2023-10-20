@@ -168,6 +168,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
       selectionFeatureCollectionPolygon != null &&

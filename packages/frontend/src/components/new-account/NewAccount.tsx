@@ -25,6 +25,7 @@ const NewAccount: FunctionComponent = () => {
       enabled: enabledQuery,
     }
   );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setEnabledQuery(false);
   }, [userSettings]);

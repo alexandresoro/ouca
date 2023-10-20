@@ -26,6 +26,7 @@ export const buildInventaireAssocieRepository = ({ slonik }: SexeRepositoryDepen
     inventaireId: number,
     associeIds: number[],
     transaction?: DatabaseTransactionConnection
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ): Promise<QueryResult<void> | void> => {
     if (!associeIds.length) {
       return;

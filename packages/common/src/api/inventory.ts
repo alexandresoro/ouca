@@ -49,7 +49,10 @@ export const upsertInventoryInput = z.object({
       const date = new Date(dateStr);
       return isAfter(date, new Date(1990, 0, 1)) && isBefore(date, new Date(2100, 0, 1));
     }),
-  time: z.string().regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/).nullable(),
+  time: z
+    .string()
+    .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+    .nullable(),
   duration: z.number().nullable(),
   localityId: z.string().trim().min(1),
   coordinates: z
