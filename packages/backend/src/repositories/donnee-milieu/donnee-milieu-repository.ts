@@ -26,6 +26,7 @@ export const buildDonneeMilieuRepository = ({ slonik }: SexeRepositoryDependenci
     donneeId: number,
     milieuIds: number[],
     transaction?: DatabaseTransactionConnection
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ): Promise<QueryResult<void> | void> => {
     if (!milieuIds.length) {
       return;

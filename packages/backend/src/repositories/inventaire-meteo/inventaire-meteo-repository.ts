@@ -26,6 +26,7 @@ export const buildInventaireMeteoRepository = ({ slonik }: SexeRepositoryDepende
     inventaireId: number,
     meteoIds: number[],
     transaction?: DatabaseTransactionConnection
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ): Promise<QueryResult<void> | void> => {
     if (!meteoIds.length) {
       return;

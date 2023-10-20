@@ -21,6 +21,7 @@ export const writeExcelToBuffer = async (
           : {}),
       };
     });
+    // biome-ignore lint/complexity/noForEach: <explanation>
     objects.forEach((object) => {
       sheet.addRow(object).commit();
     });

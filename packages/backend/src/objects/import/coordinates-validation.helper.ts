@@ -31,7 +31,7 @@ export class CoordinatesValidatorHelper {
     const longitude = Number(longitudeStr);
 
     if (
-      isNaN(longitude) ||
+      Number.isNaN(longitude) ||
       longitude < GPS_COORDINATES.longitudeRange.min ||
       longitude > GPS_COORDINATES.longitudeRange.max
     ) {
@@ -47,7 +47,7 @@ export class CoordinatesValidatorHelper {
     const latitude = Number(latitudeStr);
 
     if (
-      isNaN(latitude) ||
+      Number.isNaN(latitude) ||
       latitude < GPS_COORDINATES.latitudeRange.min ||
       latitude > GPS_COORDINATES.latitudeRange.max
     ) {

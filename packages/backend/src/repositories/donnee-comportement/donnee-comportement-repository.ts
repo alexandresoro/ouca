@@ -26,6 +26,7 @@ export const buildDonneeComportementRepository = ({ slonik }: SexeRepositoryDepe
     donneeId: number,
     comportementIds: number[],
     transaction?: DatabaseTransactionConnection
+    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ): Promise<QueryResult<void> | void> => {
     if (!comportementIds.length) {
       return;
