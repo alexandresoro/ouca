@@ -26,6 +26,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
       libelle: "",
     },
     resolver: zodResolver(upsertSexInput),
+    mode: "onTouched",
   });
 
   return (

@@ -27,6 +27,7 @@ const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
       libelle: "",
     },
     resolver: zodResolver(upsertEnvironmentInput),
+    mode: "onTouched",
   });
 
   return (

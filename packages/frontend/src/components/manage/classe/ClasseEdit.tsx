@@ -26,6 +26,7 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
       libelle: "",
     },
     resolver: zodResolver(upsertClassInput),
+    mode: "onTouched",
   });
 
   return (

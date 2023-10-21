@@ -34,6 +34,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
       classId: undefined,
     },
     resolver: zodResolver(upsertSpeciesInput),
+    mode: "onTouched",
   });
 
   const {

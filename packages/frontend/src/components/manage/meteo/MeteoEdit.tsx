@@ -26,6 +26,7 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
       libelle: "",
     },
     resolver: zodResolver(upsertWeatherInput),
+    mode: "onTouched",
   });
 
   return (

@@ -31,6 +31,7 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
       nicheur: null,
     },
     resolver: zodResolver(upsertBehaviorInput),
+    mode: "onTouched",
   });
 
   const breedingStatuses = [

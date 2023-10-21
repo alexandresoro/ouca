@@ -26,6 +26,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
       libelle: "",
     },
     resolver: zodResolver(upsertObserverInput),
+    mode: "onTouched",
   });
 
   return (

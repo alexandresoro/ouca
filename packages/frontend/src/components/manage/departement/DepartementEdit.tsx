@@ -26,6 +26,7 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
       code: "",
     },
     resolver: zodResolver(upsertDepartmentInput),
+    mode: "onTouched",
   });
 
   return (

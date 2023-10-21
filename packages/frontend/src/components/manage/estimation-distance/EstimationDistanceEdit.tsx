@@ -26,6 +26,7 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
       libelle: ""
     },
     resolver: zodResolver(upsertDistanceEstimateInput),
+    mode: "onTouched",
   });
 
   return (

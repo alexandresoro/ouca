@@ -42,6 +42,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
       ...defaultValues,
     },
     resolver: zodResolver(upsertLocalityInput),
+    mode: "onTouched",
   });
 
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(defaultDepartmentId);

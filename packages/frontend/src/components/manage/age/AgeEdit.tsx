@@ -26,6 +26,7 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
       libelle: "",
     },
     resolver: zodResolver(upsertAgeInput),
+    mode: "onTouched",
   });
 
   return (

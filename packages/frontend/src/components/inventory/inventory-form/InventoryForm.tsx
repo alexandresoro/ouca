@@ -98,6 +98,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
     defaultValues: defaultFormValues,
     values: formValues,
     resolver: zodResolver(upsertInventoryInput),
+    mode: "onTouched",
   });
 
   const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {

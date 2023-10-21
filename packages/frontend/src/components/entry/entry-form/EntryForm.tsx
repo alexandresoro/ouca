@@ -81,6 +81,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
     values: defaultFormValues,
     // FIX: case where number is not provided but estimate is not "nonCompte" is considered valid and should not
     resolver: zodResolver(upsertEntryInput),
+    mode: "onTouched",
   });
 
   const onSubmit: SubmitHandler<EntryFormState> = (entryFormData) => {

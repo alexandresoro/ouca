@@ -28,6 +28,7 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
       nonCompte: false,
     },
     resolver: zodResolver(upsertNumberEstimateInput),
+    mode: "onTouched",
   });
 
   return (

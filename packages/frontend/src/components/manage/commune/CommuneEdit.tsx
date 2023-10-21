@@ -33,6 +33,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
       departmentId: undefined,
     },
     resolver: zodResolver(upsertTownInput),
+    mode: "onTouched",
   });
 
   const {
