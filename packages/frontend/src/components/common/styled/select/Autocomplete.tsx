@@ -9,6 +9,7 @@ import RequiredField from "../RequiredField";
 type AutocompleteProps<T> = {
   name?: string;
   label: string;
+  hasError?: boolean;
   value: T | null;
   required?: boolean;
   onChange?: (value: T | null) => void;
@@ -45,6 +46,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     decorationKeyClassName,
     renderValue,
     renderValueAsOption,
+    hasError,
     label,
     autocompleteClassName,
     labelClassName,
@@ -112,9 +114,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
           <div className={`w-full relative ${decorationKey ? "join" : ""}`} ref={refs.setReference}>
             {decorationKey && (
               <span
-                className={`join-item w-20 bg-base-300/40 flex items-center px-4 border border-primary border-r-0 border-opacity-70 ${
-                  decorationKeyClassName ?? ""
-                }`}
+                className={`join-item w-20 bg-base-300/40 flex items-center px-4 border ${
+                  hasError ? "border-error" : "border-primary"
+                } border-r-0 border-opacity-70 ${decorationKeyClassName ?? ""}`}
               >
                 {value?.[decorationKey] as string | number}
               </span>
@@ -124,9 +126,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
             </Combobox.Button>
             <Combobox.Input
               {...inputProps}
-              className={`joint-item flex-grow w-full input input-bordered input-primary text-base-content pr-10 ${
-                decorationKey ? "rounded-l-none" : ""
-              }`}
+              className={`joint-item flex-grow w-full input input-bordered ${
+                hasError ? "input-error" : "input-primary"
+              } text-base-content pr-10 ${decorationKey ? "rounded-l-none" : ""}`}
               displayValue={getDisplayValue}
               onChange={handleInputChange}
               onBlur={handleInputChange}

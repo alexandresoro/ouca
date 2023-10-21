@@ -9,6 +9,7 @@ import RequiredField from "../RequiredField";
 type AutocompleteMultipleProps<T extends object> = {
   name?: string;
   label: string;
+  hasError?: boolean;
   values: T[];
   required?: boolean;
   onChange?: (value: T[]) => void;
@@ -42,6 +43,7 @@ const AutocompleteMultiple = <T extends object,>(
     onInputChange,
     by,
     renderValue,
+    hasError,
     label,
     autocompleteClassName,
     labelClassName,
@@ -125,7 +127,10 @@ const AutocompleteMultiple = <T extends object,>(
             </Combobox.Label>
           </div>
           <div
-            className="w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-primary focus-within:outline-offset-2 input-primary gap-3 px-2"
+            className={`w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 
+            ${hasError ? "focus-within:outline-error" : "focus-within:outline-primary"} focus-within:outline-offset-2 ${
+              hasError ? "input-error" : "input-primary"
+            } gap-3 px-2`}
             ref={refs.setReference}
           >
             <Combobox.Input

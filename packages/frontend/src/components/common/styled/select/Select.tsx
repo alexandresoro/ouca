@@ -9,6 +9,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   data: T[] | null | undefined;
   name?: string;
   label: string;
+  hasError?: boolean;
   value: T | null;
   required?: boolean;
   onChange?: (value: T) => void;
@@ -21,7 +22,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   : { by: K });
 
 const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
-  const { data, name, value, required, onChange, by, renderValue, label, selectClassName } = props;
+  const { data, name, value, required, onChange, by, renderValue, hasError, label, selectClassName } = props;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-start",
@@ -68,7 +69,9 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
         </Listbox.Label>
       </div>
       <Listbox.Button
-        className="w-full select select-bordered select-primary items-center text-base-content"
+        className={`w-full select select-bordered ${
+          hasError ? "select-error" : "select-primary"
+        } items-center text-base-content`}
         ref={refs.setReference}
       >
         {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}

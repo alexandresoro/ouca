@@ -5,10 +5,11 @@ type TextAreaProps = {
   textAreaClassName?: string;
   label?: string;
   labelTextClassName?: string;
+  hasError?: boolean;
 } & ComponentPropsWithRef<"textarea">;
 
 const TextArea: FunctionComponent<TextAreaProps> = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  ({ textAreaClassName, label, labelTextClassName, ...inputProps }, ref) => {
+  ({ textAreaClassName, label, labelTextClassName, hasError, ...inputProps }, ref) => {
     const { className, ...restInputProps } = inputProps;
 
     return (
@@ -23,7 +24,9 @@ const TextArea: FunctionComponent<TextAreaProps> = forwardRef<HTMLTextAreaElemen
         )}
 
         <textarea
-          className={`textarea textarea-primary textarea-bordered ${className ?? ""}`}
+          className={`textarea ${hasError ? "textarea-error" : "textarea-primary"} textarea-bordered ${
+            className ?? ""
+          }`}
           {...restInputProps}
           ref={ref}
         />
