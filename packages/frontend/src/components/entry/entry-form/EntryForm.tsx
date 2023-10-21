@@ -160,7 +160,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
               />
             </div>
             <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
-              <EntryFormComment register={register} />
+              <EntryFormComment register={register} control={control} />
             </div>
           </fieldset>
           <button

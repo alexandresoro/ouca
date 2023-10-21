@@ -5,7 +5,7 @@ import { type Age } from "@ou-ca/common/entities/age";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Sex } from "@ou-ca/common/entities/sex";
 import { useEffect, useState, type FunctionComponent } from "react";
-import { useController, type UseFormReturn } from "react-hook-form";
+import { useController, useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import TextInput from "../../common/styled/TextInput";
@@ -61,25 +61,30 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
   }, [defaultAge]);
 
   const {
-    field: { ref: refNumberEstimate, onChange: onChangeNumberEstimateForm },
+    field: { ref: refNumberEstimate, onChange: onChangeNumberEstimateForm, onBlur: onBlurNumberEstimate },
+    fieldState: { error: errorNumberEstimate },
   } = useController({
     name: "numberEstimateId",
     control,
   });
 
   const {
-    field: { ref: refSex, onChange: onChangeSexForm },
+    field: { ref: refSex, onChange: onChangeSexForm, onBlur: onBlurSex },
+    fieldState: { error: errorSex },
   } = useController({
     name: "sexId",
     control,
   });
 
   const {
-    field: { ref: refAge, onChange: onChangeAgeForm },
+    field: { ref: refAge, onChange: onChangeAgeForm, onBlur: onBlurAge },
+    fieldState: { error: errorAge },
   } = useController({
     name: "ageId",
     control,
   });
+
+  const { errors } = useFormState({ control });
 
   useEffect(() => {
     // When the selected numberEstimate changes, update both the input and the form value
@@ -164,6 +169,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
           label={t("observationsTable.header.number")}
           type="number"
           disabled={selectedNumberEstimate?.nonCompte}
+          hasError={!!errors.number}
         />
         <Autocomplete
           ref={refNumberEstimate}
@@ -173,9 +179,11 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
           label={t("entryForm.numberPrecision")}
           onInputChange={setNumberEstimateInput}
           onChange={handleChangeSelectedNumberEstimate}
+          onBlur={onBlurNumberEstimate}
           value={selectedNumberEstimate}
           renderValue={renderNumberEstimate}
           labelTextClassName="first-letter:capitalize"
+          hasError={!!errorNumberEstimate}
         />
       </div>
       <Autocomplete
@@ -186,9 +194,11 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
         label={t("entryForm.gender")}
         onInputChange={setSexInput}
         onChange={setSelectedSex}
+        onBlur={onBlurSex}
         value={selectedSex}
         renderValue={renderSex}
         labelTextClassName="first-letter:capitalize"
+        hasError={!!errorSex}
       />
       <Autocomplete
         ref={refAge}
@@ -198,9 +208,11 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
         label={t("entryForm.age")}
         onInputChange={setAgeInput}
         onChange={setSelectedAge}
+        onBlur={onBlurAge}
         value={selectedAge}
         renderValue={renderAge}
         labelTextClassName="first-letter:capitalize"
+        hasError={!!errorAge}
       />
     </div>
   );

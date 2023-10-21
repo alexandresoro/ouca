@@ -40,7 +40,8 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(initialSpecies ?? null);
 
   const {
-    field: { ref: refSpecies, onChange: onChangeSpeciesForm },
+    field: { ref: refSpecies, onChange: onChangeSpeciesForm, onBlur: onBlurSpecies },
+    fieldState: { error: errorSpecies },
   } = useController({
     name: "speciesId",
     control,
@@ -120,10 +121,12 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
         decorationKeyClassName="w-28"
         onInputChange={setSpeciesInput}
         onChange={setSelectedSpecies}
+        onBlur={onBlurSpecies}
         value={selectedSpecies}
         renderValue={renderSpecies}
         renderValueAsOption={renderSpeciesComplete}
         labelTextClassName="first-letter:capitalize"
+        hasError={!!errorSpecies}
       />
     </div>
   );

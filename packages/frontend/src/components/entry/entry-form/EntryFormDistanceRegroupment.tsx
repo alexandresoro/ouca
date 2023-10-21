@@ -2,7 +2,7 @@ import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimat
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { MagicWand } from "@styled-icons/boxicons-solid";
 import { useEffect, useState, type FunctionComponent } from "react";
-import { useController, type UseFormReturn } from "react-hook-form";
+import { useController, useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import useApiFetch from "../../../hooks/api/useApiFetch";
@@ -43,11 +43,14 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
   });
 
   const {
-    field: { ref: refDistanceEstimate, onChange: onChangeDistanceEstimateForm },
+    field: { ref: refDistanceEstimate, onChange: onChangeDistanceEstimateForm, onBlur: onBlurDistanceEstimate },
+    fieldState: { error: errorDistanceEstimate },
   } = useController({
     name: "distanceEstimateId",
     control,
   });
+
+  const { errors } = useFormState({ control });
 
   useEffect(() => {
     // When the selected distanceEstimate changes, update both the input and the form value
@@ -93,9 +96,11 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
             label={t("entryForm.distancePrecision")}
             onInputChange={setDistanceEstimateInput}
             onChange={setSelectedDistanceEstimate}
+            onBlur={onBlurDistanceEstimate}
             value={selectedDistanceEstimate}
             renderValue={renderDistanceEstimate}
             labelTextClassName="first-letter:capitalize"
+            hasError={!!errorDistanceEstimate}
           />
           <TextInput
             {...register("distance", {
@@ -106,6 +111,7 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
             textInputClassName="py-1"
             label={t("entryForm.distance")}
             type="number"
+            hasError={!!errors.distance}
           />
         </div>
       )}
@@ -118,6 +124,7 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
             textInputClassName="w-36 py-1"
             label={t("entryForm.regroupment")}
             type="number"
+            hasError={!!errors.regroupment}
           />
           <div
             className="tooltip tooltip-bottom absolute right-5 bottom-[30px]"
