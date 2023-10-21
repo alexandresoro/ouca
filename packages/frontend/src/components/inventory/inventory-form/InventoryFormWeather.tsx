@@ -1,7 +1,7 @@
 import { getWeathersResponse } from "@ou-ca/common/api/weather";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { useEffect, useState, type FunctionComponent } from "react";
-import { useController, type UseFormReturn } from "react-hook-form";
+import { useController, useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import TextInput from "../../common/styled/TextInput";
@@ -19,9 +19,14 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
   const [selectedWeathers, setSelectedWeathers] = useState<Weather[]>(defaultWeathers ?? []);
 
   const {
-    field: { ref: refWeathers, onChange: onChangeWeathersForm },
+    field: { ref: refWeathers, onChange: onChangeWeathersForm, onBlur: onBlurWeathersForm },
+    fieldState: { error: errorWeatherId },
   } = useController({
     name: "weatherIds",
+    control,
+  });
+
+  const { errors } = useFormState({
     control,
   });
 
@@ -53,6 +58,7 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
         textInputClassName="w-24 py-1"
         label={t("inventoryForm.temperature")}
         type="number"
+        hasError={!!errors.temperature}
       />
       <AutocompleteMultiple
         ref={refWeathers}
@@ -61,7 +67,9 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
         label={t("inventoryForm.weathers")}
         onInputChange={setWeathersInput}
         onChange={setSelectedWeathers}
+        onBlur={onBlurWeathersForm}
         values={selectedWeathers}
+        hasError={!!errorWeatherId}
         renderValue={({ libelle }) => libelle}
         autocompleteClassName="flex-grow"
         labelTextClassName="first-letter:capitalize"

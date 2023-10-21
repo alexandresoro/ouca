@@ -38,14 +38,16 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>(defaultAssociates ?? []);
 
   const {
-    field: { ref: refObserver, onChange: onChangeObserverForm },
+    field: { ref: refObserver, onChange: onChangeObserverForm, onBlur: onBlurObserver },
+    fieldState: { error: errorObserverId },
   } = useController({
     name: "observerId",
     control,
   });
 
   const {
-    field: { ref: refAssociates, onChange: onChangeAssociatesForm },
+    field: { ref: refAssociates, onChange: onChangeAssociatesForm, onBlur: onBlurAssociates },
+    fieldState: { error: errorAssociateIds },
   } = useController({
     name: "associateIds",
     control,
@@ -105,9 +107,11 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         label={t("observer")}
         onInputChange={setObservateurInput}
         onChange={setSelectedObserver}
+        onBlur={onBlurObserver}
         value={selectedObserver}
         renderValue={renderObserver}
         labelTextClassName="first-letter:capitalize"
+        hasError={!!errorObserverId}
       />
       {areAssociesDisplayed && (
         <AutocompleteMultiple
@@ -117,9 +121,11 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
           label={t("associateObservers_other")}
           onInputChange={setAssociatesInput}
           onChange={setSelectedAssociates}
+          onBlur={onBlurAssociates}
           values={selectedAssociates}
           renderValue={({ libelle }) => libelle}
           labelTextClassName="first-letter:capitalize"
+          hasError={!!errorAssociateIds}
         />
       )}
     </>

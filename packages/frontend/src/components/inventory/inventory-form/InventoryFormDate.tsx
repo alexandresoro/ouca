@@ -1,15 +1,19 @@
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
-import { type UseFormRegister } from "react-hook-form";
+import { useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../common/styled/TextInput";
 import { type InventoryFormState } from "./InventoryFormState";
 
-type InventoryFormDateProps = { register: UseFormRegister<InventoryFormState> };
+type InventoryFormDateProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register">;
 
-const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register }) => {
+const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register, control }) => {
   const { t } = useTranslation();
+
+  const { errors } = useFormState({
+    control,
+  });
 
   return (
     <div className="flex gap-2">
@@ -21,6 +25,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
         label={t("inventoryForm.date")}
         type="date"
         required
+        hasError={!!errors.date}
       />
       <TextInput
         {...register("time", {
@@ -29,6 +34,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
         textInputClassName="py-1"
         label={t("inventoryForm.time")}
         type="time"
+        hasError={!!errors.time}
       />
       <TextInput
         {...register("duration", {
@@ -44,6 +50,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
           </span>
         }
         type="text"
+        hasError={!!errors.duration}
       />
     </div>
   );

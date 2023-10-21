@@ -8,7 +8,7 @@ import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
-import { useController, type UseFormReturn } from "react-hook-form";
+import { useController, useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { altitudeServiceStatusAtom } from "../../../atoms/altitudeServiceAtom";
 import {
@@ -135,11 +135,14 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   }, [town, department, setDepartmentId]);
 
   const {
-    field: { ref: refLocality },
+    field: { ref: refLocality, onBlur: onBlurLocality },
+    fieldState: { error: errorLocality },
   } = useController({
     name: "localityId",
     control,
   });
+
+  const { errors } = useFormState({ control });
 
   const { data: dataDepartments } = useApiQuery(
     {
@@ -261,9 +264,11 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         required
         onInputChange={setLocalityInput}
         onChange={handleLocalityChange}
+        onBlur={onBlurLocality}
         value={locality}
         renderValue={renderLocality}
         labelTextClassName="first-letter:capitalize"
+        hasError={!!errorLocality}
       />
       <div className="flex gap-2">
         <TextInput
@@ -276,6 +281,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           label={t("latitude")}
           type="number"
           step="any"
+          hasError={!!errors.coordinates?.latitude}
         />
         <TextInput
           {...register("coordinates.longitude", {
@@ -287,6 +293,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           label={t("longitude")}
           type="number"
           step="any"
+          hasError={!!errors.coordinates?.longitude}
         />
         <TextInput
           {...register("coordinates.altitude", {
@@ -297,6 +304,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           textInputClassName="flex-grow w-24 py-1"
           label={t("altitude")}
           type="number"
+          hasError={!!errors.coordinates?.altitude}
         />
       </div>
       {areCoordinatesCustomized && (

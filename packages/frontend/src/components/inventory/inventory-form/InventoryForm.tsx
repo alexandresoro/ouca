@@ -94,6 +94,12 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
     formState: { isValid, isDirty },
     handleSubmit,
   } = useForm<InventoryFormState>({
+    // FIXME: We have a limitation in error feedback
+    // Basically whenever one of [locality, latitude, longitude, altitude] changes
+    // it internally triggers a reset on the form that loses all errors
+    // Option keepErrors fixes that, but on the other hand will not set back as valid
+    // so the opposite...
+    // trigger may help but it also break other cases
     resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
     values: formValues,
@@ -122,7 +128,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
               />
             </div>
             <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
-              <InventoryFormDate register={register} />
+              <InventoryFormDate register={register} control={control} />
             </div>
             <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
               <InventoryFormLocation
