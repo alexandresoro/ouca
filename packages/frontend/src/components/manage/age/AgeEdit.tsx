@@ -19,7 +19,7 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
 
   const {
     register,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertAgeInput>({
     defaultValues: defaultValues ?? {
@@ -31,7 +31,7 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput label={t("label")} type="text" required {...register("libelle")} />
+      <TextInput label={t("label")} type="text" required {...register("libelle")} hasError={!!errors.libelle} />
       <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
     </form>
   );

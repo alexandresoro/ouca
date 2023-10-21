@@ -20,7 +20,7 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
 
   const {
     register,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertNumberEstimateInput>({
     defaultValues: defaultValues ?? {
@@ -33,7 +33,7 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput label={t("label")} type="text" required {...register("libelle")} />
+      <TextInput label={t("label")} type="text" required {...register("libelle")} hasError={!!errors.libelle} />
       <Checkbox label={t("undefinedNumber")} {...register("nonCompte")} />
       <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
     </form>

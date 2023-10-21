@@ -19,7 +19,7 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
 
   const {
     register,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertDistanceEstimateInput>({
     defaultValues: defaultValues ??{
@@ -36,6 +36,7 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
         type="text"
         required
         {...register("libelle")}
+        hasError={!!errors.libelle}
       />
       <EntityUpsertFormActionButtons
         className="mt-6"

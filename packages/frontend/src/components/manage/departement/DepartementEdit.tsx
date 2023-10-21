@@ -19,7 +19,7 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
 
   const {
     register,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertDepartmentInput>({
     defaultValues: defaultValues ?? {
@@ -31,7 +31,7 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput label={t("code")} type="text" required {...register("code")} />
+      <TextInput label={t("code")} type="text" required {...register("code")} hasError={!!errors.code} />
 
       <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
     </form>

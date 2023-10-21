@@ -24,7 +24,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
   const {
     register,
     control,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertSpeciesInput>({
     defaultValues: defaultValues ?? {
@@ -79,9 +79,21 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
           renderValue={({ libelle }) => libelle}
         />
 
-        <TextInput label={t("speciesCode")} type="text" required {...register("code")} />
-        <TextInput label={t("localizedName")} type="text" required {...register("nomFrancais")} />
-        <TextInput label={t("scientificName")} type="text" required {...register("nomLatin")} />
+        <TextInput label={t("speciesCode")} type="text" required {...register("code")} hasError={!!errors.code} />
+        <TextInput
+          label={t("localizedName")}
+          type="text"
+          required
+          {...register("nomFrancais")}
+          hasError={!!errors.nomFrancais}
+        />
+        <TextInput
+          label={t("scientificName")}
+          type="text"
+          required
+          {...register("nomLatin")}
+          hasError={!!errors.nomLatin}
+        />
 
         <EntityUpsertFormActionButtons
           className="mt-6"

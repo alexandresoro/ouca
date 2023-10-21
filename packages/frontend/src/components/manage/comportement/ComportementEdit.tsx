@@ -22,7 +22,7 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
   const {
     register,
     control,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertBehaviorInput>({
     defaultValues: defaultValues ?? {
@@ -55,9 +55,9 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput label={t("code")} type="text" required {...register("code")} />
+      <TextInput label={t("code")} type="text" required {...register("code")} hasError={!!errors.code} />
 
-      <TextInput label={t("label")} type="text" required {...register("libelle")} />
+      <TextInput label={t("label")} type="text" required {...register("libelle")} hasError={!!errors.libelle} />
 
       <FormSelect
         name="nicheur"

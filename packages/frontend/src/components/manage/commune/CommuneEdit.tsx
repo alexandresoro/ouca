@@ -24,7 +24,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   const {
     register,
     control,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertTownInput>({
     defaultValues: defaultValues ?? {
@@ -77,8 +77,8 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
         renderValue={({ code }) => code}
       />
 
-      <TextInput label={t("townCode")} type="text" required {...register("code")} />
-      <TextInput label={t("townName")} type="text" required {...register("nom")} />
+      <TextInput label={t("townCode")} type="text" required {...register("code")} hasError={!!errors.code} />
+      <TextInput label={t("townName")} type="text" required {...register("nom")} hasError={!!errors.nom} />
 
       <EntityUpsertFormActionButtons
         className="mt-6"

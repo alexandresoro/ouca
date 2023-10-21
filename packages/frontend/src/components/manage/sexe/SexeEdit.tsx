@@ -19,7 +19,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
 
   const {
     register,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertSexInput>({
     defaultValues: defaultValues ?? {
@@ -38,6 +38,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
         {...register("libelle", {
           required: t("requiredFieldError"),
         })}
+        hasError={!!errors.libelle}
       />
       <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
     </form>

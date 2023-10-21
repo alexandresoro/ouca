@@ -9,8 +9,8 @@ import { useTranslation } from "react-i18next";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
-import TextInput from "../../common/styled/TextInput";
 import Select from "../../common/styled/select/Select";
+import TextInput from "../../common/styled/TextInput";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type LieuDitEditProps = {
@@ -30,7 +30,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     setValue,
     getValues,
     control,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertLocalityInput>({
     defaultValues: {
@@ -140,7 +140,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
         />
       </div>
 
-      <TextInput label={t("localityName")} type="text" required {...register("nom")} />
+      <TextInput label={t("localityName")} type="text" required {...register("nom")} hasError={!!errors.nom} />
 
       <h3 className="font-semibold mt-6">{t("localityCoordinates")}</h3>
 
@@ -154,6 +154,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
           {...register("latitude", {
             valueAsNumber: true,
           })}
+          hasError={!!errors.latitude}
         />
 
         <TextInput
@@ -165,6 +166,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
           {...register("longitude", {
             valueAsNumber: true,
           })}
+          hasError={!!errors.longitude}
         />
 
         <TextInput
@@ -176,6 +178,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
           {...register("altitude", {
             valueAsNumber: true,
           })}
+          hasError={!!errors.altitude}
         />
       </div>
 
