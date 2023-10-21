@@ -33,7 +33,7 @@ export const getDepartmentsExtendedResponse = getPaginatedResponseSchema(departm
  * `POST` `/department` Create new department entity
  */
 export const upsertDepartmentInput = z.object({
-  code: z.string(),
+  code: z.string().trim().min(1),
 });
 
 export type UpsertDepartmentInput = z.infer<typeof upsertDepartmentInput>;
