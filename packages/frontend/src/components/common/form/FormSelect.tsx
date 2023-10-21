@@ -24,7 +24,8 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
   const { data, by, renderValue, name, label, required, defaultValue, control, rules, selectClassName } = props;
 
   const {
-    field: { ref, value, onChange },
+    field: { ref, value, onChange, onBlur },
+    fieldState: { error },
   } = useController({
     name,
     control,
@@ -50,8 +51,10 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
       by={by as K}
       value={selectedEntry}
       onChange={handleOnChange}
+      onBlur={onBlur}
       renderValue={renderValue}
       selectClassName={selectClassName}
+      hasError={!!error}
     />
   );
 };

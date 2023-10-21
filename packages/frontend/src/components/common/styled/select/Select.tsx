@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Listbox } from "@headlessui/react";
 import { Check } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ForwardedRef, type Key } from "react";
+import { forwardRef, type FocusEventHandler, type ForwardedRef, type Key } from "react";
 import { type ConditionalKeys } from "type-fest";
 import RequiredField from "../RequiredField";
 
@@ -13,6 +13,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   value: T | null;
   required?: boolean;
   onChange?: (value: T) => void;
+  onBlur?: FocusEventHandler<HTMLButtonElement>;
   renderValue: (value: T) => string;
   selectClassName?: string;
 } & (T extends { id: Key }
@@ -22,7 +23,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   : { by: K });
 
 const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
-  const { data, name, value, required, onChange, by, renderValue, hasError, label, selectClassName } = props;
+  const { data, name, value, required, onChange, onBlur, by, renderValue, hasError, label, selectClassName } = props;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-start",
@@ -73,6 +74,7 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
           hasError ? "select-error" : "select-primary"
         } items-center text-base-content`}
         ref={refs.setReference}
+        onBlur={onBlur}
       >
         {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
       </Listbox.Button>
