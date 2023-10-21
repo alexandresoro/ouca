@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ComponentPropsWithoutRef, type ForwardedRef, type Key } from "react";
+import { forwardRef, type ComponentPropsWithoutRef, type FocusEventHandler, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 import RequiredField from "../RequiredField";
@@ -13,6 +13,7 @@ type AutocompleteProps<T> = {
   value: T | null;
   required?: boolean;
   onChange?: (value: T | null) => void;
+  onBlur?: FocusEventHandler<HTMLDivElement>;
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
   renderValueAsOption?: (value: T) => string;
@@ -40,6 +41,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     value,
     required,
     onChange,
+    onBlur,
     onInputChange,
     by,
     decorationKey,
@@ -99,6 +101,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
       name={name}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       by={key}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
       nullable

@@ -13,6 +13,7 @@ type AutocompleteMultipleProps<T extends object> = {
   values: T[];
   required?: boolean;
   onChange?: (value: T[]) => void;
+  onBlur?: FocusEventHandler<HTMLDivElement>;
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
   autocompleteClassName?: string;
@@ -40,6 +41,7 @@ const AutocompleteMultiple = <T extends object,>(
     values,
     required,
     onChange,
+    onBlur,
     onInputChange,
     by,
     renderValue,
@@ -113,6 +115,7 @@ const AutocompleteMultiple = <T extends object,>(
       name={name}
       value={values}
       onChange={onChange}
+      onBlur={onBlur}
       // Ugly workaround weird types in combobox w/ TS 5.0
       by={key as keyof unknown}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
