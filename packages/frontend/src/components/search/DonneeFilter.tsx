@@ -6,31 +6,30 @@ import AutocompleteMultiple from "../common/styled/select/AutocompleteMultiple";
 const DonneeFilter: FunctionComponent = () => {
   const { t } = useTranslation();
 
+  const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(true);
   const [values, setValues] = useState<{ id: string }[]>([]);
 
   // TODO put real values
   const options = ["Option 1", "Option 2"];
 
   return (
-    <>
-      <div className="card border-2 border-primary bg-base-100 shadow-xl">
-        <div className="card-body">
-          <AutocompleteMultiple
-            label={t("observationFilter.searchCriteria")}
-            data={options.map((option) => {
-              return { id: option };
-            })}
-            values={values}
-            renderValue={({ id }) => id}
-            onChange={setValues}
-          />
-          <Switch label={t("observationFilter.displayOnlyMyObservations")} />
-          <button type="button" className="btn btn-outline btn-primary mt-2">
-            {t("observationFilter.exportToExcel")}
-          </button>
-        </div>
-      </div>
-    </>
+    <div>
+      <h2 className="text-xl font-semibold mb-6">{t("observationFilter.search")}</h2>
+      <Switch
+        label={t("observationFilter.displayOnlyMyObservations")}
+        checked={displayOnlyOwnObservations}
+        onChange={setDisplayOnlyOwnObservations}
+      />
+      <AutocompleteMultiple
+        label={t("observationFilter.search")}
+        data={options.map((option) => {
+          return { id: option };
+        })}
+        values={values}
+        renderValue={({ id }) => id}
+        onChange={setValues}
+      />
+    </div>
   );
 };
 

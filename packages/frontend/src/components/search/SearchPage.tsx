@@ -15,40 +15,55 @@ const SearchPage: FunctionComponent = () => {
   return (
     <>
       <ContentContainerLayout>
-        {features.tmp_view_search_filters && <DonneeFilter />}
+        <div className="flex gap-16">
+          {features.tmp_view_search_filters && (
+            <div className="flex-shrink-0 w-80">
+              <DonneeFilter />
+            </div>
+          )}
 
-        <Tab.Group>
-          <Tab.List className="join mt-6 mb-2">
-            <Tab as={Fragment}>
-              {({ selected }) => (
-                <button
-                  type="button"
-                  className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
-                >
-                  {t("view.tab.observations")}
-                </button>
-              )}
-            </Tab>
-            <Tab as={Fragment}>
-              {({ selected }) => (
-                <button
-                  type="button"
-                  className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
-                >
-                  {t("view.tab.species")}
-                </button>
-              )}
-            </Tab>
-          </Tab.List>
-          <Tab.Panels>
-            <Tab.Panel>
-              <SearchEntriesTable />
-            </Tab.Panel>
-            <Tab.Panel>
-              <SearchSpeciesTable />
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
+          <div className="flex-grow">
+            <Tab.Group>
+              <div className="flex justify-between mb-12">
+                <Tab.List className="join">
+                  <Tab as={Fragment}>
+                    {({ selected }) => (
+                      <button
+                        type="button"
+                        className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
+                      >
+                        {t("view.tab.observations")}
+                      </button>
+                    )}
+                  </Tab>
+                  <Tab as={Fragment}>
+                    {({ selected }) => (
+                      <button
+                        type="button"
+                        className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
+                      >
+                        {t("view.tab.species")}
+                      </button>
+                    )}
+                  </Tab>
+                </Tab.List>
+                {features.tmp_export_search_results && (
+                  <button type="button" className="btn btn-sm btn-outline btn-secondary mt-2">
+                    {t("observationFilter.exportToExcel")}
+                  </button>
+                )}
+              </div>
+              <Tab.Panels>
+                <Tab.Panel>
+                  <SearchEntriesTable />
+                </Tab.Panel>
+                <Tab.Panel>
+                  <SearchSpeciesTable />
+                </Tab.Panel>
+              </Tab.Panels>
+            </Tab.Group>
+          </div>
+        </div>
       </ContentContainerLayout>
     </>
   );

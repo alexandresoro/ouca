@@ -91,9 +91,9 @@
     "dataNotFound": "La donnée que vous recherchez n'existe pas."
   },
   "observationFilter": {
-    "displayOnlyMyObservations": "Afficher uniquement mes observations",
-    "exportToExcel": "Exporter les résultats dans un fichier Excel",
-    "searchCriteria": "Critères de recherche"
+    "search": "Recherche d'observations",
+    "displayOnlyMyObservations": "Uniquement mes observations",
+    "exportToExcel": "Exporter au format Excel"
   },
   "department": "Département",
   "departmentAlreadyExistingError": "Il existe déjà un département identique.",

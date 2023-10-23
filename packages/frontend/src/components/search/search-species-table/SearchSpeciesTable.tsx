@@ -1,6 +1,8 @@
 import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
+import { useAtomValue } from "jotai";
 import { Fragment, useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { searchEntriesCriteriaAtom } from "../../../atoms/searchEntriesCriteriaAtom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
@@ -39,6 +41,8 @@ const SearchSpeciesTable: FunctionComponent = () => {
     setSortOrder("desc");
   }, [setOrderBy, setSortOrder]);
 
+  const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
+
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
     {
       path: "/species",
@@ -47,7 +51,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
         orderBy,
         sortOrder,
         extended: true,
-        // TODO add search criteria
+        ...searchCriteria,
       },
       schema: getSpeciesExtendedResponse,
     },

@@ -1,7 +1,9 @@
 import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/api/entry";
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { useAtomValue } from "jotai";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { searchEntriesCriteriaAtom } from "../../../atoms/searchEntriesCriteriaAtom";
 import { useApiEntryDelete } from "../../../hooks/api/queries/api-entry-queries";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -45,6 +47,8 @@ const SearchEntriesTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
+  const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
+
   const { data, refetch, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
     {
       path: "/entries",
@@ -53,7 +57,7 @@ const SearchEntriesTable: FunctionComponent = () => {
         orderBy,
         sortOrder,
         extended: true,
-        // TODO add search criteria
+        ...searchCriteria,
       },
       schema: getEntriesExtendedResponse,
     },
