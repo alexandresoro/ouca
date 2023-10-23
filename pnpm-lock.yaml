@@ -372,8 +372,8 @@ importers:
         specifier: 1.3.1
         version: 1.3.1(typescript@5.2.2)(vitest@0.34.6)
       wireit:
-        specifier: 0.14.0
-        version: 0.14.0
+        specifier: 0.14.1
+        version: 0.14.1
 
 packages:
 
@@ -7160,8 +7160,8 @@ packages:
       stackback: 0.0.2
     dev: true
 
-  /wireit@0.14.0:
-    resolution: {integrity: sha512-CwHhyWduARI7zOoyyQvxH6U/5GTy8p6RxTe2LpwIhE4Y8PbaTk0iH8dLkeGMvxETVBkxCgQnF2GfzYKXMSmYSw==}
+  /wireit@0.14.1:
+    resolution: {integrity: sha512-q5sixPM/vKQEpyaub6J9QoHAFAF9g4zBdnjoYelH9/RLAekcUf3x1dmFLACGZ6nYjqehCsTlXC1irmzU7znPhA==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     dependencies:
