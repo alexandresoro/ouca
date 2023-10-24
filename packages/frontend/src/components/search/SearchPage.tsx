@@ -3,8 +3,8 @@ import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../../hooks/useAppContext";
 import ContentContainerLayout from "../layout/ContentContainerLayout";
-import DonneeFilter from "./DonneeFilter";
 import SearchEntriesTable from "./search-entries-table/SearchEntriesTable";
+import SearchFilterPanel from "./search-filter-panel/SearchFilterPanel";
 import SearchSpeciesTable from "./search-species-table/SearchSpeciesTable";
 
 const SearchPage: FunctionComponent = () => {
@@ -18,7 +18,7 @@ const SearchPage: FunctionComponent = () => {
         <div className="flex gap-16">
           {features.tmp_view_search_filters && (
             <div className="flex-shrink-0 w-80">
-              <DonneeFilter />
+              <SearchFilterPanel />
             </div>
           )}
 

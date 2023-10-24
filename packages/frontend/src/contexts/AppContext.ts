@@ -6,6 +6,7 @@ export type AppContext = {
   features: {
     tmp_import: boolean;
     tmp_view_search_filters: boolean;
+    tmp_only_own_observations_filter: boolean;
     tmp_export_search_results: boolean;
   };
 };
@@ -16,6 +17,7 @@ export const DEFAULT_CONFIG = {
   features: {
     tmp_import: false,
     tmp_view_search_filters: false,
+    tmp_only_own_observations_filter: false,
     tmp_export_search_results: false,
   },
 } satisfies AppContext;
