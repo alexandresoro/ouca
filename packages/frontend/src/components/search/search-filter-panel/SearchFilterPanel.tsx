@@ -1,5 +1,9 @@
+import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
+import { useAtom } from "jotai";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { searchEntriesFilterSpeciesAtom } from "../../../atoms/searchEntriesCriteriaAtom";
+import useSWRApiQuery from "../../../hooks/api/useSWRApiQuery";
 import useAppContext from "../../../hooks/useAppContext";
 import Switch from "../../common/styled/Switch";
 import AutocompleteMultipleWithSelection from "../../common/styled/select/AutocompleteMultipleWithSelection";
@@ -12,10 +16,16 @@ const SearchFilterPanel: FunctionComponent = () => {
   const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
     features.tmp_only_own_observations_filter
   );
-  const [values, setValues] = useState<{ id: string }[]>([]);
 
-  // TODO put real values
-  const options = ["Option 1", "Option 2"];
+  const [speciesInput, setSpeciesInput] = useState("");
+  const [selectedSpecies, setSelectedSpecies] = useAtom(searchEntriesFilterSpeciesAtom);
+  const { data: dataSpecies } = useSWRApiQuery("/species", {
+    queryParams: {
+      q: speciesInput,
+      pageSize: 5,
+    },
+    schema: getSpeciesPaginatedResponse,
+  });
 
   return (
     <div>
@@ -29,12 +39,11 @@ const SearchFilterPanel: FunctionComponent = () => {
       )}
       <AutocompleteMultipleWithSelection
         label={t("species")}
-        data={options.map((option) => {
-          return { id: option };
-        })}
-        values={values}
-        renderValue={({ id }) => id}
-        onChange={setValues}
+        data={dataSpecies?.data ?? []}
+        onInputChange={setSpeciesInput}
+        onChange={setSelectedSpecies}
+        values={selectedSpecies}
+        renderValue={({ nomFrancais }) => nomFrancais}
       />
     </div>
   );
