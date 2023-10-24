@@ -2,7 +2,7 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../../../hooks/useAppContext";
 import Switch from "../../common/styled/Switch";
-import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
+import AutocompleteMultipleWithSelection from "../../common/styled/select/AutocompleteMultipleWithSelection";
 
 const SearchFilterPanel: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ const SearchFilterPanel: FunctionComponent = () => {
           onChange={setDisplayOnlyOwnObservations}
         />
       )}
-      <AutocompleteMultiple
+      <AutocompleteMultipleWithSelection
         label={t("species")}
         data={options.map((option) => {
           return { id: option };
