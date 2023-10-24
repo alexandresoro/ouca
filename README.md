@@ -11,7 +11,7 @@ This project also provides a web application that consumes the API and allows a 
 
 ## Prerequisites
 
-- _Node.js 18_ or later
+- _Node.js 20_ or later
 - _pnpm 8_ or later
 - PostgreSQL 15 or newer to store the data.
 - A Redis instance used as temporary cache.

@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # 1. Transpile the project
-FROM node:18-alpine as build
+FROM node:20-alpine as build
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN pnpm i --frozen-lockfile
 RUN pnpm run backend build
 
 # 2. Run the NodeJS backend
-FROM node:18-alpine
+FROM node:20-alpine
 ENV NODE_ENV=production
 
 # Install only the dependencies that are required at runtime
