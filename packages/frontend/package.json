@@ -63,6 +63,7 @@
     "react-map-gl": "7.1.6",
     "react-oidc-context": "2.3.1",
     "react-router-dom": "6.17.0",
+    "swr": "2.2.4",
     "zod": "3.22.4"
   },
   "devDependencies": {
