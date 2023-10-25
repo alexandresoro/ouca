@@ -4,7 +4,7 @@ const fetchApi = async <T = unknown>({
   url,
   token,
   schema,
-}: { url: string; token: string; schema?: z.ZodType<T> }): Promise<T> => {
+}: { url: string; token?: string; schema?: z.ZodType<T> }): Promise<T> => {
   const response = await fetch(url, {
     headers: {
       ...(token
