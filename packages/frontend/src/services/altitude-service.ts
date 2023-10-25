@@ -1,8 +1,26 @@
 import { getDefaultStore } from "jotai";
+import { LRUCache } from "lru-cache";
 import { altitudeServiceStatusAtom } from "../atoms/altitudeServiceAtom";
-import { queryClient } from "../query/query-client";
 import { type CoordinatesWithAltitude } from "../types/Coordinates";
 import { getAltitudeForCoordinates } from "./ign-alticodage-service";
+
+const altitudeServiceCache = new LRUCache<string, number>({
+  max: 1000,
+  fetchMethod: async (key) => {
+    const coordinates = JSON.parse(key) as {
+      latitude: number;
+      longitude: number;
+    };
+    const ignAltimetrieServiceResult = await getAltitudeForCoordinates(coordinates);
+    switch (ignAltimetrieServiceResult.outcome) {
+      case "success":
+        // Round the altitude returned by the service
+        return Math.round(ignAltimetrieServiceResult.altitude);
+      case "error":
+        return undefined;
+    }
+  },
+});
 
 const defaultAtomStore = getDefaultStore();
 
@@ -50,28 +68,22 @@ export const getAltitudeToDisplay = async (
     };
   }
 
+  // Check in the LRU cache if the altitude is already present
   // Otherwise, retrieve the altitude from the ign service
-  return queryClient
-    .fetchQuery({
-      queryKey: ["IGN", "altimetrie", { latitude, longitude }],
-      queryFn: () => getAltitudeForCoordinates({ latitude, longitude }),
-      staleTime: Infinity,
-    })
-    .then((ignAltimetrieServiceResult) => {
-      switch (ignAltimetrieServiceResult.outcome) {
-        case "success":
-          defaultAtomStore.set(altitudeServiceStatusAtom, "idle");
-          return {
-            outcome: "success",
-            source: "ign",
-            // Round the altitude returned by the service
-            altitude: Math.round(ignAltimetrieServiceResult.altitude),
-          };
-        case "error":
-          defaultAtomStore.set(altitudeServiceStatusAtom, "error");
-          return {
-            outcome: "error",
-          };
-      }
-    });
+  const altitude = await altitudeServiceCache.fetch(JSON.stringify({ latitude, longitude }));
+
+  if (altitude !== undefined) {
+    defaultAtomStore.set(altitudeServiceStatusAtom, "idle");
+    return {
+      outcome: "success",
+      source: "ign",
+      // Round the altitude returned by the service
+      altitude,
+    };
+  } else {
+    defaultAtomStore.set(altitudeServiceStatusAtom, "error");
+    return {
+      outcome: "error",
+    };
+  }
 };
