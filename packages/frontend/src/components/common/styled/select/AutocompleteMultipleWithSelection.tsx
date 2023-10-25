@@ -116,7 +116,7 @@ const AutocompleteMultipleWithSelection = <T extends object,>(
         <>
           <div className="flex items-center justify-between">
             <div className={`label px-0 ${labelClassName ?? ""}`}>
-              <Combobox.Label className={`label-text uppercase text-md ${labelTextClassName ?? ""}`}>
+              <Combobox.Label className={`label-text uppercase text-base font-semibold ${labelTextClassName ?? ""}`}>
                 {label}
                 {required && <RequiredField />}
               </Combobox.Label>
