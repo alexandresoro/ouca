@@ -1,12 +1,9 @@
-import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
-import { useAtom } from "jotai";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { searchEntriesFilterSpeciesAtom } from "../../../atoms/searchEntriesCriteriaAtom";
-import useSWRApiQuery from "../../../hooks/api/useSWRApiQuery";
 import useAppContext from "../../../hooks/useAppContext";
 import Switch from "../../common/styled/Switch";
-import AutocompleteMultipleWithSelection from "../../common/styled/select/AutocompleteMultipleWithSelection";
+import SearchFilterBehaviors from "./SearchFilterBehaviors";
+import SearchFilterSpecies from "./SearchFilterSpecies";
 
 const SearchFilterPanel: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -16,16 +13,6 @@ const SearchFilterPanel: FunctionComponent = () => {
   const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
     features.tmp_only_own_observations_filter
   );
-
-  const [speciesInput, setSpeciesInput] = useState("");
-  const [selectedSpecies, setSelectedSpecies] = useAtom(searchEntriesFilterSpeciesAtom);
-  const { data: dataSpecies } = useSWRApiQuery("/species", {
-    queryParams: {
-      q: speciesInput,
-      pageSize: 5,
-    },
-    schema: getSpeciesPaginatedResponse,
-  });
 
   return (
     <div>
@@ -37,14 +24,10 @@ const SearchFilterPanel: FunctionComponent = () => {
           onChange={setDisplayOnlyOwnObservations}
         />
       )}
-      <AutocompleteMultipleWithSelection
-        label={t("species")}
-        data={dataSpecies?.data ?? []}
-        onInputChange={setSpeciesInput}
-        onChange={setSelectedSpecies}
-        values={selectedSpecies}
-        renderValue={({ nomFrancais }) => nomFrancais}
-      />
+      <div className="flex flex-col gap-3">
+        <SearchFilterSpecies />
+        <SearchFilterBehaviors />
+      </div>
     </div>
   );
 };
