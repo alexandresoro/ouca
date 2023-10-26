@@ -1,12 +1,12 @@
+import loadAnalytics from "@services/analytics/load-analytics";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { type AppConfig } from "@typings/AppConfig";
 import { WebStorageStateStore, type UserManagerSettings } from "oidc-client-ts";
 import { Suspense, useEffect, useMemo, useState, type FunctionComponent } from "react";
 import { AuthProvider } from "react-oidc-context";
 import { RouterProvider, type createBrowserRouter } from "react-router-dom";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
-import loadAnalytics from "./services/load-analytics";
-import { type AppConfig } from "./types/AppConfig";
 
 type AppProps = {
   config: AppConfig;

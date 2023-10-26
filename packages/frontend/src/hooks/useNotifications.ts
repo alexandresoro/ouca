@@ -1,5 +1,5 @@
+import { type Notification } from "@typings/Notification";
 import { useCallback, useState } from "react";
-import { type Notification } from "../types/Notification";
 
 const NOTIFICATION_TIMEOUT_MS = 2500;
 

@@ -1,9 +1,9 @@
+import useAppContext from "@hooks/useAppContext";
+import fetchApi from "@utils/fetch-api";
+import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAuth } from "react-oidc-context";
 import useSWR, { type SWRConfiguration } from "swr";
 import { type z } from "zod";
-import fetchApi from "../../utils/fetch-api";
-import { toUrlSearchParams } from "../../utils/url-search-params";
-import useAppContext from "../useAppContext";
 
 type UseSWRApiQueryParams<T = unknown> = {
   queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;

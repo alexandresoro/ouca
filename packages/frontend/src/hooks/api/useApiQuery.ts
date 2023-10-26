@@ -1,9 +1,9 @@
+import useAppContext from "@hooks/useAppContext";
 import { useQuery, type QueryFunction, type UseQueryOptions } from "@tanstack/react-query";
+import { type FetchError } from "@utils/fetch-api";
+import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
-import { toUrlSearchParams } from "../../utils/url-search-params";
-import useAppContext from "../useAppContext";
-import { type FetchError } from "./api-types";
 
 const useApiQuery = <
   TQueryFnData = unknown,

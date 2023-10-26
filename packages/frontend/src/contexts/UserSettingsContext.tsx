@@ -1,8 +1,8 @@
+import useApiQuery from "@hooks/api/useApiQuery";
 import { getSettingsResponse, type GetSettingsResponse } from "@ou-ca/common/api/settings";
 import { createContext, useEffect, type FunctionComponent, type PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import useApiQuery from "../hooks/api/useApiQuery";
 
 export const UserSettingsContext = createContext<{
   userSettings: GetSettingsResponse | null;

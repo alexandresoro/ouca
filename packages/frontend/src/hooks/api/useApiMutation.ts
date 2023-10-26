@@ -1,8 +1,8 @@
+import useAppContext from "@hooks/useAppContext";
 import { useMutation, type MutationFunction, type UseMutationOptions } from "@tanstack/react-query";
+import { type FetchError } from "@utils/fetch-api";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
-import useAppContext from "../useAppContext";
-import { type FetchError } from "./api-types";
 
 type MutationParamsSchema<R> = {
   path?: string;

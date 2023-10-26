@@ -1,10 +1,10 @@
+import useAppContext from "@hooks/useAppContext";
 import { type PaginatedResponseSchemaType } from "@ou-ca/common/api/common/pagination";
 import { useInfiniteQuery, type QueryFunction, type UseInfiniteQueryOptions } from "@tanstack/react-query";
+import { type FetchError } from "@utils/fetch-api";
+import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
-import { toUrlSearchParams } from "../../utils/url-search-params";
-import useAppContext from "../useAppContext";
-import { type FetchError } from "./api-types";
 
 const getNextPage = (page: z.infer<PaginatedResponseSchemaType<z.ZodAny>>): number | undefined => {
   if (page.meta.pageNumber === undefined || page.meta.pageSize === undefined) {

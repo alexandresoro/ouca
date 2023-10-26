@@ -15,6 +15,12 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@ou-ca/common": path.resolve(__dirname, "../common/src"),
+        "@components": path.resolve(__dirname, "./src/components"),
+        "@hooks": path.resolve(__dirname, "./src/hooks"),
+        "@layouts": path.resolve(__dirname, "./src/layouts"),
+        "@services": path.resolve(__dirname, "./src/services"),
+        "@typings": path.resolve(__dirname, "./src/@types"),
+        "@utils": path.resolve(__dirname, "./src/utils"),
       },
     },
     build: {

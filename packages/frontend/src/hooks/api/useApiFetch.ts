@@ -1,8 +1,8 @@
+import useAppContext from "@hooks/useAppContext";
+import fetchApi from "@utils/fetch-api";
+import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
-import fetchApi from "../../utils/fetch-api";
-import { toUrlSearchParams } from "../../utils/url-search-params";
-import useAppContext from "../useAppContext";
 
 function useApiFetch<SType>({
   schema,

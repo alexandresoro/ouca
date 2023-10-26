@@ -17,7 +17,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@ou-ca/common/*": ["../common/src/*"]
+      "@ou-ca/common/*": ["../common/src/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@services/*": ["./src/services/*"],
+      "@typings/*": ["./src/@types/*"],
+      "@utils/*": ["./src/utils/*"]
     },
     "types": ["vite/client", "vitest/globals"]
   }
