@@ -1,12 +1,12 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useApiEntryCreate } from "../../../hooks/api/queries/api-entry-queries";
 import { useApiInventoryCreate } from "../../../hooks/api/queries/api-inventory-queries";
 import useSnackbar from "../../../hooks/useSnackbar";
-import { queryClient } from "../../../query/query-client";
 import { ENTRY_STEP, INVENTORY_STEP, type NewEntryStep } from "../new-entry-page/new-entry-hash-step-mapper";
 import EntryStepContainer from "../steps/entry-step-container/EntryStepContainer";
 import InventoryStepContainer from "../steps/inventory-step-container/InventoryStepContainer";
@@ -17,6 +17,8 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   const { t } = useTranslation();
 
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   const [searchParams] = useSearchParams();
   const inventoryIdParam = searchParams.get("inventoryId") ?? undefined;
