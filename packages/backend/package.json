@@ -36,7 +36,7 @@
     "@sentry/node": "7.75.1",
     "@sentry/tracing": "7.75.1",
     "@turf/helpers": "6.5.0",
-    "bullmq": "4.12.5",
+    "bullmq": "4.12.6",
     "camelcase": "8.0.0",
     "content-disposition": "0.5.4",
     "csv-parse": "5.5.2",
