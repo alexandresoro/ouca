@@ -1,6 +1,3 @@
-import "@fontsource-variable/nunito";
-import "@fontsource/carter-one";
-import "maplibre-gl/dist/maplibre-gl.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter } from "react-router-dom";
