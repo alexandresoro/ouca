@@ -31,8 +31,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - uses: google/wireit@setup-github-actions-caching/v1
-
       - name: Install dependencies
         run: pnpm install
 

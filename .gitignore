@@ -14,5 +14,3 @@ coverage
 .DS_Store
 
 *.tsbuildinfo
-
-.wireit
