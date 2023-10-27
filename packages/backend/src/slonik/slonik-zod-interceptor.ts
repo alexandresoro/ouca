@@ -1,5 +1,5 @@
 import { type Logger } from "pino";
-import { SchemaValidationError, type Interceptor, type QueryResultRow, type SerializableValue } from "slonik";
+import { SchemaValidationError, type Interceptor, type QueryResultRow } from "slonik";
 
 export const createResultParserInterceptor = (logger: Logger): Interceptor => {
   return {
@@ -18,7 +18,7 @@ export const createResultParserInterceptor = (logger: Logger): Interceptor => {
 
       if (!validationResult.success) {
         logger.debug({ issues: validationResult.error.issues }, "Slonik validation error");
-        throw new SchemaValidationError(actualQuery, row as SerializableValue, validationResult.error.issues);
+        throw new SchemaValidationError(actualQuery, row, validationResult.error.issues);
       }
 
       return validationResult.data as QueryResultRow;
