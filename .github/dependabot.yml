@@ -8,6 +8,10 @@ updates:
     commit-message:
        prefix: "chore(deps)"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@types/node"
+        # Ignore node types updates to stick w/ current LTS
+        versions: ["21.x", "22.x"]
     groups:
       fastify:
         patterns:
