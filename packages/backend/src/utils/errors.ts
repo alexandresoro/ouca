@@ -7,7 +7,7 @@ type SubError =
     }
   | {
       readonly message: string;
-      readonly originalError: Error;
+      readonly cause?: Error;
     };
 
 export class OucaError extends Error {
