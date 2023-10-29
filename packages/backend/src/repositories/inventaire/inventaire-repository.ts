@@ -60,7 +60,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   ): Promise<number | null> => {
     const query = sql.type(
       z.object({
-        rowNumber: z.number(),
+        rowNumber: z.bigint().transform((v) => Number(v)),
       })
     )`
       SELECT
