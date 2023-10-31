@@ -90,8 +90,8 @@ importers:
         specifier: 11.0.2
         version: 11.0.2
       slonik:
-        specifier: 37.1.0
-        version: 37.1.0(zod@3.22.4)
+        specifier: 37.2.0
+        version: 37.2.0(zod@3.22.4)
       umzug:
         specifier: 3.3.1
         version: 3.3.1
@@ -3030,6 +3030,7 @@ packages:
     dependencies:
       has-property-descriptors: 1.0.0
       object-keys: 1.1.1
+    dev: true
 
   /denque@2.1.0:
     resolution: {integrity: sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==}
@@ -3791,6 +3792,7 @@ packages:
 
   /function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+    dev: true
 
   /function.prototype.name@1.1.6:
     resolution: {integrity: sha512-Z5kx79swU5P27WEayXM1tBi5Ze/lbIyiNgU3qyXUOf9b2rgXYyF9Dy9Cx+IQv/Lc8WCG6L82zwUPpSS9hGehIg==}
@@ -3835,6 +3837,7 @@ packages:
       has: 1.0.3
       has-proto: 1.0.1
       has-symbols: 1.0.3
+    dev: true
 
   /get-stack-trace@3.1.1:
     resolution: {integrity: sha512-E1rM+umbm9MlMp6zNSap+UI8VVWWmAoUxiAHp1Ron1FV2dM99mgMAHS1tGAGO/ceBjgOXz24GC47aLeNN1llrA==}
@@ -3963,6 +3966,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       define-properties: 1.2.0
+    dev: true
 
   /globby@11.1.0:
     resolution: {integrity: sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==}
@@ -4006,14 +4010,17 @@ packages:
     resolution: {integrity: sha512-62DVLZGoiEBDHQyqG4w9xCuZ7eJEwNmJRWw2VY84Oedb7WFcA27fiEVe8oUQx9hAUJ4ekurquucTGwsyO1XGdQ==}
     dependencies:
       get-intrinsic: 1.2.1
+    dev: true
 
   /has-proto@1.0.1:
     resolution: {integrity: sha512-7qE+iP+O+bgF9clE5+UoBFzE65mlBiVj3tKCrlNQ0Ogwm0BjpT/gK4SlLYDMybDh5I3TCTKnPPa0oMG7JDYrhg==}
     engines: {node: '>= 0.4'}
+    dev: true
 
   /has-symbols@1.0.3:
     resolution: {integrity: sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==}
     engines: {node: '>= 0.4'}
+    dev: true
 
   /has-tostringtag@1.0.0:
     resolution: {integrity: sha512-kFjcSNhnlGV1kyoGk7OXKSawH5JOb/LzUc5w9B02hOTO0dfFRjbHQKvg1d6cf3HbeUmtU9VbbV3qzZ2Teh97WQ==}
@@ -4027,6 +4034,7 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.2
+    dev: true
 
   /hasown@2.0.0:
     resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
@@ -5067,6 +5075,7 @@ packages:
   /object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
+    dev: true
 
   /object.assign@4.1.4:
     resolution: {integrity: sha512-1mxKf0e58bvyjSCtKYY4sRe9itRk3PJpquJOjeIkz885CczcI4IvJJDLPS72oowuSh+pBxUFROpX+TU++hxhZQ==}
@@ -5991,14 +6000,11 @@ packages:
     dependencies:
       glob: 7.2.3
 
-  /roarr@7.15.1:
-    resolution: {integrity: sha512-0ExL9rjOXeQPvQvQo8IcV8SR2GTXmDr1FQFlY2HiAV+gdVQjaVZNOx9d4FI2RqFFsd0sNsiw2TRS/8RU9g0ZfA==}
-    engines: {node: '>=12.0'}
+  /roarr@7.18.3:
+    resolution: {integrity: sha512-1oGYrNJ7IE+vD7i6nC7cuMBq6poy7FmbcRUHDDiSMD7VH/KpQmvVy+WJLOE3HtpQv84Y8orsec+uJgtiiiyJMw==}
+    engines: {node: '>=18.0'}
     dependencies:
-      boolean: 3.2.0
-      fast-json-stringify: 5.8.0
       fast-printf: 1.6.9
-      globalthis: 1.0.3
       safe-stable-stringify: 2.4.3
       semver-compare: 1.0.0
     dev: false
@@ -6179,8 +6185,8 @@ packages:
       is-fullwidth-code-point: 4.0.0
     dev: true
 
-  /slonik@37.1.0(zod@3.22.4):
-    resolution: {integrity: sha512-/ppdtL6J3fZ6FtTQzF3DLW2tdQCMYDkZoNcAPK6CiKGFywKMMj8M2LK/bwFMCd9KHrO4OX5oJbxlmSt3yHptgA==}
+  /slonik@37.2.0(zod@3.22.4):
+    resolution: {integrity: sha512-G4giLtT+PWrHJcjhNrYZpQmDNb4aehugP8IF6MYHAvP39ewGb+EdBaB94MUwPqU9+nu9aNEFLLpy1y2tyHNb4w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3
@@ -6195,7 +6201,7 @@ packages:
       pg-types: 4.0.1
       postgres-array: 3.0.2
       postgres-interval: 4.0.1
-      roarr: 7.15.1
+      roarr: 7.18.3
       safe-stable-stringify: 2.4.3
       serialize-error: 8.1.0
       zod: 3.22.4
