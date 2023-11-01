@@ -1,11 +1,18 @@
 import { type z } from "zod";
 
-const fetchApi = async <T = unknown>({
+export const fetchApiResponse = async ({
   url,
+  method,
+  body,
   token,
-  schema,
-}: { url: string; token?: string; schema?: z.ZodType<T> }): Promise<T> => {
+}: {
+  url: string;
+  method?: string;
+  body?: Record<string, unknown>;
+  token?: string;
+}): Promise<Response> => {
   const response = await fetch(url, {
+    method,
     headers: {
       ...(token
         ? {
@@ -13,6 +20,7 @@ const fetchApi = async <T = unknown>({
           }
         : {}),
     },
+    body: body ? JSON.stringify(body) : null,
   });
 
   if (!response.ok) {
@@ -21,6 +29,24 @@ const fetchApi = async <T = unknown>({
       statusText: response.statusText,
     } satisfies FetchError);
   }
+
+  return response;
+};
+
+const fetchApi = async <T = unknown>({
+  url,
+  method,
+  body,
+  token,
+  schema,
+}: {
+  url: string;
+  method?: string;
+  body?: Record<string, unknown>;
+  token?: string;
+  schema?: z.ZodType<T>;
+}): Promise<T> => {
+  const response = await fetchApiResponse({ url, method, body, token });
 
   const jsonResponse = await (response.json() as Promise<T>);
   if (schema) {
