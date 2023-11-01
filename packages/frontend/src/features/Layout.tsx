@@ -1,4 +1,4 @@
-import { useNotifications } from "@hooks/useNotifications";
+import { useDisplayNotification } from "@hooks/useNotifications";
 import { Suspense, lazy, type FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
 import { SnackbarContext } from "../contexts/SnackbarContext";
@@ -7,7 +7,7 @@ const Header = lazy(() => import("./header/Header"));
 const NotificationSnackbar = lazy(() => import("./notifications/NotificationSnackbar"));
 
 const Layout: FunctionComponent = () => {
-  const [notifications, displayNotification] = useNotifications();
+  const displayNotification = useDisplayNotification();
 
   return (
     // biome-ignore lint/complexity/noUselessFragments: <explanation>
@@ -20,7 +20,7 @@ const Layout: FunctionComponent = () => {
           </div>
         </div>
       </SnackbarContext.Provider>
-      <NotificationSnackbar notifications={notifications} />
+      <NotificationSnackbar />
     </Suspense>
   );
 };

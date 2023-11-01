@@ -1,10 +1,8 @@
 import { CheckCircle, Error as ErrorIcon, InfoCircle, XCircle } from "@styled-icons/boxicons-regular";
-import { type AlertType, type Notification } from "@typings/Notification";
+import { type AlertType } from "@typings/Notification";
+import { useAtomValue } from "jotai";
 import { type FunctionComponent, type ReactElement } from "react";
-
-type NotificationSnackbarProps = {
-  notifications: Notification[];
-};
+import { notificationsAtom } from "./notificationAtoms";
 
 const getAlertIcon = (type: AlertType): ReactElement => {
   switch (type) {
@@ -19,8 +17,8 @@ const getAlertIcon = (type: AlertType): ReactElement => {
   }
 };
 
-const NotificationSnackbar: FunctionComponent<NotificationSnackbarProps> = (props) => {
-  const { notifications } = props;
+const NotificationSnackbar: FunctionComponent = () => {
+  const notifications = useAtomValue(notificationsAtom);
 
   return (
     <div className="toast toast-center w-max z-50 shadow-sm">
@@ -37,10 +35,6 @@ const NotificationSnackbar: FunctionComponent<NotificationSnackbarProps> = (prop
       ))}
     </div>
   );
-};
-
-NotificationSnackbar.defaultProps = {
-  notifications: [],
 };
 
 export default NotificationSnackbar;
