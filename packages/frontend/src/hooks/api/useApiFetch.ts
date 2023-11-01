@@ -5,17 +5,18 @@ import { useCallback } from "react";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 
-function useApiFetch<SType>({
+const useApiFetch = <SType>({
   method,
   schema,
+}: { method?: string; schema?: z.ZodType<SType> }): (({
+  path,
+  body,
+  queryParams,
 }: {
-  method?: string;
-  schema?: z.ZodType<SType>;
-}): (params: { path: string; queryParams?: Record<string, string | number | boolean | undefined> }) => Promise<SType>;
-function useApiFetch<SType>({
-  method,
-  schema,
-}: { method?: string; body?: Record<string, unknown>; schema?: z.ZodType<SType> }) {
+  path: string;
+  body?: Record<string, unknown>;
+  queryParams?: Record<string, string | number | boolean | undefined>;
+}) => Promise<SType>) => {
   const { user } = useAuth();
   const { apiUrl } = useAppContext();
 
@@ -43,6 +44,6 @@ function useApiFetch<SType>({
     },
     [apiUrl, accessToken, method, schema]
   );
-}
+};
 
 export default useApiFetch;
