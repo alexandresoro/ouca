@@ -11,10 +11,10 @@ type UseSWRApiQueryParams<T = unknown> = {
   paused?: boolean;
 };
 
-const useSWRApiQuery = <T = unknown>(
+const useSWRApiQuery = <T = unknown, E = unknown>(
   path: string,
   { queryParams, paused, schema }: UseSWRApiQueryParams<T> = {},
-  swrOptions?: Omit<SWRConfiguration, "fetcher">
+  swrOptions?: Omit<SWRConfiguration<T, E>, "fetcher">
 ) => {
   const { user } = useAuth();
   const { apiUrl } = useAppContext();
@@ -25,7 +25,7 @@ const useSWRApiQuery = <T = unknown>(
 
   const queryUrl = `${apiUrl}/api/v1${path}${queryString.length ? `?${queryString}` : ""}`;
 
-  return useSWR<T>(!paused ? { url: queryUrl, token: accessToken, schema } : null, fetchApi, swrOptions);
+  return useSWR<T, E>(!paused ? { url: queryUrl, token: accessToken, schema } : null, fetchApi<T>, swrOptions);
 };
 
 export default useSWRApiQuery;
