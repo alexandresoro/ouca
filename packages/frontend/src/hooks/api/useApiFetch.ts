@@ -7,16 +7,13 @@ import { type z } from "zod";
 
 function useApiFetch<SType>({
   method,
-  body,
   schema,
 }: {
   method?: string;
-  body?: Record<string, unknown>;
   schema?: z.ZodType<SType>;
 }): (params: { path: string; queryParams?: Record<string, string | number | boolean | undefined> }) => Promise<SType>;
 function useApiFetch<SType>({
   method,
-  body,
   schema,
 }: { method?: string; body?: Record<string, unknown>; schema?: z.ZodType<SType> }) {
   const { user } = useAuth();
@@ -27,8 +24,13 @@ function useApiFetch<SType>({
   return useCallback(
     async ({
       path,
+      body,
       queryParams,
-    }: { path: string; queryParams?: Record<string, string | number | boolean | undefined> }) => {
+    }: {
+      path: string;
+      body?: Record<string, unknown>;
+      queryParams?: Record<string, string | number | boolean | undefined>;
+    }) => {
       const queryString = toUrlSearchParams(queryParams).toString();
 
       return fetchApi({
@@ -39,7 +41,7 @@ function useApiFetch<SType>({
         schema,
       });
     },
-    [apiUrl, accessToken, method, body, schema]
+    [apiUrl, accessToken, method, schema]
   );
 }
 
