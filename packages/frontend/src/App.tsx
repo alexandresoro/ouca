@@ -1,12 +1,14 @@
 import loadAnalytics from "@services/analytics/load-analytics";
+import { apiUrlAtom } from "@services/api/useApiUrl";
+import { type AppConfig } from "@services/config/config";
+import { isSentryEnabledAtom } from "@services/sentry/sentry";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { type AppConfig } from "@typings/AppConfig";
+import { useSetAtom } from "jotai";
 import { WebStorageStateStore, type UserManagerSettings } from "oidc-client-ts";
-import { Suspense, useEffect, useMemo, useState, type FunctionComponent } from "react";
+import { Suspense, useEffect, useMemo, type FunctionComponent } from "react";
 import { AuthProvider } from "react-oidc-context";
 import { RouterProvider, type createBrowserRouter } from "react-router-dom";
-import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
 
 type AppProps = {
   config: AppConfig;
@@ -16,17 +18,13 @@ type AppProps = {
 const queryClient = new QueryClient();
 
 const App: FunctionComponent<AppProps> = ({ config, router }) => {
-  const [appContext, setAppContext] = useState<AppContext>(DEFAULT_CONFIG);
+  const setApiUrl = useSetAtom(apiUrlAtom);
+  const setIsSentryEnabled = useSetAtom(isSentryEnabledAtom);
 
   useEffect(() => {
-    setAppContext((context) => {
-      return {
-        ...context,
-        apiUrl: config.apiUrl ?? "",
-        isSentryEnabled: !!config.sentry,
-      };
-    });
-  }, [config]);
+    setApiUrl(config.apiUrl ?? "");
+    setIsSentryEnabled(!!config.sentry);
+  }, [config, setApiUrl, setIsSentryEnabled]);
 
   useEffect(() => {
     loadAnalytics(config.umami);
@@ -42,23 +40,21 @@ const App: FunctionComponent<AppProps> = ({ config, router }) => {
   }, [config]);
 
   return (
-    <AppContext.Provider value={appContext}>
-      <AuthProvider
-        {...oidcConfig}
-        onSigninCallback={() => {
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools />
-          <div className="bg-base-100">
-            <Suspense fallback="">
-              <RouterProvider router={router} />
-            </Suspense>
-          </div>
-        </QueryClientProvider>
-      </AuthProvider>
-    </AppContext.Provider>
+    <AuthProvider
+      {...oidcConfig}
+      onSigninCallback={() => {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools />
+        <div className="bg-base-100">
+          <Suspense fallback="">
+            <RouterProvider router={router} />
+          </Suspense>
+        </div>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 };
 

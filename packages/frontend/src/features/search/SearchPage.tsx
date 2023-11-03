@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import useAppContext from "@hooks/useAppContext";
+import { useFeatures } from "@services/app-features/features";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import SearchEntriesTable from "./search-entries-table/SearchEntriesTable";
@@ -9,7 +9,7 @@ import SearchSpeciesTable from "./search-species-table/SearchSpeciesTable";
 const SearchPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { features } = useAppContext();
+  const features = useFeatures();
 
   return (
     <div className="container mx-auto flex gap-16 mt-6">

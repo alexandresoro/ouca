@@ -1,5 +1,5 @@
 import Switch from "@components/base/Switch";
-import useAppContext from "@hooks/useAppContext";
+import { useFeatures } from "@services/app-features/features";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
@@ -8,7 +8,7 @@ import SearchFilterSpecies from "./SearchFilterSpecies";
 const SearchFilterPanel: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { features } = useAppContext();
+  const features = useFeatures();
 
   const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
     features.tmp_only_own_observations_filter

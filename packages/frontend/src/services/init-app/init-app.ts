@@ -1,4 +1,4 @@
-import { type AppConfig } from "@typings/AppConfig";
+import { type AppConfig } from "@services/config/config";
 
 const fetchAppConfig = fetch("/appconfig", {
   method: "GET",

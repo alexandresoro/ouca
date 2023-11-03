@@ -1,6 +1,7 @@
 import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
-import { type AppConfig } from "@typings/AppConfig";
+import { type AppConfig } from "@services/config/config";
+import { atom } from "jotai";
 import { type User } from "oidc-client-ts";
 import { useEffect } from "react";
 import {
@@ -10,6 +11,8 @@ import {
   useLocation,
   useNavigationType,
 } from "react-router-dom";
+
+export const isSentryEnabledAtom = atom(false);
 
 export const initializeSentry = (config: AppConfig) => {
   const { sentry, apiUrl } = config;

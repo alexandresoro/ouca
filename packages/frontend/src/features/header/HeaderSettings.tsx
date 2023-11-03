@@ -1,6 +1,6 @@
 import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
-import useAppContext from "@hooks/useAppContext";
+import { useFeatures, type Features } from "@services/app-features/features";
 import { Cog, Import, LogOut, User } from "@styled-icons/boxicons-regular";
 import stringToColor from "@utils/user-profile/stringToColor";
 import { getFullName, getInitials } from "@utils/user-profile/usernameUtils";
@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "react-oidc-context";
 import { Link } from "react-router-dom";
 
-const getMenuOptions = (features: ReturnType<typeof useAppContext>["features"]) => [
+const getMenuOptions = (features: Features) => [
   {
     localizationKey: "profile" as ParseKeys,
     Icon: User,
@@ -35,7 +35,7 @@ const getMenuOptions = (features: ReturnType<typeof useAppContext>["features"]) 
 const HeaderSettings: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { features } = useAppContext();
+  const features = useFeatures();
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { user, removeUser } = useAuth();

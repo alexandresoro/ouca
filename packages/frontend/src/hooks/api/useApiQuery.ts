@@ -1,7 +1,8 @@
-import useAppContext from "@hooks/useAppContext";
+import { apiUrlAtom } from "@services/api/useApiUrl";
 import { useQuery, type QueryFunction, type UseQueryOptions } from "@tanstack/react-query";
 import { type FetchError } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
+import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 
@@ -25,7 +26,7 @@ const useApiQuery = <
   queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn">
 ) => {
   const { user } = useAuth();
-  const { apiUrl } = useAppContext();
+  const apiUrl = useAtomValue(apiUrlAtom);
 
   const accessToken = user?.access_token;
 

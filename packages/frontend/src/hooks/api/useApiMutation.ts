@@ -1,6 +1,7 @@
-import useAppContext from "@hooks/useAppContext";
+import { apiUrlAtom } from "@services/api/useApiUrl";
 import { useMutation, type MutationFunction, type UseMutationOptions } from "@tanstack/react-query";
 import { type FetchError } from "@utils/fetch-api";
+import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 
@@ -27,7 +28,7 @@ const useApiMutation = <TData, TVariables extends MutationVariables, TError exte
   mutationOptions?: Omit<UseMutationOptions<TData, TError, TVariables>, "mutationFn">
 ) => {
   const { user } = useAuth();
-  const { apiUrl } = useAppContext();
+  const apiUrl = useAtomValue(apiUrlAtom);
 
   const accessToken = user?.access_token;
 

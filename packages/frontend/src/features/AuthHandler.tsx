@@ -1,4 +1,5 @@
-import useAppContext from "@hooks/useAppContext";
+import { isSentryEnabledAtom } from "@services/sentry/sentry";
+import { useAtomValue } from "jotai";
 import { useEffect, type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { hasAuthParams, useAuth } from "react-oidc-context";
@@ -10,7 +11,7 @@ export const AuthHandler = ({ children }: { children: ReactElement }): ReactElem
 
   const navigate = useNavigate();
 
-  const appContext = useAppContext();
+  const isSentryEnabled = useAtomValue(isSentryEnabledAtom);
 
   useEffect(() => {
     if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading) {
@@ -28,12 +29,12 @@ export const AuthHandler = ({ children }: { children: ReactElement }): ReactElem
   }, [auth.events, navigate]);
 
   useEffect(() => {
-    if (appContext.isSentryEnabled) {
+    if (isSentryEnabled) {
       void import("../services/sentry/sentry").then(({ setUser }) => {
         setUser(auth.user);
       });
     }
-  }, [auth, appContext]);
+  }, [auth, isSentryEnabled]);
 
   if (auth.activeNavigator) {
     return (
