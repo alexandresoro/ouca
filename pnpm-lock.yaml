@@ -48,8 +48,8 @@ importers:
         specifier: 6.5.0
         version: 6.5.0
       bullmq:
-        specifier: 4.12.7
-        version: 4.12.7
+        specifier: 4.12.8
+        version: 4.12.8
       camelcase:
         specifier: 8.0.0
         version: 8.0.0
@@ -2552,8 +2552,8 @@ packages:
     engines: {node: '>=0.2.0'}
     dev: false
 
-  /bullmq@4.12.7:
-    resolution: {integrity: sha512-wigDuI8dyzY1jaUZLrwMp0L7t2glp0eErnRCYlVwi56DUWYSrzrOB3Vz8SaAmpc3Ro5dS4mBwt7RDJG3jiuJKA==}
+  /bullmq@4.12.8:
+    resolution: {integrity: sha512-aG9o2/y6P+SvsIlIfjTP4Cn2wOsD6r7IplWBovi1wCmTMDBhtKsPVCC2ZKezaagtTCGtV6IN5Bx5g6WrtMUz0Q==}
     dependencies:
       cron-parser: 4.9.0
       glob: 8.1.0
