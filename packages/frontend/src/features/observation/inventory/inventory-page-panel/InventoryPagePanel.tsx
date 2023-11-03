@@ -18,7 +18,7 @@ import { z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../../hooks/useSnackbar";
-import { useApiInventoryDelete, useApiInventoryUpdate } from "../../../../services/api/api-inventory-queries";
+import { useApiInventoryDelete, useApiInventoryUpdate } from "../../../../services/api/inventory/api-inventory-queries";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
 import InventoryMap from "../inventory-map/InventoryMap";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";

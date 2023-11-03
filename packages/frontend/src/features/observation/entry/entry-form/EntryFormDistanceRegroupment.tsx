@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import TextInput from "../../../../components/base/TextInput";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiFetch from "../../../../hooks/api/useApiFetch";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
+import useApiFetch from "../../../../services/api/useApiFetch";
 import { capitalizeFirstLetter } from "../../../../utils/capitalize-first-letter";
 import { type EntryFormState } from "./EntryFormState";
 

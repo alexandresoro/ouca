@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { type z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import useSnackbar from "../../../../hooks/useSnackbar";
-import { useApiEntryDelete, useApiEntryUpdate } from "../../../../services/api/api-entry-queries";
+import { useApiEntryDelete, useApiEntryUpdate } from "../../../../services/api/entry/api-entry-queries";
 import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import { ENTRY_STEP } from "../../entry/new-entry-page/new-entry-hash-step-mapper";
 import UpdateEntryDialogContainer from "../../entry/update-entry-dialog-container/UpdateEntryDialogContainer";

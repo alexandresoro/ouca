@@ -29,8 +29,8 @@ import {
   type MarkerDragEvent,
   type ViewState,
 } from "react-map-gl/maplibre";
-import useApiFetch from "../../../../hooks/api/useApiFetch";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
+import useApiFetch from "../../../../services/api/useApiFetch";
 import { boundingPolygon } from "../../../../utils/map/bounding-polygon";
 import { clusterCountLayer, clusterLayer, selectionLayer, singleLocalityLayer } from "../../../maps/localities-layers";
 import { MAP_STYLE_PROVIDERS } from "../../../maps/map-style-providers";

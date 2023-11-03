@@ -6,7 +6,7 @@ import usePaginationParams from "@hooks/usePaginationParams";
 import useSnackbar from "@hooks/useSnackbar";
 import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/api/entry";
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
-import { useApiEntryDelete } from "@services/api/api-entry-queries";
+import { useApiEntryDelete } from "@services/api/entry/api-entry-queries";
 import { useAtomValue } from "jotai";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

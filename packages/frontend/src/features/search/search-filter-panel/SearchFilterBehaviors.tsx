@@ -1,6 +1,6 @@
 import AutocompleteMultipleWithSelection from "@components/base/autocomplete/AutocompleteMultipleWithSelection";
-import useSWRApiQuery from "@hooks/api/useSWRApiQuery";
 import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
+import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ const SearchFilterBehaviors: FunctionComponent = () => {
 
   const [behaviorInput, setBehaviorInput] = useState("");
   const [selectedBehaviors, setSelectedBehaviors] = useAtom(searchEntriesFilterBehaviorsAtom);
-  const { data: dataBehaviors } = useSWRApiQuery("/behaviors", {
+  const { data: dataBehaviors } = useApiQuery("/behaviors", {
     queryParams: {
       q: behaviorInput,
       pageSize: 5,

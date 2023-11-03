@@ -1,6 +1,6 @@
 import AutocompleteMultipleWithSelection from "@components/base/autocomplete/AutocompleteMultipleWithSelection";
-import useSWRApiQuery from "@hooks/api/useSWRApiQuery";
 import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
+import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ const SearchFilterSpecies: FunctionComponent = () => {
 
   const [speciesInput, setSpeciesInput] = useState("");
   const [selectedSpecies, setSelectedSpecies] = useAtom(searchEntriesFilterSpeciesAtom);
-  const { data: dataSpecies } = useSWRApiQuery("/species", {
+  const { data: dataSpecies } = useApiQuery("/species", {
     queryParams: {
       q: speciesInput,
       pageSize: 5,

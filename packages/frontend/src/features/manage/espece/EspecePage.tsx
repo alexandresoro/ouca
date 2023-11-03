@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/useApiExportEntities";
+import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import EspeceCreate from "./EspeceCreate";

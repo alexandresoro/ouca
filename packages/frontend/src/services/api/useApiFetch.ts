@@ -1,9 +1,9 @@
-import useAppContext from "@hooks/useAppContext";
 import fetchApi from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useCallback } from "react";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
+import useApiUrl from "./useApiUrl";
 
 type UseApiFetchParams<T> = { path?: string; method?: string; schema?: z.ZodType<T> };
 
@@ -38,7 +38,7 @@ function useApiFetch<T>({
   schema,
 }: UseApiFetchParams<T>): (params?: UseApiFetchCallParams) => Promise<T> {
   const { user } = useAuth();
-  const { apiUrl } = useAppContext();
+  const apiUrl = useApiUrl();
 
   const accessToken = user?.access_token;
 
