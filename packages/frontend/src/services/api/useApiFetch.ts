@@ -54,7 +54,7 @@ function useApiFetch<T>({
       }
 
       return fetchApi({
-        url: `${apiUrl}/api/v1${path}${queryString.length ? `?${queryString}` : ""}`,
+        url: `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}`,
         method,
         body,
         token: accessToken,

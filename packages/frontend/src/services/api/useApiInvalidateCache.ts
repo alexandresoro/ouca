@@ -19,7 +19,7 @@ const useApiInvalidateCache = (path: string, mutatorOptions?: MutatorOptions) =>
   const { mutate } = useSWRConfig();
   const apiUrl = useApiUrl();
 
-  const queryUrlPath = `${apiUrl}/api/v1${path}`;
+  const queryUrlPath = `${apiUrl}${path}`;
 
   return () =>
     mutate(

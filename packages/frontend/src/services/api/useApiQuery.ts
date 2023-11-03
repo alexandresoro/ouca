@@ -23,7 +23,7 @@ const useApiQuery = <T = unknown, E = unknown>(
 
   const queryString = toUrlSearchParams(queryParams).toString();
 
-  const queryUrl = `${apiUrl}/api/v1${path}${queryString.length ? `?${queryString}` : ""}`;
+  const queryUrl = `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}`;
 
   return useSWR<T, E>(!paused ? { url: queryUrl, token: accessToken, schema } : null, fetchApi<T>, swrOptions);
 };
