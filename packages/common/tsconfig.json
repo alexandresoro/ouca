@@ -8,8 +8,7 @@
     "target": "ES2022",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "strict": true,
-    "types": ["vitest/globals"]
+    "strict": true
   },
   "include": ["src/**/*"]
 }

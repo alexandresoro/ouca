@@ -1,3 +1,5 @@
+import assert from "node:assert";
+import test from "node:test";
 import { areCoordinatesCustomized } from "./coordinates-helper.js";
 import { type CoordinatesSystemType } from "./coordinates-system.object.js";
 
@@ -10,7 +12,7 @@ test("should correctly validate non-customized coordinated", () => {
     altitude: 45,
   };
 
-  expect(areCoordinatesCustomized(lieudit, 45, 10, -4, "gps")).toBe<boolean>(false);
+  assert.strictEqual(areCoordinatesCustomized(lieudit, 45, 10, -4, "gps"), false);
 });
 
 test("should correctly validate customized coordinated", () => {
@@ -22,5 +24,5 @@ test("should correctly validate customized coordinated", () => {
     altitude: 45,
   };
 
-  expect(areCoordinatesCustomized(lieudit, 33, 22, 11, "gps")).toBe<boolean>(true);
+  assert.strictEqual(areCoordinatesCustomized(lieudit, 33, 22, 11, "gps"), true);
 });
