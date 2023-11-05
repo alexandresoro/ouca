@@ -1,4 +1,5 @@
-import { type AppConfig } from "@services/config/config";
+import { loadAnalytics } from "@services/analytics/umami";
+import { initConfig, type AppConfig } from "@services/config/config";
 
 const fetchAppConfig = fetch("/appconfig", {
   method: "GET",
@@ -18,17 +19,21 @@ const fetchAppConfig = fetch("/appconfig", {
 export const initApp = async () => {
   const config = await fetchAppConfig;
 
+  initConfig(config);
+
+  // Umami
+  if (config.umami) {
+    loadAnalytics(config.umami);
+  }
+
   // Sentry
   if (config.sentry) {
     const { initializeSentry } = await import("../sentry/sentry");
     const { sentryRouter } = initializeSentry(config);
     return {
-      config,
       sentryRouter,
     };
   } else {
-    return {
-      config,
-    };
+    return {};
   }
 };

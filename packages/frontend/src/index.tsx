@@ -11,12 +11,12 @@ import { routes } from "./router/routes";
 const Root = createRoot(document.getElementById("root")!);
 
 initApp()
-  .then(({ config, sentryRouter }) => {
+  .then(({ sentryRouter }) => {
     const router = (sentryRouter ?? createBrowserRouter)(routes);
 
     Root.render(
       <StrictMode>
-        <App config={config} router={router} />
+        <App router={router} />
       </StrictMode>
     );
   })
