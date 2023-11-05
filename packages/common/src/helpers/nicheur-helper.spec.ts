@@ -1,9 +1,11 @@
+import assert from "node:assert";
+import test from "node:test";
 import { NICHEUR_CERTAIN, NICHEUR_PROBABLE, type NicheurCode } from "../types/nicheur.model.js";
 import { getHighestNicheurStatus, getNicheurStatusToDisplay } from "./nicheur-helper.js";
 
 test("should return correct value when no nicheur code provided ", () => {
   const comportementsEmpty: { nicheur?: NicheurCode | null }[] = [];
-  expect(getHighestNicheurStatus(comportementsEmpty)).toBe<NicheurCode | null>(null);
+  assert.strictEqual(getHighestNicheurStatus(comportementsEmpty), null);
 });
 
 test("should return correct value with one code provided ", () => {
@@ -12,7 +14,7 @@ test("should return correct value with one code provided ", () => {
       nicheur: "certain",
     },
   ];
-  expect(getHighestNicheurStatus(comportementsSingle)).toBe<NicheurCode | null>("certain");
+  assert.strictEqual(getHighestNicheurStatus(comportementsSingle), "certain");
 });
 
 test("should return correct value with similar codes provided ", () => {
@@ -24,7 +26,7 @@ test("should return correct value with similar codes provided ", () => {
       nicheur: "probable",
     },
   ];
-  expect(getHighestNicheurStatus(comportementsSimilar)).toBe<NicheurCode | null>("probable");
+  assert.strictEqual(getHighestNicheurStatus(comportementsSimilar), "probable");
 });
 
 test("should return correct value with different codes provided ", () => {
@@ -36,7 +38,7 @@ test("should return correct value with different codes provided ", () => {
       nicheur: "certain",
     },
   ];
-  expect(getHighestNicheurStatus(comportementsDifferent)).toBe<NicheurCode | null>("certain");
+  assert.strictEqual(getHighestNicheurStatus(comportementsDifferent), "certain");
 });
 
 test("should return correct value with a complex case ", () => {
@@ -55,17 +57,17 @@ test("should return correct value with a complex case ", () => {
       nicheur: "possible",
     },
   ];
-  expect(getHighestNicheurStatus(comportementsComplex)).toBe<NicheurCode | null>("probable");
+  assert.strictEqual(getHighestNicheurStatus(comportementsComplex), "probable");
 });
 
 test("should return the default text when no element supplied", () => {
   const comportementsEmpty: { nicheur?: NicheurCode | null }[] = [];
-  expect(getNicheurStatusToDisplay(comportementsEmpty, "defaultText")).toBe<string>("defaultText");
+  assert.strictEqual(getNicheurStatusToDisplay(comportementsEmpty, "defaultText"), "defaultText");
 });
 
 test("should return the default text when no code supplied", () => {
   const comportementMultiplesEmpty: { nicheur?: NicheurCode | null }[] = [{}, {}, {}];
-  expect(getNicheurStatusToDisplay(comportementMultiplesEmpty, "defaultText")).toBe<string>("defaultText");
+  assert.strictEqual(getNicheurStatusToDisplay(comportementMultiplesEmpty, "defaultText"), "defaultText");
 });
 
 test("should return correct value with one code provided ", () => {
@@ -74,7 +76,7 @@ test("should return correct value with one code provided ", () => {
       nicheur: "certain",
     },
   ];
-  expect(getNicheurStatusToDisplay(comportementsSingle, "defaultText")).toBe<string>(NICHEUR_CERTAIN.name);
+  assert.strictEqual(getNicheurStatusToDisplay(comportementsSingle, "defaultText"), NICHEUR_CERTAIN.name);
 });
 
 test("should return correct value with similar codes provided ", () => {
@@ -86,7 +88,7 @@ test("should return correct value with similar codes provided ", () => {
       nicheur: "probable",
     },
   ];
-  expect(getNicheurStatusToDisplay(comportementsSimilar, "defaultText")).toBe<string>(NICHEUR_PROBABLE.name);
+  assert.strictEqual(getNicheurStatusToDisplay(comportementsSimilar, "defaultText"), NICHEUR_PROBABLE.name);
 });
 
 test("should return correct value with different codes provided ", () => {
@@ -98,7 +100,7 @@ test("should return correct value with different codes provided ", () => {
       nicheur: "certain",
     },
   ];
-  expect(getNicheurStatusToDisplay(comportementsDifferent, "defaultText")).toBe<string>(NICHEUR_CERTAIN.name);
+  assert.strictEqual(getNicheurStatusToDisplay(comportementsDifferent, "defaultText"), NICHEUR_CERTAIN.name);
 });
 
 test("should return correct value with a complex case ", () => {
@@ -117,5 +119,5 @@ test("should return correct value with a complex case ", () => {
       nicheur: "possible",
     },
   ];
-  expect(getNicheurStatusToDisplay(comportementsComplex, "defaultText")).toBe<string>(NICHEUR_PROBABLE.name);
+  assert.strictEqual(getNicheurStatusToDisplay(comportementsComplex, "defaultText"), NICHEUR_PROBABLE.name);
 });

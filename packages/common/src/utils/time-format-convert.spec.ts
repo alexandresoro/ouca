@@ -1,59 +1,61 @@
+import assert from "node:assert";
+import test, { describe } from "node:test";
 import { getHumanFriendlyTimeFromMinutes, getMinutesFromTime } from "./time-format-convert.js";
 
 describe("getMinutesFromTime", () => {
   test("should parse HH:mm format", () => {
-    expect(getMinutesFromTime("11:12")).toEqual(672);
-    expect(getMinutesFromTime("0:25")).toEqual(25);
+    assert.strictEqual(getMinutesFromTime("11:12"), 672);
+    assert.strictEqual(getMinutesFromTime("0:25"), 25);
   });
 
   test("should parse HHhmm format", () => {
-    expect(getMinutesFromTime("1h35")).toEqual(95);
-    expect(getMinutesFromTime("0h25")).toEqual(25);
+    assert.strictEqual(getMinutesFromTime("1h35"), 95);
+    assert.strictEqual(getMinutesFromTime("0h25"), 25);
   });
 
   test("should parse HHHmm format", () => {
-    expect(getMinutesFromTime("15H22")).toEqual(922);
-    expect(getMinutesFromTime("0H25")).toEqual(25);
+    assert.strictEqual(getMinutesFromTime("15H22"), 922);
+    assert.strictEqual(getMinutesFromTime("0H25"), 25);
   });
 
   test("should parse minutes format", () => {
-    expect(getMinutesFromTime("1023")).toEqual(1023);
-    expect(getMinutesFromTime("145")).toEqual(145);
-    expect(getMinutesFromTime("15")).toEqual(15);
-    expect(getMinutesFromTime("6")).toEqual(6);
+    assert.strictEqual(getMinutesFromTime("1023"), 1023);
+    assert.strictEqual(getMinutesFromTime("145"), 145);
+    assert.strictEqual(getMinutesFromTime("15"), 15);
+    assert.strictEqual(getMinutesFromTime("6"), 6);
   });
 
   test("should return NaN for values that do no match any pattern", () => {
-    expect(getMinutesFromTime("H13")).toEqual(NaN);
-    expect(getMinutesFromTime("h13")).toEqual(NaN);
-    expect(getMinutesFromTime("2:91")).toEqual(NaN);
-    expect(getMinutesFromTime("2H91")).toEqual(NaN);
-    expect(getMinutesFromTime("9h91")).toEqual(NaN);
-    expect(getMinutesFromTime("15o32")).toEqual(NaN);
-    expect(getMinutesFromTime("15H223")).toEqual(NaN);
-    expect(getMinutesFromTime("15:223")).toEqual(NaN);
-    expect(getMinutesFromTime("99bb")).toEqual(NaN);
-    expect(getMinutesFromTime("fail")).toEqual(NaN);
-    expect(getMinutesFromTime(":34")).toEqual(NaN);
-    expect(getMinutesFromTime("6321")).toEqual(NaN);
-    expect(getMinutesFromTime("14.38")).toEqual(NaN);
-    expect(getMinutesFromTime("6,35")).toEqual(NaN);
+    assert.strictEqual(getMinutesFromTime("H13"), NaN);
+    assert.strictEqual(getMinutesFromTime("h13"), NaN);
+    assert.strictEqual(getMinutesFromTime("2:91"), NaN);
+    assert.strictEqual(getMinutesFromTime("2H91"), NaN);
+    assert.strictEqual(getMinutesFromTime("9h91"), NaN);
+    assert.strictEqual(getMinutesFromTime("15o32"), NaN);
+    assert.strictEqual(getMinutesFromTime("15H223"), NaN);
+    assert.strictEqual(getMinutesFromTime("15:223"), NaN);
+    assert.strictEqual(getMinutesFromTime("99bb"), NaN);
+    assert.strictEqual(getMinutesFromTime("fail"), NaN);
+    assert.strictEqual(getMinutesFromTime(":34"), NaN);
+    assert.strictEqual(getMinutesFromTime("6321"), NaN);
+    assert.strictEqual(getMinutesFromTime("14.38"), NaN);
+    assert.strictEqual(getMinutesFromTime("6,35"), NaN);
   });
 });
 
 describe("getHumanFriendlyTimeFromMinutes", () => {
   test("should parse minutes format", () => {
-    expect(getHumanFriendlyTimeFromMinutes(1023)).toEqual("17:03");
-    expect(getHumanFriendlyTimeFromMinutes(145)).toEqual("02:25");
-    expect(getHumanFriendlyTimeFromMinutes(15)).toEqual("00:15");
-    expect(getHumanFriendlyTimeFromMinutes(6)).toEqual("00:06");
+    assert.strictEqual(getHumanFriendlyTimeFromMinutes(1023), "17:03");
+    assert.strictEqual(getHumanFriendlyTimeFromMinutes(145), "02:25");
+    assert.strictEqual(getHumanFriendlyTimeFromMinutes(15), "00:15");
+    assert.strictEqual(getHumanFriendlyTimeFromMinutes(6), "00:06");
   });
 
   test("should reject minutes that are not valid", () => {
-    expect(() => getHumanFriendlyTimeFromMinutes(15332)).toThrowError();
-    expect(() => getHumanFriendlyTimeFromMinutes(-1)).toThrowError();
-    expect(() => getHumanFriendlyTimeFromMinutes(4.7)).toThrowError();
-    expect(() => getHumanFriendlyTimeFromMinutes(7 / 3)).toThrowError();
-    expect(() => getHumanFriendlyTimeFromMinutes(Math.PI)).toThrowError();
+    assert.throws(() => getHumanFriendlyTimeFromMinutes(15332));
+    assert.throws(() => getHumanFriendlyTimeFromMinutes(-1));
+    assert.throws(() => getHumanFriendlyTimeFromMinutes(4.7));
+    assert.throws(() => getHumanFriendlyTimeFromMinutes(7 / 3));
+    assert.throws(() => getHumanFriendlyTimeFromMinutes(Math.PI));
   });
 });

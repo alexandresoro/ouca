@@ -1,8 +1,10 @@
+import assert from "node:assert";
+import test from "node:test";
 import { type Coordinates } from "../types/coordinates.object.js";
 import { transformCoordinates } from "./coordinates-transformer.js";
 
 test("should throw an error if coordinates are missing", () => {
-  expect(() => transformCoordinates(null, "gps")).toThrowError();
+  assert.throws(() => transformCoordinates(null, "gps"));
 });
 
 test("should throw an error if system is missing", () => {
@@ -12,7 +14,7 @@ test("should throw an error if system is missing", () => {
     longitude: -3,
   };
 
-  expect(() => transformCoordinates(inputCoordinates, undefined)).toThrowError();
+  assert.throws(() => transformCoordinates(inputCoordinates, undefined));
 });
 
 test("should not transform coordinates if the system is the same", () => {
@@ -22,7 +24,7 @@ test("should not transform coordinates if the system is the same", () => {
     longitude: -3,
   };
 
-  expect(transformCoordinates(inputCoordinates, "gps")).toBe<Coordinates>(inputCoordinates);
+  assert.deepStrictEqual(transformCoordinates(inputCoordinates, "gps"), inputCoordinates);
 });
 
 test("should convert coordinates from Lambert to GPS", () => {
@@ -32,7 +34,7 @@ test("should convert coordinates from Lambert to GPS", () => {
     longitude: 460000,
   };
 
-  expect(transformCoordinates(inputCoordinates, "gps")).toEqual<Coordinates>({
+  assert.deepStrictEqual(transformCoordinates(inputCoordinates, "gps"), {
     latitude: 43.308711,
     longitude: 0.042885,
     system: "gps",
@@ -48,7 +50,7 @@ test("should detect transformation to invalid coordinates", () => {
     longitude: 0,
   };
 
-  expect(transformCoordinates(inputCoordinates, "lambert93")).toEqual<Coordinates>({
+  assert.deepStrictEqual(transformCoordinates(inputCoordinates, "lambert93"), {
     latitude: 909838.93,
     longitude: 253531.13,
     system: "lambert93",
