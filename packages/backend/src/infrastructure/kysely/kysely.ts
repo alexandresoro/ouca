@@ -1,18 +1,16 @@
+import { dbConfig } from "@infrastructure/config/database-config.js";
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
 import pg from "pg";
 import { serializeError } from "serialize-error";
-import { getDbConfig } from "../../config.js";
 import { logger } from "../../utils/logger.js";
 import { type Database } from "./database/Database.js";
-
-const databaseConfig = getDbConfig();
 
 const kyselyLogger = logger.child({ module: "kysely" });
 
 const dialect = new PostgresDialect({
   // eslint-disable-next-line import/no-named-as-default-member
   pool: new pg.Pool({
-    connectionString: databaseConfig.url,
+    connectionString: dbConfig.url,
   }),
 });
 

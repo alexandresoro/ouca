@@ -1,5 +1,5 @@
+import { type Config } from "@domain/config/config.js";
 import { z } from "zod";
-import { type Config } from "../../config.js";
 import { userRoles, type LoggedUser, type UserRole } from "../../types/User.js";
 import introspectAccessTokenCommon from "./introspect-access-token.js";
 import { type OidcWithInternalUserMappingService } from "./oidc-with-internal-user-mapping.js";

@@ -10,6 +10,7 @@
     "strict": true,
     "paths": {
       "@ou-ca/common/*": ["../common/src/*"],
+      "@domain/*": ["./src/domain/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
     },
     "types": ["vitest/globals"]

@@ -1,8 +1,8 @@
+import { type Config } from "@domain/config/config.js";
 import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
-import { type Config } from "../config.js";
 import { buildAgeRepository } from "../repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";

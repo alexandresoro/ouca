@@ -1,5 +1,5 @@
+import { type Config } from "@domain/config/config.js";
 import { type z } from "zod";
-import { type Config } from "../../config.js";
 
 /**
  * Calls the OIDC introspection endpoint and returns the response of the introspection

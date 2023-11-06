@@ -1,12 +1,10 @@
+import { dbConfig } from "@infrastructure/config/database-config.js";
 import fs from "node:fs";
 import path from "node:path";
 import { sql, type DatabasePool } from "slonik";
 import { Umzug } from "umzug";
 import { z } from "zod";
-import { getDbConfig } from "../../config.js";
 import { logger } from "../../utils/logger.js";
-
-const dbConfig = getDbConfig();
 
 export const getUmzugInstance = ({ slonik }: { slonik: DatabasePool }) =>
   new Umzug({

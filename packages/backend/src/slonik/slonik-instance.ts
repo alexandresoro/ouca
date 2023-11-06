@@ -1,6 +1,6 @@
+import { type DbConfig } from "@domain/config/database-config.js";
 import { type Logger } from "pino";
 import { createPool } from "slonik";
-import { type DbConfig } from "../config.js";
 import { createFieldNameTransformationToCamelcaseInterceptor } from "./slonik-fieldname-to-camelcase-interceptor.js";
 import { createQueryLoggingInterceptor } from "./slonik-pino-interceptor.js";
 import { createResultParserInterceptor } from "./slonik-zod-interceptor.js";

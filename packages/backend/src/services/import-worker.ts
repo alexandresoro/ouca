@@ -3,7 +3,7 @@ import { readFile } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
-import { getConfig } from "../config.js";
+import { getConfig } from "../infrastructure/config/config.js";
 import {
   IMPORT_COMPLETE,
   IMPORT_FAILED,
