@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
     "module": "Node16",
@@ -10,7 +9,8 @@
     "resolveJsonModule": true,
     "strict": true,
     "paths": {
-      "@ou-ca/common/*": ["../common/src/*"]
+      "@ou-ca/common/*": ["../common/src/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"],
     },
     "types": ["vitest/globals"]
   },

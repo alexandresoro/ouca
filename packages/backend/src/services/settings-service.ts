@@ -1,3 +1,4 @@
+import { type SettingsRepository as SettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type Age } from "@ou-ca/common/entities/age";
 import { type Department } from "@ou-ca/common/entities/department";
@@ -21,6 +22,7 @@ import { type SexeService } from "./entities/sexe-service.js";
 type SettingsServiceDependencies = {
   logger: Logger;
   settingsRepository: SettingsRepository;
+  settingsRepositoryKysely: SettingsRepositoryKysely;
   departementService: DepartementService;
   observateurService: ObservateurService;
   sexeService: SexeService;
@@ -42,6 +44,7 @@ type Settings = Omit<
 export const buildSettingsService = ({
   logger,
   settingsRepository,
+  settingsRepositoryKysely,
   departementService,
   observateurService,
   sexeService,

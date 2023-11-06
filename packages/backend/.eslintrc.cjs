@@ -8,11 +8,8 @@ module.exports = {
   },
   settings: {
     "import/resolver": {
-      typescript: {
-        project: "packages/*/tsconfig.json",
-      },
+      typescript: {},
       node: true,
     },
   },
-  ignorePatterns: ["generated", "scripts/"],
 };

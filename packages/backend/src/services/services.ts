@@ -1,3 +1,4 @@
+import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
@@ -104,6 +105,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const milieuRepository = buildMilieuRepository({ slonik });
   const observateurRepository = buildObservateurRepository({ slonik });
   const settingsRepository = buildSettingsRepository({ slonik });
+  const settingsRepositoryKysely = buildSettingsRepositoryKysely();
   const sexeRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ slonik });
 
@@ -222,6 +224,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const settingsService = buildSettingsService({
     logger,
     settingsRepository,
+    settingsRepositoryKysely,
     departementService,
     observateurService,
     sexeService,

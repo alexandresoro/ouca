@@ -5,6 +5,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@ou-ca/common": path.resolve(__dirname, "../common/src"),
+      "@infrastructure": path.resolve(__dirname, "./src/infrastructure"),
     },
   },
   test: {
