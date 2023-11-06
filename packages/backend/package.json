@@ -20,8 +20,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "biome:ci": "biome ci *",
-    "compile:tsc": "tsc --build tsconfig.build.json",
-    "compile:tsc:dev": "tsc --build tsconfig.dev.json",
+    "compile:tsc": "tsc --build tsconfig.build.json && tsc-alias",
+    "compile:tsc:dev": "tsc --build tsconfig.dev.json && tsc-alias",
     "umzug": "node dist/umzug",
     "umzug:dev": "tsx -r dotenv/config src/umzug.ts"
   },
@@ -63,6 +63,7 @@
     "@types/pg": "8.10.8",
     "@vitest/coverage-v8": "0.34.6",
     "dotenv": "16.3.1",
+    "tsc-alias": "1.8.8",
     "tsx": "3.14.0",
     "typescript": "5.2.2",
     "vitest": "0.34.6",
