@@ -1,10 +1,10 @@
+import { getUmzugInstance } from "@infrastructure/umzug/umzug-instance.js";
 import * as Sentry from "@sentry/node";
 import { getConfig } from "./config.js";
 import { buildServer } from "./fastify.js";
 import { startWorkersAndJobs } from "./jobs/job-runner.js";
 import { buildServices } from "./services/services.js";
 import shutdown from "./shutdown.js";
-import { runDatabaseMigrations } from "./umzug.js";
 import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
 
@@ -28,11 +28,13 @@ checkAndCreateFolders();
 (async () => {
   const services = await buildServices(config);
 
-  await runDatabaseMigrations({
-    logger: logger.child({ module: "umzug" }),
-    slonik: services.slonik,
-    dbConfig: config.database,
-  });
+  if (config.database.migrator.runMigrations) {
+    logger.child({ module: "umzug" }).debug("Running database migrations");
+    const umzug = getUmzugInstance({ slonik: services.slonik });
+    await umzug.up();
+  } else {
+    logger.debug("No migrations to run as feature is disabled");
+  }
 
   await startWorkersAndJobs(services);
 
