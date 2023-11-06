@@ -1,4 +1,4 @@
-import { isSentryEnabledAtom } from "@services/sentry/sentry";
+import { isSentryEnabledAtom } from "@services/sentry/sentry-atom";
 import { useAtomValue } from "jotai";
 import { useEffect, type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
