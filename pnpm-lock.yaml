@@ -109,8 +109,8 @@ importers:
         specifier: workspace:*
         version: link:../eslint-config
       '@types/content-disposition':
-        specifier: 0.5.7
-        version: 0.5.7
+        specifier: 0.5.8
+        version: 0.5.8
       '@types/node':
         specifier: 20.8.10
         version: 20.8.10
@@ -1801,8 +1801,8 @@ packages:
     resolution: {integrity: sha512-VOVRLM1mBxIRxydiViqPcKn6MIxZytrbMpd6RJLIWKxUNr3zux8no0Oc7kJx0WAPIitgZ0gkrDS+btlqQpubpw==}
     dev: true
 
-  /@types/content-disposition@0.5.7:
-    resolution: {integrity: sha512-V9/5u21RHFR1zfdm3rQ6pJUKV+zSSVQt+yq16i1YhdivVzWgPEoKedc3GdT8aFjsqQbakdxuy3FnEdePUQOamQ==}
+  /@types/content-disposition@0.5.8:
+    resolution: {integrity: sha512-QVSSvno3dE0MgO76pJhmv4Qyi/j0Yk9pBp0Y7TJ2Tlj+KCgJWY6qX7nnxCOLkZ3VYRSIk1WTxCvwUSdx6CCLdg==}
     dev: true
 
   /@types/geojson@7946.0.13:
