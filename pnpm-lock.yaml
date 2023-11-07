@@ -176,8 +176,8 @@ importers:
         specifier: 20.8.10
         version: 20.8.10
       '@types/proj4':
-        specifier: 2.5.4
-        version: 2.5.4
+        specifier: 2.5.5
+        version: 2.5.5
       tsx:
         specifier: 3.14.0
         version: 3.14.0
@@ -1862,8 +1862,8 @@ packages:
       pg-protocol: 1.6.0
       pg-types: 4.0.1
 
-  /@types/proj4@2.5.4:
-    resolution: {integrity: sha512-AAqZQKgOGuEmhlfLgues7anx0vcZg+0xKE8UggfVnWJSKk4xdVm+Rg1q2q7YmqoZS51BJ5jTcCyYQqIGdxa8FQ==}
+  /@types/proj4@2.5.5:
+    resolution: {integrity: sha512-y4tHUVVoMEOm2nxRLQ2/ET8upj/pBmoutGxFw2LZJTQWPgWXI+cbxVEUFFmIzr/bpFR83hGDOTSXX6HBeObvZA==}
     dev: true
 
   /@types/prop-types@15.7.5:
