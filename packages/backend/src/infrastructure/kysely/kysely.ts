@@ -14,30 +14,34 @@ const dialect = new PostgresDialect({
   }),
 });
 
-export const kysely = new Kysely<Database>({
-  dialect,
-  plugins: [new CamelCasePlugin()],
-  log: (event) => {
-    switch (event.level) {
-      case "query":
-        kyselyLogger.trace(
-          {
-            executionTime: event.queryDurationMillis,
-            query: event.query.sql,
-          },
-          "query"
-        );
-        break;
-      case "error":
-        kyselyLogger.warn(
-          {
-            error: serializeError(event.error),
-          },
-          "query execution produced an error"
-        );
-        break;
-      default:
-        break;
-    }
-  },
-});
+export const getKyselyInstance = () => {
+  return new Kysely<Database>({
+    dialect,
+    plugins: [new CamelCasePlugin()],
+    log: (event) => {
+      switch (event.level) {
+        case "query":
+          kyselyLogger.trace(
+            {
+              executionTime: event.queryDurationMillis,
+              query: event.query.sql,
+            },
+            "query"
+          );
+          break;
+        case "error":
+          kyselyLogger.warn(
+            {
+              error: serializeError(event.error),
+            },
+            "query execution produced an error"
+          );
+          break;
+        default:
+          break;
+      }
+    },
+  });
+};
+
+export const kysely = getKyselyInstance();

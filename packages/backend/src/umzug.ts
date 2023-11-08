@@ -1,10 +1,9 @@
-import { dbConfig } from "@infrastructure/config/database-config.js";
+import { getKyselyInstance } from "@infrastructure/kysely/kysely.js";
 import { getUmzugInstance } from "@infrastructure/umzug/umzug-instance.js";
-import getSlonikInstance from "./slonik/slonik-instance.js";
-import { logger } from "./utils/logger.js";
 
-void getSlonikInstance({ dbConfig, logger }).then((slonik) => {
-  void getUmzugInstance({
-    slonik,
-  }).runAsCLI();
-});
+// Use dedicated Kysely instance to be able to tear it down as soon as CLI is finished
+const kysely = getKyselyInstance();
+
+await getUmzugInstance(kysely).runAsCLI();
+
+await kysely.destroy();

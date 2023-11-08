@@ -28,7 +28,7 @@ checkAndCreateFolders();
 
   if (config.database.migrator.runMigrations) {
     logger.child({ module: "umzug" }).debug("Running database migrations");
-    const umzug = getUmzugInstance({ slonik: services.slonik });
+    const umzug = getUmzugInstance();
     await umzug.up();
   } else {
     logger.debug("No migrations to run as feature is disabled");
