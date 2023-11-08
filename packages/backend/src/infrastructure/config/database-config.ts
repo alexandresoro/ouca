@@ -16,7 +16,7 @@ const envDbSchema = z.object({
   OUCA_DATABASE_RUN_MIGRATIONS: z.string().default("false").transform(zodStringToBoolean),
   OUCA_DATABASE_MIGRATION_SCHEMA: z.string().default("public"),
   OUCA_DATABASE_MIGRATION_TABLE: z.string().default("base_naturaliste_umzug_migrations"),
-  OUCA_DATABASE_MIGRATIONS_PATH: z.string().default(new URL("../migrations/", import.meta.url).pathname),
+  OUCA_DATABASE_MIGRATIONS_PATH: z.string().default(new URL("../../../migrations/", import.meta.url).pathname),
 });
 
 export const getDbConfig = (): DbConfig => {
