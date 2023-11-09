@@ -3,15 +3,9 @@ name: Deploy to Cloudflare
 on:
   workflow_call:
     inputs:
-      artifact:
-        required: true
-        type: string
-      branch:
-        required: true
-        type: string
-      distPath:
-        required: true
-        type: string
+      with-sentry:
+        required: false
+        type: boolean
 
 jobs:
   deploy-cloudflare:
@@ -23,16 +17,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Retrieve artifact
-        uses: actions/download-artifact@v3
+      - name: Setup versions
+        run: |
+          echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
+          echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json | sed -En 's/^(~|\^|>=)*([0-9]+\.[0-9]+\.[0-9]+$)/\2/p')" >> $GITHUB_ENV
+
+      - uses: pnpm/action-setup@v2
         with:
-          name: ${{ inputs.artifact }}
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm frontend build
+        env:
+          ENABLE_SENTRY: ${{ inputs.with-sentry }}
+          SENTRY_RELEASE: ${{ github.sha }}
+          SENTRY_URL: ${{ vars.SENTRY_URL }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
 
       - uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
-          branch: ${{ inputs.branch }}
-          directory: ${{ inputs.distPath }}
+          directory: './packages/frontend/dist'
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

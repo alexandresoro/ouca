@@ -10,21 +10,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    uses: ./.github/workflows/_build.yml
+  validate:
+    uses: ./.github/workflows/_validate.yml
     secrets: inherit
-    with:
-      with-sentry: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
-  deploy-frontend:
-    needs: build
+  build-deploy-frontend:
+    needs: validate
+    concurrency:
+      group: deploy-frontend-${{ github.ref }}
+      cancel-in-progress: true
 
     uses: ./.github/workflows/_deploy-cloudflare.yml
     secrets: inherit
     with:
-      artifact: dist-frontend
-      branch: ${{ github.ref_name }}
-      distPath: './packages/frontend/dist'
+      with-sentry: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
   publish-backend-image:
     runs-on: ubuntu-latest
@@ -86,7 +85,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-backend-trigger:
-    needs: [build, publish-backend-image]
+    needs: [validate, publish-backend-image]
     concurrency: deploy-backend-${{ github.ref }}
 
     runs-on: ubuntu-latest

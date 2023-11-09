@@ -2,10 +2,6 @@ name: Validate, Test & Build
 
 on:
   workflow_call:
-    inputs:
-      with-sentry:
-        required: false
-        type: boolean
 
 jobs:
   validate-test-build:
@@ -40,22 +36,5 @@ jobs:
       - name: Lint
         run: pnpm --aggregate-output --recursive run lint
 
-      - name: Build
-        run: pnpm run build:ci
-        env:
-          ENABLE_SENTRY: ${{ inputs.with-sentry }}
-          SENTRY_RELEASE: ${{ github.sha }}
-          SENTRY_URL: ${{ vars.SENTRY_URL }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-
-      - name: Upload artifact - frontend
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-frontend
-          path: |
-            packages/frontend/dist/
-            functions/
-          retention-days: 1
-          if-no-files-found: error
+      - name: Typecheck
+        run: pnpm --aggregate-output --recursive run typecheck

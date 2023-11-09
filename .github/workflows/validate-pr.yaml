@@ -5,12 +5,10 @@ on:
 
 jobs:
   validate-pr:    
-    uses: ./.github/workflows/_build.yml
+    uses: ./.github/workflows/_validate.yml
     secrets: inherit
-    with:
-      with-sentry: false
 
-  deploy-frontend:
+  build-deploy-frontend:
     needs: validate-pr
     concurrency:
       group: deploy-frontend-${{ github.ref }}
@@ -19,9 +17,7 @@ jobs:
     uses: ./.github/workflows/_deploy-cloudflare.yml
     secrets: inherit
     with:
-      artifact: dist-frontend
-      branch: ${{ github.ref_name }}
-      distPath: './packages/frontend/dist'
+      with-sentry: false
 
   dependabot:
     runs-on: ubuntu-latest
