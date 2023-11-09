@@ -6,9 +6,6 @@ on:
       with-sentry:
         required: false
         type: boolean
-      upload-backend:
-        required: false
-        type: boolean
 
 jobs:
   validate-test-build:
@@ -60,22 +57,5 @@ jobs:
           path: |
             packages/frontend/dist/
             functions/
-          retention-days: 1
-          if-no-files-found: error
-
-      - name: Upload artifact - backend
-        if: ${{ inputs.upload-backend }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-node-lts
-          path: |
-            packages/backend/dist/
-            packages/common/dist/
-            packages/backend/migrations/
-            package.json
-            pnpm-*.yaml
-            packages/backend/package.json
-            packages/common/package.json
-            !**/node_modules/**
           retention-days: 1
           if-no-files-found: error

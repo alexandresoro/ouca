@@ -10,12 +10,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:    
+  build:
     uses: ./.github/workflows/_build.yml
     secrets: inherit
     with:
       with-sentry: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
-      upload-backend: true
 
   deploy-frontend:
     needs: build
@@ -28,8 +27,6 @@ jobs:
       distPath: './packages/frontend/dist'
 
   publish-backend-image:
-    needs: build
-
     runs-on: ubuntu-latest
 
     outputs:
@@ -89,7 +86,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-backend-trigger:
-    needs: publish-backend-image
+    needs: [build, publish-backend-image]
     concurrency: deploy-backend-${{ github.ref }}
 
     runs-on: ubuntu-latest
