@@ -13,10 +13,11 @@
   ],
   "scripts": {
     "start": "vite",
-    "build": "tsc --build tsconfig.build.json && vite build",
+    "build": "vite build",
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint .",
+    "typecheck": "tsc --build tsconfig.build.json",
     "biome:ci": "biome ci *"
   },
   "dependencies": {

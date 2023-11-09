@@ -17,6 +17,7 @@
     "prepare": "husky install",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",
+    "typecheck": "pnpm -r run typecheck",
     "biome:ci": "pnpm -r run biome:ci",
     "frontend": "pnpm --dir './packages/frontend'",
     "backend": "pnpm --dir './packages/backend'",
