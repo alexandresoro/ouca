@@ -44,15 +44,8 @@ jobs:
           echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
           echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json | sed -En 's/^(~|\^|>=)*([0-9]+\.[0-9]+\.[0-9]+$)/\2/p')" >> $GITHUB_ENV
 
-      - name: Retrieve artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dist-node-lts
-          path: build
-
-      - name: Docker meta
+      - uses: docker/metadata-action@v5
         id: meta
-        uses: docker/metadata-action@v5
         with:
           images: |
             ghcr.io/${{ github.repository }}-backend
@@ -66,15 +59,12 @@ jobs:
           flavor: |
             latest=false
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
+      - uses: docker/setup-buildx-action@v3
         id: buildx
-        uses: docker/setup-buildx-action@v3
 
-      - name: Log into GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
