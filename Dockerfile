@@ -1,11 +1,13 @@
 # syntax=docker/dockerfile:1
+ARG NODE_IMAGE_VERSION=20
 
 # 1. Transpile the project
-FROM node:20-alpine as build
+FROM node:${NODE_IMAGE_VERSION}-alpine as build
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+ARG PNPM_VERSION=latest
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY ./ /app/
 
@@ -13,30 +15,39 @@ RUN pnpm i --frozen-lockfile
 RUN pnpm run backend build
 
 # 2. Run the NodeJS backend
-FROM node:20-alpine
-ENV NODE_ENV=production
+FROM node:${NODE_IMAGE_VERSION}-alpine as final
 
-# Install only the dependencies that are required at runtime
+ARG PNPM_VERSION=latest
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+# Sets to production, it also sets the install script to install deps only
+ENV NODE_ENV production
+
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
+# In the container, listen to outside localhost by default
 ENV OUCA_SERVER_HOST 0.0.0.0
 
-COPY migrations/ /app/migrations/
-COPY package.json pnpm-lock.yaml /app/
+COPY /packages/backend/migrations/ packages/backend/migrations/
+COPY --from=build /app/packages/common/dist/ packages/common/dist/
+COPY --from=build /app/packages/backend/dist/ packages/backend/dist/
+
+COPY package.json pnpm-*.yaml ./
+
+COPY /packages/common/package.json packages/common/package.json
+COPY /packages/backend/package.json packages/backend/package.json
 
 RUN npm pkg delete scripts.prepare && \
-  pnpm i --frozen-lockfile && \
-  rm -f pnpm-lock.yaml
-
-COPY --from=build /app/packages/ /app/packages/
+  pnpm i --frozen-lockfile
 
 WORKDIR /app/packages/backend/dist
 
 # Create the necessary directories
 RUN mkdir public && \
   mkdir uploads
+
+ARG GIT_SHA
+ENV SENTRY_RELEASE ${GIT_SHA}
 
 ENTRYPOINT ["node", "main.js"]
 

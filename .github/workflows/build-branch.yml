@@ -90,7 +90,6 @@ jobs:
             "PNPM_VERSION=${{ env.PNPM_VERSION }}"
             "GIT_SHA=${{ github.sha }}"
           context: .
-          file: Dockerfile.ci
           platforms: |
             linux/amd64
           push: true
