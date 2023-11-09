@@ -29,9 +29,12 @@ jobs:
 
   publish-backend-image:
     needs: build
-    concurrency: publish-backend-docker-${{ github.ref }}
 
     runs-on: ubuntu-latest
+
+    outputs:
+      image-label: ${{ steps.meta.outputs.version }}
+      image-digest: ${{ steps.docker_build.outputs.digest }}
 
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +99,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  deploy-backend-trigger:
+    needs: publish-backend-image
+    concurrency: deploy-backend-${{ github.ref }}
+
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Dispatch backend image update
-        run: gh workflow run --repo alexandresoro/k3s -f label=${{ steps.meta.outputs.version }} -f digest=${{ steps.docker_build.outputs.digest }} -f isProduction=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }} ouca-backend-image-update.yaml
+        run: gh workflow run --repo alexandresoro/k3s -f label=${{ needs.publish-backend-image.image-label }} -f digest=${{ needs.publish-backend-image.image-digest }} -f isProduction=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }} ouca-backend-image-update.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
