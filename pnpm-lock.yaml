@@ -39,11 +39,11 @@ importers:
         specifier: workspace:*
         version: link:../common
       '@sentry/node':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       '@sentry/tracing':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       '@turf/helpers':
         specifier: 6.5.0
         version: 6.5.0
@@ -224,14 +224,14 @@ importers:
         specifier: workspace:*
         version: link:../common
       '@sentry/integrations':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       '@sentry/react':
-        specifier: 7.78.0
-        version: 7.78.0(react@18.2.0)
+        specifier: 7.79.0
+        version: 7.79.0(react@18.2.0)
       '@sentry/tracing':
-        specifier: 7.78.0
-        version: 7.78.0
+        specifier: 7.79.0
+        version: 7.79.0
       '@styled-icons/boxicons-regular':
         specifier: 10.47.0
         version: 10.47.0(react@18.2.0)(styled-components@5.3.11)
@@ -423,7 +423,7 @@ packages:
       '@babel/helpers': 7.23.2
       '@babel/parser': 7.23.0
       '@babel/template': 7.22.15
-      '@babel/traverse': 7.23.2(supports-color@5.5.0)
+      '@babel/traverse': 7.23.2
       '@babel/types': 7.23.0
       convert-source-map: 2.0.0
       debug: 4.3.4(supports-color@5.5.0)
@@ -442,11 +442,21 @@ packages:
       '@jridgewell/trace-mapping': 0.3.20
       jsesc: 2.5.2
 
+  /@babel/generator@7.23.3:
+    resolution: {integrity: sha512-keeZWAV4LU3tW0qRi19HRpabC/ilM0HRBBzf9/k8FFiG4KVpiv0FIy4hHfLfFQZNhziCTPTmd59zoyv6DNISzg==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/types': 7.23.3
+      '@jridgewell/gen-mapping': 0.3.3
+      '@jridgewell/trace-mapping': 0.3.20
+      jsesc: 2.5.2
+    dev: false
+
   /@babel/helper-annotate-as-pure@7.22.5:
     resolution: {integrity: sha512-LvBTxu8bQSQkcyKOU+a1btnNFQ1dMAd0R6PyW3arXes06F6QLWLIrd681bxRPIXlrMGR3XYnW9JyML7dP3qgxg==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.23.0
+      '@babel/types': 7.23.3
     dev: false
 
   /@babel/helper-compilation-targets@7.22.15:
@@ -528,7 +538,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.22.15
-      '@babel/traverse': 7.23.2(supports-color@5.5.0)
+      '@babel/traverse': 7.23.2
       '@babel/types': 7.23.0
     transitivePeerDependencies:
       - supports-color
@@ -548,8 +558,16 @@ packages:
     dependencies:
       '@babel/types': 7.23.0
 
-  /@babel/plugin-syntax-jsx@7.22.5(@babel/core@7.23.2):
-    resolution: {integrity: sha512-gvyP4hZrgrs/wWMaocvxZ44Hw0b3W8Pe+cMxc8V1ULQ07oh8VNbIRaoD1LRZVTvD+0nieDKjfgKg89sD7rrKrg==}
+  /@babel/parser@7.23.3:
+    resolution: {integrity: sha512-uVsWNvlVsIninV2prNz/3lHCb+5CJ+e+IUBfbjToAHODtfGYLfCFuY4AU7TskI+dAKk+njsPiBjq1gKTvZOBaw==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+    dependencies:
+      '@babel/types': 7.23.3
+    dev: false
+
+  /@babel/plugin-syntax-jsx@7.23.3(@babel/core@7.23.2):
+    resolution: {integrity: sha512-EB2MELswq55OHUoRZLGg/zC7QWUKfNLpE57m/S2yr1uEneIgsTgrSzXP3NXEsMkVn76OlaVVnzN+ugObuYGwhg==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
@@ -599,7 +617,7 @@ packages:
       '@babel/parser': 7.23.0
       '@babel/types': 7.23.0
 
-  /@babel/traverse@7.23.2(supports-color@5.5.0):
+  /@babel/traverse@7.23.2:
     resolution: {integrity: sha512-azpe59SQ48qG6nu2CzcMLbxUudtN+dOM9kDbUqGq3HXUJRlo7i8fvPoxQUzYgLZ4cMVmuZgm8vvBpNeRhd6XSw==}
     engines: {node: '>=6.9.0'}
     dependencies:
@@ -616,6 +634,24 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /@babel/traverse@7.23.3(supports-color@5.5.0):
+    resolution: {integrity: sha512-+K0yF1/9yR0oHdE0StHuEj3uTPzwwbrLGfNOndVJVV2TqA5+j3oljJUb4nmB954FLGjNem976+B+eDuLIjesiQ==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/code-frame': 7.22.13
+      '@babel/generator': 7.23.3
+      '@babel/helper-environment-visitor': 7.22.20
+      '@babel/helper-function-name': 7.23.0
+      '@babel/helper-hoist-variables': 7.22.5
+      '@babel/helper-split-export-declaration': 7.22.6
+      '@babel/parser': 7.23.3
+      '@babel/types': 7.23.3
+      debug: 4.3.4(supports-color@5.5.0)
+      globals: 11.12.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@babel/types@7.23.0:
     resolution: {integrity: sha512-0oIyUfKoI3mSqMvsxBdclDwxXKXAUA8v/apZbc+iSyARYou1o8ZGDxbUYyLFoW2arqS2jDGqJuZvv1d/io1axg==}
     engines: {node: '>=6.9.0'}
@@ -623,6 +659,15 @@ packages:
       '@babel/helper-string-parser': 7.22.5
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
+
+  /@babel/types@7.23.3:
+    resolution: {integrity: sha512-OZnvoH2l8PK5eUvEcUyCt/sXgr/h+UWpVuBbOljwcrAgUl6lpchoQ++PHGyQy1AtYnVA6CEq3y5xeEI10brpXw==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/helper-string-parser': 7.22.5
+      '@babel/helper-validator-identifier': 7.22.20
+      to-fast-properties: 2.0.0
+    dev: false
 
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
@@ -1391,23 +1436,23 @@ packages:
       string-argv: 0.3.2
     dev: false
 
-  /@sentry-internal/tracing@7.78.0:
-    resolution: {integrity: sha512-53wf+HWyjiansZ0U+q7Q7U2kEjXfL/C8+XOwE4ntLVPGFyvxuYaRUb8OEYFNTsODf20ihnxOLZ+GsXXPlqPfFA==}
+  /@sentry-internal/tracing@7.79.0:
+    resolution: {integrity: sha512-Mf9Bd0OrZ24h1qZpvmz9IRnfORMGYNYC1xWBBFpIR1AauEDX89x+mJwIOrUc4KKAAAwt73shrJv1QA8QOm4E3g==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/core': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
 
-  /@sentry/browser@7.78.0:
-    resolution: {integrity: sha512-KVeC71y7hnqYN3HN6KZH33y0yBAE8CmiApQ08KFIF3+6Ty1V3PC1mbQAmNGttka57jNvyBXTCpN8Fw8MPK9V/A==}
+  /@sentry/browser@7.79.0:
+    resolution: {integrity: sha512-gWbWEElF61uZeTFLIZz3NMyCkAzBDOpMAogEbVu2GX91SHKB7GXlE//INnS/R5wfE5j/CFaZc53mzzoIuMy1sA==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.78.0
-      '@sentry/core': 7.78.0
-      '@sentry/replay': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry-internal/tracing': 7.79.0
+      '@sentry/core': 7.79.0
+      '@sentry/replay': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
     dev: false
 
   /@sentry/bundler-plugin-core@2.10.0:
@@ -1415,8 +1460,8 @@ packages:
     engines: {node: '>= 14'}
     dependencies:
       '@sentry/cli': 2.21.2
-      '@sentry/node': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/node': 7.79.0
+      '@sentry/utils': 7.79.0
       dotenv: 16.3.1
       find-up: 5.0.0
       glob: 9.3.2
@@ -1443,74 +1488,74 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/core@7.78.0:
-    resolution: {integrity: sha512-cf8U+1cNkIK14KC5ySXtzu4RW5Veto3lqkS95Rbl4ExUsrVsfansFNH63j6Bvu7UbJlBRK67uf6Ug2GBbUBUIg==}
+  /@sentry/core@7.79.0:
+    resolution: {integrity: sha512-9vG7SfOcJNJNiqlqg4MuHDUCaSf2ZXpv3eZYRPbBkgPGr8X1ekrSABpOK+6kBNvbtKxfWVTWbLpAA6xU+cwnVw==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
 
-  /@sentry/integrations@7.78.0:
-    resolution: {integrity: sha512-h5D2CqM3KPD5hcDFBSsaVGUz95QDuEaKU9juhb96os5zpg5c3VfSWE+u9CuABXu+cXS5+TVfffVrZ+A+YFo+Rg==}
+  /@sentry/integrations@7.79.0:
+    resolution: {integrity: sha512-BcD9KDgvFFoVkWGTZXu4jZ/zitXYJr39B0CQuJUfO/QquoKdAGvzcNXOKrq/sT9yMu1kl3e9MVqNxxrbXUkWWQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/core': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
       localforage: 1.10.0
     dev: false
 
-  /@sentry/node@7.78.0:
-    resolution: {integrity: sha512-gCImN1McfAObOvwgHTef2RZaifcgKt8oqCmctk9MczLJOqjOSzuaigNiCwvyvioe5Eq9jqbZomO6Qx/sG+1gpQ==}
+  /@sentry/node@7.79.0:
+    resolution: {integrity: sha512-7kZpYG5hGyt3JhEfo9YtEhbUMwFOzNRQqL/weKgHSyFXU20VcScorceKG2Hynn0rhdAZR6GfdKHsM4kFQvgmtg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.78.0
-      '@sentry/core': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry-internal/tracing': 7.79.0
+      '@sentry/core': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
       https-proxy-agent: 5.0.1
     transitivePeerDependencies:
       - supports-color
 
-  /@sentry/react@7.78.0(react@18.2.0):
-    resolution: {integrity: sha512-/5+yhXpzbdLehSqAJHAMvFDTBCSEt4WTjqjG7Bjw+w6ALUYwCXQBhCEITLT6tBdMLKO62qz69nuUvrWmaacxXg==}
+  /@sentry/react@7.79.0(react@18.2.0):
+    resolution: {integrity: sha512-QVSxLU0vxsW8X0oRYd30eQ4G4vadLXVYXnyLqopYp0M7rDhF5tPVnUrdAYoH+Q4UO/klOnqhSkXpfbrjMFvOng==}
     engines: {node: '>=8'}
     peerDependencies:
       react: 15.x || 16.x || 17.x || 18.x
     dependencies:
-      '@sentry/browser': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry/browser': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
       hoist-non-react-statics: 3.3.2
       react: 18.2.0
     dev: false
 
-  /@sentry/replay@7.78.0:
-    resolution: {integrity: sha512-BYBEJg8rdya8nN5H39ZVsklvFja/TX0Z5evkihCHYOAsUN74SPqmwsFYzziQhswFPJWEp0qpKweC7iuCKCSqyw==}
+  /@sentry/replay@7.79.0:
+    resolution: {integrity: sha512-vF79NxWGYfoD0hnIkdgUQqedoMcRHHp5UAfZlxhpQzJf4TnbOjollp63AvOrfd38osSG2d3E5kTUU9xs/zKhBQ==}
     engines: {node: '>=12'}
     dependencies:
-      '@sentry-internal/tracing': 7.78.0
-      '@sentry/core': 7.78.0
-      '@sentry/types': 7.78.0
-      '@sentry/utils': 7.78.0
+      '@sentry-internal/tracing': 7.79.0
+      '@sentry/core': 7.79.0
+      '@sentry/types': 7.79.0
+      '@sentry/utils': 7.79.0
     dev: false
 
-  /@sentry/tracing@7.78.0:
-    resolution: {integrity: sha512-NSWJZP6upHMYVGqE/4hbKHroqLOr+XjNS37MwXvip3trpIT7GK3JEGXrbkZAsmGhNiGWW3IYXAK169bL0gwX7w==}
+  /@sentry/tracing@7.79.0:
+    resolution: {integrity: sha512-Y1awpIcMKCsTpC3wS+SaEJTcOMd6OugZZXCV2r9ozBIRKE7wG//ntDX3ApcRf4kbDzQMJY2Ylu0QKDIyNEAr0g==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.78.0
+      '@sentry-internal/tracing': 7.79.0
     dev: false
 
-  /@sentry/types@7.78.0:
-    resolution: {integrity: sha512-XNyu6EFTrXmKlVgKHOxGdBJ6Aw7BnMBWtptr5TPOQJ4kh+rP+4DB3I6nafcSSUbIsO+hBVgBpj0J8R3Ps86CMQ==}
+  /@sentry/types@7.79.0:
+    resolution: {integrity: sha512-3tV32+v/DF8w7kD0p3kLWtgVTVdFL39oGY02+vz//rjWg/vzeqSE95mCYKm5pUfd6cPETX/8dunCiuTBQIkTHQ==}
     engines: {node: '>=8'}
 
-  /@sentry/utils@7.78.0:
-    resolution: {integrity: sha512-vxPZaMTthMgEgKvlkuqD9rQuQ4Q8fsWAuOuzeuwUbrVCBIeM/WpmyjUUx4ozy6axNGXSXGE4CzrEQUNv3+t9kQ==}
+  /@sentry/utils@7.79.0:
+    resolution: {integrity: sha512-tUTlb6PvfZawqBmBK9CPXflqrZDXHKWoX3fve2zLK6W0FSpIMOO4TH8PBqkHBFs0ZgF/bnv/bsM4z7uEAlAtzg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.78.0
+      '@sentry/types': 7.79.0
 
   /@sentry/vite-plugin@2.10.0:
     resolution: {integrity: sha512-jOJQnu3ox+HcD1HCul5LBy6YEhS0oVFjrFshoFD2PtHI5sMldbwNWrkkTXcknNy/0o4d5cAtdsEuVzEnbdd+Gg==}
@@ -2428,7 +2473,7 @@ packages:
     dependencies:
       '@babel/helper-annotate-as-pure': 7.22.5
       '@babel/helper-module-imports': 7.22.15
-      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.23.2)
+      '@babel/plugin-syntax-jsx': 7.23.3(@babel/core@7.23.2)
       lodash: 4.17.21
       picomatch: 2.3.1
       styled-components: 5.3.11(@babel/core@7.23.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -6361,7 +6406,7 @@ packages:
       react-is: '>= 16.8.0'
     dependencies:
       '@babel/helper-module-imports': 7.22.15
-      '@babel/traverse': 7.23.2(supports-color@5.5.0)
+      '@babel/traverse': 7.23.3(supports-color@5.5.0)
       '@emotion/is-prop-valid': 1.2.1
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5
