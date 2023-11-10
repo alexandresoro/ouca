@@ -46,10 +46,8 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}-backend
           tags: |
-            # branch event
             type=ref,event=branch
-            # tag event
-            type=ref,event=tag
+            type=sha
             # set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
           flavor: |
