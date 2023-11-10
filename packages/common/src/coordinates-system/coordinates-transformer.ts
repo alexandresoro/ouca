@@ -17,7 +17,7 @@ export const transformCoordinates = (
   inputCoordinates: Coordinates | null | undefined,
   outputSystemType: CoordinatesSystemType | null | undefined
 ): Coordinates => {
-  if (!inputCoordinates || !inputCoordinates.system || !outputSystemType) {
+  if (!inputCoordinates?.system || !outputSystemType) {
     throw new Error("Wrong usage of method transformCoordinates");
   }
 

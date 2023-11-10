@@ -5,6 +5,7 @@
     "module": "CommonJS",
     "lib": ["ES2020"],
     "noEmit": true,
+    "strict": true,
     "types": ["@cloudflare/workers-types"]
   }
 }

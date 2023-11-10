@@ -119,10 +119,8 @@ export class ImportDonneeService extends ImportService {
     };
 
     // Round the coordinates
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    coordinates.longitude = +coordinates.longitude.toFixed(COORDINATES_SYSTEMS_CONFIG["gps"].decimalPlaces);
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    coordinates.latitude = +coordinates.latitude.toFixed(COORDINATES_SYSTEMS_CONFIG["gps"].decimalPlaces);
+    coordinates.longitude = +coordinates.longitude.toFixed(COORDINATES_SYSTEMS_CONFIG.gps.decimalPlaces);
+    coordinates.latitude = +coordinates.latitude.toFixed(COORDINATES_SYSTEMS_CONFIG.gps.decimalPlaces);
 
     if (!areCoordinatesCustomized(lieudit, altitude, coordinates.longitude, coordinates.latitude, "gps")) {
       altitude = null;

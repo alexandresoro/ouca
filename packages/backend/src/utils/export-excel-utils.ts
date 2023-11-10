@@ -1,7 +1,7 @@
 import exceljs from "exceljs";
 
 export const writeExcelToBuffer = async (
-  objects: { [key: string]: unknown }[],
+  objects: Record<string, unknown>[],
   worksheetName: string
 ): Promise<exceljs.Buffer> => {
   // eslint-disable-next-line import/no-named-as-default-member

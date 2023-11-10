@@ -8,8 +8,7 @@ export const getHighestNicheurStatus = (comportements: { nicheur?: NicheurCode |
       return comportement?.nicheur != null;
     })
     .map((comportement) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      return comportement.nicheur as NicheurCode;
+      return comportement.nicheur!;
     });
 
   // Then we keep the highest nicheur status

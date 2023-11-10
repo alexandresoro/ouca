@@ -75,6 +75,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
       label={label}
       required={required}
       data={data}
+      // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
       by={by as ConditionalKeys<T, Key> & string}
       decorationKey={props.decorationKey}
       value={value}

@@ -4,7 +4,7 @@ export const getInventaireCoordinates = (
   inventaire: Inventory
 ): { latitude: number; longitude: number; altitude: number } => {
   // Customized coordinates are defined
-  if (inventaire.customizedCoordinates && inventaire.customizedCoordinates.longitude != null) {
+  if (inventaire.customizedCoordinates?.longitude != null) {
     return {
       latitude: inventaire.customizedCoordinates.latitude,
       longitude: inventaire.customizedCoordinates.longitude,

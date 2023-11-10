@@ -107,6 +107,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         : sql.fragment``
     }
     ${
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       nomOrDepartementLike || departmentId != null
         ? sql.fragment`
       WHERE
@@ -160,6 +161,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       LEFT JOIN
         basenaturaliste.departement ON commune.departement_id = departement.id
       ${
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         codeLike || departmentId != null
           ? sql.fragment`
         WHERE

@@ -44,7 +44,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
           sexId: userSettings.defaultSex?.id ?? null,
           ageId: userSettings.defaultAge?.id ?? null,
           numberEstimateId: userSettings.defaultNumberEstimate?.id ?? null,
-          number: userSettings.defaultNombre != null ? userSettings.defaultNombre : null,
+          number: userSettings.defaultNombre ?? null,
           distanceEstimateId: null,
           distance: null,
           regroupment: null,

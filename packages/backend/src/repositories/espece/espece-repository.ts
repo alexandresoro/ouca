@@ -114,6 +114,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
           : sql.fragment``
       }
       ${
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         searchCriteria || isSortByNbDonnees
           ? sql.fragment`
       LEFT JOIN basenaturaliste.donnee ON donnee.espece_id = espece.id

@@ -18,7 +18,7 @@ import { type LoggedUser } from "../types/User.js";
 import { logger } from "../utils/logger.js";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "../utils/paths.js";
 
-const importStatuses: Map<string, ImportStatusStructure> = new Map();
+const importStatuses = new Map<string, ImportStatusStructure>();
 
 type ImportStatusStructure = {
   status: ImportStatusEnum;

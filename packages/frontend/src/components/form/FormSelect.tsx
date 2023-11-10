@@ -48,6 +48,7 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
       label={label}
       required={required}
       data={data}
+      // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
       by={by as K}
       value={selectedEntry}
       onChange={handleOnChange}

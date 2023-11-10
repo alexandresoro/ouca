@@ -5,9 +5,8 @@ module.exports = {
     "eslint:recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/recommended-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked",
   ],
   settings: {
     "import/parsers": {
@@ -16,11 +15,17 @@ module.exports = {
   },
   rules: {
     "import/no-unresolved": "error",
-    "@typescript-eslint/array-type": "error",
+    "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
     "@typescript-eslint/consistent-type-imports": ["warn", { fixStyle: "inline-type-imports" }],
     "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true, destructuredArrayIgnorePattern: "^_" }],
-    "@typescript-eslint/prefer-for-of": "error",
-    "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowBoolean: true }],
+    "@typescript-eslint/prefer-nullish-coalescing": [
+      "error",
+      {
+        ignoreTernaryTests: true,
+        ignoreConditionalTests: true,
+        ignoreMixedLogicalExpressions: true,
+      },
+    ],
   },
   ignorePatterns: ["coverage", "dist", "vite.config.*", ".eslintrc.*"],
 };
