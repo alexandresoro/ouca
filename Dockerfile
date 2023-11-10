@@ -29,8 +29,6 @@ WORKDIR /app
 ENV OUCA_SERVER_HOST 0.0.0.0
 
 COPY /packages/backend/migrations/ packages/backend/migrations/
-COPY --from=build /app/packages/common/dist/ packages/common/dist/
-COPY --from=build /app/packages/backend/dist/ packages/backend/dist/
 
 COPY package.json pnpm-*.yaml ./
 
@@ -39,6 +37,9 @@ COPY /packages/backend/package.json packages/backend/package.json
 
 RUN npm pkg delete scripts.prepare && \
   pnpm i --frozen-lockfile
+
+COPY --from=build /app/packages/common/dist/ packages/common/dist/
+COPY --from=build /app/packages/backend/dist/ packages/backend/dist/
 
 WORKDIR /app/packages/backend/dist
 
