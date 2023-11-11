@@ -1,4 +1,4 @@
-import { type UserResult } from "../../repositories/user/user-repository-types.js";
+import { type User } from "@domain/user/user.js";
 import { type UserService } from "../user-service.js";
 
 export type OidcWithInternalUserMappingServiceDependencies = {
@@ -11,7 +11,7 @@ type FindLoggedUserFromProviderResult =
     }
   | {
       outcome: "found";
-      user: UserResult;
+      user: User;
     };
 
 export const buildOidcWithInternalUserMappingService = ({
