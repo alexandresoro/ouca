@@ -1,10 +1,9 @@
-import { type Redis } from "ioredis";
+import { type UserRepository } from "@interfaces/user-repository-interface.js";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
-import { type UserRepository } from "../repositories/user/user-repository.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
 import { buildUserService, type CreateUserInput } from "./user-service.js";
@@ -19,12 +18,10 @@ const logger = mock<Logger>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
-const redis = mock<Redis>();
 
 const userService = buildUserService({
   logger,
   slonik,
-  redis,
   userRepository,
   settingsRepository,
 });

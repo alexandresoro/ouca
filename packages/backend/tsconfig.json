@@ -10,6 +10,7 @@
     "strict": true,
     "paths": {
       "@ou-ca/common/*": ["../common/src/*"],
+      "@interfaces/*": ["./src/application/interfaces/*"],
       "@domain/*": ["./src/domain/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
     },

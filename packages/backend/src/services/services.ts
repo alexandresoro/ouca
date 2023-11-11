@@ -1,6 +1,8 @@
 import { type Config } from "@domain/config/config.js";
+import { redis } from "@infrastructure/ioredis/redis.js";
 import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
-import { Redis } from "ioredis";
+import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
+import { type Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import { buildAgeRepository } from "../repositories/age/age-repository.js";
@@ -23,7 +25,6 @@ import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.
 import { buildObservateurRepository } from "../repositories/observateur/observateur-repository.js";
 import { buildSettingsRepository } from "../repositories/settings/settings-repository.js";
 import { buildSexeRepository } from "../repositories/sexe/sexe-repository.js";
-import { buildUserRepository } from "../repositories/user/user-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { buildAgeService, type AgeService } from "./entities/age-service.js";
@@ -80,9 +81,6 @@ export const buildServices = async (config: Config): Promise<Services> => {
 
   // Database connection
   const slonik = await getSlonikInstance({ dbConfig: database, logger: logger.child({ module: "slonik" }) });
-
-  // Redis instance
-  const redis = new Redis(config.redis.url);
 
   logger.debug("Connection to database successful");
 
@@ -216,7 +214,6 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const userService = buildUserService({
     logger,
     slonik,
-    redis,
     userRepository,
     settingsRepository,
   });
