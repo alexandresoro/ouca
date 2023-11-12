@@ -3,7 +3,13 @@ import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
 import pg from "pg";
 import { serializeError } from "serialize-error";
 import { logger } from "../../utils/logger.js";
-import { type Database } from "./database/Database.js";
+import { type Settings } from "./database/Settings.js";
+import { type User } from "./database/User.js";
+
+export type Database = {
+  "basenaturaliste.settings": Settings;
+  "basenaturaliste.user": User;
+};
 
 const kyselyLogger = logger.child({ module: "kysely" });
 

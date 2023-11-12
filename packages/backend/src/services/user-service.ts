@@ -1,16 +1,11 @@
 import { type User } from "@domain/user/user.js";
 import { type UserRepository } from "@interfaces/user-repository-interface.js";
-import { type Logger } from "pino";
-import { type DatabasePool } from "slonik";
-import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
+import { logger } from "../utils/logger.js";
 
 type UserServiceDependencies = {
-  logger: Logger;
-  slonik: DatabasePool;
   userRepository: UserRepository;
-  settingsRepository: SettingsRepository;
 };
 
 export type CreateUserInput = {
@@ -18,31 +13,17 @@ export type CreateUserInput = {
   extProviderUserId: string;
 };
 
-export const buildUserService = ({ logger, slonik, userRepository, settingsRepository }: UserServiceDependencies) => {
-  const getUser = async (userId: string): Promise<User | null> => {
-    return await userRepository.getUserInfoById(userId);
-  };
+export const buildUserService = ({ userRepository }: UserServiceDependencies) => {
+  const getUser = async (userId: string): Promise<User | null> => userRepository.getUserInfoById(userId);
 
   const findUserByExternalId = async (externalProviderName: string, externalUserId: string): Promise<User | null> =>
     userRepository.findUserByExternalId({ externalUserId, externalProviderName });
 
-  const createUser = async ({ extProvider, extProviderUserId }: CreateUserInput): Promise<User> => {
-    const createdUser = await slonik.transaction(async (transactionConnection) => {
-      const createdUserQueryResult = await userRepository.createUser(
-        {
-          ext_provider_name: extProvider,
-          ext_provider_id: extProviderUserId,
-        },
-        transactionConnection
-      );
-
-      await settingsRepository.createDefaultSettings(createdUserQueryResult.id, transactionConnection);
-
-      return createdUserQueryResult;
+  const createUser = async ({ extProvider, extProviderUserId }: CreateUserInput): Promise<User> =>
+    userRepository.createUser({
+      extProviderName: extProvider,
+      extProviderId: extProviderUserId,
     });
-
-    return createdUser;
-  };
 
   // Not used, not sure if still needed with IDP
   const deleteUser = async (userId: string, loggedUser: LoggedUser): Promise<boolean> => {

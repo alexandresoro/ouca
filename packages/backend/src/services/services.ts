@@ -104,7 +104,7 @@ export const buildServices = async (): Promise<Services> => {
   const settingsRepository = buildSettingsRepository({ slonik });
   const settingsRepositoryKysely = buildSettingsRepositoryKysely();
   const sexeRepository = buildSexeRepository({ slonik });
-  const userRepository = buildUserRepository({ slonik });
+  const userRepository = buildUserRepository({ settingsRepository: settingsRepositoryKysely });
 
   const ageService = buildAgeService({
     logger,
@@ -211,10 +211,7 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const userService = buildUserService({
-    logger,
-    slonik,
     userRepository,
-    settingsRepository,
   });
 
   const settingsService = buildSettingsService({

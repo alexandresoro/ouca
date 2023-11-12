@@ -1,9 +1,6 @@
 import { type UserRepository } from "@interfaces/user-repository-interface.js";
-import { type Logger } from "pino";
-import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
 import { buildUserService, type CreateUserInput } from "./user-service.js";
@@ -11,19 +8,9 @@ import { buildUserService, type CreateUserInput } from "./user-service.js";
 const userRepository = mock<UserRepository>({
   createUser: vi.fn(),
 });
-const settingsRepository = mock<SettingsRepository>({
-  createDefaultSettings: vi.fn(),
-});
-const logger = mock<Logger>();
-const slonik = createMockPool({
-  query: vi.fn(),
-});
 
 const userService = buildUserService({
-  logger,
-  slonik,
   userRepository,
-  settingsRepository,
 });
 
 describe("User creation", () => {
@@ -35,7 +22,6 @@ describe("User creation", () => {
     await userService.createUser(signupData);
 
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
-    expect(settingsRepository.createDefaultSettings).toHaveBeenCalledTimes(1);
   });
 });
 

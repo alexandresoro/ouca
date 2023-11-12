@@ -8,9 +8,9 @@ export type Settings = {
   default_sexe_id: number | null;
   default_estimation_nombre_id: number | null;
   default_nombre: number | null;
-  are_associes_displayed: boolean;
-  is_meteo_displayed: boolean;
-  is_distance_displayed: boolean;
-  is_regroupement_displayed: boolean;
-  user_id: string;
+  are_associes_displayed: Generated<boolean>;
+  is_meteo_displayed: Generated<boolean>;
+  is_distance_displayed: Generated<boolean>;
+  is_regroupement_displayed: Generated<boolean>;
+  userId: string;
 };

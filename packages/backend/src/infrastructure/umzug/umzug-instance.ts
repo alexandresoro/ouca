@@ -1,6 +1,5 @@
 import { dbConfig } from "@infrastructure/config/database-config.js";
-import { type Database } from "@infrastructure/kysely/database/Database.js";
-import { kysely as defaultKysely } from "@infrastructure/kysely/kysely.js";
+import { kysely as defaultKysely, type Database } from "@infrastructure/kysely/kysely.js";
 import { sql, type Generated, type Kysely } from "kysely";
 import fs from "node:fs";
 import path from "node:path";

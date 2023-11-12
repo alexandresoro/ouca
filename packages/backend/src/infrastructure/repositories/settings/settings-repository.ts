@@ -1,6 +1,6 @@
-import { kysely } from "@infrastructure/kysely/kysely.js";
-import { sql } from "kysely";
-import { settingsSchema, type Settings } from "./settings-repository-types.js";
+import { settingsSchema, type Settings } from "@domain/settings/settings.js";
+import { kysely, type Database } from "@infrastructure/kysely/kysely.js";
+import { sql, type Transaction } from "kysely";
 
 export const buildSettingsRepository = () => {
   const getUserSettings = async (userId: string): Promise<Settings | null> => {
@@ -18,16 +18,26 @@ export const buildSettingsRepository = () => {
         "is_meteo_displayed",
         "is_distance_displayed",
         "is_regroupement_displayed",
-        "user_id",
+        "userId",
       ])
-      .where("user_id", "=", userId)
+      .where("userId", "=", userId)
       .executeTakeFirstOrThrow();
 
     return settingsSchema.parse(userSettings);
   };
 
+  const createDefaultSettings = async (userId: string, transaction?: Transaction<Database>): Promise<void> => {
+    await (transaction ?? kysely)
+      .insertInto("basenaturaliste.settings")
+      .values({
+        userId,
+      })
+      .execute();
+  };
+
   return {
     getUserSettings,
+    createDefaultSettings,
   };
 };
 

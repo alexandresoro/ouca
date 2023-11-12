@@ -1,8 +1,7 @@
 import { userSchema, type User } from "@domain/user/user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
-import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
-import { z } from "zod";
-import { objectToKeyValueInsert } from "../../../repositories/repository-helpers.js";
+import { kysely } from "@infrastructure/kysely/kysely.js";
+import { type SettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { logger } from "../../../utils/logger.js";
 
 const EXTERNAL_USER_INTERNAL_USER_MAPPING_CACHE_PREFIX = "externalUserInternalUserMapping";
@@ -38,35 +37,29 @@ const storeMappedUserToCache = async (user: User): Promise<void> => {
     });
 };
 
-export const buildUserRepository = ({ slonik }: { slonik: DatabasePool }) => {
+const findUserByExternalIdFromStorage = async ({
+  externalProviderName,
+  externalProviderId,
+}: { externalProviderName: string; externalProviderId: string }): Promise<User | null> => {
+  const userResult = await kysely
+    .selectFrom("basenaturaliste.user")
+    .selectAll()
+    .where("extProviderName", "=", externalProviderName)
+    .where("extProviderId", "=", externalProviderId)
+    .executeTakeFirst();
+
+  return userResult ? userSchema.parse(userResult) : null;
+};
+
+export const buildUserRepository = ({ settingsRepository }: { settingsRepository: SettingsRepository }) => {
   const getUserInfoById = async (userId: string): Promise<User | null> => {
-    const query = sql.type(userSchema)`
-    SELECT 
-      *
-    FROM
-      basenaturaliste.user
-    WHERE
-      id = ${userId}
-  `;
+    const userResult = await kysely
+      .selectFrom("basenaturaliste.user")
+      .selectAll()
+      .where("id", "=", userId)
+      .executeTakeFirst();
 
-    return slonik.maybeOne(query);
-  };
-
-  const findUserByExternalIdFromStorage = ({
-    externalProviderName,
-    externalProviderId,
-  }: { externalProviderName: string; externalProviderId: string }): Promise<User | null> => {
-    const query = sql.type(userSchema)`
-    SELECT 
-      *
-    FROM
-      basenaturaliste.user
-    WHERE
-      ext_provider_name = ${externalProviderName}
-      AND ext_provider_id = ${externalProviderId}
-  `;
-
-    return slonik.maybeOne(query);
+    return userResult ? userSchema.parse(userResult) : null;
   };
 
   const findUserByExternalId = async ({
@@ -91,36 +84,38 @@ export const buildUserRepository = ({ slonik }: { slonik: DatabasePool }) => {
     return user;
   };
 
-  const createUser = async (
-    create: {
-      ext_provider_name: string;
-      ext_provider_id: string;
-    },
-    transaction?: DatabaseTransactionConnection
-  ): Promise<User> => {
-    const createUserQuery = sql.type(userSchema)`
-      INSERT INTO
-        basenaturaliste.user
-        ${objectToKeyValueInsert(create)}
-      RETURNING
-        *
-    `;
+  const createUser = async ({
+    extProviderName,
+    extProviderId,
+  }: {
+    extProviderName: string;
+    extProviderId: string;
+  }): Promise<User> => {
+    const createdUser = await kysely.transaction().execute(async (transaction) => {
+      const createdUser = await transaction
+        .insertInto("basenaturaliste.user")
+        .values({
+          extProviderId,
+          extProviderName,
+        })
+        .returningAll()
+        .executeTakeFirstOrThrow();
 
-    return (transaction ?? slonik).one(createUserQuery);
+      await settingsRepository.createDefaultSettings(createdUser.id, transaction);
+
+      return createdUser;
+    });
+
+    return userSchema.parse(createdUser);
   };
 
   const deleteUserById = async (userId: string): Promise<boolean> => {
-    const query = sql.type(z.void())`
-      DELETE
-      FROM
-        basenaturaliste.user
-      WHERE
-        id = ${userId}
-    `;
-
-    const result = await slonik.query(query);
-
-    return result?.rowCount === 1;
+    const deletedUsers = await kysely
+      .deleteFrom("basenaturaliste.user")
+      .where("id", "=", userId)
+      .returningAll()
+      .execute();
+    return deletedUsers.length === 1;
   };
 
   return { getUserInfoById, findUserByExternalId, createUser, deleteUserById };
