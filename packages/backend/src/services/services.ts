@@ -1,9 +1,7 @@
 import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
-import { redis } from "@infrastructure/ioredis/redis.js";
 import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
-import { type Redis } from "ioredis";
 import { type DatabasePool } from "slonik";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
@@ -52,7 +50,6 @@ import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel
 
 export type Services = {
   slonik: DatabasePool;
-  redis: Redis;
   ageService: AgeService;
   classeService: ClasseService;
   communeService: CommuneService;
@@ -222,7 +219,6 @@ export const buildServices = async (): Promise<Services> => {
 
   const geojsonService = buildGeoJSONService({
     logger,
-    redis,
     lieuditRepository,
   });
 
@@ -236,7 +232,6 @@ export const buildServices = async (): Promise<Services> => {
 
   return {
     slonik,
-    redis,
     ageService,
     classeService,
     communeService,

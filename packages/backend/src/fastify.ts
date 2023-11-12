@@ -81,7 +81,7 @@ export const buildServer = async (
   await server.register(userController, { services, prefix: `${API_V1_PREFIX}/user` });
   logger.debug("Fastify API routes registered");
 
-  await server.register(downloadController, { services, prefix: "/download" });
+  await server.register(downloadController, { prefix: "/download" });
   registerFastifyStaticRoutes(server);
   logger.debug("Fastify static routes added");
 

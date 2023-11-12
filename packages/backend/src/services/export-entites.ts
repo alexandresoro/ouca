@@ -1,3 +1,4 @@
+import { redis } from "@infrastructure/ioredis/redis.js";
 import { type EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
@@ -42,10 +43,7 @@ const storeExportInCache = async (
   return id;
 };
 
-export const generateAgesExport = async ({
-  ageService,
-  redis,
-}: { ageService: AgeService; redis: Redis }): Promise<string> => {
+export const generateAgesExport = async ({ ageService }: { ageService: AgeService }): Promise<string> => {
   const agesDb = await ageService.findAllAges();
 
   const agesToExport = agesDb.map((ageDb) => {
@@ -58,10 +56,7 @@ export const generateAgesExport = async ({
   return id;
 };
 
-export const generateClassesExport = async ({
-  classeService,
-  redis,
-}: { classeService: ClasseService; redis: Redis }): Promise<string> => {
+export const generateClassesExport = async ({ classeService }: { classeService: ClasseService }): Promise<string> => {
   const classes = await classeService.findAllClasses();
 
   const objectsToExport = classes.map((object) => {
@@ -74,8 +69,7 @@ export const generateClassesExport = async ({
 
 export const generateCommunesExport = async ({
   communeService,
-  redis,
-}: { communeService: CommuneService; redis: Redis }): Promise<string> => {
+}: { communeService: CommuneService }): Promise<string> => {
   const communesDb = await communeService.findAllCommunesWithDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
@@ -92,8 +86,7 @@ export const generateCommunesExport = async ({
 
 export const generateComportementsExport = async ({
   comportementService,
-  redis,
-}: { comportementService: ComportementService; redis: Redis }): Promise<string> => {
+}: { comportementService: ComportementService }): Promise<string> => {
   const comportementsDb = await comportementService.findAllComportements();
 
   const comportementsToExport = comportementsDb.map((object) => {
@@ -109,8 +102,7 @@ export const generateComportementsExport = async ({
 
 export const generateDepartementsExport = async ({
   departementService,
-  redis,
-}: { departementService: DepartementService; redis: Redis }): Promise<string> => {
+}: { departementService: DepartementService }): Promise<string> => {
   const departementsDb = await departementService.findAllDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
@@ -133,7 +125,6 @@ const getMilieu = (milieux: Environment[], index: number): string => {
 
 export const generateDonneesExport = async (
   {
-    redis,
     ageService,
     classeService,
     communeService,
@@ -150,7 +141,6 @@ export const generateDonneesExport = async (
     observateurService,
     sexeService,
   }: {
-    redis: Redis;
     ageService: AgeService;
     classeService: ClasseService;
     communeService: CommuneService;
@@ -254,10 +244,7 @@ export const generateDonneesExport = async (
   return id;
 };
 
-export const generateEspecesExport = async ({
-  especeService,
-  redis,
-}: { especeService: EspeceService; redis: Redis }): Promise<string> => {
+export const generateEspecesExport = async ({ especeService }: { especeService: EspeceService }): Promise<string> => {
   const especes = await especeService.findAllEspecesWithClasses();
 
   const objectsToExport = especes.map((espece) => {
@@ -275,8 +262,7 @@ export const generateEspecesExport = async ({
 
 export const generateEstimationsDistanceExport = async ({
   estimationDistanceService,
-  redis,
-}: { estimationDistanceService: EstimationDistanceService; redis: Redis }): Promise<string> => {
+}: { estimationDistanceService: EstimationDistanceService }): Promise<string> => {
   const estimations = await estimationDistanceService.findAllEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
@@ -291,8 +277,7 @@ export const generateEstimationsDistanceExport = async ({
 
 export const generateEstimationsNombreExport = async ({
   estimationNombreService,
-  redis,
-}: { estimationNombreService: EstimationNombreService; redis: Redis }): Promise<string> => {
+}: { estimationNombreService: EstimationNombreService }): Promise<string> => {
   const estimations = await estimationNombreService.findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
@@ -307,8 +292,7 @@ export const generateEstimationsNombreExport = async ({
 
 export const generateLieuxDitsExport = async ({
   lieuditService,
-  redis,
-}: { lieuditService: LieuditService; redis: Redis }): Promise<string> => {
+}: { lieuditService: LieuditService }): Promise<string> => {
   const lieuxDits = await lieuditService.findAllLieuxDitsWithCommuneAndDepartement();
 
   const objectsToExport = lieuxDits.map((lieudit) => {
@@ -327,10 +311,7 @@ export const generateLieuxDitsExport = async ({
   return id;
 };
 
-export const generateMeteosExport = async ({
-  meteoService,
-  redis,
-}: { meteoService: MeteoService; redis: Redis }): Promise<string> => {
+export const generateMeteosExport = async ({ meteoService }: { meteoService: MeteoService }): Promise<string> => {
   const meteos = await meteoService.findAllMeteos();
 
   const objectsToExport = meteos.map((object) => {
@@ -343,10 +324,7 @@ export const generateMeteosExport = async ({
   return id;
 };
 
-export const generateMilieuxExport = async ({
-  milieuService,
-  redis,
-}: { milieuService: MilieuService; redis: Redis }): Promise<string> => {
+export const generateMilieuxExport = async ({ milieuService }: { milieuService: MilieuService }): Promise<string> => {
   const milieuxDb = await milieuService.findAllMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {
@@ -362,8 +340,7 @@ export const generateMilieuxExport = async ({
 
 export const generateObservateursExport = async ({
   observateurService,
-  redis,
-}: { observateurService: ObservateurService; redis: Redis }): Promise<string> => {
+}: { observateurService: ObservateurService }): Promise<string> => {
   const observateurs = await observateurService.findAllObservateurs();
 
   const objectsToExport = observateurs.map((object) => {
@@ -376,10 +353,7 @@ export const generateObservateursExport = async ({
   return id;
 };
 
-export const generateSexesExport = async ({
-  sexeService,
-  redis,
-}: { sexeService: SexeService; redis: Redis }): Promise<string> => {
+export const generateSexesExport = async ({ sexeService }: { sexeService: SexeService }): Promise<string> => {
   const sexes = await sexeService.findAllSexes();
 
   const objectsToExport = sexes.map((object) => {

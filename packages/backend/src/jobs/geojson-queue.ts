@@ -1,3 +1,4 @@
+import { redis } from "@infrastructure/ioredis/redis.js";
 import { Queue, Worker } from "bullmq";
 import { type Logger } from "pino";
 import { type Services } from "../services/services.js";
@@ -5,14 +6,12 @@ import { type Services } from "../services/services.js";
 const GEOJSON_QUEUE_NAME = "geojson";
 
 export const buildQueueGeoJSONRefresh = (services: Services, logger: Logger): Queue => {
-  const { redis: connection } = services;
-
   logger.debug({ worker: GEOJSON_QUEUE_NAME }, "Queue geojson is being created");
-  return new Queue(GEOJSON_QUEUE_NAME, { connection });
+  return new Queue(GEOJSON_QUEUE_NAME, { connection: redis });
 };
 
 export const buildWorkerGeoJSONRefresh = (services: Services, logger: Logger): void => {
-  const { redis: connection, geojsonService } = services;
+  const { geojsonService } = services;
   logger.debug({ worker: GEOJSON_QUEUE_NAME }, "Worker geojson is being created");
 
   new Worker(
@@ -22,7 +21,7 @@ export const buildWorkerGeoJSONRefresh = (services: Services, logger: Logger): v
       await geojsonService.updateGeoJSONData();
     },
     {
-      connection,
+      connection: redis,
       limiter: {
         max: 5,
         duration: 30000,

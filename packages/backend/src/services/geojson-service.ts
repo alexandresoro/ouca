@@ -1,8 +1,8 @@
+import { redis } from "@infrastructure/ioredis/redis.js";
 // FIXME: https://github.com/Turfjs/turf/issues/2414
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
-import { type Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../types/User.js";
@@ -13,10 +13,9 @@ const GEOJSON_DATA_REDIS_KEY = "geoJsonLocalities";
 type GeoJSONServiceDependencies = {
   logger: Logger;
   lieuditRepository: LieuditRepository;
-  redis: Redis;
 };
 
-export const buildGeoJSONService = ({ logger, lieuditRepository, redis }: GeoJSONServiceDependencies) => {
+export const buildGeoJSONService = ({ logger, lieuditRepository }: GeoJSONServiceDependencies) => {
   const getLocalities = async (loggedUser: LoggedUser | null): Promise<unknown> => {
     validateAuthorization(loggedUser);
 
