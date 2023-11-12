@@ -1,8 +1,6 @@
-import { dbConfig } from "@infrastructure/config/database-config.js";
-import { sentryConfig } from "@infrastructure/config/sentry-config.js";
 import { serverConfig } from "@infrastructure/config/server-config.js";
-import { getUmzugInstance } from "@infrastructure/umzug/umzug-instance.js";
-import * as Sentry from "@sentry/node";
+import { captureException, initSentry } from "@infrastructure/sentry/sentry.js";
+import { runMigrations } from "@infrastructure/umzug/umzug-instance.js";
 import { buildServer } from "./fastify.js";
 import { startWorkersAndJobs } from "./jobs/job-runner.js";
 import { buildServices } from "./services/services.js";
@@ -13,28 +11,18 @@ import { checkAndCreateFolders } from "./utils/paths.js";
 logger.debug("Starting app");
 
 // Sentry
-if (sentryConfig.dsn) {
-  logger.debug("Sentry instrumenting enabled");
-}
-Sentry.init({
-  dsn: sentryConfig.dsn,
-  environment: sentryConfig.environment,
-  release: sentryConfig.release,
-  tracesSampleRate: 1.0,
-});
+initSentry();
 
 checkAndCreateFolders();
 
+// Run database migrations if active
+await runMigrations().catch((e) => {
+  captureException(e);
+  logger.error(e);
+});
+
 const startApp = async () => {
   const services = await buildServices();
-
-  if (dbConfig.migrator.runMigrations) {
-    logger.child({ module: "umzug" }).debug("Running database migrations");
-    const umzug = getUmzugInstance();
-    await umzug.up();
-  } else {
-    logger.debug("No migrations to run as feature is disabled");
-  }
 
   await startWorkersAndJobs(services);
 
@@ -47,6 +35,6 @@ const startApp = async () => {
 };
 
 await startApp().catch((e) => {
-  Sentry.captureException(e);
+  captureException(e);
   logger.error(e);
 });

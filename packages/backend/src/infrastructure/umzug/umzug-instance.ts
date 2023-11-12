@@ -86,3 +86,13 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
     },
   });
 };
+
+export const runMigrations = async () => {
+  if (dbConfig.migrator.runMigrations) {
+    logger.child({ module: "umzug" }).debug("Running database migrations");
+    const umzug = getUmzugInstance();
+    await umzug.up();
+  } else {
+    logger.debug("No migrations to run as feature is disabled");
+  }
+};
