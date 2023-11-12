@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
 import SearchFilterDepartments from "./SearchFilterDepartments";
 import SearchFilterSpecies from "./SearchFilterSpecies";
+import SearchFilterTowns from "./SearchFilterTowns";
 
 const SearchFilterPanel: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -26,8 +27,9 @@ const SearchFilterPanel: FunctionComponent = () => {
         />
       )}
       <div className="flex flex-col gap-2.5">
-        <SearchFilterSpecies />
         <SearchFilterDepartments />
+        <SearchFilterTowns />
+        <SearchFilterSpecies />
         <SearchFilterBehaviors />
       </div>
     </div>
