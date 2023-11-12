@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type Logger } from "pino";
@@ -9,7 +10,6 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 

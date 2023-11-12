@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
@@ -11,7 +12,6 @@ import {
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
-import { OucaError } from "../../utils/errors.js";
 import { logger } from "../../utils/logger.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { getSqlPagination } from "./entities-utils.js";

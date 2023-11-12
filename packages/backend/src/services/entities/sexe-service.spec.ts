@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -7,7 +8,6 @@ import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-re
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { buildSexeService } from "./sexe-service.js";
 
 const sexeRepository = mock<SexeRepository>({});

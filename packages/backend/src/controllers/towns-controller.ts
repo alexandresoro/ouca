@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getTownResponse,
   getTownsExtendedResponse,
@@ -10,7 +11,6 @@ import { type Town, type TownExtended } from "@ou-ca/common/entities/town";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
-import { OucaError } from "../utils/errors.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const townsController: FastifyPluginCallback<{

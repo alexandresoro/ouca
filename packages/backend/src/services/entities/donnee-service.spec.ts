@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type Logger } from "pino";
@@ -11,7 +12,6 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type LoggedUser } from "../../types/User.js";
-import { OucaError } from "../../utils/errors.js";
 import { buildDonneeService } from "./donnee-service.js";
 
 const donneeRepository = mock<DonneeRepository>({});

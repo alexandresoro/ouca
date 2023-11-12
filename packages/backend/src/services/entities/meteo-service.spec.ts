@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -7,7 +8,6 @@ import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/mete
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { buildMeteoService } from "./meteo-service.js";
 
 const meteoRepository = mock<MeteoRepository>({});

@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Logger } from "pino";
@@ -7,7 +8,6 @@ import { type MeteoCreateInput } from "../../repositories/meteo/meteo-repository
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 

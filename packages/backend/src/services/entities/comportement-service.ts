@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Logger } from "pino";
@@ -7,7 +8,6 @@ import { type ComportementRepository } from "../../repositories/comportement/com
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 

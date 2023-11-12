@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -11,7 +12,6 @@ import {
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { buildObservateurService } from "./observateur-service.js";
 
 const observateurRepository = mock<ObservateurRepository>({});

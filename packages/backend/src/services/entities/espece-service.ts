@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Species } from "@ou-ca/common/entities/species";
 import { type Logger } from "pino";
@@ -12,7 +13,6 @@ import { type EspeceRepository } from "../../repositories/espece/espece-reposito
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { type ClasseService } from "./classe-service.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";

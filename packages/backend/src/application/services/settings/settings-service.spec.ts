@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type Settings } from "@domain/settings/settings.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
@@ -10,7 +11,6 @@ import { type EstimationNombreService } from "../../../services/entities/estimat
 import { type ObservateurService } from "../../../services/entities/observateur-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
 import { type LoggedUser } from "../../../types/User.js";
-import { OucaError } from "../../../utils/errors.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mock<SettingsRepository>({

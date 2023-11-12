@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Logger } from "pino";
@@ -7,7 +8,6 @@ import { type SexeCreateInput } from "../../repositories/sexe/sexe-repository-ty
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 

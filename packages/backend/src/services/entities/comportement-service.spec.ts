@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -10,7 +11,6 @@ import { type ComportementRepository } from "../../repositories/comportement/com
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE, COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { buildComportementService } from "./comportement-service.js";
 
 const comportementRepository = mock<ComportementRepository>({});

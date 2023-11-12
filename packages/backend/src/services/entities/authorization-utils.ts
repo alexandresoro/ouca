@@ -1,5 +1,5 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "../../types/User.js";
-import { OucaError } from "../../utils/errors.js";
 
 export function validateAuthorization(loggedUser: LoggedUser | null | undefined): asserts loggedUser is LoggedUser {
   if (!loggedUser) {

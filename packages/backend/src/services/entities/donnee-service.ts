@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type Logger } from "pino";
@@ -9,7 +10,6 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { type LoggedUser } from "../../types/User.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape.js";
 import { getSqlPagination } from "./entities-utils.js";

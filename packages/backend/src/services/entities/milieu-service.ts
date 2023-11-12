@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Environment } from "@ou-ca/common/entities/environment";
 import { type Logger } from "pino";
@@ -7,7 +8,6 @@ import { type MilieuCreateInput } from "../../repositories/milieu/milieu-reposit
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 

@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getInventoriesQueryParamsSchema,
   getInventoriesResponse,
@@ -13,7 +14,6 @@ import { NotFoundError } from "slonik";
 import { type Inventaire } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Services } from "../services/services.js";
 import { type LoggedUser } from "../types/User.js";
-import { OucaError } from "../utils/errors.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedLocality } from "./localities-controller.js";
 

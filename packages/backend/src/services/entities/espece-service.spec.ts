@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,7 +9,6 @@ import { type Espece, type EspeceCreateInput } from "../../repositories/espece/e
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { type ClasseService } from "./classe-service.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 import { buildEspeceService } from "./espece-service.js";

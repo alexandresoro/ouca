@@ -1,3 +1,4 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getSpeciesExtendedResponse,
   getSpeciesPaginatedResponse,
@@ -10,7 +11,6 @@ import { type Species, type SpeciesExtended } from "@ou-ca/common/entities/speci
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
-import { OucaError } from "../utils/errors.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const speciesController: FastifyPluginCallback<{

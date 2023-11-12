@@ -1,16 +1,16 @@
+import { OucaError } from "@domain/errors/ouca-error.js";
 import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-    type EstimationDistance,
-    type EstimationDistanceCreateInput
+  type EstimationDistance,
+  type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { OucaError } from "../../utils/errors.js";
 import { buildEstimationDistanceService } from "./estimation-distance-service.js";
 
 const estimationDistanceRepository = mock<EstimationDistanceRepository>({});
