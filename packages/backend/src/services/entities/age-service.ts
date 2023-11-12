@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type Age } from "@ou-ca/common/entities/age";
 import { type Logger } from "pino";
@@ -6,7 +7,6 @@ import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";

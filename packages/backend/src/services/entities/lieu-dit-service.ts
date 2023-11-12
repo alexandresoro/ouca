@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Logger } from "pino";
@@ -10,7 +11,6 @@ import {
   type LieuditWithCommuneAndDepartementCode,
 } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { getSqlPagination } from "./entities-utils.js";

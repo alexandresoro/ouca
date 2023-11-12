@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Logger } from "pino";
@@ -6,7 +7,6 @@ import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EstimationNombreCreateInput } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";

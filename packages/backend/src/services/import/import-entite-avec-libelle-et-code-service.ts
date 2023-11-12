@@ -1,5 +1,5 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object.js";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService<T = unknown> extends ImportService {

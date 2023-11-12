@@ -1,3 +1,4 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { type EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
@@ -6,7 +7,6 @@ import { type Environment } from "@ou-ca/common/entities/environment";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
-import { type LoggedUser } from "../types/User.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type AgeService } from "./entities/age-service.js";

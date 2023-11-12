@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -6,7 +7,6 @@ import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { buildMilieuService } from "./milieu-service.js";
 

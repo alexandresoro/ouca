@@ -1,7 +1,7 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { enrichEntityWithEditableStatus } from "./entities-utils.js";
 
 export const reshapeInputLieuditUpsertData = (data: UpsertLocalityInput): LieuditCreateInput => {

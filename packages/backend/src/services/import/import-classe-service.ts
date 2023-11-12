@@ -1,6 +1,6 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
 import { type Classe } from "../../repositories/classe/classe-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportClasseService extends ImportEntiteAvecLibelleService {

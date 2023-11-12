@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,7 +9,6 @@ import { type Commune, type CommuneCreateInput } from "../../repositories/commun
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
 import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { buildCommuneService } from "./commune-service.js";

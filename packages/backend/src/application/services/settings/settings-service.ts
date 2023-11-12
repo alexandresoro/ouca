@@ -1,4 +1,5 @@
 import { type SettingsEnriched, type UpdateSettingsInput } from "@domain/settings/settings.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type Logger } from "pino";
@@ -8,7 +9,6 @@ import { type DepartementService } from "../../../services/entities/departement-
 import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
 import { type ObservateurService } from "../../../services/entities/observateur-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
-import { type LoggedUser } from "../../../types/User.js";
 
 type SettingsServiceDependencies = {
   logger: Logger;

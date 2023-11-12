@@ -2,10 +2,10 @@ import { redis } from "@infrastructure/ioredis/redis.js";
 // FIXME: https://github.com/Turfjs/turf/issues/2414
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { featureCollection, point } from "@turf/helpers";
 import { type Logger } from "pino";
 import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
-import { type LoggedUser } from "../types/User.js";
 import { validateAuthorization } from "./entities/authorization-utils.js";
 
 const GEOJSON_DATA_REDIS_KEY = "geoJsonLocalities";

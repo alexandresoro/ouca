@@ -1,5 +1,5 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { mock } from "vitest-mock-extended";
-import { type LoggedUser } from "../../types/User.js";
 import { isEntityEditable } from "./entities-utils.js";
 
 describe("Entity editable status", () => {

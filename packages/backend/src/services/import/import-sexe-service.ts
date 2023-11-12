@@ -1,5 +1,5 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type Sex } from "@ou-ca/common/entities/sex";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportSexeService extends ImportEntiteAvecLibelleService {

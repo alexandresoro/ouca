@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import {
   getEntriesExtendedResponse,
   getEntriesQueryParamsSchema,
@@ -13,7 +14,6 @@ import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Donnee } from "../repositories/donnee/donnee-repository-types.js";
 import { type Services } from "../services/services.js";
-import { type LoggedUser } from "../types/User.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedInventory } from "./inventories-controller.js";
 

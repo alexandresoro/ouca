@@ -1,7 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type User } from "@domain/user/user.js";
 import { type UserRepository } from "@interfaces/user-repository-interface.js";
-import { type LoggedUser } from "../../../types/User.js";
 import { logger } from "../../../utils/logger.js";
 
 type UserServiceDependencies = {

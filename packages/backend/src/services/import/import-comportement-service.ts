@@ -1,6 +1,6 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service.js";
 
 export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeService {

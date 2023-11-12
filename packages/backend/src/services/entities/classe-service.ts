@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
 import { type Logger } from "pino";
@@ -7,7 +8,6 @@ import { type ClasseCreateInput } from "../../repositories/classe/classe-reposit
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";

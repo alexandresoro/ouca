@@ -1,7 +1,7 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object.js";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {

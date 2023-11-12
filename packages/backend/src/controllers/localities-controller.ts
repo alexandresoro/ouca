@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import {
   getLocalitiesExtendedResponse,
   getLocalitiesQueryParamsSchema,
@@ -11,7 +12,6 @@ import { type Locality, type LocalityExtended } from "@ou-ca/common/entities/loc
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
-import { type LoggedUser } from "../types/User.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 export const enrichedLocality = async (

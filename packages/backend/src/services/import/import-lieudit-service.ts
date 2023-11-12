@@ -1,3 +1,4 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import {
   type CoordinatesSystem,
@@ -8,7 +9,6 @@ import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Town } from "@ou-ca/common/entities/town";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object.js";
 import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportLieuxditService extends ImportService {

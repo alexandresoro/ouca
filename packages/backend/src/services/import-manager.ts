@@ -1,3 +1,4 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { ImportErrorType } from "@ou-ca/common/import/import-error-types";
 import { type ImportStatus } from "@ou-ca/common/import/import-status";
 import { ImportStatusEnum, OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
@@ -14,7 +15,6 @@ import {
   VALIDATION_PROGRESS,
   type ImportUpdateMessage,
 } from "../objects/import/import-update-message.js";
-import { type LoggedUser } from "../types/User.js";
 import { logger } from "../utils/logger.js";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "../utils/paths.js";
 

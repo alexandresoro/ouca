@@ -1,3 +1,4 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
@@ -17,7 +18,6 @@ import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
 

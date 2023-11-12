@@ -1,8 +1,8 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type Species } from "@ou-ca/common/entities/species";
 import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
 import { ImportedEspece } from "../../objects/import/imported-espece.object.js";
 import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
-import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportEspeceService extends ImportService {

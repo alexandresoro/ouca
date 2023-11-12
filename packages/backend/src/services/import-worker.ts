@@ -1,3 +1,4 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ImportType } from "@ou-ca/common/import/import-types";
 import { readFile } from "node:fs";
 import path from "node:path";
@@ -13,7 +14,6 @@ import {
   type ImportNotifyStatusUpdateMessage,
   type ImportPostCompleteMessage,
 } from "../objects/import/import-update-message.js";
-import { type LoggedUser } from "../types/User.js";
 import { logger } from "../utils/logger.js";
 import { IMPORTS_DIR_PATH } from "../utils/paths.js";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type.js";

@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Logger } from "pino";
@@ -7,7 +8,6 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type ObservateurCreateInput } from "../../repositories/observateur/observateur-repository-types.js";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
-import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
