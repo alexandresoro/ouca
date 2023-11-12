@@ -1,4 +1,4 @@
-import { type Config } from "@domain/config/config.js";
+import { type OidcConfig } from "@infrastructure/config/oidc-config.js";
 import { type z } from "zod";
 
 /**
@@ -8,7 +8,7 @@ import { type z } from "zod";
 const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
   accessToken: string,
   introspectionResultSchema: T,
-  oidcConfig: Config["oidc"]
+  oidcConfig: OidcConfig
 ): Promise<z.infer<typeof introspectionResultSchema>> => {
   const basicAuthHeader = Buffer.from(`${oidcConfig.clientId}:${oidcConfig.clientSecret}`).toString("base64");
 

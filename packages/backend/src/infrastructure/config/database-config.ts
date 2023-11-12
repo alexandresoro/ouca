@@ -1,11 +1,5 @@
-import { type DbConfig } from "@domain/config/database-config.js";
-import { pino } from "pino";
 import { z } from "zod";
-
-const initLogger = pino({
-  level: "warn",
-  base: undefined,
-});
+import { logger } from "../../utils/logger.js";
 
 const zodStringToBoolean = (input: string | undefined): boolean => {
   return input?.toLowerCase() === "true" || input === "1";
@@ -19,10 +13,10 @@ const envDbSchema = z.object({
   OUCA_DATABASE_MIGRATIONS_PATH: z.string().default(new URL("../../../migrations/", import.meta.url).pathname),
 });
 
-export const getDbConfig = (): DbConfig => {
+export const getDbConfig = () => {
   const envDbParseResult = envDbSchema.safeParse(process.env);
   if (!envDbParseResult.success) {
-    initLogger.fatal({ error: envDbParseResult.error }, "An error has occurred when trying to parse the environment");
+    logger.fatal({ error: envDbParseResult.error }, "An error has occurred when trying to parse the environment");
     process.exit(1);
   }
   const env = envDbParseResult.data;
@@ -36,5 +30,7 @@ export const getDbConfig = (): DbConfig => {
     },
   };
 };
+
+export type DbConfig = ReturnType<typeof getDbConfig>;
 
 export const dbConfig = getDbConfig();

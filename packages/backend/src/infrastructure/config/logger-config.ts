@@ -1,7 +1,7 @@
-import { type LoggerConfig } from "@domain/config/logger-config.js";
 import { pino } from "pino";
 import { z } from "zod";
 
+// Don't rely on app-wide logger as it needs this config to be built
 const initLogger = pino({
   level: "warn",
   base: undefined,
@@ -11,7 +11,7 @@ const envLogSchema = z.object({
   OUCA_LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("warn"),
 });
 
-const getLoggerConfig = (): LoggerConfig => {
+const getLoggerConfig = () => {
   const envLoggerParseResult = envLogSchema.safeParse(process.env);
   if (!envLoggerParseResult.success) {
     initLogger.fatal(

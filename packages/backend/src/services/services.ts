@@ -1,4 +1,5 @@
-import { type Config } from "@domain/config/config.js";
+import { dbConfig } from "@infrastructure/config/database-config.js";
+import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
@@ -76,11 +77,9 @@ export type Services = {
   zitadelOidcService: ZitadelOidcService;
 };
 
-export const buildServices = async (config: Config): Promise<Services> => {
-  const { database } = config;
-
+export const buildServices = async (): Promise<Services> => {
   // Database connection
-  const slonik = await getSlonikInstance({ dbConfig: database, logger: logger.child({ module: "slonik" }) });
+  const slonik = await getSlonikInstance({ dbConfig, logger: logger.child({ module: "slonik" }) });
 
   logger.debug("Connection to database successful");
 
@@ -237,7 +236,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
 
   const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });
   const zitadelOidcService = buildZitadelOidcService({
-    config,
+    oidcConfig,
     oidcWithInternalUserMappingService,
   });
 

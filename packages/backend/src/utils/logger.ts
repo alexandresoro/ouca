@@ -1,9 +1,8 @@
-import { type LoggerConfig } from "@domain/config/logger-config.js";
 import { loggerConfig } from "@infrastructure/config/logger-config.js";
 import { nodeEnvConfig } from "@infrastructure/config/node-env-config.js";
 import { pino, type TransportTargetOptions } from "pino";
 
-const getPinoTransportsToUse = ({ level }: LoggerConfig, isProduction: boolean) => {
+const getPinoTransportsToUse = ({ level }: typeof loggerConfig, isProduction: boolean) => {
   const transports: TransportTargetOptions[] = [];
 
   if (!isProduction) {

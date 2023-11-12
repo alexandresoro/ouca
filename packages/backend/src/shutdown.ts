@@ -1,3 +1,4 @@
+import { kysely } from "@infrastructure/kysely/kysely.js";
 import * as Sentry from "@sentry/node";
 import {
   type FastifyInstance,
@@ -7,6 +8,7 @@ import {
 } from "fastify";
 import { type Logger } from "pino";
 import { type Services } from "./services/services.js";
+import { logger } from "./utils/logger.js";
 
 // Handle shutdown request gracefully
 // This is used when inside a container
@@ -22,14 +24,17 @@ const shutdown =
     services: Services
   ): (() => void) =>
   () => {
-    services.logger.info("Shutdown requested");
+    logger.info("Shutdown requested");
     void Promise.all([
       Sentry.close(2000),
       services.slonik.end().then(() => {
-        services.logger.info("Database connector has been shut down");
+        logger.info("Database connector has been shut down");
+      }),
+      kysely.destroy().then(() => {
+        logger.info("Kysely database connection has been shut down");
       }),
       server.close().then(() => {
-        services.logger.info("Web server has been shut down");
+        logger.info("Web server has been shut down");
       }),
     ]).finally(() => {
       process.exit(0);

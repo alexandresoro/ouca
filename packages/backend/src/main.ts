@@ -1,4 +1,6 @@
-import { config } from "@infrastructure/config/config.js";
+import { dbConfig } from "@infrastructure/config/database-config.js";
+import { sentryConfig } from "@infrastructure/config/sentry-config.js";
+import { serverConfig } from "@infrastructure/config/server-config.js";
 import { getUmzugInstance } from "@infrastructure/umzug/umzug-instance.js";
 import * as Sentry from "@sentry/node";
 import { buildServer } from "./fastify.js";
@@ -9,13 +11,13 @@ import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
 
 // Sentry
-if (config.sentry.dsn) {
+if (sentryConfig.dsn) {
   logger.debug("Sentry instrumenting enabled");
 }
 Sentry.init({
-  dsn: config.sentry.dsn,
-  environment: config.sentry.environment,
-  release: config.sentry.release,
+  dsn: sentryConfig.dsn,
+  environment: sentryConfig.environment,
+  release: sentryConfig.release,
   tracesSampleRate: 1.0,
 });
 
@@ -24,9 +26,9 @@ logger.debug("Starting app");
 checkAndCreateFolders();
 
 (async () => {
-  const services = await buildServices(config);
+  const services = await buildServices();
 
-  if (config.database.migrator.runMigrations) {
+  if (dbConfig.migrator.runMigrations) {
     logger.child({ module: "umzug" }).debug("Running database migrations");
     const umzug = getUmzugInstance();
     await umzug.up();
@@ -41,7 +43,7 @@ checkAndCreateFolders();
   process.on("SIGINT", shutdown(server, services));
   process.on("SIGTERM", shutdown(server, services));
 
-  await server.listen({ ...config.server });
+  await server.listen({ ...serverConfig });
 })().catch((e) => {
   Sentry.captureException(e);
   logger.error(e);

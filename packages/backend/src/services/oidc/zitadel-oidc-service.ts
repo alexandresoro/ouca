@@ -1,4 +1,4 @@
-import { type Config } from "@domain/config/config.js";
+import { type OidcConfig } from "@infrastructure/config/oidc-config.js";
 import { z } from "zod";
 import { userRoles, type LoggedUser, type UserRole } from "../../types/User.js";
 import introspectAccessTokenCommon from "./introspect-access-token.js";
@@ -37,7 +37,7 @@ export const introspectionResultSchema = z.union([
 export type ZitadelIntrospectionResult = z.infer<typeof introspectionResultSchema>;
 
 export type ZitadelOidcServiceDependencies = {
-  config: Config;
+  oidcConfig: OidcConfig;
   oidcWithInternalUserMappingService: OidcWithInternalUserMappingService;
 };
 
@@ -52,11 +52,11 @@ type GetMatchingLoggedUserResult =
     };
 
 export const buildZitadelOidcService = ({
-  config,
+  oidcConfig,
   oidcWithInternalUserMappingService,
 }: ZitadelOidcServiceDependencies) => {
   const introspectAccessToken = async (accessToken: string): Promise<ZitadelIntrospectionResult> => {
-    return introspectAccessTokenCommon(accessToken, introspectionResultSchema, config.oidc);
+    return introspectAccessTokenCommon(accessToken, introspectionResultSchema, oidcConfig);
   };
 
   const getRoleFromLoggedUser = (introspectionUser: ZitadelIntrospectionUser): UserRole | null => {

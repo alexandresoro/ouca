@@ -1,4 +1,4 @@
-import { type DbConfig } from "@domain/config/database-config.js";
+import { type DbConfig } from "@infrastructure/config/database-config.js";
 import { type Logger } from "pino";
 import { createPool } from "slonik";
 import { createFieldNameTransformationToCamelcaseInterceptor } from "./slonik-fieldname-to-camelcase-interceptor.js";
