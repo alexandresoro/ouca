@@ -6,6 +6,8 @@ import { buildUserRepository } from "@infrastructure/repositories/user/user-repo
 import { type Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
+import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
+import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildAgeRepository } from "../repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
@@ -24,7 +26,6 @@ import { buildLieuditRepository } from "../repositories/lieudit/lieudit-reposito
 import { buildMeteoRepository } from "../repositories/meteo/meteo-repository.js";
 import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
 import { buildObservateurRepository } from "../repositories/observateur/observateur-repository.js";
-import { buildSettingsRepository } from "../repositories/settings/settings-repository.js";
 import { buildSexeRepository } from "../repositories/sexe/sexe-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
@@ -49,8 +50,6 @@ import { buildSexeService, type SexeService } from "./entities/sexe-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
-import { buildSettingsService, type SettingsService } from "./settings-service.js";
-import { buildUserService, type UserService } from "./user-service.js";
 
 export type Services = {
   logger: Logger;
@@ -101,10 +100,9 @@ export const buildServices = async (): Promise<Services> => {
   const meteoRepository = buildMeteoRepository({ slonik });
   const milieuRepository = buildMilieuRepository({ slonik });
   const observateurRepository = buildObservateurRepository({ slonik });
-  const settingsRepository = buildSettingsRepository({ slonik });
-  const settingsRepositoryKysely = buildSettingsRepositoryKysely();
+  const settingsRepository = buildSettingsRepositoryKysely();
   const sexeRepository = buildSexeRepository({ slonik });
-  const userRepository = buildUserRepository({ settingsRepository: settingsRepositoryKysely });
+  const userRepository = buildUserRepository({ settingsRepository });
 
   const ageService = buildAgeService({
     logger,
@@ -217,7 +215,6 @@ export const buildServices = async (): Promise<Services> => {
   const settingsService = buildSettingsService({
     logger,
     settingsRepository,
-    settingsRepositoryKysely,
     departementService,
     observateurService,
     sexeService,

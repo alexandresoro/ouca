@@ -1,4 +1,4 @@
-import { settingsSchema, type Settings } from "@domain/settings/settings.js";
+import { settingsSchema, type Settings, type UpdateSettingsInput } from "@domain/settings/settings.js";
 import { kysely, type Database } from "@infrastructure/kysely/kysely.js";
 import { sql, type Transaction } from "kysely";
 
@@ -13,17 +13,17 @@ export const buildSettingsRepository = () => {
         sql`default_age_id::text`.as("default_age_id"),
         sql`default_sexe_id::text`.as("default_sexe_id"),
         sql`default_estimation_nombre_id::text`.as("default_estimation_nombre_id"),
-        "default_nombre",
-        "are_associes_displayed",
-        "is_meteo_displayed",
-        "is_distance_displayed",
-        "is_regroupement_displayed",
+        "defaultNombre",
+        "areAssociesDisplayed",
+        "isMeteoDisplayed",
+        "isDistanceDisplayed",
+        "isRegroupementDisplayed",
         "userId",
       ])
       .where("userId", "=", userId)
-      .executeTakeFirstOrThrow();
+      .executeTakeFirst();
 
-    return settingsSchema.parse(userSettings);
+    return userSettings ? settingsSchema.parse(userSettings) : null;
   };
 
   const createDefaultSettings = async (userId: string, transaction?: Transaction<Database>): Promise<void> => {
@@ -35,9 +35,34 @@ export const buildSettingsRepository = () => {
       .execute();
   };
 
+  const updateUserSettings = async (userId: string, updateSettingsInput: UpdateSettingsInput): Promise<Settings> => {
+    const updatedUserResult = await kysely
+      .updateTable("basenaturaliste.settings")
+      .set(updateSettingsInput)
+      .where("userId", "=", userId)
+      .returning([
+        sql`id::text`.as("id"),
+        sql`default_observateur_id::text`.as("default_observateur_id"),
+        sql`default_departement_id::text`.as("default_departement_id"),
+        sql`default_age_id::text`.as("default_age_id"),
+        sql`default_sexe_id::text`.as("default_sexe_id"),
+        sql`default_estimation_nombre_id::text`.as("default_estimation_nombre_id"),
+        "defaultNombre",
+        "areAssociesDisplayed",
+        "isMeteoDisplayed",
+        "isDistanceDisplayed",
+        "isRegroupementDisplayed",
+        "userId",
+      ])
+      .executeTakeFirstOrThrow();
+
+    return settingsSchema.parse(updatedUserResult);
+  };
+
   return {
     getUserSettings,
     createDefaultSettings,
+    updateUserSettings,
   };
 };
 

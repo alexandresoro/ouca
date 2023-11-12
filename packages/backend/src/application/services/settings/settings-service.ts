@@ -1,28 +1,18 @@
-import { type SettingsRepository as SettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
+import { type SettingsEnriched, type UpdateSettingsInput } from "@domain/settings/settings.js";
+import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { type Age } from "@ou-ca/common/entities/age";
-import { type Department } from "@ou-ca/common/entities/department";
-import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
-import { type Observer } from "@ou-ca/common/entities/observer";
-import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Logger } from "pino";
-import {
-  type Settings as SettingsRepositoryType,
-  type UpdateSettingsInput,
-} from "../repositories/settings/settings-repository-types.js";
-import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
-import { type LoggedUser } from "../types/User.js";
-import { type AgeService } from "./entities/age-service.js";
-import { validateAuthorization } from "./entities/authorization-utils.js";
-import { type DepartementService } from "./entities/departement-service.js";
-import { type EstimationNombreService } from "./entities/estimation-nombre-service.js";
-import { type ObservateurService } from "./entities/observateur-service.js";
-import { type SexeService } from "./entities/sexe-service.js";
+import { type AgeService } from "../../../services/entities/age-service.js";
+import { validateAuthorization } from "../../../services/entities/authorization-utils.js";
+import { type DepartementService } from "../../../services/entities/departement-service.js";
+import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
+import { type ObservateurService } from "../../../services/entities/observateur-service.js";
+import { type SexeService } from "../../../services/entities/sexe-service.js";
+import { type LoggedUser } from "../../../types/User.js";
 
 type SettingsServiceDependencies = {
   logger: Logger;
   settingsRepository: SettingsRepository;
-  settingsRepositoryKysely: SettingsRepositoryKysely;
   departementService: DepartementService;
   observateurService: ObservateurService;
   sexeService: SexeService;
@@ -30,28 +20,16 @@ type SettingsServiceDependencies = {
   estimationNombreService: EstimationNombreService;
 };
 
-type Settings = Omit<
-  SettingsRepositoryType,
-  "defaultDepartementId" | "defaultObservateurId" | "defaultSexeId" | "defaultAgeId" | "defaultEstimationNombreId"
-> & {
-  defaultDepartment: Department | null;
-  defaultObserver: Observer | null;
-  defaultSex: Sex | null;
-  defaultAge: Age | null;
-  defaultNumberEstimate: NumberEstimate | null;
-};
-
 export const buildSettingsService = ({
   logger,
   settingsRepository,
-  settingsRepositoryKysely,
   departementService,
   observateurService,
   sexeService,
   ageService,
   estimationNombreService,
 }: SettingsServiceDependencies) => {
-  const getSettings = async (loggedUser: LoggedUser | null): Promise<Settings | null> => {
+  const getSettings = async (loggedUser: LoggedUser | null): Promise<SettingsEnriched | null> => {
     validateAuthorization(loggedUser);
 
     const settings = await settingsRepository.getUserSettings(loggedUser.id);
@@ -95,10 +73,10 @@ export const buildSettingsService = ({
   const updateUserSettings = async (
     inputUpdateSettings: PutSettingsInput,
     loggedUser: LoggedUser | null
-  ): Promise<Settings> => {
+  ): Promise<SettingsEnriched> => {
     validateAuthorization(loggedUser);
 
-    const updateSettingsInput = buildSettingsDbFromInputSettings(inputUpdateSettings);
+    const updateSettingsInput = buildSettingsFromInputSettings(inputUpdateSettings);
 
     logger.trace(
       {
@@ -151,21 +129,21 @@ export const buildSettingsService = ({
 
 export type SettingsService = ReturnType<typeof buildSettingsService>;
 
-const buildSettingsDbFromInputSettings = (inputUpdateSettings: PutSettingsInput): UpdateSettingsInput => {
+const buildSettingsFromInputSettings = (inputUpdateSettings: PutSettingsInput): UpdateSettingsInput => {
   return {
-    default_observateur_id: inputUpdateSettings.defaultObserver ? parseInt(inputUpdateSettings.defaultObserver) : null,
-    default_departement_id: inputUpdateSettings.defaultDepartment
+    defaultObservateurId: inputUpdateSettings.defaultObserver ? parseInt(inputUpdateSettings.defaultObserver) : null,
+    defaultDepartementId: inputUpdateSettings.defaultDepartment
       ? parseInt(inputUpdateSettings.defaultDepartment)
       : null,
-    default_age_id: inputUpdateSettings.defaultAge ? parseInt(inputUpdateSettings.defaultAge) : null,
-    default_sexe_id: inputUpdateSettings.defaultSexe ? parseInt(inputUpdateSettings.defaultSexe) : null,
-    default_estimation_nombre_id: inputUpdateSettings.defaultEstimationNombre
+    defaultAgeId: inputUpdateSettings.defaultAge ? parseInt(inputUpdateSettings.defaultAge) : null,
+    defaultSexeId: inputUpdateSettings.defaultSexe ? parseInt(inputUpdateSettings.defaultSexe) : null,
+    defaultEstimationNombreId: inputUpdateSettings.defaultEstimationNombre
       ? parseInt(inputUpdateSettings.defaultEstimationNombre)
       : null,
-    default_nombre: inputUpdateSettings.defaultNombre,
-    are_associes_displayed: inputUpdateSettings.areAssociesDisplayed,
-    is_meteo_displayed: inputUpdateSettings.isMeteoDisplayed,
-    is_distance_displayed: inputUpdateSettings.isDistanceDisplayed,
-    is_regroupement_displayed: inputUpdateSettings.isRegroupementDisplayed,
+    defaultNombre: inputUpdateSettings.defaultNombre,
+    areAssociesDisplayed: inputUpdateSettings.areAssociesDisplayed,
+    isMeteoDisplayed: inputUpdateSettings.isMeteoDisplayed,
+    isDistanceDisplayed: inputUpdateSettings.isDistanceDisplayed,
+    isRegroupementDisplayed: inputUpdateSettings.isRegroupementDisplayed,
   };
 };

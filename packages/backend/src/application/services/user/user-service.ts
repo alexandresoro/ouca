@@ -1,8 +1,8 @@
 import { type User } from "@domain/user/user.js";
 import { type UserRepository } from "@interfaces/user-repository-interface.js";
-import { type LoggedUser } from "../types/User.js";
-import { OucaError } from "../utils/errors.js";
-import { logger } from "../utils/logger.js";
+import { type LoggedUser } from "../../../types/User.js";
+import { OucaError } from "../../../utils/errors.js";
+import { logger } from "../../../utils/logger.js";
 
 type UserServiceDependencies = {
   userRepository: UserRepository;

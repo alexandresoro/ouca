@@ -1,16 +1,16 @@
+import { type Settings } from "@domain/settings/settings.js";
+import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type Logger } from "pino";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type Settings } from "../repositories/settings/settings-repository-types.js";
-import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
-import { type LoggedUser } from "../types/User.js";
-import { OucaError } from "../utils/errors.js";
-import { type AgeService } from "./entities/age-service.js";
-import { type DepartementService } from "./entities/departement-service.js";
-import { type EstimationNombreService } from "./entities/estimation-nombre-service.js";
-import { type ObservateurService } from "./entities/observateur-service.js";
-import { type SexeService } from "./entities/sexe-service.js";
+import { type AgeService } from "../../../services/entities/age-service.js";
+import { type DepartementService } from "../../../services/entities/departement-service.js";
+import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
+import { type ObservateurService } from "../../../services/entities/observateur-service.js";
+import { type SexeService } from "../../../services/entities/sexe-service.js";
+import { type LoggedUser } from "../../../types/User.js";
+import { OucaError } from "../../../utils/errors.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mock<SettingsRepository>({
@@ -117,16 +117,16 @@ test("should update settings with parameters for user", async () => {
 
   expect(settingsRepository.updateUserSettings).toHaveBeenCalledTimes(1);
   expect(settingsRepository.updateUserSettings).toHaveBeenCalledWith(loggedUser.id, {
-    are_associes_displayed: true,
-    default_age_id: 1,
-    default_departement_id: 2,
-    default_estimation_nombre_id: 3,
-    default_nombre: 4,
-    default_observateur_id: 5,
-    default_sexe_id: null,
-    is_distance_displayed: true,
-    is_meteo_displayed: true,
-    is_regroupement_displayed: true,
+    areAssociesDisplayed: true,
+    defaultAgeId: 1,
+    defaultDepartementId: 2,
+    defaultEstimationNombreId: 3,
+    defaultNombre: 4,
+    defaultObservateurId: 5,
+    defaultSexeId: null,
+    isDistanceDisplayed: true,
+    isMeteoDisplayed: true,
+    isRegroupementDisplayed: true,
   });
   expect(departementService.findDepartement).toHaveBeenCalledTimes(1);
   expect(departementService.findDepartement).toHaveBeenCalledWith(2, loggedUser);
