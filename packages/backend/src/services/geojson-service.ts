@@ -1,8 +1,8 @@
+import { type LoggedUser } from "@domain/user/logged-user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 // FIXME: https://github.com/Turfjs/turf/issues/2414
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { type LoggedUser } from "@domain/user/logged-user.js";
 import { featureCollection, point } from "@turf/helpers";
 import { type Logger } from "pino";
 import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
