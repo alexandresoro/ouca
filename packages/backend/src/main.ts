@@ -10,6 +10,8 @@ import shutdown from "./shutdown.js";
 import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
 
+logger.debug("Starting app");
+
 // Sentry
 if (sentryConfig.dsn) {
   logger.debug("Sentry instrumenting enabled");
@@ -21,11 +23,9 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-logger.debug("Starting app");
-
 checkAndCreateFolders();
 
-(async () => {
+const startApp = async () => {
   const services = await buildServices();
 
   if (dbConfig.migrator.runMigrations) {
@@ -44,7 +44,9 @@ checkAndCreateFolders();
   process.on("SIGTERM", shutdown(server, services));
 
   await server.listen({ ...serverConfig });
-})().catch((e) => {
+};
+
+await startApp().catch((e) => {
   Sentry.captureException(e);
   logger.error(e);
 });

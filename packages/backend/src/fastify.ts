@@ -24,6 +24,7 @@ import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
 import { startImportTask } from "./services/import-manager.js";
 import { type Services } from "./services/services.js";
+import { logger as loggerParent } from "./utils/logger.js";
 import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "./utils/paths.js";
 
 const API_V1_PREFIX = "/api/v1";
@@ -38,12 +39,11 @@ export const buildServer = async (
     Logger
   >
 > => {
-  const { logger: loggerParent } = services;
   const logger = loggerParent.child({ module: "fastify" });
 
   // Server
   const server = fastify.default({
-    logger: services.logger,
+    logger: loggerParent,
     trustProxy: true,
   });
 

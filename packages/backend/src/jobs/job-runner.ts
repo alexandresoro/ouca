@@ -1,18 +1,14 @@
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { createWorkers } from "./queue-workers.js";
 import { createQueues, type Queues } from "./queues.js";
 
 export const startWorkersAndJobs = async (services: Services): Promise<Queues> => {
-  const { logger } = services;
-
   // Create workers
-  createWorkers({ ...services, logger: logger.child({ module: "workers" }) });
+  createWorkers(services, logger.child({ module: "workers" }));
 
   // Create queues
-  const { geoJsonQueue } = createQueues({
-    ...services,
-    logger: logger.child({ module: "queues" }),
-  });
+  const { geoJsonQueue } = createQueues(services, logger.child({ module: "queues" }));
 
   // Start jobs
   // https://docs.bullmq.io/guide/jobs/repeatable

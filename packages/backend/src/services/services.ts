@@ -4,7 +4,6 @@ import { redis } from "@infrastructure/ioredis/redis.js";
 import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { type Redis } from "ioredis";
-import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
@@ -52,7 +51,6 @@ import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-intern
 import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
 
 export type Services = {
-  logger: Logger;
   slonik: DatabasePool;
   redis: Redis;
   ageService: AgeService;
@@ -237,7 +235,6 @@ export const buildServices = async (): Promise<Services> => {
   logger.debug("Services initialized successfully");
 
   return {
-    logger,
     slonik,
     redis,
     ageService,

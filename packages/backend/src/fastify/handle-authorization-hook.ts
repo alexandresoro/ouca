@@ -1,7 +1,9 @@
+import { redis } from "@infrastructure/ioredis/redis.js";
 import { add, compareAsc } from "date-fns";
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import { type ZitadelIntrospectionResult } from "../services/oidc/zitadel-oidc-service.js";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 
 export const BEARER_PATTERN = /^Bearer (.+)$/;
 
@@ -10,13 +12,12 @@ const ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_PREFIX = "accessTokenIntrospection
 const ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION = 3600; // 1h
 
 const storeIntrospectionResultInCache = async (
-  services: Services,
   key: string,
   introspectionResult: ZitadelIntrospectionResult,
   accessToken: string
 ) => {
-  await services.redis.set(key, JSON.stringify(introspectionResult)).catch(() => {
-    services.logger.warn(
+  await redis.set(key, JSON.stringify(introspectionResult)).catch(() => {
+    logger.warn(
       {
         accessToken,
       },
@@ -31,14 +32,14 @@ const storeIntrospectionResultInCache = async (
     const cacheExpirationDate = add(new Date(), { seconds: ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION });
     if (compareAsc(cacheExpirationDate, tokenExpirationDate) <= 0) {
       // Default cache duration is earlier than token duration
-      await services.redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
+      await redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
     } else {
       // Token expires before the default duration
-      await services.redis.expireat(key, introspectionResult.exp);
+      await redis.expireat(key, introspectionResult.exp);
     }
   } else {
     // If token is not active, set the default duration
-    await services.redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
+    await redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
   }
 };
 
@@ -47,7 +48,7 @@ const handleAuthorizationHook = async (
   reply: FastifyReply,
   services: Services
 ): Promise<void> => {
-  const { redis, zitadelOidcService } = services;
+  const { zitadelOidcService } = services;
 
   const authorizationHeader = request.headers.authorization;
 
@@ -77,7 +78,7 @@ const handleAuthorizationHook = async (
     // Introspect token if not present in cache
     introspectionResult = await zitadelOidcService.introspectAccessToken(accessToken);
     // Regardless of the outcome, store the result in cache
-    await storeIntrospectionResultInCache(services, redisKey, introspectionResult, accessToken);
+    await storeIntrospectionResultInCache(redisKey, introspectionResult, accessToken);
   }
 
   if (!introspectionResult.active) {
