@@ -3,6 +3,7 @@ import { useFeatures } from "@services/app-features/features";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
+import SearchFilterDepartments from "./SearchFilterDepartments";
 import SearchFilterSpecies from "./SearchFilterSpecies";
 
 const SearchFilterPanel: FunctionComponent = () => {
@@ -24,8 +25,9 @@ const SearchFilterPanel: FunctionComponent = () => {
           onChange={setDisplayOnlyOwnObservations}
         />
       )}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5">
         <SearchFilterSpecies />
+        <SearchFilterDepartments />
         <SearchFilterBehaviors />
       </div>
     </div>
