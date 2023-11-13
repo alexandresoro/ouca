@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -17,10 +16,8 @@ import { buildObservateurService } from "./observateur-service.js";
 const observateurRepository = mock<ObservateurRepository>({});
 const inventaireRepository = mock<InventaireRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const observateurService = buildObservateurService({
-  logger,
   observateurRepository,
   inventaireRepository,
   donneeRepository,

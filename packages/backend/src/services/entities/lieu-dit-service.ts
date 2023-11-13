@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Locality } from "@ou-ca/common/entities/locality";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
@@ -17,7 +16,6 @@ import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 
 type LieuditServiceDependencies = {
-  logger: Logger;
   lieuditRepository: LieuditRepository;
   inventaireRepository: InventaireRepository;
   donneeRepository: DonneeRepository;

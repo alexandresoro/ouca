@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Environment } from "@ou-ca/common/entities/environment";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
@@ -12,7 +11,6 @@ import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type MilieuServiceDependencies = {
-  logger: Logger;
   milieuRepository: MilieuRepository;
   donneeRepository: DonneeRepository;
 };

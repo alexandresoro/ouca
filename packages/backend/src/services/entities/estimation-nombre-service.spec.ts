@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -17,10 +16,8 @@ import { buildEstimationNombreService } from "./estimation-nombre-service.js";
 
 const estimationNombreRepository = mock<EstimationNombreRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const estimationNombreService = buildEstimationNombreService({
-  logger,
   estimationNombreRepository,
   donneeRepository,
 });

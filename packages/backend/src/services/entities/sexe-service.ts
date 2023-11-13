@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Sex } from "@ou-ca/common/entities/sex";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
@@ -12,7 +11,6 @@ import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type SexeServiceDependencies = {
-  logger: Logger;
   sexeRepository: SexeRepository;
   donneeRepository: DonneeRepository;
 };

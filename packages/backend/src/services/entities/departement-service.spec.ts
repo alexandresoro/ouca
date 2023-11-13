@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
@@ -19,10 +18,8 @@ const departementRepository = mock<DepartementRepository>({});
 const communeRepository = mock<CommuneRepository>({});
 const lieuditRepository = mock<LieuditRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const departementService = buildDepartementService({
-  logger,
   departementRepository,
   communeRepository,
   lieuditRepository,

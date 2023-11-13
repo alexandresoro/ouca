@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -15,10 +14,8 @@ import { buildEstimationDistanceService } from "./estimation-distance-service.js
 
 const estimationDistanceRepository = mock<EstimationDistanceRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const estimationDistanceService = buildEstimationDistanceService({
-  logger,
   estimationDistanceRepository,
   donneeRepository,
 });

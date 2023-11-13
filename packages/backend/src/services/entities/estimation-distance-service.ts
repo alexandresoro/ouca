@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
@@ -14,7 +13,6 @@ import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type EstimationDistanceServiceDependencies = {
-  logger: Logger;
   estimationDistanceRepository: EstimationDistanceRepository;
   donneeRepository: DonneeRepository;
 };

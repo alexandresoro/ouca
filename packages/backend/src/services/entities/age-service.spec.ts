@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
@@ -12,10 +11,8 @@ import { buildAgeService } from "./age-service.js";
 
 const ageRepository = mock<AgeRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const ageService = buildAgeService({
-  logger,
   ageRepository,
   donneeRepository,
 });

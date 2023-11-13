@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -12,10 +11,8 @@ import { buildMilieuService } from "./milieu-service.js";
 
 const milieuRepository = mock<MilieuRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const milieuService = buildMilieuService({
-  logger,
   milieuRepository,
   donneeRepository,
 });

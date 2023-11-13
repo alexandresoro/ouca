@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
@@ -13,7 +12,6 @@ import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ClasseServiceDependencies = {
-  logger: Logger;
   classeRepository: ClasseRepository;
   especeRepository: EspeceRepository;
   donneeRepository: DonneeRepository;

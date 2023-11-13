@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Town } from "@ou-ca/common/entities/town";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   type CommuneCreateInput,
@@ -17,7 +16,6 @@ import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type CommuneServiceDependencies = {
-  logger: Logger;
   communeRepository: CommuneRepository;
   lieuditRepository: LieuditRepository;
   donneeRepository: DonneeRepository;

@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
@@ -18,7 +17,6 @@ import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.js";
 
 type InventaireServiceDependencies = {
-  logger: Logger;
   slonik: DatabasePool;
   inventaireRepository: InventaireRepository;
   inventaireAssocieRepository: InventaireAssocieRepository;

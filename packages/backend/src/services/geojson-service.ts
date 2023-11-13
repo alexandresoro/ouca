@@ -4,18 +4,17 @@ import { redis } from "@infrastructure/ioredis/redis.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
-import { type Logger } from "pino";
 import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
+import { logger } from "../utils/logger.js";
 import { validateAuthorization } from "./entities/authorization-utils.js";
 
 const GEOJSON_DATA_REDIS_KEY = "geoJsonLocalities";
 
 type GeoJSONServiceDependencies = {
-  logger: Logger;
   lieuditRepository: LieuditRepository;
 };
 
-export const buildGeoJSONService = ({ logger, lieuditRepository }: GeoJSONServiceDependencies) => {
+export const buildGeoJSONService = ({ lieuditRepository }: GeoJSONServiceDependencies) => {
   const getLocalities = async (loggedUser: LoggedUser | null): Promise<unknown> => {
     validateAuthorization(loggedUser);
 

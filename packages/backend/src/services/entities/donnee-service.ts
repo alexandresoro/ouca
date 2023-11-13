@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
-import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
@@ -15,7 +14,6 @@ import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape.js";
 import { getSqlPagination } from "./entities-utils.js";
 
 type DonneeServiceDependencies = {
-  logger: Logger;
   slonik: DatabasePool;
   inventaireRepository: InventaireRepository;
   donneeRepository: DonneeRepository;

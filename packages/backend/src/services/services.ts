@@ -100,33 +100,28 @@ export const buildServices = async (): Promise<Services> => {
   const userRepository = buildUserRepository({ settingsRepository });
 
   const ageService = buildAgeService({
-    logger,
     ageRepository,
     donneeRepository,
   });
 
   const classeService = buildClasseService({
-    logger,
     classeRepository,
     especeRepository,
     donneeRepository,
   });
 
   const communeService = buildCommuneService({
-    logger,
     communeRepository,
     lieuditRepository,
     donneeRepository,
   });
 
   const comportementService = buildComportementService({
-    logger,
     comportementRepository,
     donneeRepository,
   });
 
   const departementService = buildDepartementService({
-    logger,
     departementRepository,
     communeRepository,
     lieuditRepository,
@@ -134,7 +129,6 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const donneeService = buildDonneeService({
-    logger,
     slonik,
     inventaireRepository,
     donneeRepository,
@@ -143,26 +137,22 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const especeService = buildEspeceService({
-    logger,
     classeService,
     especeRepository,
     donneeRepository,
   });
 
   const estimationDistanceService = buildEstimationDistanceService({
-    logger,
     estimationDistanceRepository,
     donneeRepository,
   });
 
   const estimationNombreService = buildEstimationNombreService({
-    logger,
     estimationNombreRepository,
     donneeRepository,
   });
 
   const inventaireService = buildInventaireService({
-    logger,
     slonik,
     inventaireRepository,
     inventaireAssocieRepository,
@@ -172,33 +162,28 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const lieuditService = buildLieuditService({
-    logger,
     lieuditRepository,
     inventaireRepository,
     donneeRepository,
   });
 
   const meteoService = buildMeteoService({
-    logger,
     meteoRepository,
     donneeRepository,
   });
 
   const milieuService = buildMilieuService({
-    logger,
     milieuRepository,
     donneeRepository,
   });
 
   const observateurService = buildObservateurService({
-    logger,
     observateurRepository,
     inventaireRepository,
     donneeRepository,
   });
 
   const sexeService = buildSexeService({
-    logger,
     sexeRepository,
     donneeRepository,
   });
@@ -208,7 +193,6 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const settingsService = buildSettingsService({
-    logger,
     settingsRepository,
     departementService,
     observateurService,
@@ -218,7 +202,6 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const geojsonService = buildGeoJSONService({
-    logger,
     lieuditRepository,
   });
 

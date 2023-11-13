@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
@@ -22,13 +21,11 @@ const inventaireAssocieRepository = mock<InventaireAssocieRepository>({});
 const inventaireMeteoRepository = mock<InventaireMeteoRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
 const lieuditRepository = mock<LieuditRepository>({});
-const logger = mock<Logger>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
 
 const inventaireService = buildInventaireService({
-  logger,
   slonik,
   inventaireRepository,
   inventaireAssocieRepository,

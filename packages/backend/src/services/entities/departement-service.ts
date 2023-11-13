@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/entities/department";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DepartementCreateInput } from "../../repositories/departement/departement-repository-types.js";
@@ -14,7 +13,6 @@ import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type DepartementServiceDependencies = {
-  logger: Logger;
   departementRepository: DepartementRepository;
   communeRepository: CommuneRepository;
   lieuditRepository: LieuditRepository;

@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Observer } from "@ou-ca/common/entities/observer";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
@@ -13,7 +12,6 @@ import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ObservateurServiceDependencies = {
-  logger: Logger;
   inventaireRepository: InventaireRepository;
   observateurRepository: ObservateurRepository;
   donneeRepository: DonneeRepository;

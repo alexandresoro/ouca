@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Locality } from "@ou-ca/common/entities/locality";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock, mockDeep } from "vitest-mock-extended";
@@ -17,10 +16,8 @@ import { buildLieuditService } from "./lieu-dit-service.js";
 const lieuditRepository = mock<LieuditRepository>({});
 const inventaireRepository = mock<InventaireRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const lieuditService = buildLieuditService({
-  logger,
   lieuditRepository,
   inventaireRepository,
   donneeRepository,

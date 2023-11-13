@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
@@ -14,10 +13,8 @@ import { buildClasseService } from "./classe-service.js";
 const classeRepository = mock<ClasseRepository>({});
 const especeRepository = mock<EspeceRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const classeService = buildClasseService({
-  logger,
   classeRepository,
   especeRepository,
   donneeRepository,

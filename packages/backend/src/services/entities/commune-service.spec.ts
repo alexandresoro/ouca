@@ -1,7 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -16,10 +15,8 @@ import { buildCommuneService } from "./commune-service.js";
 const communeRepository = mock<CommuneRepository>({});
 const lieuditRepository = mock<LieuditRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
-const logger = mock<Logger>();
 
 const communeService = buildCommuneService({
-  logger,
   communeRepository,
   lieuditRepository,
   donneeRepository,

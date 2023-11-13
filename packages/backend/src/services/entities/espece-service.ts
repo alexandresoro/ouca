@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Species } from "@ou-ca/common/entities/species";
-import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
@@ -19,7 +18,6 @@ import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-uti
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 
 type EspeceServiceDependencies = {
-  logger: Logger;
   classeService: ClasseService;
   especeRepository: EspeceRepository;
   donneeRepository: DonneeRepository;

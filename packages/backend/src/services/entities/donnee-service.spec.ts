@@ -2,7 +2,6 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
-import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
@@ -18,13 +17,11 @@ const donneeRepository = mock<DonneeRepository>({});
 const donneeComportementRepository = mock<DonneeComportementRepository>({});
 const donneeMilieuRepository = mock<DonneeMilieuRepository>({});
 const inventaireRepository = mock<InventaireRepository>({});
-const logger = mock<Logger>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
 
 const donneeService = buildDonneeService({
-  logger,
   slonik,
   inventaireRepository,
   donneeRepository,
