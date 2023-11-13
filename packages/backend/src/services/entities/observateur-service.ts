@@ -3,12 +3,12 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type ObservateurCreateInput } from "../../repositories/observateur/observateur-repository-types.js";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
-import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ObservateurServiceDependencies = {

@@ -3,14 +3,13 @@ import { type Settings } from "@domain/settings/settings.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { type Logger } from "pino";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type AgeService } from "../../../services/entities/age-service.js";
 import { type DepartementService } from "../../../services/entities/departement-service.js";
 import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
 import { type ObservateurService } from "../../../services/entities/observateur-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
+import { type AgeService } from "../age/age-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mock<SettingsRepository>({
@@ -36,10 +35,7 @@ const estimationNombreService = mock<EstimationNombreService>({
   findEstimationNombre: vi.fn(),
 });
 
-const logger = mock<Logger>();
-
 const settingsService = buildSettingsService({
-  logger,
   settingsRepository,
   departementService,
   observateurService,

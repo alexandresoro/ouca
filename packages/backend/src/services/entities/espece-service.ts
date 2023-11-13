@@ -3,6 +3,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Species } from "@ou-ca/common/entities/species";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Espece,
@@ -12,7 +13,6 @@ import {
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { validateAuthorization } from "./authorization-utils.js";
 import { type ClasseService } from "./classe-service.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";

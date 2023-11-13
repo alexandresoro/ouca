@@ -3,13 +3,13 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/entities/department";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DepartementCreateInput } from "../../repositories/departement/departement-repository-types.js";
 import { type DepartementRepository } from "../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type DepartementServiceDependencies = {

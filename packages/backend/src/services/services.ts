@@ -3,6 +3,7 @@ import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { type DatabasePool } from "slonik";
+import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildAgeRepository } from "../repositories/age/age-repository.js";
@@ -26,7 +27,6 @@ import { buildObservateurRepository } from "../repositories/observateur/observat
 import { buildSexeRepository } from "../repositories/sexe/sexe-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
-import { buildAgeService, type AgeService } from "./entities/age-service.js";
 import { buildClasseService, type ClasseService } from "./entities/classe-service.js";
 import { buildCommuneService, type CommuneService } from "./entities/commune-service.js";
 import { buildComportementService, type ComportementService } from "./entities/comportement-service.js";

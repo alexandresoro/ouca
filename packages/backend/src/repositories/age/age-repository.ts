@@ -1,3 +1,4 @@
+import { ageSchema, type Age, type AgeCreateInput, type AgeFindManyInput } from "@domain/age/age.js";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -7,7 +8,6 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import { ageSchema, type Age, type AgeCreateInput, type AgeFindManyInput } from "./age-repository-types.js";
 
 export type AgeRepositoryDependencies = {
   slonik: DatabasePool;

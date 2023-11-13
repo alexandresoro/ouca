@@ -2,13 +2,13 @@ import { type SettingsEnriched, type UpdateSettingsInput } from "@domain/setting
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { type AgeService } from "../../../services/entities/age-service.js";
-import { validateAuthorization } from "../../../services/entities/authorization-utils.js";
 import { type DepartementService } from "../../../services/entities/departement-service.js";
 import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
 import { type ObservateurService } from "../../../services/entities/observateur-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
 import { logger } from "../../../utils/logger.js";
+import { type AgeService } from "../age/age-service.js";
+import { validateAuthorization } from "../authorization/authorization-utils.js";
 
 type SettingsServiceDependencies = {
   settingsRepository: SettingsRepository;

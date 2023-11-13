@@ -3,13 +3,13 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type DatabasePool } from "slonik";
+import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { validateAuthorization } from "./authorization-utils.js";
 import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape.js";
 import { getSqlPagination } from "./entities-utils.js";
 

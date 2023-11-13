@@ -3,11 +3,11 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type ComportementCreateInput } from "../../repositories/comportement/comportement-repository-types.js";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
-import { validateAuthorization } from "./authorization-utils.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ComportementServiceDependencies = {

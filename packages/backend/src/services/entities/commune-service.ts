@@ -3,6 +3,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Town } from "@ou-ca/common/entities/town";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import {
   type CommuneCreateInput,
   type CommuneWithDepartementCode,
@@ -11,7 +12,6 @@ import { type CommuneRepository } from "../../repositories/commune/commune-repos
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
-import { validateAuthorization } from "./authorization-utils.js";
 import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
