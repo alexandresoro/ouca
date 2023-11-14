@@ -34,7 +34,7 @@
     "@ou-ca/eslint-config": "workspace:*",
     "@types/node": "20.9.0",
     "@types/proj4": "2.5.5",
-    "tsx": "4.1.1",
+    "tsx": "4.1.2",
     "typescript": "5.2.2"
   }
 }
