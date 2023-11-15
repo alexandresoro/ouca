@@ -1,39 +1,22 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Settings } from "@domain/settings/settings.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { vi } from "vitest";
-import { mock } from "vitest-mock-extended";
 import { type DepartementService } from "../../../services/entities/departement-service.js";
 import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
 import { type ObservateurService } from "../../../services/entities/observateur-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
+import { mockVi } from "../../../utils/mock.js";
 import { type AgeService } from "../age/age-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
-const settingsRepository = mock<SettingsRepository>({
-  getUserSettings: vi.fn(),
-  updateUserSettings: vi.fn(),
-});
-const departementService = mock<DepartementService>({
-  findDepartement: vi.fn(),
-});
-const observateurService = mock<ObservateurService>({
-  findObservateur: vi.fn(),
-});
-
-const sexeService = mock<SexeService>({
-  findSexe: vi.fn(),
-});
-
-const ageService = mock<AgeService>({
-  findAge: vi.fn(),
-});
-
-const estimationNombreService = mock<EstimationNombreService>({
-  findEstimationNombre: vi.fn(),
-});
+const settingsRepository = mockVi<SettingsRepository>();
+const departementService = mockVi<DepartementService>();
+const observateurService = mockVi<ObservateurService>();
+const sexeService = mockVi<SexeService>();
+const ageService = mockVi<AgeService>();
+const estimationNombreService = mockVi<EstimationNombreService>();
 
 const settingsService = buildSettingsService({
   settingsRepository,
@@ -46,9 +29,9 @@ const settingsService = buildSettingsService({
 
 describe("Fetch app configuration for user", () => {
   test("should query needed parameters for user", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
-    const mockResolved = mock<Settings>({
+    const mockResolved = settingsFactory.build({
       defaultDepartementId: "7",
       defaultObservateurId: "13",
     });
@@ -65,9 +48,9 @@ describe("Fetch app configuration for user", () => {
   });
 
   test("should query needed parameters for user when some of them are not defined", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
-    const mockResolved = mock<Settings>({
+    const mockResolved = settingsFactory.build({
       defaultDepartementId: null,
       defaultObservateurId: null,
     });
@@ -101,9 +84,9 @@ test("should update settings with parameters for user", async () => {
     isRegroupementDisplayed: true,
   } satisfies PutSettingsInput;
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
-  const mockResolved = mock<Settings>({
+  const mockResolved = settingsFactory.build({
     defaultDepartementId: "2",
     defaultObservateurId: "5",
   });

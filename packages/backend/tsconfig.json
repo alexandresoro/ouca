@@ -12,6 +12,7 @@
       "@ou-ca/common/*": ["../common/src/*"],
       "@interfaces/*": ["./src/application/interfaces/*"],
       "@domain/*": ["./src/domain/*"],
+      "@fixtures/*": ["./src/__fixtures__/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
     },
     "types": ["vitest/globals"]

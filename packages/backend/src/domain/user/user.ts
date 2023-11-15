@@ -7,3 +7,8 @@ export const userSchema = z.object({
 });
 
 export type User = z.infer<typeof userSchema>;
+
+export type CreateUserInput = {
+  extProvider: string;
+  extProviderUserId: string;
+};

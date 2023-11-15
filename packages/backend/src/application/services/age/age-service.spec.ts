@@ -1,26 +1,24 @@
-import { type Age, type AgeCreateInput } from "@domain/age/age.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import { ageCreateInputFactory, ageFactory } from "@fixtures/domain/age/age.fixtures.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { upsertAgeInputFactory } from "@fixtures/services/age/age-service.fixtures.js";
 import { type AgeRepository } from "@interfaces/age-repository-interface.js";
-import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type AgesSearchParams } from "@ou-ca/common/api/age";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
+import { mockVi } from "../../../utils/mock.js";
 import { buildAgeService } from "./age-service.js";
 
-const ageRepository = mock<AgeRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const ageRepository = mockVi<AgeRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const ageService = buildAgeService({
   ageRepository,
   donneeRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint"
-);
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(new Error("errorMessage"));
 
 const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
@@ -28,8 +26,8 @@ const uniqueConstraintFailed = () => {
 
 describe("Find age", () => {
   test("should handle a matching age", async () => {
-    const ageData = mock<Age>();
-    const loggedUser = mock<LoggedUser>();
+    const ageData = ageFactory.build();
+    const loggedUser = loggedUserFactory.build();
 
     ageRepository.findAgeById.mockResolvedValueOnce(ageData);
 
@@ -41,7 +39,7 @@ describe("Find age", () => {
 
   test("should handle age not found", async () => {
     ageRepository.findAgeById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(ageService.findAge(10, loggedUser)).resolves.toBe(null);
 
@@ -57,7 +55,7 @@ describe("Find age", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await ageService.getDonneesCountByAge("12", loggedUser);
 
@@ -72,10 +70,8 @@ describe("Data count per entity", () => {
 
 describe("Find age by data ID", () => {
   test("should handle age found", async () => {
-    const ageData = mock<Age>({
-      id: "256",
-    });
-    const loggedUser = mock<LoggedUser>();
+    const ageData = ageFactory.build();
+    const loggedUser = loggedUserFactory.build();
 
     ageRepository.findAgeByDonneeId.mockResolvedValueOnce(ageData);
 
@@ -83,7 +79,7 @@ describe("Find age by data ID", () => {
 
     expect(ageRepository.findAgeByDonneeId).toHaveBeenCalledTimes(1);
     expect(ageRepository.findAgeByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(age?.id).toEqual("256");
+    expect(age?.id).toEqual(ageData.id);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -92,7 +88,7 @@ describe("Find age by data ID", () => {
 });
 
 test("Find all ages", async () => {
-  const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
+  const agesData = ageFactory.buildList(3);
 
   ageRepository.findAges.mockResolvedValueOnce(agesData);
 
@@ -106,8 +102,8 @@ test("Find all ages", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
-    const loggedUser = mock<LoggedUser>();
+    const agesData = ageFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
 
     ageRepository.findAges.mockResolvedValueOnce(agesData);
 
@@ -118,8 +114,8 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated ages ", async () => {
-    const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
-    const loggedUser = mock<LoggedUser>();
+    const agesData = ageFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: AgesSearchParams = {
       orderBy: "libelle",
@@ -150,7 +146,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await ageService.getAgesCount(loggedUser);
 
@@ -159,7 +155,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await ageService.getAgesCount(loggedUser, "test");
 
@@ -174,9 +170,9 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of an age", () => {
   test("should be allowed when requested by an admin", async () => {
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await ageService.updateAge(12, ageData, loggedUser);
 
@@ -185,13 +181,13 @@ describe("Update of an age", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Age>({
+    const existingData = ageFactory.build({
       ownerId: "notAdmin",
     });
 
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     ageRepository.findAgeById.mockResolvedValueOnce(existingData);
 
@@ -202,11 +198,11 @@ describe("Update of an age", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Age>({
+    const existingData = ageFactory.build({
       ownerId: "notAdmin",
     });
 
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -221,9 +217,9 @@ describe("Update of an age", () => {
   });
 
   test("should throw an error when trying to update to an age that exists", async () => {
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     ageRepository.updateAge.mockImplementation(uniqueConstraintFailed);
 
@@ -236,7 +232,7 @@ describe("Update of an age", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
     await expect(ageService.updateAge(12, ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(ageRepository.updateAge).not.toHaveBeenCalled();
@@ -245,9 +241,9 @@ describe("Update of an age", () => {
 
 describe("Creation of an age", () => {
   test("should create new age", async () => {
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build();
 
     await ageService.createAge(ageData, loggedUser);
 
@@ -259,9 +255,9 @@ describe("Creation of an age", () => {
   });
 
   test("should throw an error when trying to create an age that already exists", async () => {
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build();
 
     ageRepository.createAge.mockImplementation(uniqueConstraintFailed);
 
@@ -277,7 +273,7 @@ describe("Creation of an age", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const ageData = mock<UpsertAgeInput>();
+    const ageData = upsertAgeInputFactory.build();
 
     await expect(ageService.createAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(ageRepository.createAge).not.toHaveBeenCalled();
@@ -286,14 +282,12 @@ describe("Creation of an age", () => {
 
 describe("Deletion of an age", () => {
   test("should handle the deletion of an owned age", async () => {
-    const loggedUser: LoggedUser = {
+    const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
-    };
-
-    const age = mock<Age>({
-      ownerId: loggedUser.id,
     });
+
+    const age = ageFactory.build({ ownerId: loggedUser.id });
 
     ageRepository.findAgeById.mockResolvedValueOnce(age);
 
@@ -304,11 +298,11 @@ describe("Deletion of an age", () => {
   });
 
   test("should handle the deletion of any age if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
-    ageRepository.findAgeById.mockResolvedValueOnce(mock<Age>());
+    ageRepository.findAgeById.mockResolvedValueOnce(ageFactory.build());
 
     await ageService.deleteAge(11, loggedUser);
 
@@ -317,11 +311,9 @@ describe("Deletion of an age", () => {
   });
 
   test("should return an error when deleting a non-owned age as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
-      role: "contributor",
+    const loggedUser = loggedUserFactory.build({
+      id: "12",
     });
-
-    ageRepository.findAgeById.mockResolvedValueOnce(mock<Age>());
 
     await expect(ageService.deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
@@ -335,13 +327,9 @@ describe("Deletion of an age", () => {
 });
 
 test("Create multiple ages", async () => {
-  const agesData = [
-    mock<Omit<AgeCreateInput, "ownerId">>(),
-    mock<Omit<AgeCreateInput, "ownerId">>(),
-    mock<Omit<AgeCreateInput, "ownerId">>(),
-  ];
+  const agesData = ageCreateInputFactory.buildList(3);
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   ageRepository.createAges.mockResolvedValueOnce([]);
 

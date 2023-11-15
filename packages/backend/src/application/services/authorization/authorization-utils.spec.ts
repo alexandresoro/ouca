@@ -1,6 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { mock } from "vitest-mock-extended";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { validateAuthorization } from "./authorization-utils.js";
 
 describe("General access check to the API", () => {
@@ -13,7 +12,7 @@ describe("General access check to the API", () => {
   });
 
   test("should not throw anything when credentials are provided", () => {
-    const loginInfo = mock<LoggedUser>();
+    const loginInfo = loggedUserFactory.build();
     expect(() => validateAuthorization(loginInfo)).not.toThrowError();
   });
 });
