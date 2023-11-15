@@ -12,12 +12,13 @@ import { type DepartementRepository } from "../../repositories/departement/depar
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildDepartementService } from "./departement-service.js";
 
-const departementRepository = mock<DepartementRepository>({});
-const communeRepository = mock<CommuneRepository>({});
-const lieuditRepository = mock<LieuditRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const departementRepository = mockVi<DepartementRepository>();
+const communeRepository = mockVi<CommuneRepository>();
+const lieuditRepository = mockVi<LieuditRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const departementService = buildDepartementService({
   departementRepository,

@@ -11,11 +11,12 @@ import {
 } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
 import { buildEstimationNombreService } from "./estimation-nombre-service.js";
 
-const estimationNombreRepository = mock<EstimationNombreRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const estimationNombreRepository = mockVi<EstimationNombreRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const estimationNombreService = buildEstimationNombreService({
   estimationNombreRepository,

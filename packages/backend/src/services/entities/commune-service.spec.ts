@@ -9,12 +9,13 @@ import { type CommuneRepository } from "../../repositories/commune/commune-repos
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { buildCommuneService } from "./commune-service.js";
 
-const communeRepository = mock<CommuneRepository>({});
-const lieuditRepository = mock<LieuditRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const communeRepository = mockVi<CommuneRepository>();
+const lieuditRepository = mockVi<LieuditRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const communeService = buildCommuneService({
   communeRepository,

@@ -7,10 +7,11 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildMilieuService } from "./milieu-service.js";
 
-const milieuRepository = mock<MilieuRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const milieuRepository = mockVi<MilieuRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const milieuService = buildMilieuService({
   milieuRepository,

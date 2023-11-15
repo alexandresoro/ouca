@@ -11,11 +11,12 @@ import {
 } from "../../repositories/observateur/observateur-repository-types.js";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildObservateurService } from "./observateur-service.js";
 
-const observateurRepository = mock<ObservateurRepository>({});
-const inventaireRepository = mock<InventaireRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const observateurRepository = mockVi<ObservateurRepository>();
+const inventaireRepository = mockVi<InventaireRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const observateurService = buildObservateurService({
   observateurRepository,

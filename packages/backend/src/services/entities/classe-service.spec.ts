@@ -8,11 +8,12 @@ import { type ClasseRepository } from "../../repositories/classe/classe-reposito
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildClasseService } from "./classe-service.js";
 
-const classeRepository = mock<ClasseRepository>({});
-const especeRepository = mock<EspeceRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const classeRepository = mockVi<ClasseRepository>();
+const especeRepository = mockVi<EspeceRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const classeService = buildClasseService({
   classeRepository,

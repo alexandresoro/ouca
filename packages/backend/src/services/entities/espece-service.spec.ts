@@ -8,13 +8,14 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { type ClasseService } from "./classe-service.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 import { buildEspeceService } from "./espece-service.js";
 
-const classeService = mock<ClasseService>();
-const especeRepository = mock<EspeceRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const classeService = mockVi<ClasseService>();
+const especeRepository = mockVi<EspeceRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const especeService = buildEspeceService({
   classeService,

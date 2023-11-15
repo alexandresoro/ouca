@@ -7,10 +7,11 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildSexeService } from "./sexe-service.js";
 
-const sexeRepository = mock<SexeRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const sexeRepository = mockVi<SexeRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const sexeService = buildSexeService({
   sexeRepository,

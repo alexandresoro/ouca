@@ -10,10 +10,11 @@ import {
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildEstimationDistanceService } from "./estimation-distance-service.js";
 
-const estimationDistanceRepository = mock<EstimationDistanceRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const estimationDistanceRepository = mockVi<EstimationDistanceRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const estimationDistanceService = buildEstimationDistanceService({
   estimationDistanceRepository,

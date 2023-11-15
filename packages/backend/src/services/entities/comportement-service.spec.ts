@@ -10,10 +10,11 @@ import {
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { COLUMN_CODE, COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildComportementService } from "./comportement-service.js";
 
-const comportementRepository = mock<ComportementRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const comportementRepository = mockVi<ComportementRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const comportementService = buildComportementService({
   comportementRepository,

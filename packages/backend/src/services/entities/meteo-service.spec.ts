@@ -7,10 +7,11 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildMeteoService } from "./meteo-service.js";
 
-const meteoRepository = mock<MeteoRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const meteoRepository = mockVi<MeteoRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const meteoService = buildMeteoService({
   meteoRepository,

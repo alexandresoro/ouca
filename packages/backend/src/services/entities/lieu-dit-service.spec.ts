@@ -10,12 +10,13 @@ import { type InventaireRepository } from "../../repositories/inventaire/inventa
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
+import { mockVi } from "../../utils/mock.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 import { buildLieuditService } from "./lieu-dit-service.js";
 
-const lieuditRepository = mock<LieuditRepository>({});
-const inventaireRepository = mock<InventaireRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
+const lieuditRepository = mockVi<LieuditRepository>();
+const inventaireRepository = mockVi<InventaireRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
 
 const lieuditService = buildLieuditService({
   lieuditRepository,

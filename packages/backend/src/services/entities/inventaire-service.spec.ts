@@ -14,13 +14,14 @@ import {
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildInventaireService } from "./inventaire-service.js";
 
-const inventaireRepository = mock<InventaireRepository>({});
-const inventaireAssocieRepository = mock<InventaireAssocieRepository>({});
-const inventaireMeteoRepository = mock<InventaireMeteoRepository>({});
-const donneeRepository = mock<DonneeRepository>({});
-const lieuditRepository = mock<LieuditRepository>({});
+const inventaireRepository = mockVi<InventaireRepository>();
+const inventaireAssocieRepository = mockVi<InventaireAssocieRepository>();
+const inventaireMeteoRepository = mockVi<InventaireMeteoRepository>();
+const donneeRepository = mockVi<DonneeRepository>();
+const lieuditRepository = mockVi<LieuditRepository>();
 const slonik = createMockPool({
   query: vi.fn(),
 });

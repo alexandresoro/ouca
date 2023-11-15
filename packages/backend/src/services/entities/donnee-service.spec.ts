@@ -11,12 +11,13 @@ import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/d
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { mockVi } from "../../utils/mock.js";
 import { buildDonneeService } from "./donnee-service.js";
 
-const donneeRepository = mock<DonneeRepository>({});
-const donneeComportementRepository = mock<DonneeComportementRepository>({});
-const donneeMilieuRepository = mock<DonneeMilieuRepository>({});
-const inventaireRepository = mock<InventaireRepository>({});
+const donneeRepository = mockVi<DonneeRepository>();
+const donneeComportementRepository = mockVi<DonneeComportementRepository>();
+const donneeMilieuRepository = mockVi<DonneeMilieuRepository>();
+const inventaireRepository = mockVi<InventaireRepository>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
