@@ -1,16 +1,10 @@
+import { canModifyEntity } from "@domain/entity-access/entity-access.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 
 type PaginationOptions = Partial<{
   pageNumber: number | null;
   pageSize: number | null;
 }>;
-
-export const isEntityEditable = (entity: { ownerId?: string | null } | null, user: LoggedUser | null): boolean => {
-  if (!entity || !user) {
-    return false;
-  }
-  return user?.role === "admin" || entity?.ownerId === user?.id;
-};
 
 export function enrichEntityWithEditableStatus<E>(entity: E, user: LoggedUser | null): E & { editable: boolean };
 export function enrichEntityWithEditableStatus(entity: null, user: LoggedUser | null): null;
@@ -24,7 +18,7 @@ export function enrichEntityWithEditableStatus<E>(
 
   return {
     ...entity,
-    editable: isEntityEditable(entity, user),
+    editable: canModifyEntity(entity, user),
   };
 }
 

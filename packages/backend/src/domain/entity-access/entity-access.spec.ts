@@ -1,12 +1,11 @@
+import { canModifyEntity } from "@domain/entity-access/entity-access.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { mock } from "vitest-mock-extended";
-import { isEntityEditable } from "./entities-utils.js";
 
-describe("Entity editable status", () => {
+describe("canModifyEntity", () => {
   test("should return correct status for non logged user", () => {
-    const entity = mock<{ ownerId: string }>();
+    const entity = {};
 
-    expect(isEntityEditable(entity, null)).toBe(false);
+    expect(canModifyEntity(entity, null)).toBe(false);
   });
 
   test("should return correct status when no entity is provided", () => {
@@ -15,7 +14,7 @@ describe("Entity editable status", () => {
       role: "admin",
     };
 
-    expect(isEntityEditable(null, user)).toBe(false);
+    expect(canModifyEntity(null, user)).toBe(false);
   });
 
   test("should return correct status for non admin user and not owner", () => {
@@ -28,7 +27,7 @@ describe("Entity editable status", () => {
       role: "contributor",
     };
 
-    expect(isEntityEditable(entity, user)).toBe(false);
+    expect(canModifyEntity(entity, user)).toBe(false);
   });
 
   test("should return correct status for owner", () => {
@@ -41,7 +40,7 @@ describe("Entity editable status", () => {
       role: "contributor",
     };
 
-    expect(isEntityEditable(entity, user)).toBe(true);
+    expect(canModifyEntity(entity, user)).toBe(true);
   });
 
   test("should return correct status for admin", () => {
@@ -54,15 +53,15 @@ describe("Entity editable status", () => {
       role: "admin",
     };
 
-    expect(isEntityEditable(entity, user)).toBe(true);
+    expect(canModifyEntity(entity, user)).toBe(true);
   });
 
   test("should return correct status for non logged user and no entity owner", () => {
     const entity = {
       ownerId: null,
     };
-
-    expect(isEntityEditable(entity, null)).toBe(false);
+    canModifyEntity;
+    expect(canModifyEntity(entity, null)).toBe(false);
   });
 
   test("should return correct status for non-admin and no entity owner", () => {
@@ -75,7 +74,7 @@ describe("Entity editable status", () => {
       role: "contributor",
     };
 
-    expect(isEntityEditable(entity, user)).toBe(false);
+    expect(canModifyEntity(entity, user)).toBe(false);
   });
 
   test("should return correct status for admin and no entity owner", () => {
@@ -88,6 +87,6 @@ describe("Entity editable status", () => {
       role: "admin",
     };
 
-    expect(isEntityEditable(entity, user)).toBe(true);
+    expect(canModifyEntity(entity, user)).toBe(true);
   });
 });
