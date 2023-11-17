@@ -82,7 +82,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     try {
       const createdAge = await ageRepository.createAge({
         ...input,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       });
 
       return enrichEntityWithEditableStatus(createdAge, loggedUser);
@@ -135,12 +135,12 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   };
 
   const createAges = async (
-    ages: Omit<AgeCreateInput[], "owner_id">,
+    ages: Omit<AgeCreateInput, "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Age[]> => {
     const createdAges = await ageRepository.createAges(
       ages.map((age) => {
-        return { ...age, owner_id: loggedUser.id };
+        return { ...age, ownerId: loggedUser.id };
       })
     );
 

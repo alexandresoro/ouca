@@ -250,7 +250,7 @@ describe("Creation of an age", () => {
     expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
     expect(ageRepository.createAge).toHaveBeenLastCalledWith({
       ...ageData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -268,7 +268,7 @@ describe("Creation of an age", () => {
     expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
     expect(ageRepository.createAge).toHaveBeenLastCalledWith({
       ...ageData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -340,7 +340,7 @@ test("Create multiple ages", async () => {
     agesData.map((age) => {
       return {
         ...age,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     })
   );

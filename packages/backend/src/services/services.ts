@@ -6,7 +6,7 @@ import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
-import { buildAgeRepository } from "../repositories/age/age-repository.js";
+import { buildAgeRepository } from "../infrastructure/repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
 import { buildComportementRepository } from "../repositories/comportement/comportement-repository.js";

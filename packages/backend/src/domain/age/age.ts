@@ -19,5 +19,5 @@ export type AgeFindManyInput = Partial<{
 
 export type AgeCreateInput = {
   libelle: string;
-  owner_id?: string | null;
+  ownerId?: string | null;
 };
