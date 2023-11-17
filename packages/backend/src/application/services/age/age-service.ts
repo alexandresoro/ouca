@@ -118,7 +118,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     }
   };
 
-  const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age> => {
+  const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -131,7 +131,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     }
 
     const deletedAge = await ageRepository.deleteAgeById(id);
-    return enrichEntityWithEditableStatus(deletedAge, loggedUser);
+    return deletedAge ? enrichEntityWithEditableStatus(deletedAge, loggedUser) : null;
   };
 
   const createAges = async (

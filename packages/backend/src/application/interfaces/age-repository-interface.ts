@@ -8,5 +8,5 @@ export type AgeRepository = {
   createAge: (ageInput: AgeCreateInput) => Promise<Age>;
   createAges: (ageInputs: AgeCreateInput[]) => Promise<Age[]>;
   updateAge: (ageId: number, ageInput: AgeCreateInput) => Promise<Age>;
-  deleteAgeById: (ageId: number) => Promise<Age>;
+  deleteAgeById: (ageId: number) => Promise<Age | null>;
 };

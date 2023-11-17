@@ -136,20 +136,14 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     return slonik.one(query);
   };
 
-  const deleteAgeById = async (ageId: number): Promise<Age> => {
-    const query = sql.type(ageSchema)`
-      DELETE
-      FROM
-        basenaturaliste.age
-      WHERE
-        id = ${ageId}
-      RETURNING
-        age.id::text,
-        age.libelle,
-        age.owner_id
-    `;
+  const deleteAgeById = async (ageId: number): Promise<Age | null> => {
+    const deletedAge = await kysely
+      .deleteFrom("basenaturaliste.age")
+      .where("id", "=", ageId)
+      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .executeTakeFirst();
 
-    return slonik.one(query);
+    return deletedAge ? ageSchema.parse(deletedAge) : null;
   };
 
   return {
