@@ -79,9 +79,9 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
         {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
       </Listbox.Button>
       <Listbox.Options
-        className={`menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ${
+        className={`menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ${
           data?.length ? "ring-2" : ""
-        } ring-primary-focus rounded-lg overflow-y-auto`}
+        } ring-primary rounded-lg overflow-y-auto`}
         style={{
           position: strategy,
           top: y ?? 0,

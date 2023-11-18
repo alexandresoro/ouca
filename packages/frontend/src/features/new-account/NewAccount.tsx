@@ -63,7 +63,7 @@ const NewAccount: FunctionComponent = () => {
       <div className="hero-content flex-col">
         <div>{t("newAccount.description")}</div>
         <div>{t("newAccount.descriptionAction")}</div>
-        <button type="button" className="btn btn-primary" onClick={onCreateAccountRequested}>
+        <button type="button" className="btn btn-primary uppercase" onClick={onCreateAccountRequested}>
           {t("newAccount.createAccountButton")}
         </button>
       </div>

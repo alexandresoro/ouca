@@ -149,7 +149,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
           </fieldset>
           <button
             type="submit"
-            className="btn btn-primary btn-block mb-8"
+            className="btn btn-primary btn-block uppercase mb-8"
             disabled={(disableIfNoChanges && !isDirty) || !isValid}
           >
             {submitFormText ?? t("save")}

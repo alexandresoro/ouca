@@ -10,6 +10,7 @@ module.exports = {
       {
         ouca: {
           primary: "#5C7F67",
+          "primary-content": "#DDE4DF",
           secondary: "#8F4263",
           accent: "#F50076",
           neutral: "#291E00",

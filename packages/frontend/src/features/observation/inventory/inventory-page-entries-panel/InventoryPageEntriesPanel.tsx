@@ -99,7 +99,7 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
         </div>
         <Link
           to={`/create-new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`}
-          className="btn btn-sm btn-secondary"
+          className="btn btn-sm btn-secondary uppercase"
         >
           <Plus className="w-5 h-5" />
           {t("inventoryPage.entriesPanel.addNewEntry")}

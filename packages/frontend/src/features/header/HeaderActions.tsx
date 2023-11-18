@@ -136,7 +136,7 @@ const HeaderActions: FunctionComponent = () => {
 
   return (
     <div className="flex items-center gap-4">
-      <Link className="hidden lg:flex btn btn-sm btn-primary" to="/create-new">
+      <Link className="hidden lg:flex btn btn-sm uppercase btn-primary" to="/create-new">
         <Plus className="h-6" />
         {t("appHeader.createNew")}
       </Link>
@@ -167,7 +167,7 @@ const HeaderActions: FunctionComponent = () => {
             top: floatingManage.y ?? 0,
             left: floatingManage.x ?? 0,
           }}
-          className="flex flex-col flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
+          className="flex flex-col flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
         >
           {entries.map(({ Icon, localizationKey, to }) => {
             const CurrentMenuItem = (

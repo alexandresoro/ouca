@@ -25,7 +25,9 @@ const SearchPage: FunctionComponent = () => {
                 {({ selected }) => (
                   <button
                     type="button"
-                    className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
+                    className={`join-item btn btn-primary uppercase ${
+                      selected ? "btn-active" : "btn-primary btn-outline"
+                    }`}
                   >
                     {t("view.tab.observations")}
                   </button>
@@ -35,7 +37,9 @@ const SearchPage: FunctionComponent = () => {
                 {({ selected }) => (
                   <button
                     type="button"
-                    className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
+                    className={`join-item btn btn-primary uppercase ${
+                      selected ? "btn-active" : "btn-primary btn-outline"
+                    }`}
                   >
                     {t("view.tab.species")}
                   </button>
@@ -43,7 +47,7 @@ const SearchPage: FunctionComponent = () => {
               </Tab>
             </Tab.List>
             {features.tmp_export_search_results && (
-              <button type="button" className="btn btn-sm btn-outline btn-secondary mt-2">
+              <button type="button" className="btn btn-sm btn-outline btn-secondary uppercase mt-2">
                 {t("observationFilter.exportToExcel")}
               </button>
             )}
