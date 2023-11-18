@@ -3,6 +3,7 @@ import { useFeatures } from "@services/app-features/features";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
+import SearchFilterBreeders from "./SearchFilterBreeders";
 import SearchFilterDepartments from "./SearchFilterDepartments";
 import SearchFilterSpecies from "./SearchFilterSpecies";
 import SearchFilterTowns from "./SearchFilterTowns";
@@ -31,6 +32,7 @@ const SearchFilterPanel: FunctionComponent = () => {
         <SearchFilterTowns />
         <SearchFilterSpecies />
         <SearchFilterBehaviors />
+        <SearchFilterBreeders />
       </div>
     </div>
   );
