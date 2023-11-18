@@ -138,7 +138,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
             />
           </div>
           <Combobox.Options
-            className="menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ring-2 ring-primary-focus rounded-lg overflow-y-auto"
+            className="menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ring-2 ring-primary rounded-lg overflow-y-auto"
             style={{
               position: strategy,
               top: y ?? 0,

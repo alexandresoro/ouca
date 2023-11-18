@@ -68,7 +68,7 @@ const HeaderSettings: FunctionComponent = () => {
     <Menu as="div">
       <Menu.Button
         ref={refs.setReference}
-        className="btn btn-circle w-8 h-8 min-h-8 border-none avatar placeholder focus:outline-white"
+        className="btn btn-sm btn-circle w-8 border-none avatar placeholder focus:outline-white"
         aria-label={t("aria-userMenuButton")}
       >
         <div
@@ -92,7 +92,7 @@ const HeaderSettings: FunctionComponent = () => {
           top: y ?? 0,
           left: x ?? 0,
         }}
-        className="flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
+        className="flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
       >
         {getMenuOptions(features).map(({ Icon, localizationKey, to }) => {
           const CurrentMenuItem = (

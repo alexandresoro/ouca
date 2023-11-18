@@ -66,7 +66,7 @@ const UserProfilePage: FunctionComponent = () => {
                   </span>
                 )}
                 {user && (
-                  <Link to={user.profile.iss} target="_blank" className="btn btn-primary mt-4">
+                  <Link to={user.profile.iss} target="_blank" className="btn btn-primary uppercase mt-4">
                     {t("updateProfileButton")}
                   </Link>
                 )}

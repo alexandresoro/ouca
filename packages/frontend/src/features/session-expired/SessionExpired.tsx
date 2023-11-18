@@ -16,7 +16,7 @@ const SessionExpired: FunctionComponent = () => {
     <div className="flex h-[100dvh] justify-center items-center">
       <div className="flex flex-col gap-8 items-center">
         <span className="text-xl text-primary">{t("sessionExpired.description")}</span>
-        <button type="button" className="btn btn-primary" onClick={handleReconnect}>
+        <button type="button" className="btn btn-primary uppercase" onClick={handleReconnect}>
           {t("sessionExpired.reconnectButton")}
         </button>
       </div>

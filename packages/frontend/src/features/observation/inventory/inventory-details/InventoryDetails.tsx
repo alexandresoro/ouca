@@ -62,7 +62,7 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
               data-tip={t("inventoryCreateNewFromExisting.createNewButtonTooltip")}
             >
               <Link
-                className="btn btn-xs btn-secondary"
+                className="btn btn-xs btn-secondary uppercase"
                 to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
               >
                 <CopyAlt className="h-4" />

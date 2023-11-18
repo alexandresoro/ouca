@@ -198,7 +198,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 top: floatingMoreInventory.y ?? 0,
                 left: floatingMoreInventory.x ?? 0,
               }}
-              className="z-10 flex flex-col gap-1.5 p-1.5 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max"
+              className="z-10 flex flex-col gap-1.5 p-1.5 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max"
             >
               <FloatingArrow
                 className="fill-primary"
@@ -210,7 +210,9 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 {({ active }) => (
                   <button
                     type="button"
-                    className={`btn btn-xs text-primary ${active ? "bg-opacity-20 bg-base-content" : "btn-ghost"}`}
+                    className={`btn btn-xs text-primary uppercase ${
+                      active ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                    }`}
                     onClick={() => setInventoryEditDialogOpen(true)}
                   >
                     <EditAlt className="h-5" />
@@ -221,7 +223,9 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
               <Menu.Item key="createNewFrom">
                 {({ active }) => (
                   <Link
-                    className={`btn btn-xs text-primary ${active ? "bg-opacity-20 bg-base-content" : "btn-ghost"}`}
+                    className={`btn btn-xs text-primary uppercase ${
+                      active ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                    }`}
                     to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
                   >
                     <CopyAlt className="h-5" />
@@ -234,7 +238,9 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                   {({ active }) => (
                     <button
                       type="button"
-                      className={`btn btn-xs text-error ${active ? "bg-opacity-20 bg-base-content" : "btn-ghost"}`}
+                      className={`btn btn-xs text-error uppercase ${
+                        active ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                      }`}
                       onClick={() => setDeleteDialog(inventory)}
                     >
                       <Trash className="h-5" />

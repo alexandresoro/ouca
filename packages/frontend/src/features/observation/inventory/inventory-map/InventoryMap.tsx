@@ -91,7 +91,7 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
               <button
                 type="button"
                 key={providerKey}
-                className={`join-item btn btn-xs ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
+                className={`join-item btn btn-xs uppercase ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
                 onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
               >
                 {t(providerConfig.nameKey)}
