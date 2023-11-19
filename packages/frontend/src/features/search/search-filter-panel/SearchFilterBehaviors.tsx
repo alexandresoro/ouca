@@ -1,4 +1,4 @@
-import AutocompleteMultipleWithSelection from "@components/base/autocomplete/AutocompleteMultipleWithSelection";
+import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
 import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
 import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
@@ -20,8 +20,10 @@ const SearchFilterBehaviors: FunctionComponent = () => {
   });
 
   return (
-    <AutocompleteMultipleWithSelection
+    <AutocompleteMultiple
       label={t("behaviors")}
+      labelClassName="px-0 py-2"
+      labelTextClassName="uppercase text-base font-semibold"
       data={dataBehaviors?.data ?? []}
       onInputChange={setBehaviorInput}
       onChange={setSelectedBehaviors}

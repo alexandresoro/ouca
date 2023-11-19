@@ -1,4 +1,4 @@
-import AutocompleteMultipleWithSelection from "@components/base/autocomplete/AutocompleteMultipleWithSelection";
+import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
 import { getTownsResponse } from "@ou-ca/common/api/town";
 import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
@@ -20,8 +20,10 @@ const SearchFilterTowns: FunctionComponent = () => {
   });
 
   return (
-    <AutocompleteMultipleWithSelection
+    <AutocompleteMultiple
       label={t("towns")}
+      labelClassName="px-0 py-2"
+      labelTextClassName="uppercase text-base font-semibold"
       data={dataTowns?.data ?? []}
       onInputChange={setTownInput}
       onChange={setSelectedTowns}

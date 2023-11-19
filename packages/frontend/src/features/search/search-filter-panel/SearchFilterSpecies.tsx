@@ -1,4 +1,4 @@
-import AutocompleteMultipleWithSelection from "@components/base/autocomplete/AutocompleteMultipleWithSelection";
+import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
 import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
 import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
@@ -20,8 +20,10 @@ const SearchFilterSpecies: FunctionComponent = () => {
   });
 
   return (
-    <AutocompleteMultipleWithSelection
+    <AutocompleteMultiple
       label={t("species")}
+      labelClassName="px-0 py-2"
+      labelTextClassName="uppercase text-base font-semibold"
       data={dataSpecies?.data ?? []}
       onInputChange={setSpeciesInput}
       onChange={setSelectedSpecies}

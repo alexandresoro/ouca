@@ -1,9 +1,10 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
-import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
+import { ExpandVertical } from "@styled-icons/boxicons-regular";
 import { forwardRef, type ComponentPropsWithRef, type FocusEventHandler, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
+import Chip from "../Chip";
 import RequiredField from "../RequiredField";
 
 type AutocompleteMultipleProps<T extends object> = {
@@ -90,17 +91,8 @@ const AutocompleteMultiple = <T extends object,>(
     onInputChange?.(event.target.value);
   };
 
-  const getDisplayedOption = (option: T) => {
-    return (
-      <Combobox.Option className="font-semibold" key={option[key] as Key} value={option}>
-        {({ active, selected, disabled }) => (
-          <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
-            <span>{renderValue(option)}</span>
-            {selected && <Check className={`h-5 ${active ? "text-primary-content" : "text-primary"}`} />}
-          </div>
-        )}
-      </Combobox.Option>
-    );
+  const handleDeselectionFromList = (valueToDeselect: T) => {
+    onChange?.(values.filter((value) => value[key] !== valueToDeselect[key]));
   };
 
   // Filter results that are already selected so that they don't appear twice
@@ -123,12 +115,26 @@ const AutocompleteMultiple = <T extends object,>(
     >
       {({ value }) => (
         <>
-          <div className={`label py-1 ${labelClassName ?? ""}`}>
-            <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>
-              {label}
-              {required && <RequiredField />}
-            </Combobox.Label>
+          <div className="flex items-center justify-between">
+            <div className={`label py-1 ${labelClassName ?? ""}`}>
+              <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>
+                {label}
+                {required && <RequiredField />}
+              </Combobox.Label>
+            </div>
+            {value.length > 0 && <div className="badge badge-accent badge-outline">{value.length}</div>}
           </div>
+          {value.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1 mb-1.5">
+              {value.map((selectedValue) => (
+                <Chip
+                  key={selectedValue[key] as Key}
+                  content={renderValue(selectedValue)}
+                  onDelete={() => handleDeselectionFromList(selectedValue)}
+                />
+              ))}
+            </div>
+          )}
           <div
             className={`w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 
             ${hasError ? "focus-within:outline-error" : "focus-within:outline-primary"} focus-within:outline-offset-2 ${
@@ -140,10 +146,8 @@ const AutocompleteMultiple = <T extends object,>(
               {...inputProps}
               className="flex-grow outline-none bg-transparent text-base-content placeholder-shown:text-ellipsis"
               onChange={handleInputChange}
-              placeholder={values.map(renderValue).join(", ") ?? ""}
               onBlur={handleOnBlur}
             />
-            {value.length > 0 && <div className="badge badge-accent badge-outline">{value.length}</div>}
             <Combobox.Button className="flex items-center">
               <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
             </Combobox.Button>
@@ -157,21 +161,17 @@ const AutocompleteMultiple = <T extends object,>(
             }}
             ref={refs.setFloating}
           >
-            {value.length > 0 && (
-              <>
-                <li className="menu-title">
-                  <span>{t("components.autocomplete.selectedEntries")}</span>
-                </li>
-                {value.map(getDisplayedOption)}
-              </>
-            )}
-            {value.length > 0 && (searchResults.length > 0 || !data.length) && (
-              <li className="menu-title">
-                <span>{t("components.autocomplete.resultsTitle")}</span>
-              </li>
-            )}
-            {searchResults.length > 0 && searchResults.map(getDisplayedOption)}
-            {!data.length && (
+            {searchResults.length > 0 &&
+              searchResults.map((option) => (
+                <Combobox.Option className="font-semibold" key={option[key] as Key} value={option}>
+                  {({ active, disabled }) => (
+                    <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
+                      {renderValue(option)}
+                    </div>
+                  )}
+                </Combobox.Option>
+              ))}
+            {!searchResults.length && (
               <li className="pointer-events-none font-semibold text-base-content">
                 <span className="">{t("components.autocomplete.noResults")}</span>
               </li>

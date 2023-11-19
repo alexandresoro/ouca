@@ -1,4 +1,4 @@
-import AutocompleteMultipleWithSelection from "@components/base/autocomplete/AutocompleteMultipleWithSelection";
+import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
@@ -20,8 +20,10 @@ const SearchFilterDepartments: FunctionComponent = () => {
   });
 
   return (
-    <AutocompleteMultipleWithSelection
+    <AutocompleteMultiple
       label={t("departments")}
+      labelClassName="px-0 py-2"
+      labelTextClassName="uppercase text-base font-semibold"
       data={dataDepartments?.data ?? []}
       onInputChange={setDepartmentInput}
       onChange={setSelectedDepartments}
