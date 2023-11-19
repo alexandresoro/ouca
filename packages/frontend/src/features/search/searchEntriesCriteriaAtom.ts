@@ -70,6 +70,6 @@ export const searchEntriesCriteriaAtom = atom((get) => {
     behaviorIds,
     breeders: breeders.length ? breeders : undefined,
     environmentIds,
-    comment,
+    comment: comment?.length ? comment : undefined,
   } satisfies SearchCriteriaParams;
 });
