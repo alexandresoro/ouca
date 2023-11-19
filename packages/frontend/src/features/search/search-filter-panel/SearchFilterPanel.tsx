@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import SearchFilterAges from "./SearchFilterAges";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
 import SearchFilterBreeders from "./SearchFilterBreeders";
+import SearchFilterClasses from "./SearchFilterClasses";
 import SearchFilterComment from "./SearchFilterComment";
 import SearchFilterDateRange from "./SearchFilterDateRange";
 import SearchFilterDepartments from "./SearchFilterDepartments";
@@ -36,6 +37,7 @@ const SearchFilterPanel: FunctionComponent = () => {
         <SearchFilterDateRange />
         <SearchFilterDepartments />
         <SearchFilterTowns />
+        <SearchFilterClasses />
         <SearchFilterSpecies />
         <SearchFilterSexes />
         <SearchFilterAges />
