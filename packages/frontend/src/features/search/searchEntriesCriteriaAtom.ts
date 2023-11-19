@@ -20,7 +20,17 @@ export const searchEntriesFilterToDateAtom = atom<string | null>(null);
 
 export const searchEntriesFilterDepartmentsAtom = atom<Department[]>([]);
 
-export const searchEntriesFilterTownsAtom = atom<Town[]>([]);
+const searchEntriesFilterTownsInternalAtom = atom<Town[]>([]);
+
+export const searchEntriesFilterTownsAtom = atom<Town[], [Town[]], unknown>(
+  (get) => get(searchEntriesFilterTownsInternalAtom),
+  (_, set, towns) => {
+    set(searchEntriesFilterTownsInternalAtom, towns);
+    if (towns.length !== 1) {
+      set(searchEntriesFilterLocalitiesAtom, []);
+    }
+  }
+);
 
 export const searchEntriesFilterLocalitiesAtom = atom<Locality[]>([]);
 
@@ -45,7 +55,7 @@ export const searchEntriesCriteriaAtom = atom((get) => {
   const fromDate = get(searchEntriesFilterFromDateAtom) ?? undefined;
   const toDate = get(searchEntriesFilterToDateAtom) ?? undefined;
   const departmentIds = get(searchEntriesFilterDepartmentsAtom).map(({ id }) => id);
-  const townIds = get(searchEntriesFilterTownsAtom).map(({ id }) => id);
+  const townIds = get(searchEntriesFilterTownsInternalAtom).map(({ id }) => id);
   const localityIds = get(searchEntriesFilterLocalitiesAtom).map(({ id }) => id);
   const classIds = get(searchEntriesFilterClassesAtom).map(({ id }) => id);
   const speciesIds = get(searchEntriesFilterSpeciesAtom).map(({ id }) => id);
