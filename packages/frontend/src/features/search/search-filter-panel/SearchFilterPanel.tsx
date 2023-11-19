@@ -7,6 +7,7 @@ import SearchFilterBreeders from "./SearchFilterBreeders";
 import SearchFilterComment from "./SearchFilterComment";
 import SearchFilterDateRange from "./SearchFilterDateRange";
 import SearchFilterDepartments from "./SearchFilterDepartments";
+import SearchFilterEnvironments from "./SearchFilterEnvironments";
 import SearchFilterSpecies from "./SearchFilterSpecies";
 import SearchFilterTowns from "./SearchFilterTowns";
 
@@ -36,6 +37,7 @@ const SearchFilterPanel: FunctionComponent = () => {
         <SearchFilterSpecies />
         <SearchFilterBehaviors />
         <SearchFilterBreeders />
+        <SearchFilterEnvironments />
         <SearchFilterComment />
       </div>
     </div>
