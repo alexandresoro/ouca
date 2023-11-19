@@ -18,7 +18,26 @@ export const searchEntriesFilterFromDateAtom = atom<string | null>(null);
 
 export const searchEntriesFilterToDateAtom = atom<string | null>(null);
 
-export const searchEntriesFilterDepartmentsAtom = atom<Department[]>([]);
+const searchEntriesFilterInternalDepartmentsAtom = atom<Department[]>([]);
+
+export const searchEntriesFilterDepartmentsAtom = atom<Department[], [Department[]], unknown>(
+  (get) => get(searchEntriesFilterInternalDepartmentsAtom),
+  (get, set, departments) => {
+    set(searchEntriesFilterInternalDepartmentsAtom, departments);
+
+    // If more than one department is selected, reset the towns filter
+    // Here we want to allow the user to select towns directly - without having to select a department first
+    if (departments.length > 1) {
+      set(searchEntriesFilterTownsInternalAtom, []);
+    } else if (departments.length === 1) {
+      // If only a single department is selected, set the towns filter to the towns of that department
+      const townsOfDepartments = get(searchEntriesFilterTownsInternalAtom).filter(
+        ({ departmentId }) => departmentId === departments[0].id
+      );
+      set(searchEntriesFilterTownsInternalAtom, townsOfDepartments);
+    }
+  }
+);
 
 const searchEntriesFilterTownsInternalAtom = atom<Town[]>([]);
 
@@ -26,6 +45,8 @@ export const searchEntriesFilterTownsAtom = atom<Town[], [Town[]], unknown>(
   (get) => get(searchEntriesFilterTownsInternalAtom),
   (_, set, towns) => {
     set(searchEntriesFilterTownsInternalAtom, towns);
+
+    // If no town is selected or more than one, reset the localities filter
     if (towns.length !== 1) {
       set(searchEntriesFilterLocalitiesAtom, []);
     }
@@ -54,7 +75,7 @@ export const searchEntriesCriteriaAtom = atom((get) => {
   const observerIds = get(searchEntriesFilterObserversAtom).map(({ id }) => id);
   const fromDate = get(searchEntriesFilterFromDateAtom) ?? undefined;
   const toDate = get(searchEntriesFilterToDateAtom) ?? undefined;
-  const departmentIds = get(searchEntriesFilterDepartmentsAtom).map(({ id }) => id);
+  const departmentIds = get(searchEntriesFilterInternalDepartmentsAtom).map(({ id }) => id);
   const townIds = get(searchEntriesFilterTownsInternalAtom).map(({ id }) => id);
   const localityIds = get(searchEntriesFilterLocalitiesAtom).map(({ id }) => id);
   const classIds = get(searchEntriesFilterClassesAtom).map(({ id }) => id);
