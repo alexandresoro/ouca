@@ -112,6 +112,7 @@ const AutocompleteMultiple = <T extends object,>(
       by={key as keyof unknown}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
       multiple
+      disabled={inputProps?.disabled}
     >
       {({ value }) => (
         <>
@@ -138,7 +139,7 @@ const AutocompleteMultiple = <T extends object,>(
           <div
             className={`w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 
             ${hasError ? "focus-within:outline-error" : "focus-within:outline-primary"} focus-within:outline-offset-2 ${
-              hasError ? "input-error" : "input-primary"
+              hasError ? "input-error" : inputProps?.disabled ? "" : "input-primary"
             } gap-3 px-2`}
             ref={refs.setReference}
           >
