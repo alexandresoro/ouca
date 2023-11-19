@@ -11,6 +11,7 @@ import SearchFilterDateRange from "./SearchFilterDateRange";
 import SearchFilterDepartments from "./SearchFilterDepartments";
 import SearchFilterEnvironments from "./SearchFilterEnvironments";
 import SearchFilterLocalities from "./SearchFilterLocalities";
+import SearchFilterObservers from "./SearchFilterObservers";
 import SearchFilterSexes from "./SearchFilterSexes";
 import SearchFilterSpecies from "./SearchFilterSpecies";
 import SearchFilterTowns from "./SearchFilterTowns";
@@ -35,6 +36,7 @@ const SearchFilterPanel: FunctionComponent = () => {
         />
       )}
       <div className="flex flex-col gap-2.5">
+        <SearchFilterObservers />
         <SearchFilterDateRange />
         <SearchFilterDepartments />
         <SearchFilterTowns />
