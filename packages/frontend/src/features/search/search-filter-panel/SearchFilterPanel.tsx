@@ -4,6 +4,7 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
 import SearchFilterBreeders from "./SearchFilterBreeders";
+import SearchFilterDateRange from "./SearchFilterDateRange";
 import SearchFilterDepartments from "./SearchFilterDepartments";
 import SearchFilterSpecies from "./SearchFilterSpecies";
 import SearchFilterTowns from "./SearchFilterTowns";
@@ -28,6 +29,7 @@ const SearchFilterPanel: FunctionComponent = () => {
         />
       )}
       <div className="flex flex-col gap-2.5">
+        <SearchFilterDateRange />
         <SearchFilterDepartments />
         <SearchFilterTowns />
         <SearchFilterSpecies />
