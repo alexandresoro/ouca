@@ -128,6 +128,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
               <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
             </Combobox.Button>
             <Combobox.Input
+              autoComplete="off"
               {...inputProps}
               className={`joint-item flex-grow w-full input input-bordered ${
                 hasError ? "input-error" : "input-primary"

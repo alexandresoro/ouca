@@ -144,6 +144,7 @@ const AutocompleteMultiple = <T extends object,>(
             ref={refs.setReference}
           >
             <Combobox.Input
+              autoComplete="off"
               {...inputProps}
               className="flex-grow outline-none bg-transparent text-base-content placeholder-shown:text-ellipsis"
               onChange={handleInputChange}
