@@ -48,9 +48,9 @@ export const searchEntriesCriteriaAtom = atom((get) => {
   const townIds = get(searchEntriesFilterTownsAtom).map(({ id }) => id);
   const localityIds = get(searchEntriesFilterLocalitiesAtom).map(({ id }) => id);
   const classIds = get(searchEntriesFilterClassesAtom).map(({ id }) => id);
+  const speciesIds = get(searchEntriesFilterSpeciesAtom).map(({ id }) => id);
   const sexIds = get(searchEntriesFilterSexesAtom).map(({ id }) => id);
   const ageIds = get(searchEntriesFilterAgesAtom).map(({ id }) => id);
-  const speciesIds = get(searchEntriesFilterSpeciesAtom).map(({ id }) => id);
   const behaviorIds = get(searchEntriesFilterBehaviorsAtom).map(({ id }) => id);
   const breeders = get(searchEntriesFilterBreedersAtom);
   const environmentIds = get(searchEntriesFilterEnvironmentsAtom).map(({ id }) => id);
@@ -64,9 +64,9 @@ export const searchEntriesCriteriaAtom = atom((get) => {
     townIds,
     localityIds,
     classIds,
+    speciesIds,
     sexIds,
     ageIds,
-    speciesIds,
     behaviorIds,
     breeders: breeders.length ? breeders : undefined,
     environmentIds,

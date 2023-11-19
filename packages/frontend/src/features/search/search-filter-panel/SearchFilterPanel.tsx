@@ -2,6 +2,7 @@ import Switch from "@components/base/Switch";
 import { useFeatures } from "@services/app-features/features";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import SearchFilterAges from "./SearchFilterAges";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
 import SearchFilterBreeders from "./SearchFilterBreeders";
 import SearchFilterComment from "./SearchFilterComment";
@@ -35,6 +36,7 @@ const SearchFilterPanel: FunctionComponent = () => {
         <SearchFilterDepartments />
         <SearchFilterTowns />
         <SearchFilterSpecies />
+        <SearchFilterAges />
         <SearchFilterBehaviors />
         <SearchFilterBreeders />
         <SearchFilterEnvironments />
