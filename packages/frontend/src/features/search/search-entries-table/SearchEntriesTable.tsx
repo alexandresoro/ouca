@@ -4,13 +4,15 @@ import DeletionConfirmationDialog from "@components/common/DeletionConfirmationD
 import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "@hooks/usePaginationParams";
 import useSnackbar from "@hooks/useSnackbar";
-import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/api/entry";
-import { type EntryExtended } from "@ou-ca/common/entities/entry";
-import { useApiEntryDelete } from "@services/api/entry/api-entry-queries";
+import { getEntriesExtendedResponse, type EntriesOrderBy, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
+import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-entry-queries";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import EntryDetailsDialogContainer from "../../observation/entry/entry-details-dialog-container/EntryDetailsDialogContainer";
+import UpdateEntryDialogContainer from "../../observation/entry/update-entry-dialog-container/UpdateEntryDialogContainer";
 import { searchEntriesCriteriaAtom } from "../searchEntriesCriteriaAtom";
 import SearchEntriesTableRow from "./SearchEntriesTableRow";
 
@@ -42,8 +44,11 @@ const SearchEntriesTable: FunctionComponent = () => {
 
   const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EntriesOrderBy>();
 
+  const queryClient = useQueryClient();
+
   const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
+  const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
 
   const { displayNotification } = useSnackbar();
 
@@ -67,6 +72,28 @@ const SearchEntriesTable: FunctionComponent = () => {
     }
   );
 
+  const { mutate: updateEntry } = useApiEntryUpdate({
+    onSettled: async () => {
+      // FIXME: this will only refetch the current filter,
+      // but possibly not ones that are cached and not refetched
+      await refetch();
+    },
+    onSuccess: (updatedEntry) => {
+      queryClient.setQueryData(["API", `/entries/${updatedEntry.id}`], updatedEntry);
+      setUpdateEntryDialogEntry(null);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.entries.updateSuccess"),
+      });
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.entries.updateError"),
+      });
+    },
+  });
+
   const { mutate } = useApiEntryDelete({
     onSettled: async () => {
       await refetch();
@@ -84,6 +111,13 @@ const SearchEntriesTable: FunctionComponent = () => {
       });
     },
   });
+
+  const handleSubmitUpdateExistingEntryForm = (entryFormData: UpsertEntryInput, entryId: string) => {
+    updateEntry({
+      entryId,
+      body: entryFormData,
+    });
+  };
 
   const handleDeleteDonnee = (donnee: EntryExtended | null) => {
     if (donnee) {
@@ -134,6 +168,7 @@ const SearchEntriesTable: FunctionComponent = () => {
                     key={donnee.id}
                     donnee={donnee}
                     onViewAction={() => setViewEntryDialogEntry(donnee)}
+                    onEditAction={() => setUpdateEntryDialogEntry(donnee)}
                     onDeleteAction={() => handleDeleteDonnee(donnee)}
                   />
                 );
@@ -162,6 +197,12 @@ const SearchEntriesTable: FunctionComponent = () => {
         entry={viewEntryDialogEntry}
         open={viewEntryDialogEntry != null}
         onClose={() => setViewEntryDialogEntry(undefined)}
+      />
+      <UpdateEntryDialogContainer
+        entry={updateEntryDialogEntry}
+        open={updateEntryDialogEntry != null}
+        onClose={() => setUpdateEntryDialogEntry(null)}
+        onSubmitUpdateEntryForm={handleSubmitUpdateExistingEntryForm}
       />
     </>
   );

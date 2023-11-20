@@ -128,6 +128,7 @@
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
+  "goToInventory": "Aller à la fiche inventaire associée",
   "inventoryCreateNewFromExisting": {
     "createNewButton": "Nouvel inventaire",
     "createNewButtonTooltip": "Créer un nouvel inventaire"

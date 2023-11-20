@@ -1,18 +1,21 @@
 import IconButton from "@components/base/IconButton";
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
-import { Detail, Trash } from "@styled-icons/boxicons-regular";
+import { Detail, EditAlt, Trash } from "@styled-icons/boxicons-regular";
+import { Binoculars } from "@styled-icons/boxicons-solid";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 type SearchEntriesTableRowProps = {
   donnee: EntryExtended;
   onViewAction: () => void;
+  onEditAction?: () => void;
   onDeleteAction: () => void;
 };
 
 const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (props) => {
-  const { donnee, onViewAction, onDeleteAction } = props;
+  const { donnee, onViewAction, onEditAction, onDeleteAction } = props;
 
   const { t } = useTranslation();
 
@@ -27,16 +30,28 @@ const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (pr
         </td>
         <td>{intlFormat(parseISO(donnee?.inventory.date))}</td>
         <td>{donnee.inventory.observer.libelle}</td>
-        <td align="right" className="pr-6">
+        <td align="right" className="flex gap-1 pr-6">
+          <div className="tooltip tooltip-bottom" data-tip={t("goToInventory")}>
+            <Link
+              className="btn btn-circle btn-sm btn-ghost text-primary"
+              to={`/inventory/${donnee.inventory.id}`}
+              aria-label={t("goToInventory")}
+            >
+              <Binoculars className="h-5" />
+            </Link>
+          </div>
           <IconButton
-            className="mx-1 text-primary dark:text-white"
+            className="text-primary"
             aria-label={t("observationsTable.header.action.view")}
             onClick={onViewAction}
           >
             <Detail className="h-5" />
           </IconButton>
+          <IconButton className="text-primary" aria-label={t("aria-editButton")} onClick={onEditAction}>
+            <EditAlt className="h-5" />
+          </IconButton>
           <IconButton
-            className="mx-1 text-error"
+            className="text-error"
             aria-label={t("observationsTable.header.action.delete")}
             onClick={onDeleteAction}
           >
