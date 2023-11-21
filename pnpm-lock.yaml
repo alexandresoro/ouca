@@ -272,8 +272,8 @@ importers:
         specifier: 23.7.6
         version: 23.7.6
       i18next-http-backend:
-        specifier: 2.4.1
-        version: 2.4.1
+        specifier: 2.4.2
+        version: 2.4.2
       jotai:
         specifier: 2.5.1
         version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
@@ -4432,8 +4432,8 @@ packages:
     hasBin: true
     dev: true
 
-  /i18next-http-backend@2.4.1:
-    resolution: {integrity: sha512-CZHzFGDvF8zN7ya1W2lHbgLj2ejPUvPD836+vA3eNXc9eKGUM3MSF6SA2TKBXKBZ2cNG3nxzycCXeM6n/46KWQ==}
+  /i18next-http-backend@2.4.2:
+    resolution: {integrity: sha512-wKrgGcaFQ4EPjfzBTjzMU0rbFTYpa0S5gv9N/d8WBmWS64+IgJb7cHddMvV+tUkse7vUfco3eVs2lB+nJhPo3w==}
     dependencies:
       cross-fetch: 4.0.0
     transitivePeerDependencies:
