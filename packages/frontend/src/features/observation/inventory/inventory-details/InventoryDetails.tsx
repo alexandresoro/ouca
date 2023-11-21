@@ -1,7 +1,7 @@
 import { getEntriesResponse } from "@ou-ca/common/api/entry";
 import { getInventoryResponse } from "@ou-ca/common/api/inventory";
 import { CopyAlt } from "@styled-icons/boxicons-regular";
-import { Fragment, useEffect, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
@@ -14,7 +14,15 @@ type InventoryDetailsProps = { inventoryId: string };
 const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryId }) => {
   const { t } = useTranslation();
 
-  const { ref, inView } = useInView();
+  const { ref } = useInView({
+    root: document.getElementById("scrollRoot"),
+    rootMargin: "0px 0px 250px 0px",
+    onChange: (inView) => {
+      if (inView) {
+        void fetchNextPage();
+      }
+    },
+  });
 
   const { data: inventory } = useApiQuery({
     path: `/inventories/${inventoryId}`,
@@ -44,12 +52,6 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
     },
     schema: getEntriesResponse,
   });
-
-  useEffect(() => {
-    if (inView) {
-      void fetchNextPage();
-    }
-  }, [inView, fetchNextPage]);
 
   return (
     <div className="flex flex-col gap-4 pb-2">

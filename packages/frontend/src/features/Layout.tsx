@@ -15,7 +15,7 @@ const Layout: FunctionComponent = () => {
       <SnackbarContext.Provider value={{ displayNotification }}>
         <div className="flex flex-col h-[100dvh]">
           <Header />
-          <div className="flex-auto overflow-y-auto">
+          <div id="scrollRoot" className="flex-auto overflow-y-auto">
             <Outlet />
           </div>
         </div>

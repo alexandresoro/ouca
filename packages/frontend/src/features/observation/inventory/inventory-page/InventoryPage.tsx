@@ -1,6 +1,6 @@
 import { getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { getInventoryResponse } from "@ou-ca/common/api/inventory";
-import { useEffect, type FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "react-router-dom";
@@ -47,13 +47,15 @@ const InventoryPage: FunctionComponent = () => {
     }
   );
 
-  const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (inView) {
-      void fetchNextPage();
-    }
-  }, [inView, fetchNextPage]);
+  const { ref } = useInView({
+    root: document.getElementById("scrollRoot"),
+    rootMargin: "0px 0px 250px 0px",
+    onChange: (inView) => {
+      if (inView) {
+        void fetchNextPage();
+      }
+    },
+  });
 
   if (isFetching && !inventory) {
     return (

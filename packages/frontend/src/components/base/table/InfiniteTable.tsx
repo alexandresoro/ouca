@@ -1,4 +1,4 @@
-import { useEffect, type FunctionComponent, type ReactElement } from "react";
+import { type FunctionComponent, type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 
@@ -17,13 +17,15 @@ const InfiniteTable: FunctionComponent<InfiniteTableProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (inView) {
-      void onMoreRequested?.();
-    }
-  }, [inView, onMoreRequested]);
+  const { ref } = useInView({
+    root: document.getElementById("scrollRoot"),
+    rootMargin: "0px 0px 250px 0px",
+    onChange: (inView) => {
+      if (inView) {
+        onMoreRequested?.();
+      }
+    },
+  });
 
   return (
     <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md">
