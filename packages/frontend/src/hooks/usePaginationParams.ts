@@ -1,7 +1,16 @@
 import { type SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { useState } from "react";
 
-const usePaginationParams = <T>() => {
+export type PaginationParams<T> = {
+  query: string;
+  setQuery: (query: string) => void;
+  orderBy: T | undefined;
+  setOrderBy: (orderBy: T | undefined) => void;
+  sortOrder: SortOrder;
+  setSortOrder: (sortOrder: SortOrder) => void;
+};
+
+const usePaginationParams = <T>(): PaginationParams<T> => {
   const [query, setQuery] = useState("");
   const [orderBy, setOrderBy] = useState<T | undefined>(undefined);
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
