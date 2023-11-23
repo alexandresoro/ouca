@@ -12,5 +12,10 @@ export type SortOrder = typeof sortOrder[number];
 export const entitiesCommonQueryParamsSchema = paginationQueryParamsSchema.extend({
   q: z.string().optional(),
   sortOrder: z.enum(sortOrder).optional(),
+  // Deprecated, extended will only be available for a single entity
+  extended: z.coerce.boolean().default(false),
+});
+
+export const entityExtendedSearchParamSchema = z.object({
   extended: z.coerce.boolean().default(false),
 });

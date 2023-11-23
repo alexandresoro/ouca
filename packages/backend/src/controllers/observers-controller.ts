@@ -1,5 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import {
+  getObserverExtendedResponse,
+  getObserverQueryParamsSchema,
   getObserverResponse,
   getObserversExtendedResponse,
   getObserversQueryParamsSchema,
@@ -23,9 +25,30 @@ const observersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
+    const parsedQueryParamsResult = getObserverQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended },
+    } = parsedQueryParamsResult;
+
     const observer = await observateurService.findObservateur(req.params.id, req.user);
     if (!observer) {
       return await reply.status(404).send();
+    }
+
+    if (extended) {
+      const inventoriesCount = await observateurService.getInventoriesCountByObserver(observer.id, req.user);
+      const entriesCount = await observateurService.getDonneesCountByObservateur(observer.id, req.user);
+      const response = getObserverExtendedResponse.parse({
+        ...observer,
+        inventoriesCount,
+        entriesCount,
+      });
+      return await reply.send(response);
     }
 
     const response = getObserverResponse.parse(observer);

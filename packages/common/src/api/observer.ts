@@ -3,6 +3,7 @@ import { observerExtendedSchema, observerSchema } from "../entities/observer.js"
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
+  entityExtendedSearchParamSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 
@@ -10,9 +11,15 @@ import { getPaginatedResponseSchema } from "./common/pagination.js";
  * `GET` `/observer/:id`
  *  Retrieve observer entity
  */
+export const getObserverQueryParamsSchema = entityExtendedSearchParamSchema;
+
 export const getObserverResponse = observerSchema;
 
 export type GetObserverResponse = z.infer<typeof getObserverResponse>;
+
+export const getObserverExtendedResponse = observerExtendedSchema;
+
+export type GetObserverExtendedResponse = z.infer<typeof getObserverExtendedResponse>;
 
 /**
  * `GET` `/observers`
@@ -26,6 +33,9 @@ export type ObserversSearchParams = Omit<z.infer<typeof getObserversQueryParamsS
 
 export const getObserversResponse = getPaginatedResponseSchema(observerSchema);
 
+/**
+ * @deprecated use `getObserversResponse` instead
+ */
 export const getObserversExtendedResponse = getPaginatedResponseSchema(observerExtendedSchema);
 
 /**
