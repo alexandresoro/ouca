@@ -5,10 +5,10 @@ import { type SettingsRepository } from "@interfaces/settings-repository-interfa
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type DepartementService } from "../../../services/entities/departement-service.js";
 import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
-import { type ObservateurService } from "../../../services/entities/observateur-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
 import { mockVi } from "../../../utils/mock.js";
 import { type AgeService } from "../age/age-service.js";
+import { type ObservateurService } from "../observer/observateur-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mockVi<SettingsRepository>();

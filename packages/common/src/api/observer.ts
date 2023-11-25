@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
-  entityExtendedSearchParamSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { observerSchema, observerSimpleSchema } from "./entities/observer.js";
@@ -11,15 +10,9 @@ import { observerSchema, observerSimpleSchema } from "./entities/observer.js";
  * `GET` `/observer/:id`
  *  Retrieve observer entity
  */
-export const getObserverQueryParamsSchema = entityExtendedSearchParamSchema;
-
-export const getObserverResponse = observerSimpleSchema;
+export const getObserverResponse = observerSchema;
 
 export type GetObserverResponse = z.infer<typeof getObserverResponse>;
-
-export const getObserverExtendedResponse = observerSchema;
-
-export type GetObserverExtendedResponse = z.infer<typeof getObserverExtendedResponse>;
 
 /**
  * `GET` `/observers`
@@ -48,6 +41,13 @@ export const upsertObserverInput = z.object({
 
 export type UpsertObserverInput = z.infer<typeof upsertObserverInput>;
 
-export const upsertObserverResponse = observerSimpleSchema;
+export const upsertObserverResponse = observerSchema;
 
 export type UpsertObserverResponse = z.infer<typeof upsertObserverResponse>;
+
+/**
+ * `DELETE` `/observer/:id` Delete observer entity
+ */
+export const deleteObserverResponse = observerSimpleSchema;
+
+export type DeleteObserverResponse = z.infer<typeof deleteObserverResponse>;

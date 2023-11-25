@@ -20,5 +20,5 @@ export type ObserverRepository = {
   createObserver: (observerInput: ObserverCreateInput) => Promise<Observer>;
   createObservers: (observerInputs: ObserverCreateInput[]) => Promise<ObserverSimple[]>;
   updateObserver: (observerId: number, observerInput: ObserverCreateInput) => Promise<Observer>;
-  deleteObserverById: (observerId: number) => Promise<Observer | null>;
+  deleteObserverById: (observerId: number) => Promise<ObserverSimple | null>;
 };

@@ -1,8 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import {
-  getObserverExtendedResponse,
-  getObserverQueryParamsSchema,
+  deleteObserverResponse,
   getObserverResponse,
   getObserversExtendedResponse,
   getObserversQueryParamsSchema,
@@ -11,7 +10,6 @@ import {
   upsertObserverResponse,
 } from "@ou-ca/common/api/observer";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -25,30 +23,9 @@ const observersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedQueryParamsResult = getObserverQueryParamsSchema.safeParse(req.query);
-
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
-    }
-
-    const {
-      data: { extended },
-    } = parsedQueryParamsResult;
-
     const observer = await observateurService.findObservateur(req.params.id, req.user);
     if (!observer) {
       return await reply.status(404).send();
-    }
-
-    if (extended) {
-      const inventoriesCount = await observateurService.getInventoriesCountByObserver(observer.id, req.user);
-      const entriesCount = await observateurService.getDonneesCountByObservateur(observer.id, req.user);
-      const response = getObserverExtendedResponse.parse({
-        ...observer,
-        inventoriesCount,
-        entriesCount,
-      });
-      return await reply.send(response);
     }
 
     const response = getObserverResponse.parse(observer);
@@ -148,15 +125,14 @@ const observersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await observateurService.deleteObservateur(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
+    const deletedObserver = await observateurService.deleteObservateur(req.params.id, req.user);
+
+    if (!deletedObserver) {
+      return await reply.status(404).send();
     }
+
+    const response = deleteObserverResponse.parse(deletedObserver);
+    return await reply.send(response);
   });
 
   done();

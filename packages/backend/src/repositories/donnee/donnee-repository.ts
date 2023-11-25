@@ -550,6 +550,9 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
+  /**
+   * @deprecated
+   */
   const getCountByObservateurId = async (observateurId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 

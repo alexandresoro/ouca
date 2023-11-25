@@ -146,6 +146,9 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return slonik.oneFirst(query);
   };
 
+  /**
+   * @deprecated
+   */
   const getCountByObserver = async (observerId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 

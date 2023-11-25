@@ -1,9 +1,14 @@
 import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
-import { buildSettingsRepository as buildSettingsRepositoryKysely } from "@infrastructure/repositories/settings/settings-repository.js";
+import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
+import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
+import {
+  buildObservateurService,
+  type ObservateurService,
+} from "../application/services/observer/observateur-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildAgeRepository } from "../infrastructure/repositories/age/age-repository.js";
@@ -23,7 +28,6 @@ import { buildInventaireRepository } from "../repositories/inventaire/inventaire
 import { buildLieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import { buildMeteoRepository } from "../repositories/meteo/meteo-repository.js";
 import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
-import { buildObservateurRepository } from "../repositories/observateur/observateur-repository.js";
 import { buildSexeRepository } from "../repositories/sexe/sexe-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
@@ -42,7 +46,6 @@ import { buildInventaireService, type InventaireService } from "./entities/inven
 import { buildLieuditService, type LieuditService } from "./entities/lieu-dit-service.js";
 import { buildMeteoService, type MeteoService } from "./entities/meteo-service.js";
 import { buildMilieuService, type MilieuService } from "./entities/milieu-service.js";
-import { buildObservateurService, type ObservateurService } from "./entities/observateur-service.js";
 import { buildSexeService, type SexeService } from "./entities/sexe-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
@@ -94,8 +97,8 @@ export const buildServices = async (): Promise<Services> => {
   const lieuditRepository = buildLieuditRepository({ slonik });
   const meteoRepository = buildMeteoRepository({ slonik });
   const milieuRepository = buildMilieuRepository({ slonik });
-  const observateurRepository = buildObservateurRepository({ slonik });
-  const settingsRepository = buildSettingsRepositoryKysely();
+  const observerRepository = buildObserverRepository({ slonik });
+  const settingsRepository = buildSettingsRepository();
   const sexeRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ settingsRepository });
 
@@ -178,7 +181,7 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const observateurService = buildObservateurService({
-    observateurRepository,
+    observerRepository,
     inventaireRepository,
     donneeRepository,
   });

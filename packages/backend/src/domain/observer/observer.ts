@@ -5,8 +5,8 @@ export const observerSchema = z.object({
   id: z.coerce.string(),
   libelle: z.string(),
   ownerId: z.string().uuid().nullable(),
-  inventoriesCount: z.number(),
-  entriesCount: z.number(),
+  inventoriesCount: z.coerce.number(),
+  entriesCount: z.coerce.number(),
 });
 
 export type Observer = z.infer<typeof observerSchema>;

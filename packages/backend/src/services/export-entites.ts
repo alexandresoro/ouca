@@ -8,6 +8,7 @@ import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper"
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
+import { type ObservateurService } from "../application/services/observer/observateur-service.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type ClasseService } from "./entities/classe-service.js";
@@ -22,7 +23,6 @@ import { type InventaireService } from "./entities/inventaire-service.js";
 import { type LieuditService } from "./entities/lieu-dit-service.js";
 import { type MeteoService } from "./entities/meteo-service.js";
 import { type MilieuService } from "./entities/milieu-service.js";
-import { type ObservateurService } from "./entities/observateur-service.js";
 import { type SexeService } from "./entities/sexe-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
