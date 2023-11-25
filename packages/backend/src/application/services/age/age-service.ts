@@ -3,7 +3,7 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type AgeRepository } from "@interfaces/age-repository-interface.js";
 import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type Age } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/entities/age";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
@@ -16,7 +16,7 @@ type AgeServiceDependencies = {
 };
 
 export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceDependencies) => {
-  const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
+  const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<AgeSimple | null> => {
     validateAuthorization(loggedUser);
 
     const age = await ageRepository.findAgeById(id);
@@ -26,7 +26,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   const findAgeOfDonneeId = async (
     donneeId: string | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Age | null> => {
+  ): Promise<AgeSimple | null> => {
     validateAuthorization(loggedUser);
 
     const age = await ageRepository.findAgeByDonneeId(donneeId ? parseInt(donneeId) : undefined);
@@ -39,7 +39,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return donneeRepository.getCountByAgeId(parseInt(id));
   };
 
-  const findAllAges = async (): Promise<Age[]> => {
+  const findAllAges = async (): Promise<AgeSimple[]> => {
     const ages = await ageRepository.findAges({
       orderBy: COLUMN_LIBELLE,
     });
@@ -51,7 +51,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return [...enrichedAges];
   };
 
-  const findPaginatedAges = async (loggedUser: LoggedUser | null, options: AgesSearchParams): Promise<Age[]> => {
+  const findPaginatedAges = async (loggedUser: LoggedUser | null, options: AgesSearchParams): Promise<AgeSimple[]> => {
     validateAuthorization(loggedUser);
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
@@ -76,7 +76,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return ageRepository.getCount(q);
   };
 
-  const createAge = async (input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<Age> => {
+  const createAge = async (input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<AgeSimple> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -94,7 +94,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     }
   };
 
-  const updateAge = async (id: number, input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<Age> => {
+  const updateAge = async (id: number, input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<AgeSimple> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -118,7 +118,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     }
   };
 
-  const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
+  const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<AgeSimple | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -137,7 +137,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   const createAges = async (
     ages: Omit<AgeCreateInput, "ownerId">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Age[]> => {
+  ): Promise<readonly AgeSimple[]> => {
     const createdAges = await ageRepository.createAges(
       ages.map((age) => {
         return { ...age, ownerId: loggedUser.id };

@@ -1,11 +1,11 @@
 import { type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type Age } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/entities/age";
 import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
 import AgeEdit from "./AgeEdit";
 
 type AgeUpdateProps = {
-  age: Age;
+  age: AgeSimple;
   onCancel: () => void;
   onSubmit: (id: string, input: UpsertAgeInput) => void;
 };

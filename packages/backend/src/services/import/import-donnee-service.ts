@@ -2,7 +2,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
-import { type Age } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/entities/age";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
@@ -27,7 +27,7 @@ export class ImportDonneeService extends ImportService {
   private communes!: Town[];
   private lieuxDits!: Locality[];
   private especes!: Species[];
-  private ages!: Age[];
+  private ages!: AgeSimple[];
   private sexes!: Sex[];
   private estimationsNombre!: NumberEstimate[];
   private estimationsDistance!: DistanceEstimate[];
@@ -382,7 +382,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findAge = (libelleMeteo: string): Age | undefined => {
+  private findAge = (libelleMeteo: string): AgeSimple | undefined => {
     return this.ages.find((age) => {
       return this.compareStrings(age.libelle, libelleMeteo);
     });

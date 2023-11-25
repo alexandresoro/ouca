@@ -1,5 +1,5 @@
 import { type SearchCriteriaParams } from "@ou-ca/common/api/common/search-criteria";
-import { type Age } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/entities/age";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type Environment } from "@ou-ca/common/entities/environment";
@@ -61,7 +61,7 @@ export const searchEntriesFilterSpeciesAtom = atom<Species[]>([]);
 
 export const searchEntriesFilterSexesAtom = atom<Sex[]>([]);
 
-export const searchEntriesFilterAgesAtom = atom<Age[]>([]);
+export const searchEntriesFilterAgesAtom = atom<AgeSimple[]>([]);
 
 export const searchEntriesFilterBehaviorsAtom = atom<Behavior[]>([]);
 

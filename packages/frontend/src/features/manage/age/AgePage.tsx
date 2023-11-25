@@ -1,5 +1,5 @@
 import { upsertAgeResponse, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type Age, type AgeExtended } from "@ou-ca/common/entities/age";
+import { type Age, type AgeSimple } from "@ou-ca/common/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,10 +21,10 @@ const AgePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const [upsertAgeDialog, setUpsertAgeDialog] = useState<null | { mode: "create" } | { mode: "update"; age: Age }>(
-    null
-  );
-  const [ageToDelete, setAgeToDelete] = useState<AgeExtended | null>(null);
+  const [upsertAgeDialog, setUpsertAgeDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; age: AgeSimple }
+  >(null);
+  const [ageToDelete, setAgeToDelete] = useState<Age | null>(null);
 
   const { mutate: createAge } = useApiMutation(
     {
@@ -119,7 +119,7 @@ const AgePage: FunctionComponent = () => {
     setUpsertAgeDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (age: Age) => {
+  const handleUpdateClick = (age: AgeSimple) => {
     setUpsertAgeDialog({ mode: "update", age });
   };
 
@@ -135,7 +135,7 @@ const AgePage: FunctionComponent = () => {
     updateAge({ path: `/ages/${id}`, body: input });
   };
 
-  const handleDeleteAge = (ageToDelete: AgeExtended) => {
+  const handleDeleteAge = (ageToDelete: Age) => {
     deleteAge({ path: `/ages/${ageToDelete.id}` });
   };
 

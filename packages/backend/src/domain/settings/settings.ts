@@ -1,4 +1,4 @@
-import { type Age } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/entities/age";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
@@ -29,7 +29,7 @@ export type SettingsEnriched = Omit<
   defaultDepartment: Department | null;
   defaultObserver: Observer | null;
   defaultSex: Sex | null;
-  defaultAge: Age | null;
+  defaultAge: AgeSimple | null;
   defaultNumberEstimate: NumberEstimate | null;
 };
 

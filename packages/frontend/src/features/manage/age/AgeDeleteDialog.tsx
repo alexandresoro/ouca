@@ -1,12 +1,12 @@
-import { type AgeExtended } from "@ou-ca/common/entities/age";
+import { type Age } from "@ou-ca/common/entities/age";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type AgeDeleteDialogProps = {
-  ageToDelete: AgeExtended | null;
+  ageToDelete: Age | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (age: AgeExtended) => void;
+  onConfirmDeletion?: (age: Age) => void;
 };
 
 const AgeDeleteDialog: FunctionComponent<AgeDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const AgeDeleteDialog: FunctionComponent<AgeDeleteDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (ageToDelete: AgeExtended | null) => {
+  const handleConfirmDeletion = (ageToDelete: Age | null) => {
     if (ageToDelete != null) {
       onConfirmDeletion?.(ageToDelete);
     }

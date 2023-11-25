@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ageSchema } from "../entities/age.js";
+import { ageSimpleSchema } from "../entities/age.js";
 import { departmentSchema } from "../entities/department.js";
 import { numberEstimateSchema } from "../entities/number-estimate.js";
 import { observerSchema } from "../entities/observer.js";
@@ -9,7 +9,7 @@ import { sexSchema } from "../entities/sex.js";
 const settingsResponse = z.object({
   defaultObserver: observerSchema.nullable(),
   defaultDepartment: departmentSchema.nullable(),
-  defaultAge: ageSchema.nullable(),
+  defaultAge: ageSimpleSchema.nullable(),
   defaultSex: sexSchema.nullable(),
   defaultNumberEstimate: numberEstimateSchema.nullable(),
   defaultNombre: z.number().nullable(),
