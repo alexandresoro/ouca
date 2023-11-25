@@ -25,7 +25,11 @@ const useApiQuery = <T = unknown, E = unknown>(
 
   const queryUrl = `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}`;
 
-  return useSWR<T, E>(!paused ? { url: queryUrl, token: accessToken, schema } : null, fetchApi<T>, swrOptions);
+  return useSWR(
+    !paused ? { url: queryUrl, token: accessToken } : null,
+    ({ url, token }) => fetchApi({ url, token, schema }),
+    swrOptions
+  );
 };
 
 export default useApiQuery;
