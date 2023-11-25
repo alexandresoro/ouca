@@ -1,5 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
@@ -16,7 +16,7 @@ export class ImportObservateurService extends ImportEntiteAvecLibelleService {
   protected saveEntities = (
     observateurs: Omit<Observateur, "id" | "ownerId">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Observer[]> => {
+  ): Promise<readonly ObserverSimple[]> => {
     return this.services.observateurService.createObservateurs(observateurs, loggedUser);
   };
 }

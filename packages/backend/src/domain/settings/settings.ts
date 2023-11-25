@@ -1,7 +1,7 @@
 import { type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { type Department } from "@ou-ca/common/api/entities/department";
 import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type Sex } from "@ou-ca/common/api/entities/sex";
 import { z } from "zod";
 
@@ -27,7 +27,7 @@ export type SettingsEnriched = Omit<
   "defaultDepartementId" | "defaultObservateurId" | "defaultSexeId" | "defaultAgeId" | "defaultEstimationNombreId"
 > & {
   defaultDepartment: Department | null;
-  defaultObserver: Observer | null;
+  defaultObserver: ObserverSimple | null;
   defaultSex: Sex | null;
   defaultAge: AgeSimple | null;
   defaultNumberEstimate: NumberEstimate | null;

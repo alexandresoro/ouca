@@ -2,12 +2,12 @@ import { z } from "zod";
 import { ageSimpleSchema } from "./entities/age.js";
 import { departmentSchema } from "./entities/department.js";
 import { numberEstimateSchema } from "./entities/number-estimate.js";
-import { observerSchema } from "./entities/observer.js";
+import { observerSimpleSchema } from "./entities/observer.js";
 import { sexSchema } from "./entities/sex.js";
 
 // Common response content returned when settings are queried or updated
 const settingsResponse = z.object({
-  defaultObserver: observerSchema.nullable(),
+  defaultObserver: observerSimpleSchema.nullable(),
   defaultDepartment: departmentSchema.nullable(),
   defaultAge: ageSimpleSchema.nullable(),
   defaultSex: sexSchema.nullable(),

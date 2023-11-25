@@ -4,13 +4,15 @@ export const observerSchema = z.object({
   id: z.coerce.string(),
   libelle: z.string(),
   editable: z.boolean(),
-});
-
-export type Observer = z.infer<typeof observerSchema>;
-
-export const observerExtendedSchema = observerSchema.extend({
   inventoriesCount: z.number(),
   entriesCount: z.number(),
 });
 
-export type ObserverExtended = z.infer<typeof observerExtendedSchema>;
+export type Observer = z.infer<typeof observerSchema>;
+
+export const observerSimpleSchema = observerSchema.omit({
+  inventoriesCount: true,
+  entriesCount: true,
+});
+
+export type ObserverSimple = z.infer<typeof observerSimpleSchema>;

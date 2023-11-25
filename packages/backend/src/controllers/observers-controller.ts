@@ -1,5 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Observer, type ObserverExtended } from "@ou-ca/common/api/entities/observer";
+import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import {
   getObserverExtendedResponse,
   getObserverQueryParamsSchema,
@@ -71,7 +71,7 @@ const observersController: FastifyPluginCallback<{
       observateurService.getObservateursCount(req.user, queryParams.q),
     ]);
 
-    let data: Observer[] | ObserverExtended[] = observersData;
+    let data: ObserverSimple[] | Observer[] = observersData;
     if (extended) {
       data = await Promise.all(
         observersData.map(async (observerData) => {

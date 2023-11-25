@@ -1,12 +1,12 @@
-import { type ObserverExtended } from "@ou-ca/common/api/entities/observer";
+import { type Observer } from "@ou-ca/common/api/entities/observer";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type ObservateurDeleteDialogProps = {
-  observerToDelete: ObserverExtended | null;
+  observerToDelete: Observer | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (observer: ObserverExtended) => void;
+  onConfirmDeletion?: (observer: Observer) => void;
 };
 
 const ObservateurDeleteDialog: FunctionComponent<ObservateurDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const ObservateurDeleteDialog: FunctionComponent<ObservateurDeleteDialogProps> =
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (observerToDelete: ObserverExtended | null) => {
+  const handleConfirmDeletion = (observerToDelete: Observer | null) => {
     if (observerToDelete != null) {
       onConfirmDeletion?.(observerToDelete);
     }

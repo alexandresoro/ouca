@@ -5,7 +5,7 @@ import {
   entityExtendedSearchParamSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { observerExtendedSchema, observerSchema } from "./entities/observer.js";
+import { observerSchema, observerSimpleSchema } from "./entities/observer.js";
 
 /**
  * `GET` `/observer/:id`
@@ -13,11 +13,11 @@ import { observerExtendedSchema, observerSchema } from "./entities/observer.js";
  */
 export const getObserverQueryParamsSchema = entityExtendedSearchParamSchema;
 
-export const getObserverResponse = observerSchema;
+export const getObserverResponse = observerSimpleSchema;
 
 export type GetObserverResponse = z.infer<typeof getObserverResponse>;
 
-export const getObserverExtendedResponse = observerExtendedSchema;
+export const getObserverExtendedResponse = observerSchema;
 
 export type GetObserverExtendedResponse = z.infer<typeof getObserverExtendedResponse>;
 
@@ -31,12 +31,12 @@ export const getObserversQueryParamsSchema = entitiesCommonQueryParamsSchema.ext
 
 export type ObserversSearchParams = Omit<z.infer<typeof getObserversQueryParamsSchema>, "extended">;
 
-export const getObserversResponse = getPaginatedResponseSchema(observerSchema);
+export const getObserversResponse = getPaginatedResponseSchema(observerSimpleSchema);
 
 /**
  * @deprecated use `getObserversResponse` instead
  */
-export const getObserversExtendedResponse = getPaginatedResponseSchema(observerExtendedSchema);
+export const getObserversExtendedResponse = getPaginatedResponseSchema(observerSchema);
 
 /**
  * `PUT` `/observer/:id` Update of observer entity
@@ -48,6 +48,6 @@ export const upsertObserverInput = z.object({
 
 export type UpsertObserverInput = z.infer<typeof upsertObserverInput>;
 
-export const upsertObserverResponse = observerSchema;
+export const upsertObserverResponse = observerSimpleSchema;
 
 export type UpsertObserverResponse = z.infer<typeof upsertObserverResponse>;

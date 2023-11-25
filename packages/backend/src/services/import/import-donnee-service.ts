@@ -6,7 +6,7 @@ import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estim
 import { type Environment } from "@ou-ca/common/api/entities/environment";
 import { type Locality } from "@ou-ca/common/api/entities/locality";
 import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type Sex } from "@ou-ca/common/api/entities/sex";
 import { type Species } from "@ou-ca/common/api/entities/species";
 import { type Town } from "@ou-ca/common/api/entities/town";
@@ -22,7 +22,7 @@ import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js
 import { ImportService } from "./import-service.js";
 
 export class ImportDonneeService extends ImportService {
-  private observateurs!: Observer[];
+  private observateurs!: ObserverSimple[];
   private departements!: Department[];
   private communes!: Town[];
   private lieuxDits!: Locality[];
@@ -333,7 +333,7 @@ export class ImportDonneeService extends ImportService {
     }
   };
 
-  private findObservateur = (libelleObservateur: string): Observer | undefined => {
+  private findObservateur = (libelleObservateur: string): ObserverSimple | undefined => {
     return this.observateurs.find((observateur) => {
       return this.compareStrings(observateur.libelle, libelleObservateur);
     });

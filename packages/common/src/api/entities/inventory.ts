@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { coordinatesSchema } from "./coordinates.js";
 import { localityExtendedSchema, localitySchema } from "./locality.js";
-import { observerSchema } from "./observer.js";
+import { observerSimpleSchema } from "./observer.js";
 import { weatherSchema } from "./weather.js";
 
 export const inventorySchema = z.object({
   id: z.string(),
-  observer: observerSchema,
-  associates: z.array(observerSchema),
+  observer: observerSimpleSchema,
+  associates: z.array(observerSimpleSchema),
   date: z.string(),
   heure: z.string().nullable(),
   duree: z.string().nullable(),

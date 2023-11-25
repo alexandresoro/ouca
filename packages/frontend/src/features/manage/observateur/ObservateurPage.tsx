@@ -1,4 +1,4 @@
-import { type Observer, type ObserverExtended } from "@ou-ca/common/api/entities/observer";
+import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { upsertObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -22,9 +22,9 @@ const ObservateurPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertObserverDialog, setUpsertObserverDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; observer: Observer }
+    null | { mode: "create" } | { mode: "update"; observer: ObserverSimple }
   >(null);
-  const [observerToDelete, setObserverToDelete] = useState<ObserverExtended | null>(null);
+  const [observerToDelete, setObserverToDelete] = useState<Observer | null>(null);
 
   const { mutate: createObserver } = useApiMutation(
     {
@@ -119,7 +119,7 @@ const ObservateurPage: FunctionComponent = () => {
     setUpsertObserverDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (observer: Observer) => {
+  const handleUpdateClick = (observer: ObserverSimple) => {
     setUpsertObserverDialog({ mode: "update", observer });
   };
 
@@ -135,7 +135,7 @@ const ObservateurPage: FunctionComponent = () => {
     updateObserver({ path: `/observers/${id}`, body: input });
   };
 
-  const handleDeleteObserver = (observerToDelete: ObserverExtended) => {
+  const handleDeleteObserver = (observerToDelete: Observer) => {
     deleteObserver({ path: `/observers/${observerToDelete.id}` });
   };
 

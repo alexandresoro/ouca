@@ -1,6 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
@@ -22,7 +22,7 @@ export const buildObservateurService = ({
   inventaireRepository,
   donneeRepository,
 }: ObservateurServiceDependencies) => {
-  const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer | null> => {
+  const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<ObserverSimple | null> => {
     validateAuthorization(loggedUser);
 
     const observer = await observateurRepository.findObservateurById(id);
@@ -44,7 +44,7 @@ export const buildObservateurService = ({
   const findObservateurOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Observer | null> => {
+  ): Promise<ObserverSimple | null> => {
     validateAuthorization(loggedUser);
 
     const observer = await observateurRepository.findObservateurByInventaireId(inventaireId);
@@ -62,7 +62,7 @@ export const buildObservateurService = ({
   const findAssociesOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Observer[]> => {
+  ): Promise<ObserverSimple[]> => {
     validateAuthorization(loggedUser);
 
     const associes = await observateurRepository.findAssociesOfInventaireId(inventaireId);
@@ -74,7 +74,7 @@ export const buildObservateurService = ({
     return [...enrichedAssociates];
   };
 
-  const findAllObservateurs = async (): Promise<Observer[]> => {
+  const findAllObservateurs = async (): Promise<ObserverSimple[]> => {
     const observateurs = await observateurRepository.findObservateurs({
       orderBy: COLUMN_LIBELLE,
     });
@@ -89,7 +89,7 @@ export const buildObservateurService = ({
   const findPaginatedObservateurs = async (
     loggedUser: LoggedUser | null,
     options: ObserversSearchParams
-  ): Promise<Observer[]> => {
+  ): Promise<ObserverSimple[]> => {
     validateAuthorization(loggedUser);
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
@@ -114,7 +114,10 @@ export const buildObservateurService = ({
     return observateurRepository.getCount(q);
   };
 
-  const createObservateur = async (input: UpsertObserverInput, loggedUser: LoggedUser | null): Promise<Observer> => {
+  const createObservateur = async (
+    input: UpsertObserverInput,
+    loggedUser: LoggedUser | null
+  ): Promise<ObserverSimple> => {
     validateAuthorization(loggedUser);
 
     // Create a new observer
@@ -137,7 +140,7 @@ export const buildObservateurService = ({
     id: number,
     input: UpsertObserverInput,
     loggedUser: LoggedUser | null
-  ): Promise<Observer> => {
+  ): Promise<ObserverSimple> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -162,7 +165,7 @@ export const buildObservateurService = ({
     }
   };
 
-  const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer> => {
+  const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<ObserverSimple> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -181,7 +184,7 @@ export const buildObservateurService = ({
   const createObservateurs = async (
     observateurs: Omit<ObservateurCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Observer[]> => {
+  ): Promise<readonly ObserverSimple[]> => {
     const createdObservers = await observateurRepository.createObservateurs(
       observateurs.map((observateur) => {
         return { ...observateur, owner_id: loggedUser.id };

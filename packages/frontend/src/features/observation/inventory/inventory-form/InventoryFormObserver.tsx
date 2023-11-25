@@ -1,4 +1,4 @@
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
@@ -9,13 +9,13 @@ import useApiQuery from "../../../../hooks/api/useApiQuery";
 import { type InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormObserverProps = Pick<UseFormReturn<InventoryFormState>, "control"> & {
-  defaultObserver?: Observer;
-  defaultAssociates?: Observer[];
+  defaultObserver?: ObserverSimple;
+  defaultAssociates?: ObserverSimple[];
   autofocusOnObserver?: boolean;
   areAssociesDisplayed?: boolean;
 };
 
-const renderObserver = (observer: Observer | null): string => {
+const renderObserver = (observer: ObserverSimple | null): string => {
   return observer?.libelle ?? "";
 };
 
@@ -29,13 +29,13 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   const { t } = useTranslation();
 
   const [observateurInput, setObservateurInput] = useState("");
-  const [selectedObserver, setSelectedObserver] = useState<Observer | null>(null);
+  const [selectedObserver, setSelectedObserver] = useState<ObserverSimple | null>(null);
   useEffect(() => {
     setSelectedObserver(defaultObserver ?? null);
   }, [defaultObserver]);
 
   const [associatesInput, setAssociatesInput] = useState("");
-  const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>(defaultAssociates ?? []);
+  const [selectedAssociates, setSelectedAssociates] = useState<ObserverSimple[]>(defaultAssociates ?? []);
 
   const {
     field: { ref: refObserver, onChange: onChangeObserverForm, onBlur: onBlurObserver },

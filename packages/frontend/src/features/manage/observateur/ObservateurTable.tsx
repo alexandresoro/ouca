@@ -1,5 +1,5 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { type ObserverExtended } from "@ou-ca/common/api/entities/observer";
+import { type Observer } from "@ou-ca/common/api/entities/observer";
 import { getObserversExtendedResponse } from "@ou-ca/common/api/observer";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,8 +11,8 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ObservateurTableProps = {
-  onClickUpdateObserver: (observer: ObserverExtended) => void;
-  onClickDeleteObserver: (observer: ObserverExtended) => void;
+  onClickUpdateObserver: (observer: Observer) => void;
+  onClickDeleteObserver: (observer: Observer) => void;
 };
 
 const COLUMNS = [
