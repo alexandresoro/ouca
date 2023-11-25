@@ -1,5 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type AgeSimple } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportAgeService extends ImportEntiteAvecLibelleService<AgeSimple> {

@@ -1,5 +1,5 @@
+import { type Species, type SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import { upsertSpeciesResponse, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
-import { type Species, type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

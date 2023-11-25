@@ -1,7 +1,7 @@
 import { isAfter, isBefore } from "date-fns";
 import { z } from "zod";
-import { inventoryExtendedSchema } from "../entities/inventory.js";
 import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
+import { inventoryExtendedSchema } from "./entities/inventory.js";
 
 /**
  * `GET` `/inventory/:id`

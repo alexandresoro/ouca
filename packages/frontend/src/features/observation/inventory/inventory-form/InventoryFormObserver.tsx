@@ -1,5 +1,5 @@
+import { type Observer } from "@ou-ca/common/api/entities/observer";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
-import { type Observer } from "@ou-ca/common/entities/observer";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";

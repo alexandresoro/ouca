@@ -1,4 +1,4 @@
-import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
+import { type NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";

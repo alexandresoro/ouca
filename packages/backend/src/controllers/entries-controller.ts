@@ -1,5 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { entryNavigationSchema, type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import {
   getEntriesExtendedResponse,
   getEntriesQueryParamsSchema,
@@ -9,7 +10,6 @@ import {
   upsertEntryResponse,
   type GetEntryResponse,
 } from "@ou-ca/common/api/entry";
-import { entryNavigationSchema, type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Donnee } from "../repositories/donnee/donnee-repository-types.js";

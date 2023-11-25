@@ -1,7 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Sex } from "@ou-ca/common/api/entities/sex";
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
-import { type Sex } from "@ou-ca/common/entities/sex";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";

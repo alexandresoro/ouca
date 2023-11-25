@@ -1,5 +1,5 @@
+import { type Environment } from "@ou-ca/common/api/entities/environment";
 import { getEnvironmentsResponse } from "@ou-ca/common/api/environment";
-import { type Environment } from "@ou-ca/common/entities/environment";
 import { useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";

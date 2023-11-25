@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { departmentExtendedSchema, departmentSchema } from "../entities/department.js";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { departmentExtendedSchema, departmentSchema } from "./entities/department.js";
 
 /**
  * `GET` `/department/:id`

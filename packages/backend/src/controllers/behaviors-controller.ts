@@ -7,7 +7,7 @@ import {
   upsertBehaviorInput,
   upsertBehaviorResponse,
 } from "@ou-ca/common/api/behavior";
-import { type Behavior, type BehaviorExtended } from "@ou-ca/common/entities/behavior";
+import { type Behavior, type BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

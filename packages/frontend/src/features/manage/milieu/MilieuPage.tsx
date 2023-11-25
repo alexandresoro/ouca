@@ -1,5 +1,5 @@
+import { type Environment, type EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import { upsertEnvironmentResponse, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
-import { type Environment, type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,7 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
-import { type Weather } from "@ou-ca/common/entities/weather";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";

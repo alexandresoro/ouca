@@ -1,4 +1,4 @@
-import { type Age } from "@ou-ca/common/entities/age";
+import { type Age } from "@ou-ca/common/api/entities/age";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";

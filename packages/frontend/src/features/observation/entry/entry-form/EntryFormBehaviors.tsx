@@ -1,5 +1,5 @@
 import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
-import { type Behavior } from "@ou-ca/common/entities/behavior";
+import { type Behavior } from "@ou-ca/common/api/entities/behavior";
 import { useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";

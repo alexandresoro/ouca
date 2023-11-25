@@ -1,7 +1,7 @@
+import { type Species } from "@ou-ca/common/api/entities/species";
+import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
 import { getClassesResponse } from "@ou-ca/common/api/species-class";
-import { type Species } from "@ou-ca/common/entities/species";
-import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";

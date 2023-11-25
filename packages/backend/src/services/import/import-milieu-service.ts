@@ -1,5 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Environment } from "@ou-ca/common/entities/environment";
+import { type Environment } from "@ou-ca/common/api/entities/environment";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service.js";
 

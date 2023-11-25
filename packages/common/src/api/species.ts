@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { speciesExtendedSchema, speciesSchema } from "../entities/species.js";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
+import { speciesExtendedSchema, speciesSchema } from "./entities/species.js";
 
 /**
  * `GET` `/species/:id`

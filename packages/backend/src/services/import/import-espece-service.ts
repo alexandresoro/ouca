@@ -1,6 +1,6 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Species } from "@ou-ca/common/entities/species";
-import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
+import { type Species } from "@ou-ca/common/api/entities/species";
+import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { ImportedEspece } from "../../objects/import/imported-espece.object.js";
 import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { ImportService } from "./import-service.js";

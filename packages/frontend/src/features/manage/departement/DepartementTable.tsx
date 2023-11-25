@@ -1,5 +1,5 @@
 import { getDepartmentsExtendedResponse, type DepartmentsOrderBy } from "@ou-ca/common/api/department";
-import { type DepartmentExtended } from "@ou-ca/common/entities/department";
+import { type DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

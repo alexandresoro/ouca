@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { ageSchema, ageSimpleSchema } from "../entities/age.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { ageSchema, ageSimpleSchema } from "./entities/age.js";
 
 /**
  * `GET` `/age/:id`

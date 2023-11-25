@@ -1,5 +1,5 @@
 import { upsertDistanceEstimateResponse, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
+import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

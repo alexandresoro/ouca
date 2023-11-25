@@ -1,5 +1,5 @@
+import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type UpsertClassInput } from "@ou-ca/common/api/species-class";
-import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
 import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
 import ClasseEdit from "./ClasseEdit";

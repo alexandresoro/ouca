@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Environment, type EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import {
   getEnvironmentResponse,
   getEnvironmentsExtendedResponse,
@@ -7,7 +8,6 @@ import {
   upsertEnvironmentInput,
   upsertEnvironmentResponse,
 } from "@ou-ca/common/api/environment";
-import { type Environment, type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

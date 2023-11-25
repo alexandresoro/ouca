@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { environmentExtendedSchema, environmentSchema } from "../entities/environment.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { environmentExtendedSchema, environmentSchema } from "./entities/environment.js";
 
 /**
  * `GET` `/environment/:id`

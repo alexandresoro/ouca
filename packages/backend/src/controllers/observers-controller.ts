@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Observer, type ObserverExtended } from "@ou-ca/common/api/entities/observer";
 import {
   getObserverExtendedResponse,
   getObserverQueryParamsSchema,
@@ -9,7 +10,6 @@ import {
   upsertObserverInput,
   upsertObserverResponse,
 } from "@ou-ca/common/api/observer";
-import { type Observer, type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

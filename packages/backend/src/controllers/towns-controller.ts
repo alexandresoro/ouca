@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Town, type TownExtended } from "@ou-ca/common/api/entities/town";
 import {
   getTownResponse,
   getTownsExtendedResponse,
@@ -7,7 +8,6 @@ import {
   upsertTownInput,
   upsertTownResponse,
 } from "@ou-ca/common/api/town";
-import { type Town, type TownExtended } from "@ou-ca/common/entities/town";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

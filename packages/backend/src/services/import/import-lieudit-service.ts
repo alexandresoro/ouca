@@ -1,12 +1,12 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Department } from "@ou-ca/common/api/entities/department";
+import { type Locality } from "@ou-ca/common/api/entities/locality";
+import { type Town } from "@ou-ca/common/api/entities/town";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import {
   type CoordinatesSystem,
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
-import { type Department } from "@ou-ca/common/entities/department";
-import { type Locality } from "@ou-ca/common/entities/locality";
-import { type Town } from "@ou-ca/common/entities/town";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object.js";
 import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { ImportService } from "./import-service.js";

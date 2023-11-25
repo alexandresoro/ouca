@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type Inventory } from "@ou-ca/common/api/entities/inventory";
 import { upsertInventoryInput, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type Inventory } from "@ou-ca/common/entities/inventory";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { useEffect, useState, type FunctionComponent } from "react";

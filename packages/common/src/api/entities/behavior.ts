@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { NICHEUR_CODES } from "../types/nicheur.model.js";
+import { NICHEUR_CODES } from "../../types/nicheur.model.js";
 
 export const behaviorSchema = z.object({
   id: z.coerce.string(),

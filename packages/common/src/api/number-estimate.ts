@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { numberEstimateExtendedSchema, numberEstimateSchema } from "../entities/number-estimate.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { numberEstimateExtendedSchema, numberEstimateSchema } from "./entities/number-estimate.js";
 
 /**
  * `GET` `/number-estimate/:id`

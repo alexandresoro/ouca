@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { observerExtendedSchema, observerSchema } from "../entities/observer.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
   entityExtendedSearchParamSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { observerExtendedSchema, observerSchema } from "./entities/observer.js";
 
 /**
  * `GET` `/observer/:id`

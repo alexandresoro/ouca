@@ -1,5 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Observer } from "@ou-ca/common/entities/observer";
+import { type Observer } from "@ou-ca/common/api/entities/observer";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 

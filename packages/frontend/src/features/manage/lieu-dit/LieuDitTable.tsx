@@ -1,5 +1,5 @@
+import { type LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { getLocalitiesExtendedResponse, type LocalitiesOrderBy } from "@ou-ca/common/api/locality";
-import { type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

@@ -1,9 +1,9 @@
 import { getAgesResponse } from "@ou-ca/common/api/age";
+import { type AgeSimple } from "@ou-ca/common/api/entities/age";
+import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
+import { type Sex } from "@ou-ca/common/api/entities/sex";
 import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
-import { type AgeSimple } from "@ou-ca/common/entities/age";
-import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
-import { type Sex } from "@ou-ca/common/entities/sex";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";

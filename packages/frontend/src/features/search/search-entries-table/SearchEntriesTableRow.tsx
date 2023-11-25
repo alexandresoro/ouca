@@ -1,5 +1,5 @@
 import IconButton from "@components/base/IconButton";
-import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { Detail, EditAlt, Trash } from "@styled-icons/boxicons-regular";
 import { Binoculars } from "@styled-icons/boxicons-solid";
 import { intlFormat, parseISO } from "date-fns";

@@ -1,5 +1,5 @@
+import { type Environment } from "@ou-ca/common/api/entities/environment";
 import { type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
-import { type Environment } from "@ou-ca/common/entities/environment";
 import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
 import MilieuEdit from "./MilieuEdit";

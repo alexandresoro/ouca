@@ -3,7 +3,7 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type AgeRepository } from "@interfaces/age-repository-interface.js";
 import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type AgeSimple } from "@ou-ca/common/entities/age";
+import { type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";

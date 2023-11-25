@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { localityExtendedSchema, localitySchema } from "../entities/locality.js";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { localityExtendedSchema, localitySchema } from "./entities/locality.js";
 
 /**
  * `GET` `/locality/:id`

@@ -1,5 +1,5 @@
+import { type Weather } from "@ou-ca/common/api/entities/weather";
 import { getWeathersResponse } from "@ou-ca/common/api/weather";
-import { type Weather } from "@ou-ca/common/entities/weather";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, useFormState, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";

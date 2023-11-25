@@ -7,7 +7,7 @@ import {
   upsertDepartmentInput,
   upsertDepartmentResponse,
 } from "@ou-ca/common/api/department";
-import { type Department, type DepartmentExtended } from "@ou-ca/common/entities/department";
+import { type Department, type DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

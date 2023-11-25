@@ -1,5 +1,5 @@
+import { type Locality, type LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { upsertLocalityResponse, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
-import { type Locality, type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

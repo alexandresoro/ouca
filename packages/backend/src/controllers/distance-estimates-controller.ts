@@ -1,6 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { getDistanceEstimateResponse, getDistanceEstimatesExtendedResponse, getDistanceEstimatesQueryParamsSchema, getDistanceEstimatesResponse, upsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
+import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

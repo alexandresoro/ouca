@@ -1,9 +1,9 @@
 import { getDepartmentResponse, getDepartmentsResponse } from "@ou-ca/common/api/department";
+import { type Department } from "@ou-ca/common/api/entities/department";
+import { type Locality } from "@ou-ca/common/api/entities/locality";
+import { type Town } from "@ou-ca/common/api/entities/town";
 import { getLocalitiesResponse } from "@ou-ca/common/api/locality";
 import { getTownResponse, getTownsResponse } from "@ou-ca/common/api/town";
-import { type Department } from "@ou-ca/common/entities/department";
-import { type Locality } from "@ou-ca/common/entities/locality";
-import { type Town } from "@ou-ca/common/entities/town";
 import { altitudeServiceStatusAtom } from "@services/altitude/altitude-service";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";

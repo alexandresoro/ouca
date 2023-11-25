@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { sexExtendedSchema, sexSchema } from "../entities/sex.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { sexExtendedSchema, sexSchema } from "./entities/sex.js";
 
 /**
  * `GET` `/sex/:id`

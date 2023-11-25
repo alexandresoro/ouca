@@ -1,5 +1,5 @@
-import { type Behavior } from "@ou-ca/common/entities/behavior";
-import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { type Behavior } from "@ou-ca/common/api/entities/behavior";
+import { type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, CalendarPlus, Comment, MaleSign, PieChartAlt2 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";

@@ -1,5 +1,5 @@
 import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
+import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { MagicWand } from "@styled-icons/boxicons-solid";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, useFormState, type UseFormReturn } from "react-hook-form";

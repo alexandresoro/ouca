@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Weather, type WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import {
   getWeatherResponse,
   getWeathersExtendedResponse,
@@ -7,7 +8,6 @@ import {
   upsertWeatherInput,
   upsertWeatherResponse,
 } from "@ou-ca/common/api/weather";
-import { type Weather, type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

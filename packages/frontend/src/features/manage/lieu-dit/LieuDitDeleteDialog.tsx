@@ -1,4 +1,4 @@
-import { type LocalityExtended } from "@ou-ca/common/entities/locality";
+import { type LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";

@@ -7,7 +7,7 @@ import {
   upsertAgeInput,
   upsertAgeResponse,
 } from "@ou-ca/common/api/age";
-import { type Age, type AgeSimple } from "@ou-ca/common/entities/age";
+import { type Age, type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { type FastifyPluginCallback } from "fastify";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";

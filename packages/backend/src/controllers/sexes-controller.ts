@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Sex, type SexExtended } from "@ou-ca/common/api/entities/sex";
 import {
   getSexResponse,
   getSexesExtendedResponse,
@@ -7,7 +8,6 @@ import {
   upsertSexInput,
   upsertSexResponse,
 } from "@ou-ca/common/api/sex";
-import { type Sex, type SexExtended } from "@ou-ca/common/entities/sex";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

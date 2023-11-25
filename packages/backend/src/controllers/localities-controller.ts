@@ -1,5 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Locality, type LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import {
   getLocalitiesExtendedResponse,
   getLocalitiesQueryParamsSchema,
@@ -8,7 +9,6 @@ import {
   upsertLocalityInput,
   upsertLocalityResponse,
 } from "@ou-ca/common/api/locality";
-import { type Locality, type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

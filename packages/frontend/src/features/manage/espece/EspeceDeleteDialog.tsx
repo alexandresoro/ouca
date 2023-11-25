@@ -1,4 +1,4 @@
-import { type SpeciesExtended } from "@ou-ca/common/entities/species";
+import { type SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";

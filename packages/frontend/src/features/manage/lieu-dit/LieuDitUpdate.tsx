@@ -1,6 +1,6 @@
+import { type Locality } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { getTownResponse } from "@ou-ca/common/api/town";
-import { type Locality } from "@ou-ca/common/entities/locality";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";

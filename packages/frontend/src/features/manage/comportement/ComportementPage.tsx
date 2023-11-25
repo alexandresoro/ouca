@@ -1,5 +1,5 @@
 import { upsertBehaviorResponse, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
-import { type Behavior, type BehaviorExtended } from "@ou-ca/common/entities/behavior";
+import { type Behavior, type BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

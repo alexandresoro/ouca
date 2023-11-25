@@ -1,7 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
-import { type Department } from "@ou-ca/common/entities/department";
+import { type Department } from "@ou-ca/common/api/entities/department";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";

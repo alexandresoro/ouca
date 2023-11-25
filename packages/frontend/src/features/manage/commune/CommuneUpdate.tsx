@@ -1,5 +1,5 @@
+import { type Town } from "@ou-ca/common/api/entities/town";
 import { type UpsertTownInput } from "@ou-ca/common/api/town";
-import { type Town } from "@ou-ca/common/entities/town";
 import { type FunctionComponent } from "react";
 import { type SubmitHandler } from "react-hook-form";
 import CommuneEdit from "./CommuneEdit";

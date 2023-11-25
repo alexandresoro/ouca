@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { weatherExtendedSchema, weatherSchema } from "../entities/weather.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { weatherExtendedSchema, weatherSchema } from "./entities/weather.js";
 
 /**
  * `GET` `/weather/:id`

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { townExtendedSchema, townSchema } from "../entities/town.js";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { townExtendedSchema, townSchema } from "./entities/town.js";
 
 /**
  * `GET` `/town/:id`

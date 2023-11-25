@@ -1,5 +1,5 @@
+import { type SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
-import { type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

@@ -1,5 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Weather } from "@ou-ca/common/entities/weather";
+import { type Weather } from "@ou-ca/common/api/entities/weather";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 

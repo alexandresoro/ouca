@@ -1,7 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Locality } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
-import { type Locality } from "@ou-ca/common/entities/locality";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { behaviorExtendedSchema, behaviorSchema } from "../entities/behavior.js";
 import { NICHEUR_CODES } from "../types/nicheur.model.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { behaviorExtendedSchema, behaviorSchema } from "./entities/behavior.js";
 
 /**
  * `GET` `/behavior/:id`

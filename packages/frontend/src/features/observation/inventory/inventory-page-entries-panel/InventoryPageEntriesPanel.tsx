@@ -1,5 +1,5 @@
+import { type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { type UpsertEntryInput, type getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
-import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
 import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Fragment, useState, type FunctionComponent } from "react";

@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type NumberEstimate, type NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import {
   getNumberEstimateResponse,
   getNumberEstimatesExtendedResponse,
@@ -7,7 +8,6 @@ import {
   upsertNumberEstimateInput,
   upsertNumberEstimateResponse,
 } from "@ou-ca/common/api/number-estimate";
-import { type NumberEstimate, type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

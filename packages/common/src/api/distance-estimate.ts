@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { distanceEstimateExtendedSchema, distanceEstimateSchema } from "../entities/distance-estimate.js";
 import { ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS, entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { distanceEstimateExtendedSchema, distanceEstimateSchema } from "./entities/distance-estimate.js";
 
 /**
  * `GET` `/distance-estimate/:id`

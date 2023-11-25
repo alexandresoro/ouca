@@ -1,7 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type DatabasePool } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";

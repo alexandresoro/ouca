@@ -1,12 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
+import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type EstimationDistanceCreateInput
+    type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";

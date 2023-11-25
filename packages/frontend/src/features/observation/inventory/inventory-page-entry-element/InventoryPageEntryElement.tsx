@@ -1,4 +1,4 @@
-import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
+import { type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { CalendarPlus, Detail, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

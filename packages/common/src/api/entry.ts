@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { entryExtendedSchema, entryNavigationSchema, entrySchema } from "../entities/entry.js";
 import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
 import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
+import { entryExtendedSchema, entryNavigationSchema, entrySchema } from "./entities/entry.js";
 
 /**
  * `GET` `/entry/:id`

@@ -1,5 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { Link } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";

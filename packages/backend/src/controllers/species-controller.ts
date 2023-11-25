@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Species, type SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import {
   getSpeciesExtendedResponse,
   getSpeciesPaginatedResponse,
@@ -7,7 +8,6 @@ import {
   upsertSpeciesInput,
   upsertSpeciesResponse,
 } from "@ou-ca/common/api/species";
-import { type Species, type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";

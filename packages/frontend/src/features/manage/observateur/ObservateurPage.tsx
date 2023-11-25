@@ -1,5 +1,5 @@
+import { type Observer, type ObserverExtended } from "@ou-ca/common/api/entities/observer";
 import { upsertObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { type Observer, type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,6 +1,6 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
+import { type DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

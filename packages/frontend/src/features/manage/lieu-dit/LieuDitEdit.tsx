@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
+import { type Department } from "@ou-ca/common/api/entities/department";
 import { upsertLocalityInput, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { getTownsResponse } from "@ou-ca/common/api/town";
-import { type Department } from "@ou-ca/common/entities/department";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";

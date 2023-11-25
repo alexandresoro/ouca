@@ -1,6 +1,6 @@
 import { Dialog } from "@headlessui/react";
+import { type InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventoryFormWithMap from "../inventory-form-with-map/InventoryFormWithMap";

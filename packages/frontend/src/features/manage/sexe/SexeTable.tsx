@@ -1,6 +1,6 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import { type SexExtended } from "@ou-ca/common/api/entities/sex";
 import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
-import { type SexExtended } from "@ou-ca/common/entities/sex";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

@@ -1,4 +1,4 @@
-import { type Inventory } from "@ou-ca/common/entities/inventory";
+import { type Inventory } from "@ou-ca/common/api/entities/inventory";
 
 export const getInventaireCoordinates = (
   inventaire: Inventory

@@ -1,6 +1,6 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import { type ObserverExtended } from "@ou-ca/common/api/entities/observer";
 import { getObserversExtendedResponse } from "@ou-ca/common/api/observer";
-import { type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

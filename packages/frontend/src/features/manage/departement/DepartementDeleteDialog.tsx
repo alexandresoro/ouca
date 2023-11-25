@@ -1,4 +1,4 @@
-import { type DepartmentExtended } from "@ou-ca/common/entities/department";
+import { type DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";

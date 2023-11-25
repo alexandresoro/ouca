@@ -1,6 +1,6 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Locality } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
-import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { enrichEntityWithEditableStatus } from "./entities-utils.js";
 

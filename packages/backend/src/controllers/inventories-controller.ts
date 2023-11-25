@@ -1,5 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import {
   getInventoriesQueryParamsSchema,
   getInventoriesResponse,
@@ -9,7 +10,6 @@ import {
   upsertInventoryInput,
   upsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
-import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Inventaire } from "../repositories/inventaire/inventaire-repository-types.js";

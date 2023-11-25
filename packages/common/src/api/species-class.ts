@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { speciesClassExtendedSchema, speciesClassSchema } from "../entities/species-class.js";
 import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
+import { speciesClassExtendedSchema, speciesClassSchema } from "./entities/species-class.js";
 
 /**
  * `GET` `/class/:id`
