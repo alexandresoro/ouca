@@ -1,5 +1,16 @@
 import { type z } from "zod";
 
+export class FetchError extends Error {
+  status: number;
+  statusText?: string;
+
+  constructor({ status, statusText }: { status: number; statusText?: string }) {
+    super(`Fetch error: ${status} ${statusText}`);
+    this.status = status;
+    this.statusText = statusText;
+  }
+}
+
 export const fetchApiResponse = async ({
   url,
   method,
@@ -24,10 +35,7 @@ export const fetchApiResponse = async ({
   });
 
   if (!response.ok) {
-    return Promise.reject({
-      status: response.status,
-      statusText: response.statusText,
-    } satisfies FetchError);
+    return Promise.reject(new FetchError({ status: response.status, statusText: response.statusText }));
   }
 
   return response;
@@ -57,7 +65,10 @@ const fetchApi = async <T = unknown>({
   }
 };
 
-export type FetchError = {
+/**
+ * @deprecated use FetchError class instead
+ */
+export type FetchErrorType = {
   status: number;
   statusText?: string;
 };

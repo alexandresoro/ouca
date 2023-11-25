@@ -1,6 +1,6 @@
 import { apiUrlAtom } from "@services/api/useApiUrl";
 import { useMutation, type MutationFunction, type UseMutationOptions } from "@tanstack/react-query";
-import { type FetchError } from "@utils/fetch-api";
+import { type FetchErrorType } from "@utils/fetch-api";
 import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
@@ -23,7 +23,7 @@ type MutationParams<R> = MutationParamsSchema<R> | MutationParamsResponseHandler
 
 type MutationVariables = { path?: string; body?: Record<string, unknown> };
 
-const useApiMutation = <TData, TVariables extends MutationVariables, TError extends FetchError = FetchError>(
+const useApiMutation = <TData, TVariables extends MutationVariables, TError extends FetchErrorType = FetchErrorType>(
   { path: pathFromOptions, method, responseHandler, schema }: MutationParams<TData>,
   mutationOptions?: Omit<UseMutationOptions<TData, TError, TVariables>, "mutationFn">
 ) => {
@@ -63,7 +63,7 @@ const useApiMutation = <TData, TVariables extends MutationVariables, TError exte
       return Promise.reject({
         status: response.status,
         statusText: response.statusText,
-      } satisfies FetchError);
+      } satisfies FetchErrorType);
     }
     const jsonResponse = (await response.json()) as TData;
     if (schema) {

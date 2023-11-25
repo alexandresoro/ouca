@@ -1,7 +1,7 @@
 import { type PaginatedResponseSchemaType } from "@ou-ca/common/api/common/pagination";
 import { apiUrlAtom } from "@services/api/useApiUrl";
 import { useInfiniteQuery, type QueryFunction, type UseInfiniteQueryOptions } from "@tanstack/react-query";
-import { type FetchError } from "@utils/fetch-api";
+import { type FetchErrorType } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
@@ -22,7 +22,7 @@ const getNextPage = (page: z.infer<PaginatedResponseSchemaType<z.ZodAny>>): numb
 const useApiInfiniteQuery = <
   S extends z.ZodAny,
   TQueryFnData extends z.infer<PaginatedResponseSchemaType<S>>,
-  TError extends FetchError = FetchError,
+  TError extends FetchErrorType = FetchErrorType,
   TData = TQueryFnData,
   TQueryKey extends unknown[] = unknown[]
 >(
@@ -70,7 +70,7 @@ const useApiInfiniteQuery = <
       return Promise.reject({
         status: response.status,
         statusText: response.statusText,
-      } satisfies FetchError);
+      } satisfies FetchErrorType);
     }
     const jsonResponse = (await response.json()) as unknown;
     return schema.parse(jsonResponse);

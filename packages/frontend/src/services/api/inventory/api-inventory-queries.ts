@@ -5,12 +5,12 @@ import {
   type UpsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
 import { type UseMutationOptions } from "@tanstack/react-query";
-import { type FetchError } from "@utils/fetch-api";
+import { type FetchErrorType } from "@utils/fetch-api";
 import { z } from "zod";
 
 export const useApiInventoryCreate = (
   mutationOptions?: Omit<
-    UseMutationOptions<UpsertInventoryResponse, FetchError, { body: UpsertInventoryInput }>,
+    UseMutationOptions<UpsertInventoryResponse, FetchErrorType, { body: UpsertInventoryInput }>,
     "mutationFn"
   >
 ) =>
@@ -25,7 +25,7 @@ export const useApiInventoryCreate = (
 
 export const useApiInventoryUpdate = (
   mutationOptions?: Omit<
-    UseMutationOptions<UpsertInventoryResponse, FetchError, { path?: string; body: UpsertInventoryInput }>,
+    UseMutationOptions<UpsertInventoryResponse, FetchErrorType, { path?: string; body: UpsertInventoryInput }>,
     "mutationFn"
   >
 ) => {
@@ -47,7 +47,7 @@ export const useApiInventoryUpdate = (
 };
 
 export const useApiInventoryDelete = (
-  mutationOptions?: Omit<UseMutationOptions<{ id: string }, FetchError, { path?: string }>, "mutationFn">
+  mutationOptions?: Omit<UseMutationOptions<{ id: string }, FetchErrorType, { path?: string }>, "mutationFn">
 ) => {
   const { mutate, ...restUseMutation } = useApiMutation(
     {

@@ -1,10 +1,13 @@
 import useApiMutation from "@hooks/api/useApiMutation";
 import { upsertEntryResponse, type UpsertEntryInput, type UpsertEntryResponse } from "@ou-ca/common/api/entry";
 import { type UseMutationOptions } from "@tanstack/react-query";
-import { type FetchError } from "@utils/fetch-api";
+import { type FetchErrorType } from "@utils/fetch-api";
 
 export const useApiEntryCreate = (
-  mutationOptions?: Omit<UseMutationOptions<UpsertEntryResponse, FetchError, { body: UpsertEntryInput }>, "mutationFn">
+  mutationOptions?: Omit<
+    UseMutationOptions<UpsertEntryResponse, FetchErrorType, { body: UpsertEntryInput }>,
+    "mutationFn"
+  >
 ) =>
   useApiMutation(
     {
@@ -17,7 +20,7 @@ export const useApiEntryCreate = (
 
 export const useApiEntryUpdate = (
   mutationOptions?: Omit<
-    UseMutationOptions<UpsertEntryResponse, FetchError, { path?: string; body: UpsertEntryInput }>,
+    UseMutationOptions<UpsertEntryResponse, FetchErrorType, { path?: string; body: UpsertEntryInput }>,
     "mutationFn"
   >
 ) => {
@@ -39,7 +42,7 @@ export const useApiEntryUpdate = (
 };
 
 export const useApiEntryDelete = (
-  mutationOptions?: Omit<UseMutationOptions<unknown, FetchError, { path?: string }>, "mutationFn">
+  mutationOptions?: Omit<UseMutationOptions<unknown, FetchErrorType, { path?: string }>, "mutationFn">
 ) => {
   const { mutate, ...restUseMutation } = useApiMutation(
     {
