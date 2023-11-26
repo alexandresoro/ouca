@@ -1,4 +1,4 @@
-import { deleteObserverResponse, getObserverResponse } from "@ou-ca/common/api/observer";
+import { deleteObserverResponse, getObserverResponse, upsertObserverResponse } from "@ou-ca/common/api/observer";
 import useApiMutation from "@services/api/useApiMutation";
 import useApiQuery from "@services/api/useApiQuery";
 import { type SWRMutationConfiguration } from "swr/mutation";
@@ -10,15 +10,31 @@ export const useApiObserverQuery = (id: string) => {
   });
 };
 
+export const useApiObserverCreate = (
+  swrOptions?: SWRMutationConfiguration<z.infer<typeof upsertObserverResponse>, unknown>
+) => {
+  return useApiMutation(
+    "/observers",
+    {
+      method: "POST",
+      schema: upsertObserverResponse,
+    },
+    {
+      revalidate: false,
+      ...swrOptions,
+    }
+  );
+};
+
 export const useApiObserverUpdate = (
   id: string | null,
-  swrOptions?: SWRMutationConfiguration<z.infer<typeof getObserverResponse>, unknown>
+  swrOptions?: SWRMutationConfiguration<z.infer<typeof upsertObserverResponse>, unknown>
 ) => {
   return useApiMutation(
     id ? `/observers/${id}` : null,
     {
       method: "PUT",
-      schema: getObserverResponse,
+      schema: upsertObserverResponse,
     },
     {
       revalidate: false,
