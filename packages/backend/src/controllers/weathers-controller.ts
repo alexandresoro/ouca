@@ -71,7 +71,7 @@ const weathersController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertWeatherInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertWeatherInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -97,7 +97,7 @@ const weathersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertWeatherInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertWeatherInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

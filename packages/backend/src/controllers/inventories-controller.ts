@@ -121,7 +121,7 @@ const inventoriesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertInventoryInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertInventoryInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send(parsedInputResult.error);
@@ -148,7 +148,7 @@ const inventoriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertInventoryInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertInventoryInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send(parsedInputResult.error);

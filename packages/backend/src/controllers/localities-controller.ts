@@ -100,7 +100,7 @@ const localitiesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertLocalityInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertLocalityInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -126,7 +126,7 @@ const localitiesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertLocalityInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertLocalityInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

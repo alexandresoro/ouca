@@ -73,7 +73,7 @@ const classesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertClassInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertClassInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -99,7 +99,7 @@ const classesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertClassInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertClassInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

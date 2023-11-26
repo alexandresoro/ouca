@@ -70,7 +70,7 @@ const agesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertAgeInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -96,7 +96,7 @@ const agesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertAgeInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

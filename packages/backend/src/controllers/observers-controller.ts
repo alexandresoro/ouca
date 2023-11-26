@@ -73,7 +73,7 @@ const observersController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertObserverInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertObserverInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -99,7 +99,7 @@ const observersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertObserverInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertObserverInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

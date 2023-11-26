@@ -64,7 +64,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertDistanceEstimateInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -90,7 +90,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertDistanceEstimateInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

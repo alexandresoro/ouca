@@ -74,7 +74,7 @@ const speciesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertSpeciesInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -100,7 +100,7 @@ const speciesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertSpeciesInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

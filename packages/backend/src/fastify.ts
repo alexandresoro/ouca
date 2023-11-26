@@ -66,6 +66,10 @@ export const buildServer = async (
 
   logger.debug("Fastify middlewares successfully registered");
 
+  // Remove default text/plain parser
+  // https://fastify.dev/docs/latest/Reference/ContentTypeParser/
+  server.removeContentTypeParser(["text/plain"]);
+
   // Static files server
   await server.register(fastifyStatic, {
     root: IMPORT_REPORTS_DIR_PATH.pathname,

@@ -25,6 +25,7 @@ export const fetchApiResponse = async ({
   const response = await fetch(url, {
     method,
     headers: {
+      ...(body !== undefined ? { "Content-Type": "application/json; charset=utf-8" } : {}),
       ...(token
         ? {
             Authorization: `Bearer ${token}`,

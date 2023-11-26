@@ -76,7 +76,7 @@ const townsController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertTownInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertTownInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -102,7 +102,7 @@ const townsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertTownInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertTownInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

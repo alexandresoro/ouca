@@ -125,7 +125,7 @@ const entriesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertEntryInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertEntryInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -152,7 +152,7 @@ const entriesController: FastifyPluginCallback<{
       id: string;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertEntryInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertEntryInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

@@ -74,7 +74,7 @@ const numberEstimatesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertNumberEstimateInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -100,7 +100,7 @@ const numberEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertNumberEstimateInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

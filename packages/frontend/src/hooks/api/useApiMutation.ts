@@ -46,6 +46,7 @@ const useApiMutation = <TData, TVariables extends MutationVariables, TError exte
     const response = await fetch(`${apiUrl}/api/v1${path}`, {
       method,
       headers: {
+        ...(body !== undefined ? { "Content-Type": "application/json; charset=utf-8" } : {}),
         ...(accessToken
           ? {
               Authorization: `Bearer ${accessToken}`,

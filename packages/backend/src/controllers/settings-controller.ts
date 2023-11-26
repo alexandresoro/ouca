@@ -18,7 +18,7 @@ const settingsController: FastifyPluginCallback<{
   });
 
   fastify.put("/", async (req, reply) => {
-    const parsedInputResult = putSettingsInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = putSettingsInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();

@@ -71,7 +71,7 @@ const sexesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertSexInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertSexInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -97,7 +97,7 @@ const sexesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertSexInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertSexInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
