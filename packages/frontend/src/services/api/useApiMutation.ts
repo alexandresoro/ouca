@@ -5,7 +5,7 @@ import { type z } from "zod";
 import { type ApiQueryKey } from "./useApiQuery";
 import useApiUrl from "./useApiUrl";
 
-type MutationVariables = { body?: Record<string, unknown> };
+type MutationVariables = { body?: Record<string, unknown> } | undefined;
 
 const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
   path: string | null,
@@ -28,7 +28,7 @@ const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
   return useSWRMutation<T, E, ApiQueryKey, TVariables>(
     queryUrl ? { url: queryUrl, token: accessToken } : null,
     async ({ token, url }, { arg: variables }) => {
-      const { body } = variables;
+      const { body } = variables ?? {};
 
       return await fetchApi({
         url,
