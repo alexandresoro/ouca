@@ -5,6 +5,11 @@ import useSWR, { type SWRConfiguration } from "swr";
 import { type z } from "zod";
 import useApiUrl from "./useApiUrl";
 
+export type ApiQueryKey = {
+  url: string;
+  token: string | undefined;
+} | null;
+
 type UseApiQueryParams<T = unknown> = {
   queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
   schema?: z.ZodType<T>;
@@ -25,7 +30,7 @@ const useApiQuery = <T = unknown, E = unknown>(
 
   const queryUrl = `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}`;
 
-  return useSWR(
+  return useSWR<T, E, ApiQueryKey>(
     !paused ? { url: queryUrl, token: accessToken } : null,
     ({ url, token }) => fetchApi({ url, token, schema }),
     swrOptions

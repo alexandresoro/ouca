@@ -1,41 +1,48 @@
 import fetchApi from "@utils/fetch-api";
 import { useAuth } from "react-oidc-context";
-import useSWRMutation, { type MutationFetcher, type SWRMutationConfiguration } from "swr/mutation";
+import useSWRMutation, { type SWRMutationConfiguration } from "swr/mutation";
 import { type z } from "zod";
+import { type ApiQueryKey } from "./useApiQuery";
 import useApiUrl from "./useApiUrl";
 
 type MutationVariables = { body?: Record<string, unknown> };
 
-const useApiMutation = <TData, TVariables extends MutationVariables, E = unknown>(
-  key: string,
+const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
+  path: string | null,
   {
     method,
     schema,
   }: {
     method: string;
-    schema?: z.ZodType<TData>;
+    schema?: z.ZodType<T>;
   },
-  swrOptions?: SWRMutationConfiguration<TData, E>
+  swrOptions?: Omit<SWRMutationConfiguration<T, E, ApiQueryKey>, "fetcher">
 ) => {
   const { user } = useAuth();
   const apiUrl = useApiUrl();
 
   const accessToken = user?.access_token;
 
-  const mutationFn: MutationFetcher<TData, string, TVariables> = async (key, { arg: variables }) => {
-    const { body } = variables;
+  const queryUrl = path ? `${apiUrl}${path}` : null;
 
-    return await fetchApi<TData>({
-      // TODO: allow to decouple SWR key from path
-      url: `${apiUrl}${key}`,
-      method,
-      body,
-      token: accessToken,
-      schema,
-    });
-  };
+  return useSWRMutation<T, E, ApiQueryKey, TVariables>(
+    queryUrl ? { url: queryUrl, token: accessToken } : null,
+    async ({ token, url }, { arg: variables }) => {
+      const { body } = variables;
 
-  return useSWRMutation(key, mutationFn, swrOptions);
+      return await fetchApi({
+        url,
+        method,
+        body,
+        token,
+        schema,
+      });
+    },
+    {
+      throwOnError: false, // Don't throw errors, let them be handled by the onError callback
+      ...swrOptions,
+    }
+  );
 };
 
 export default useApiMutation;
