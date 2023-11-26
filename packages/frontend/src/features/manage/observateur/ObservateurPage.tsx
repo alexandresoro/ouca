@@ -1,9 +1,14 @@
-import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
-import { upsertObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { type Observer } from "@ou-ca/common/api/entities/observer";
+import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import {
+  useApiObserverCreate,
+  useApiObserverDelete,
+  useApiObserverUpdate,
+} from "@services/api/observer/api-observer-queries";
 import { useQueryClient } from "@tanstack/react-query";
+import { FetchError } from "@utils/fetch-api";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
@@ -22,21 +27,19 @@ const ObservateurPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertObserverDialog, setUpsertObserverDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; observer: ObserverSimple }
+    null | { mode: "create" } | { mode: "update"; observer: Observer }
   >(null);
   const [observerToDelete, setObserverToDelete] = useState<Observer | null>(null);
 
-  const { mutate: createObserver } = useApiMutation(
+  const createObserver = useApiObserverCreate();
+
+  const { trigger: updateObserver2 } = useApiObserverUpdate(
+    upsertObserverDialog?.mode === "update" ? upsertObserverDialog.observer?.id : null,
     {
-      path: "/observers",
-      method: "POST",
-      schema: upsertObserverResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "observerTable"]);
-      },
       onSuccess: () => {
+        // Since an update can change the sort order, we need to invalidate the table
+        void queryClient.invalidateQueries(["API", "observerTable"]);
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -44,7 +47,10 @@ const ObservateurPage: FunctionComponent = () => {
         setUpsertObserverDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
+        // Since an update can change the sort order, we need to invalidate the table
+        void queryClient.invalidateQueries(["API", "observerTable"]);
+
+        if (e instanceof FetchError && e.status === 409) {
           displayNotification({
             type: "error",
             message: t("observerAlreadyExistingError"),
@@ -59,59 +65,25 @@ const ObservateurPage: FunctionComponent = () => {
     }
   );
 
-  const { mutate: updateObserver } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertObserverResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "observerTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertObserverDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("observerAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    }
-  );
+  const { trigger: deleteObserver } = useApiObserverDelete(observerToDelete?.id ?? null, {
+    onSuccess: () => {
+      void queryClient.invalidateQueries(["API", "observerTable"]);
 
-  const { mutate: deleteObserver } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "observerTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setObserverToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setObserverToDelete(null);
+    },
+    onError: () => {
+      void queryClient.invalidateQueries(["API", "observerTable"]);
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("observer") });
 
@@ -119,7 +91,7 @@ const ObservateurPage: FunctionComponent = () => {
     setUpsertObserverDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (observer: ObserverSimple) => {
+  const handleUpdateClick = (observer: Observer) => {
     setUpsertObserverDialog({ mode: "update", observer });
   };
 
@@ -128,15 +100,38 @@ const ObservateurPage: FunctionComponent = () => {
   };
 
   const handleCreateObserver = (input: UpsertObserverInput) => {
-    createObserver({ body: input });
+    createObserver({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertObserverDialog(null);
+      })
+      .catch((e) => {
+        if (e instanceof FetchError && e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("observerAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      })
+      .finally(() => {
+        void queryClient.invalidateQueries(["API", "observerTable"]);
+      });
   };
 
   const handleUpdateObserver = (id: string, input: UpsertObserverInput) => {
-    updateObserver({ path: `/observers/${id}`, body: input });
+    void updateObserver2({ body: input });
   };
 
-  const handleDeleteObserver = (observerToDelete: Observer) => {
-    deleteObserver({ path: `/observers/${observerToDelete.id}` });
+  const handleDeleteObserver = () => {
+    void deleteObserver();
   };
 
   return (

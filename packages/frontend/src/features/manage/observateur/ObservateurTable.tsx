@@ -1,6 +1,6 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { type Observer } from "@ou-ca/common/api/entities/observer";
-import { getObserversExtendedResponse } from "@ou-ca/common/api/observer";
+import { getObserversResponse } from "@ou-ca/common/api/observer";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -8,7 +8,7 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import ObserverTableRow from "./ObserverTableRow";
 
 type ObservateurTableProps = {
   onClickUpdateObserver: (observer: Observer) => void;
@@ -43,9 +43,8 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getObserversExtendedResponse,
+    schema: getObserversResponse,
   });
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
@@ -85,22 +84,14 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((observateur) => {
-                return (
-                  <tr className="hover:bg-base-200" key={observateur?.id}>
-                    <td>{observateur.libelle}</td>
-                    <td>{observateur.entriesCount}</td>
-                    <td align="right" className="pr-6">
-                      <TableCellActionButtons
-                        disabledEdit={!observateur.editable}
-                        disabledDelete={!observateur.editable || observateur.inventoriesCount > 0}
-                        onEditClicked={() => onClickUpdateObserver(observateur)}
-                        onDeleteClicked={() => onClickDeleteObserver(observateur)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((observateur) => (
+                <ObserverTableRow
+                  id={observateur.id}
+                  key={observateur.id}
+                  onEditClicked={onClickUpdateObserver}
+                  onDeleteClicked={onClickDeleteObserver}
+                />
+              ))}
             </Fragment>
           );
         })}
