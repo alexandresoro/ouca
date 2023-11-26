@@ -27,11 +27,6 @@ export type ObserversSearchParams = Omit<z.infer<typeof getObserversQueryParamsS
 export const getObserversResponse = getPaginatedResponseSchema(observerSimpleSchema);
 
 /**
- * @deprecated use `getObserversResponse` instead
- */
-export const getObserversExtendedResponse = getPaginatedResponseSchema(observerSchema);
-
-/**
  * `PUT` `/observer/:id` Update of observer entity
  * `POST` `/observer` Create new observer entity
  */

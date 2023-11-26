@@ -182,8 +182,6 @@ export const buildServices = async (): Promise<Services> => {
 
   const observateurService = buildObservateurService({
     observerRepository,
-    inventaireRepository,
-    donneeRepository,
   });
 
   const sexeService = buildSexeService({

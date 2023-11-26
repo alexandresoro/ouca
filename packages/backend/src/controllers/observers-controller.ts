@@ -1,9 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import {
   deleteObserverResponse,
   getObserverResponse,
-  getObserversExtendedResponse,
   getObserversQueryParamsSchema,
   getObserversResponse,
   upsertObserverInput,
@@ -43,28 +41,12 @@ const observersController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [observersData, count] = await Promise.all([
+    const [data, count] = await Promise.all([
       observateurService.findPaginatedObservateurs(req.user, queryParams),
       observateurService.getObservateursCount(req.user, queryParams.q),
     ]);
 
-    let data: ObserverSimple[] | Observer[] = observersData;
-    if (extended) {
-      data = await Promise.all(
-        observersData.map(async (observerData) => {
-          const inventoriesCount = await observateurService.getInventoriesCountByObserver(observerData.id, req.user);
-          const entriesCount = await observateurService.getDonneesCountByObservateur(observerData.id, req.user);
-          return {
-            ...observerData,
-            inventoriesCount,
-            entriesCount,
-          };
-        })
-      );
-    }
-
-    const responseParser = extended ? getObserversExtendedResponse : getObserversResponse;
-    const response = responseParser.parse({
+    const response = getObserversResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

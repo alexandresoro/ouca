@@ -5,46 +5,20 @@ import { type ObserverRepository } from "@interfaces/observer-repository-interfa
 import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { validateAuthorization } from "../authorization/authorization-utils.js";
 
 type ObservateurServiceDependencies = {
-  inventaireRepository: InventaireRepository;
   observerRepository: ObserverRepository;
-  donneeRepository: DonneeRepository;
 };
 
-export const buildObservateurService = ({
-  observerRepository,
-  inventaireRepository,
-  donneeRepository,
-}: ObservateurServiceDependencies) => {
+export const buildObservateurService = ({ observerRepository }: ObservateurServiceDependencies) => {
   const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer | null> => {
     validateAuthorization(loggedUser);
 
     const observer = await observerRepository.findObserverById(id);
     return enrichEntityWithEditableStatus(observer, loggedUser);
-  };
-
-  /**
-   * @deprecated
-   */
-  const getInventoriesCountByObserver = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
-
-    return inventaireRepository.getCountByObserver(parseInt(id));
-  };
-
-  /**
-   * @deprecated
-   */
-  const getDonneesCountByObservateur = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
-
-    return donneeRepository.getCountByObservateurId(parseInt(id));
   };
 
   const findObservateurOfInventaireId = async (
@@ -203,14 +177,6 @@ export const buildObservateurService = ({
 
   return {
     findObservateur,
-    /**
-     * @deprecated
-     */
-    getInventoriesCountByObserver,
-    /**
-     * @deprecated
-     */
-    getDonneesCountByObservateur,
     findObservateurOfInventaireId,
     findAssociesOfInventaireId,
     findAssociesIdsOfInventaireId,

@@ -56,40 +56,6 @@ describe("Find observer", () => {
   });
 });
 
-describe("Inventory count per entity", () => {
-  test("should request the correct parameters", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    await observateurService.getInventoriesCountByObserver("12", loggedUser);
-
-    expect(inventaireRepository.getCountByObserver).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.getCountByObserver).toHaveBeenLastCalledWith(12);
-  });
-
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.getInventoriesCountByObserver("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
-  });
-});
-
-describe("Data count per entity", () => {
-  test("should request the correct parameters", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    await observateurService.getDonneesCountByObservateur("12", loggedUser);
-
-    expect(donneeRepository.getCountByObservateurId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByObservateurId).toHaveBeenLastCalledWith(12);
-  });
-
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.getDonneesCountByObservateur("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
-  });
-});
-
 describe("Find observer by inventary ID", () => {
   test("should handle observer found", async () => {
     const observerData = observerFactory.build();
