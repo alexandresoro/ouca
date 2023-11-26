@@ -38,6 +38,9 @@ export const useApiObserverDelete = (
       method: "DELETE",
       schema: deleteObserverResponse,
     },
-    swrOptions
+    {
+      revalidate: false,
+      ...swrOptions,
+    }
   );
 };
