@@ -2,7 +2,8 @@
   "eslint.validate": ["typescript", "javascript"],
   "eslint.workingDirectories": [{ "pattern": "./packages/*/" }],
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": true,
+    "quickfix.biome": true
   },
   "typescript.tsdk": "packages/backend/node_modules/typescript/lib",
   "[typescript]": {
