@@ -48,6 +48,7 @@
     "fastify-plugin": "4.5.1",
     "ioredis": "5.3.2",
     "kysely": "0.26.3",
+    "neverthrow": "6.1.0",
     "pg": "8.11.3",
     "pino": "8.16.2",
     "pino-pretty": "10.2.3",

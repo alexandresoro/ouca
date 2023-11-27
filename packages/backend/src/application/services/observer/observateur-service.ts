@@ -1,10 +1,11 @@
 import { type AgeCreateInput } from "@domain/age/age.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type ObserverFailureReason } from "@domain/observer/observer.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
 import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { err, type Result } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { validateAuthorization } from "../authorization/authorization-utils.js";
@@ -94,52 +95,49 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return observerRepository.getCount(q);
   };
 
-  const createObservateur = async (input: UpsertObserverInput, loggedUser: LoggedUser | null): Promise<Observer> => {
-    validateAuthorization(loggedUser);
+  const createObservateur = async (
+    input: UpsertObserverInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<Observer, ObserverFailureReason>> => {
+    if (!loggedUser) {
+      return err("unauthorized");
+    }
 
     // Create a new observer
-    try {
-      const createdObservateur = await observerRepository.createObserver({
-        ...input,
-        ownerId: loggedUser?.id,
-      });
+    const createdObservateurResult = await observerRepository.createObserver({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
+    return createdObservateurResult.map((createdObservateur) => {
       return enrichEntityWithEditableStatus(createdObservateur, loggedUser);
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
+    });
   };
 
   const updateObservateur = async (
     id: number,
     input: UpsertObserverInput,
     loggedUser: LoggedUser | null
-  ): Promise<Observer> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Observer, ObserverFailureReason>> => {
+    if (!loggedUser) {
+      return err("unauthorized");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
       const existingData = await observerRepository.findObserverById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
-        throw new OucaError("OUCA0001");
+        return err("unauthorized");
       }
     }
 
     // Update an existing observer
-    try {
-      const updatedObservateur = await observerRepository.updateObserver(id, input);
+    const updatedObservateurResult = await observerRepository.updateObserver(id, input);
 
+    return updatedObservateurResult.map((updatedObservateur) => {
       return enrichEntityWithEditableStatus(updatedObservateur, loggedUser);
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
+    });
   };
 
   const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<ObserverSimple | null> => {

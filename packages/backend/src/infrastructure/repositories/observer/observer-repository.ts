@@ -6,15 +6,14 @@ import {
   type ObserverFindManyInput,
   type ObserverSimple,
 } from "@domain/observer/observer.js";
+import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql as sqlKysely } from "kysely";
+import { fromPromise, type Result } from "neverthrow";
 import { sql, type DatabasePool } from "slonik";
 import { z } from "zod";
-import {
-  buildPaginationFragment,
-  buildSortOrderFragment,
-  objectToKeyValueSet,
-} from "../../../repositories/repository-helpers.js";
+import { buildPaginationFragment, buildSortOrderFragment } from "../../../repositories/repository-helpers.js";
 import { countSchema } from "../common.js";
 
 export type ObservateurRepositoryDependencies = {
@@ -161,17 +160,18 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
     return slonik.oneFirst(query);
   };
 
-  const createObserver = async (observerInput: ObserverCreateInput): Promise<Observer> => {
-    const createdObserver = await kysely
-      .insertInto("basenaturaliste.observateur")
-      .values({
-        libelle: observerInput.libelle,
-        ownerId: observerInput.ownerId,
-      })
-      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
-      .executeTakeFirstOrThrow();
-
-    return observerSchema.parse({ ...createdObserver, inventoriesCount: 0, entriesCount: 0 });
+  const createObserver = async (observerInput: ObserverCreateInput): Promise<Result<Observer, EntityFailureReason>> => {
+    return fromPromise(
+      kysely
+        .insertInto("basenaturaliste.observateur")
+        .values({
+          libelle: observerInput.libelle,
+          ownerId: observerInput.ownerId,
+        })
+        .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+        .executeTakeFirstOrThrow(),
+      handleDatabaseError
+    ).map((createdObserver) => observerSchema.parse({ ...createdObserver, inventoriesCount: 0, entriesCount: 0 }));
   };
 
   const createObservers = async (observerInputs: ObserverCreateInput[]): Promise<ObserverSimple[]> => {
@@ -191,37 +191,48 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
     return z.array(observerSimpleSchema).nonempty().parse(createdObservers);
   };
 
-  const updateObserver = async (observateurId: number, observateurInput: ObserverCreateInput): Promise<Observer> => {
-    const query = sql.type(observerSimpleSchema)`
-      UPDATE
-        basenaturaliste.observateur
-      SET
-        ${objectToKeyValueSet(observateurInput)}
-      WHERE
-        id = ${observateurId}
-      RETURNING
-        observateur.id::text,
-        observateur.libelle,
-        observateur.owner_id
-    `;
+  const updateObserver = async (
+    observateurId: number,
+    observateurInput: ObserverCreateInput
+  ): Promise<Result<Observer, EntityFailureReason>> => {
+    return fromPromise(
+      kysely.transaction().execute(async (trx) => {
+        // Update observer
+        const updatedObserver = await trx
+          .updateTable("basenaturaliste.observateur")
+          .set({
+            libelle: observateurInput.libelle,
+            ownerId: observateurInput.ownerId,
+          })
+          .where("id", "=", observateurId)
+          .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+          .executeTakeFirstOrThrow();
 
-    const updatedObserver = await slonik.one(query);
+        // Compute counts
+        const { inventoriesCount, entriesCount } = await trx
+          .selectFrom("basenaturaliste.observateur")
+          .leftJoin(
+            "basenaturaliste.inventaire",
+            "basenaturaliste.inventaire.observateurId",
+            "basenaturaliste.observateur.id"
+          )
+          .leftJoin("basenaturaliste.donnee", "basenaturaliste.donnee.inventaireId", "basenaturaliste.inventaire.id")
+          .select((eb) => eb.fn.count("basenaturaliste.inventaire.id").distinct().as("inventoriesCount"))
+          .select((eb) => eb.fn.count("basenaturaliste.donnee.id").distinct().as("entriesCount"))
+          .where("basenaturaliste.observateur.id", "=", observateurId)
+          .groupBy("basenaturaliste.observateur.id")
+          .executeTakeFirstOrThrow();
 
-    const { inventoriesCount, entriesCount } = await kysely
-      .selectFrom("basenaturaliste.observateur")
-      .leftJoin(
-        "basenaturaliste.inventaire",
-        "basenaturaliste.inventaire.observateurId",
-        "basenaturaliste.observateur.id"
-      )
-      .leftJoin("basenaturaliste.donnee", "basenaturaliste.donnee.inventaireId", "basenaturaliste.inventaire.id")
-      .select((eb) => eb.fn.count("basenaturaliste.inventaire.id").distinct().as("inventoriesCount"))
-      .select((eb) => eb.fn.count("basenaturaliste.donnee.id").distinct().as("entriesCount"))
-      .where("basenaturaliste.observateur.id", "=", parseInt(updatedObserver.id))
-      .groupBy("basenaturaliste.observateur.id")
-      .executeTakeFirstOrThrow();
-
-    return observerSchema.parse({ ...updatedObserver, inventoriesCount, entriesCount });
+        return {
+          ...updatedObserver,
+          inventoriesCount,
+          entriesCount,
+        };
+      }),
+      handleDatabaseError
+    ).map((updatedObserver) => {
+      return observerSchema.parse(updatedObserver);
+    });
   };
 
   const deleteObserverById = async (observerId: number): Promise<ObserverSimple | null> => {

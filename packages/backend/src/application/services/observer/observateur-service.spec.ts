@@ -4,28 +4,16 @@ import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js
 import { upsertObserverInputFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
 import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
 import { type ObserversSearchParams } from "@ou-ca/common/api/observer";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
+import { err, ok } from "neverthrow";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildObservateurService } from "./observateur-service.js";
 
 const observerRepository = mockVi<ObserverRepository>();
-const inventaireRepository = mockVi<InventaireRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
 
 const observateurService = buildObservateurService({
   observerRepository,
-  inventaireRepository,
-  donneeRepository,
 });
-
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(new Error("errorMessage"));
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
 
 describe("Find observer", () => {
   test("should handle a matching observer", async () => {
@@ -181,6 +169,8 @@ describe("Update of an observer", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    observerRepository.updateObserver.mockResolvedValueOnce(ok(observerFactory.build()));
+
     await observateurService.updateObservateur(12, observerData, loggedUser);
 
     expect(observerRepository.updateObserver).toHaveBeenCalledTimes(1);
@@ -197,6 +187,7 @@ describe("Update of an observer", () => {
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     observerRepository.findObserverById.mockResolvedValueOnce(existingData);
+    observerRepository.updateObserver.mockResolvedValueOnce(ok(observerFactory.build()));
 
     await observateurService.updateObservateur(12, observerData, loggedUser);
 
@@ -204,7 +195,7 @@ describe("Update of an observer", () => {
     expect(observerRepository.updateObserver).toHaveBeenLastCalledWith(12, observerData);
   });
 
-  test("should throw an error when requested by an use that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an use that is nor owner nor admin", async () => {
     const existingData = observerFactory.build({
       ownerId: "notAdmin",
     });
@@ -218,34 +209,32 @@ describe("Update of an observer", () => {
 
     observerRepository.findObserverById.mockResolvedValueOnce(existingData);
 
-    await expect(observateurService.updateObservateur(12, observerData, user)).rejects.toThrowError(
-      new OucaError("OUCA0001")
-    );
+    const updateResult = await observateurService.updateObservateur(12, observerData, user);
 
+    expect(updateResult).toEqual(err("unauthorized"));
     expect(observerRepository.updateObserver).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to an observer that exists", async () => {
+  test("should not be allowed when trying to update to an observer that exists", async () => {
     const observerData = upsertObserverInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    observerRepository.updateObserver.mockImplementation(uniqueConstraintFailed);
+    observerRepository.updateObserver.mockResolvedValueOnce(err("alreadyExists"));
 
-    await expect(() => observateurService.updateObservateur(12, observerData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
-    );
+    const updateResult = await observateurService.updateObservateur(12, observerData, loggedUser);
 
+    expect(updateResult).toEqual(err("alreadyExists"));
     expect(observerRepository.updateObserver).toHaveBeenCalledTimes(1);
     expect(observerRepository.updateObserver).toHaveBeenLastCalledWith(12, observerData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    await expect(observateurService.updateObservateur(12, observerData, null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    const updateResult = await observateurService.updateObservateur(12, observerData, null);
+
+    expect(updateResult).toEqual(err("unauthorized"));
     expect(observerRepository.updateObserver).not.toHaveBeenCalled();
   });
 });
@@ -256,6 +245,8 @@ describe("Creation of an observer", () => {
 
     const loggedUser = loggedUserFactory.build();
 
+    observerRepository.createObserver.mockResolvedValueOnce(ok(observerFactory.build()));
+
     await observateurService.createObservateur(observerData, loggedUser);
 
     expect(observerRepository.createObserver).toHaveBeenCalledTimes(1);
@@ -265,17 +256,16 @@ describe("Creation of an observer", () => {
     });
   });
 
-  test("should throw an error when trying to create an observer that already exists", async () => {
+  test("should not be allowed when trying to create an observer that already exists", async () => {
     const observerData = upsertObserverInputFactory.build();
 
     const loggedUser = loggedUserFactory.build();
 
-    observerRepository.createObserver.mockImplementation(uniqueConstraintFailed);
+    observerRepository.createObserver.mockResolvedValueOnce(err("alreadyExists"));
 
-    await expect(() => observateurService.createObservateur(observerData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
-    );
+    const createResult = await observateurService.createObservateur(observerData, loggedUser);
 
+    expect(createResult).toEqual(err("alreadyExists"));
     expect(observerRepository.createObserver).toHaveBeenCalledTimes(1);
     expect(observerRepository.createObserver).toHaveBeenLastCalledWith({
       ...observerData,
@@ -283,10 +273,12 @@ describe("Creation of an observer", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    await expect(observateurService.createObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const createResult = await observateurService.createObservateur(observerData, null);
+
+    expect(createResult).toEqual(err("unauthorized"));
     expect(observerRepository.createObserver).not.toHaveBeenCalled();
   });
 });

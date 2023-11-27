@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   deleteObserverResponse,
   getObserverResponse,
@@ -9,6 +8,7 @@ import {
 } from "@ou-ca/common/api/observer";
 import { type FastifyPluginCallback } from "fastify";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const observersController: FastifyPluginCallback<{
@@ -63,16 +63,21 @@ const observersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const observer = await observateurService.createObservateur(input, req.user);
-      const response = upsertObserverResponse.parse(observer);
+    const observerCreateResult = await observateurService.createObservateur(input, req.user);
 
+    if (observerCreateResult.isOk()) {
+      const response = upsertObserverResponse.parse(observerCreateResult.value);
       return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
+    }
+
+    switch (observerCreateResult.error) {
+      case "unauthorized":
+        return await reply.status(401).send();
+      case "alreadyExists":
         return await reply.status(409).send();
-      }
-      throw e;
+      default:
+        logger.error({ error: observerCreateResult.error }, "Unexpected error");
+        return await reply.status(500).send();
     }
   });
 
@@ -89,16 +94,21 @@ const observersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const observer = await observateurService.updateObservateur(req.params.id, input, req.user);
-      const response = upsertObserverResponse.parse(observer);
+    const observerUpdateResult = await observateurService.updateObservateur(req.params.id, input, req.user);
 
+    if (observerUpdateResult.isOk()) {
+      const response = upsertObserverResponse.parse(observerUpdateResult.value);
       return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
+    }
+
+    switch (observerUpdateResult.error) {
+      case "unauthorized":
+        return await reply.status(401).send();
+      case "alreadyExists":
         return await reply.status(409).send();
-      }
-      throw e;
+      default:
+        logger.error({ error: observerUpdateResult.error }, "Unexpected error");
+        return await reply.status(500).send();
     }
   });
 

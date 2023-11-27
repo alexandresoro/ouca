@@ -1,5 +1,8 @@
-import { type SortOrder } from "@domain/shared/sort-order.js";
 import { z } from "zod";
+import { type CommonFailureReason } from "../shared/failure-reason.js";
+import { type SortOrder } from "../shared/sort-order.js";
+
+export type ObserverFailureReason = CommonFailureReason;
 
 export const observerSchema = z.object({
   id: z.coerce.string(),

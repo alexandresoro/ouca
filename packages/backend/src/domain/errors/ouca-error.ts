@@ -10,6 +10,9 @@ type SubError =
       readonly cause?: Error;
     };
 
+/**
+ * @deprecated use operation/result pattern instead
+ */
 export class OucaError extends Error {
   subError?: SubError;
 
