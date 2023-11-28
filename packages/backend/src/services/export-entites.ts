@@ -8,7 +8,7 @@ import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper"
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
-import { type ObservateurService } from "../application/services/observer/observateur-service.js";
+import { type ObservateurService } from "../application/services/observer/observer-service.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type ClasseService } from "./entities/classe-service.js";
@@ -174,11 +174,15 @@ export const generateDonneesExport = async (
         return Promise.reject("Should not happen");
       }
 
-      const observateur = await observateurService.findObservateurOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const observateur = (
+        await observateurService.findObservateurOfInventaireId(parseInt(inventaire.id), loggedUser)
+      )._unsafeUnwrap();
       const lieudit = await lieuditService.findLieuDitOfInventaireId(parseInt(inventaire.id), loggedUser);
       const commune = await communeService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
       const departement = await departementService.findDepartementOfCommuneId(commune?.id, loggedUser);
-      const associes = await observateurService.findAssociesOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const associes = (
+        await observateurService.findAssociesOfInventaireId(parseInt(inventaire.id), loggedUser)
+      )._unsafeUnwrap();
       const meteos = await meteoService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
       const espece = await especeService.findEspeceOfDonneeId(donnee?.id, loggedUser);
       const classe = await classeService.findClasseOfEspeceId(espece?.id, loggedUser);

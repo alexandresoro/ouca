@@ -8,7 +8,7 @@ import { type SexeService } from "../../../services/entities/sexe-service.js";
 import { logger } from "../../../utils/logger.js";
 import { type AgeService } from "../age/age-service.js";
 import { validateAuthorization } from "../authorization/authorization-utils.js";
-import { type ObservateurService } from "../observer/observateur-service.js";
+import { type ObservateurService } from "../observer/observer-service.js";
 
 type SettingsServiceDependencies = {
   settingsRepository: SettingsRepository;
@@ -49,7 +49,7 @@ export const buildSettingsService = ({
         ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
-        ? observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser)
+        ? (await observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultSexeId != null ? sexeService.findSexe(parseInt(defaultSexeId), loggedUser) : Promise.resolve(null),
       defaultAgeId != null ? ageService.findAge(parseInt(defaultAgeId), loggedUser) : Promise.resolve(null),
@@ -100,7 +100,7 @@ export const buildSettingsService = ({
         ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
-        ? observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser)
+        ? (await observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultSexeId != null ? sexeService.findSexe(parseInt(defaultSexeId), loggedUser) : Promise.resolve(null),
       defaultAgeId != null ? ageService.findAge(parseInt(defaultAgeId), loggedUser) : Promise.resolve(null),

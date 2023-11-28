@@ -1,14 +1,16 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { observerServiceFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
+import { ok } from "neverthrow";
 import { type DepartementService } from "../../../services/entities/departement-service.js";
 import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
 import { type SexeService } from "../../../services/entities/sexe-service.js";
 import { mockVi } from "../../../utils/mock.js";
 import { type AgeService } from "../age/age-service.js";
-import { type ObservateurService } from "../observer/observateur-service.js";
+import { type ObservateurService } from "../observer/observer-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mockVi<SettingsRepository>();
@@ -36,6 +38,7 @@ describe("Fetch app configuration for user", () => {
       defaultObservateurId: "13",
     });
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
+    observateurService.findObservateur.mockResolvedValueOnce(ok(observerServiceFactory.build()));
 
     await settingsService.getSettings(loggedUser);
 
@@ -91,6 +94,7 @@ test("should update settings with parameters for user", async () => {
     defaultObservateurId: "5",
   });
   settingsRepository.updateUserSettings.mockResolvedValueOnce(mockResolved);
+  observateurService.findObservateur.mockResolvedValueOnce(ok(observerServiceFactory.build()));
 
   await settingsService.updateUserSettings(updatedAppConfiguration, loggedUser);
 

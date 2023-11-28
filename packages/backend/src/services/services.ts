@@ -5,10 +5,7 @@ import { buildSettingsRepository } from "@infrastructure/repositories/settings/s
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
-import {
-  buildObservateurService,
-  type ObservateurService,
-} from "../application/services/observer/observateur-service.js";
+import { buildObservateurService, type ObservateurService } from "../application/services/observer/observer-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildAgeRepository } from "../infrastructure/repositories/age/age-repository.js";

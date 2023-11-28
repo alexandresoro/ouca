@@ -1,35 +1,41 @@
 import { type AgeCreateInput } from "@domain/age/age.js";
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { type ObserverFailureReason } from "@domain/observer/observer.js";
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
 import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { err, type Result } from "neverthrow";
+import { err, ok, type Result } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
-import { validateAuthorization } from "../authorization/authorization-utils.js";
 
 type ObservateurServiceDependencies = {
   observerRepository: ObserverRepository;
 };
 
 export const buildObservateurService = ({ observerRepository }: ObservateurServiceDependencies) => {
-  const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer | null> => {
-    validateAuthorization(loggedUser);
+  const findObservateur = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<Observer | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const observer = await observerRepository.findObserverById(id);
-    return enrichEntityWithEditableStatus(observer, loggedUser);
+    return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
   const findObservateurOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<ObserverSimple | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const observer = await observerRepository.findObserverByInventoryId(inventaireId);
-    return enrichEntityWithEditableStatus(observer, loggedUser);
+    return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
   const findAssociesIdsOfInventaireId = async (inventaireId: number): Promise<string[]> => {
@@ -43,8 +49,10 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
   const findAssociesOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<ObserverSimple[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const associes = await observerRepository.findAssociatesOfInventoryId(inventaireId);
 
@@ -52,7 +60,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
       return enrichEntityWithEditableStatus(associate, loggedUser);
     });
 
-    return [...enrichedAssociates];
+    return ok([...enrichedAssociates]);
   };
 
   const findAllObservateurs = async (): Promise<ObserverSimple[]> => {
@@ -70,8 +78,10 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
   const findPaginatedObservateurs = async (
     loggedUser: LoggedUser | null,
     options: ObserversSearchParams
-  ): Promise<ObserverSimple[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -86,13 +96,18 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
       return enrichEntityWithEditableStatus(observer, loggedUser);
     });
 
-    return [...enrichedObservers];
+    return ok([...enrichedObservers]);
   };
 
-  const getObservateursCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getObservateursCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return observerRepository.getCount(q);
+    return ok(await observerRepository.getCount(q));
   };
 
   const createObservateur = async (
@@ -140,20 +155,25 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     });
   };
 
-  const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<ObserverSimple | null> => {
-    validateAuthorization(loggedUser);
+  const deleteObservateur = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
       const existingData = await observerRepository.findObserverById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedObserver = await observerRepository.deleteObserverById(id);
-    return deletedObserver ? enrichEntityWithEditableStatus(deletedObserver, loggedUser) : null;
+    return ok(deletedObserver ? enrichEntityWithEditableStatus(deletedObserver, loggedUser) : null);
   };
 
   const createObservateurs = async (

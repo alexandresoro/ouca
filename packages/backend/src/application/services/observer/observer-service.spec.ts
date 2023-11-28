@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { observerCreateInputFactory, observerFactory } from "@fixtures/domain/observer/observer.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertObserverInputFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
@@ -7,7 +6,7 @@ import { type ObserversSearchParams } from "@ou-ca/common/api/observer";
 import { err, ok } from "neverthrow";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildObservateurService } from "./observateur-service.js";
+import { buildObservateurService } from "./observer-service.js";
 
 const observerRepository = mockVi<ObserverRepository>();
 
@@ -32,14 +31,16 @@ describe("Find observer", () => {
     observerRepository.findObserverById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(observateurService.findObservateur(10, loggedUser)).resolves.toBe(null);
+    await expect(observateurService.findObservateur(10, loggedUser)).resolves.toEqual(ok(null));
 
     expect(observerRepository.findObserverById).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObserverById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
-    await expect(observateurService.findObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the no login details are provided", async () => {
+    const findResult = await observateurService.findObservateur(11, null);
+
+    expect(findResult).toEqual(err("notAllowed"));
     expect(observerRepository.findObserverById).not.toHaveBeenCalled();
   });
 });
@@ -51,34 +52,40 @@ describe("Find observer by inventary ID", () => {
 
     observerRepository.findObserverByInventoryId.mockResolvedValueOnce(observerData);
 
-    const observer = await observateurService.findObservateurOfInventaireId(43, loggedUser);
+    const observerResult = await observateurService.findObservateurOfInventaireId(43, loggedUser);
 
     expect(observerRepository.findObserverByInventoryId).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObserverByInventoryId).toHaveBeenLastCalledWith(43);
-    expect(observer?.id).toEqual(observerData.id);
+    expect(observerResult.isOk()).toBeTruthy();
+    expect(observerResult._unsafeUnwrap()?.id).toEqual(observerData.id);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.findObservateurOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const findResult = await observateurService.findObservateurOfInventaireId(12, null);
+
+    expect(findResult).toEqual(err("notAllowed"));
   });
 });
 
-describe("Find associates by inventary ID", () => {
+describe("Find associates by inventory ID", () => {
   test("should handle observer found", async () => {
     const associatesData = observerFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     observerRepository.findAssociatesOfInventoryId.mockResolvedValueOnce(associatesData);
 
-    const associates = await observateurService.findAssociesOfInventaireId(43, loggedUser);
+    const associatesResult = await observateurService.findAssociesOfInventaireId(43, loggedUser);
 
     expect(observerRepository.findAssociatesOfInventoryId).toHaveBeenCalledTimes(1);
     expect(observerRepository.findAssociatesOfInventoryId).toHaveBeenLastCalledWith(43);
-    expect(associates.length).toEqual(associatesData.length);
+    expect(associatesResult.isOk()).toBeTruthy();
+    expect(associatesResult._unsafeUnwrap().length).toEqual(3);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.findAssociesOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const findResult = await observateurService.findAssociesOfInventaireId(12, null);
+
+    expect(findResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -134,8 +141,9 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.findPaginatedObservateurs(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const entitiesPaginatedResult = await observateurService.findPaginatedObservateurs(null, {});
+    expect(entitiesPaginatedResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -158,8 +166,9 @@ describe("Entities count by search criteria", () => {
     expect(observerRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.getObservateursCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const entitiesCountResult = await observateurService.getObservateursCount(null);
+    expect(entitiesCountResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -314,13 +323,16 @@ describe("Deletion of an observer", () => {
       id: "12",
     });
 
-    await expect(observateurService.deleteObservateur(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    const deleteResult = await observateurService.deleteObservateur(11, loggedUser);
 
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(observerRepository.deleteObserverById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.deleteObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const deleteResult = await observateurService.deleteObservateur(11, null);
+
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(observerRepository.deleteObserverById).not.toHaveBeenCalled();
   });
 });
