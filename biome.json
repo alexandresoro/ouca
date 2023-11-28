@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.2.2/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.4.0/schema.json",
   "organizeImports": {
     "enabled": false
   },
@@ -29,7 +29,12 @@
       "trailingComma": "es5"
     }
   },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
-    "ignore": ["dist", "coverage", "generated", "**/package.json", "pnpm-*.yaml"]
+    "ignore": ["pnpm-*.yaml"]
   }
 }
