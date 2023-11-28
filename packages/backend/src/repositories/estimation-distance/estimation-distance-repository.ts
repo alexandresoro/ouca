@@ -5,13 +5,13 @@ import {
   buildSortOrderFragment,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-  objectsToKeyValueInsert
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   estimationDistanceSchema,
   type EstimationDistance,
   type EstimationDistanceCreateInput,
-  type EstimationDistanceFindManyInput
+  type EstimationDistanceFindManyInput,
 } from "./estimation-distance-repository-types.js";
 
 export type EstimationDistanceRepositoryDependencies = {
@@ -87,9 +87,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
       ${
         !isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}` : sql.fragment``
       }${buildSortOrderFragment({
-      orderBy,
-      sortOrder,
-    })}
+        orderBy,
+        sortOrder,
+      })}
       ${buildPaginationFragment({ offset, limit })}
     `;
 

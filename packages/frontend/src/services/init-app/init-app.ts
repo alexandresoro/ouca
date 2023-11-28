@@ -33,7 +33,7 @@ export const initApp = async () => {
     return {
       sentryRouter,
     };
-  } else {
-    return {};
   }
+
+  return {};
 };

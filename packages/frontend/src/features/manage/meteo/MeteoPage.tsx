@@ -152,8 +152,8 @@ const MeteoPage: FunctionComponent = () => {
           upsertWeatherDialog?.mode === "create"
             ? t("weatherCreationTitle")
             : upsertWeatherDialog?.mode === "update"
-            ? t("weatherEditionTitle")
-            : undefined
+              ? t("weatherEditionTitle")
+              : undefined
         }
       >
         {upsertWeatherDialog?.mode === "create" && (

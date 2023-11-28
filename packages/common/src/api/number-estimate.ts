@@ -19,7 +19,7 @@ export type GetNumberEstimateResponse = z.infer<typeof getNumberEstimateResponse
  *  Retrieve paginated number estimates results
  */
 export const NUMBER_ESTIMATES_ORDER_BY_ELEMENTS = [...ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS, "nonCompte"] as const;
-export type NumberEstimatesOrderBy = typeof NUMBER_ESTIMATES_ORDER_BY_ELEMENTS[number];
+export type NumberEstimatesOrderBy = (typeof NUMBER_ESTIMATES_ORDER_BY_ELEMENTS)[number];
 
 export const getNumberEstimatesQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(NUMBER_ESTIMATES_ORDER_BY_ELEMENTS).optional(),

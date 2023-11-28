@@ -152,8 +152,8 @@ const CommunePage: FunctionComponent = () => {
           upsertTownDialog?.mode === "create"
             ? t("townCreationTitle")
             : upsertTownDialog?.mode === "update"
-            ? t("townEditionTitle")
-            : undefined
+              ? t("townEditionTitle")
+              : undefined
         }
       >
         {upsertTownDialog?.mode === "create" && (

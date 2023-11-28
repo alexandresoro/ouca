@@ -121,6 +121,7 @@ export const buildInventaireService = ({
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
       return existingInventaire;
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventaire we wish to create does not have an equivalent existing one
       // In that case, we proceed as a classic create
@@ -215,6 +216,7 @@ export const buildInventaireService = ({
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
       return existingInventaire;
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventaire we wish to update does not have an equivalent existing one
       // In that case, we proceed as a classic update

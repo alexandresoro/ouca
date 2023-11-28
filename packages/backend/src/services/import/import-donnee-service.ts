@@ -170,6 +170,7 @@ export class ImportDonneeService extends ImportService {
     if (!estimationNombre.nonCompte && !nombre) {
       // If "Estimation du nombre" is of type "Compté" then "Nombre" should not be empty
       return `Le nombre ne doit pas être vide quand l'estimation du nombre est de type Compté`;
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else if (!!estimationNombre.nonCompte && !!nombre) {
       // If "Estimation du nombre" is of type "Non-compté" then "Nombre" should be empty
       return `L'estimation du nombre ${estimationNombre.libelle} est de type Non-compté donc le nombre devrait être vide`;

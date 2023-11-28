@@ -19,7 +19,7 @@ export type GetEnvironmentResponse = z.infer<typeof getEnvironmentResponse>;
  *  Retrieve paginated environments results
  */
 export const ENVIRONMENTS_ORDER_BY_ELEMENTS = [...ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS, "code"] as const;
-export type EnvironmentsOrderBy = typeof ENVIRONMENTS_ORDER_BY_ELEMENTS[number];
+export type EnvironmentsOrderBy = (typeof ENVIRONMENTS_ORDER_BY_ELEMENTS)[number];
 
 export const getEnvironmentsQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(ENVIRONMENTS_ORDER_BY_ELEMENTS).optional(),

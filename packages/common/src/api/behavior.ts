@@ -20,7 +20,7 @@ export type GetBehaviorResponse = z.infer<typeof getBehaviorResponse>;
  *  Retrieve paginated behaviors results
  */
 export const BEHAVIORS_ORDER_BY_ELEMENTS = [...ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS, "code", "nicheur"] as const;
-export type BehaviorsOrderBy = typeof BEHAVIORS_ORDER_BY_ELEMENTS[number];
+export type BehaviorsOrderBy = (typeof BEHAVIORS_ORDER_BY_ELEMENTS)[number];
 
 export const getBehaviorsQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(BEHAVIORS_ORDER_BY_ELEMENTS).optional(),

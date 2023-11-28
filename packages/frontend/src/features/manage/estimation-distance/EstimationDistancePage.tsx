@@ -21,9 +21,9 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const [upsertDistanceEstimateDialog, setUpsertDistanceEstimateDialog] = useState<null | { mode: "create" } | { mode: "update"; distanceEstimate: DistanceEstimate }>(
-    null
-  );
+  const [upsertDistanceEstimateDialog, setUpsertDistanceEstimateDialog] = useState<
+    null | { mode: "create" } | { mode: "update"; distanceEstimate: DistanceEstimate }
+  >(null);
   const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimateExtended | null>(null);
 
   const { mutate: createDistanceEstimate } = useApiMutation(
@@ -32,7 +32,7 @@ const EstimationDistancePage: FunctionComponent = () => {
       method: "POST",
       schema: upsertDistanceEstimateResponse,
     },
-    {      
+    {
       onSettled: async () => {
         await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
       },
@@ -64,7 +64,7 @@ const EstimationDistancePage: FunctionComponent = () => {
       method: "PUT",
       schema: upsertDistanceEstimateResponse,
     },
-    {      
+    {
       onSettled: async () => {
         await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
       },
@@ -102,7 +102,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
-        setDistanceEstimateToDelete(null)
+        setDistanceEstimateToDelete(null);
       },
       onError: () => {
         displayNotification({
@@ -141,9 +141,16 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("distancePrecisions")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("distancePrecisions")}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
-        <EstimationDistanceTable onClickUpdateDistanceEstimate={handleUpdateClick} onClickDeleteDistanceEstimate={setDistanceEstimateToDelete} />
+        <EstimationDistanceTable
+          onClickUpdateDistanceEstimate={handleUpdateClick}
+          onClickDeleteDistanceEstimate={setDistanceEstimateToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertDistanceEstimateDialog != null}
@@ -152,15 +159,22 @@ const EstimationDistancePage: FunctionComponent = () => {
           upsertDistanceEstimateDialog?.mode === "create"
             ? t("distancePrecisionCreationTitle")
             : upsertDistanceEstimateDialog?.mode === "update"
-            ? t("distancePrecisionEditionTitle")
-            : undefined
+              ? t("distancePrecisionEditionTitle")
+              : undefined
         }
       >
         {upsertDistanceEstimateDialog?.mode === "create" && (
-          <EstimationDistanceCreate onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleCreateDistanceEstimate} />
+          <EstimationDistanceCreate
+            onCancel={() => setUpsertDistanceEstimateDialog(null)}
+            onSubmit={handleCreateDistanceEstimate}
+          />
         )}
         {upsertDistanceEstimateDialog?.mode === "update" && (
-          <EstimationDistanceUpdate distanceEstimate={upsertDistanceEstimateDialog.distanceEstimate} onCancel={() => setUpsertDistanceEstimateDialog(null)} onSubmit={handleUpdateDistanceEstimate} />
+          <EstimationDistanceUpdate
+            distanceEstimate={upsertDistanceEstimateDialog.distanceEstimate}
+            onCancel={() => setUpsertDistanceEstimateDialog(null)}
+            onSubmit={handleUpdateDistanceEstimate}
+          />
         )}
       </EntityUpsertDialog>
       <EstimationDistanceDeleteDialog

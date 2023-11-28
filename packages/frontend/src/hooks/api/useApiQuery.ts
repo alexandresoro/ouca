@@ -10,7 +10,7 @@ const useApiQuery = <
   TQueryFnData = unknown,
   TError extends FetchErrorType = FetchErrorType,
   TData = TQueryFnData,
-  TQueryKey extends unknown[] = unknown[]
+  TQueryKey extends unknown[] = unknown[],
 >(
   {
     queryKeyPrefix,
@@ -59,6 +59,7 @@ const useApiQuery = <
     if (schema) {
       // If response schema is provided, use it
       return schema.parse(jsonResponse);
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       return jsonResponse;
     }

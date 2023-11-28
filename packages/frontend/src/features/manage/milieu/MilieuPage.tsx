@@ -152,8 +152,8 @@ const MilieuPage: FunctionComponent = () => {
           upsertEnvironmentDialog?.mode === "create"
             ? t("environmentCreationTitle")
             : upsertEnvironmentDialog?.mode === "update"
-            ? t("environmentEditionTitle")
-            : undefined
+              ? t("environmentEditionTitle")
+              : undefined
         }
       >
         {upsertEnvironmentDialog?.mode === "create" && (

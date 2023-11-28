@@ -32,6 +32,7 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
       }
 
       return isSuccess;
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       return Promise.reject(new OucaError("OUCA0001"));
     }

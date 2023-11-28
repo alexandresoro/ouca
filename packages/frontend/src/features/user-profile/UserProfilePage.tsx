@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const ROLES = ["admin", "contributor"] as const;
 
-const getRole = (user: User): typeof ROLES[number] | null | undefined => {
+const getRole = (user: User): (typeof ROLES)[number] | null | undefined => {
   const rolesMap = user.profile["urn:zitadel:iam:org:project:roles"] as Record<string, unknown>[] | undefined;
   if (!rolesMap) {
     // Should not happen in practice

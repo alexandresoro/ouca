@@ -22,8 +22,8 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
     formState: { isValid, isDirty, errors },
     handleSubmit,
   } = useForm<UpsertDistanceEstimateInput>({
-    defaultValues: defaultValues ??{
-      libelle: ""
+    defaultValues: defaultValues ?? {
+      libelle: "",
     },
     resolver: zodResolver(upsertDistanceEstimateInput),
     mode: "onTouched",
@@ -31,18 +31,8 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        label={t("label")}
-        type="text"
-        required
-        {...register("libelle")}
-        hasError={!!errors.libelle}
-      />
-      <EntityUpsertFormActionButtons
-        className="mt-6"
-        onCancelClick={onCancel}
-        disabled={!isValid || !isDirty}
-      />
+      <TextInput label={t("label")} type="text" required {...register("libelle")} hasError={!!errors.libelle} />
+      <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
     </form>
   );
 };

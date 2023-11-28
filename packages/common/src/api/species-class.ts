@@ -19,7 +19,7 @@ export type GetClassResponse = z.infer<typeof getClassResponse>;
  *  Retrieve paginated classes results
  */
 export const CLASSES_ORDER_BY_ELEMENTS = [...ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS, "nbEspeces"] as const;
-export type ClassesOrderBy = typeof CLASSES_ORDER_BY_ELEMENTS[number];
+export type ClassesOrderBy = (typeof CLASSES_ORDER_BY_ELEMENTS)[number];
 
 export const getClassesQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(CLASSES_ORDER_BY_ELEMENTS).optional(),

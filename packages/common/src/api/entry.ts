@@ -31,7 +31,7 @@ export const ENTRIES_ORDER_BY_ELEMENTS = [
   "duree",
   "observateur",
 ] as const;
-export type EntriesOrderBy = typeof ENTRIES_ORDER_BY_ELEMENTS[number];
+export type EntriesOrderBy = (typeof ENTRIES_ORDER_BY_ELEMENTS)[number];
 
 export const getEntriesQueryParamsSchema = paginationQueryParamsSchema
   .required()

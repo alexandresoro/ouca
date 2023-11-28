@@ -33,10 +33,10 @@ const EntrySummaryPanel: FunctionComponent<EntrySummaryPanelProps> = ({ entry })
             entry?.distance != null && entry.distanceEstimate
               ? "both"
               : entry.distance != null
-              ? "valueOnly"
-              : entry.distanceEstimate
-              ? "precisionOnly"
-              : "none",
+                ? "valueOnly"
+                : entry.distanceEstimate
+                  ? "precisionOnly"
+                  : "none",
           distance: entry.distance,
           distancePrecision: entry.distanceEstimate?.libelle,
         })}

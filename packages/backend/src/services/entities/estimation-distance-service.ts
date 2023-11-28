@@ -1,13 +1,14 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
+import {
+  type DistanceEstimatesSearchParams,
+  type UpsertDistanceEstimateInput,
+} from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import {
-    type EstimationDistanceCreateInput
-} from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
+import { type EstimationDistanceCreateInput } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
@@ -37,7 +38,9 @@ export const buildEstimationDistanceService = ({
   ): Promise<DistanceEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    const distanceEstimate = await estimationDistanceRepository.findEstimationDistanceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const distanceEstimate = await estimationDistanceRepository.findEstimationDistanceByDonneeId(
+      donneeId ? parseInt(donneeId) : undefined
+    );
     return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
   };
 
@@ -126,7 +129,7 @@ export const buildEstimationDistanceService = ({
 
     try {
       const updatedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, input);
-      
+
       return enrichEntityWithEditableStatus(updatedEstimationDistance, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {

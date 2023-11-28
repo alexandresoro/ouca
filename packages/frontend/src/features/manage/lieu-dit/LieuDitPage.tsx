@@ -152,8 +152,8 @@ const LieuDitPage: FunctionComponent = () => {
           upsertLocalityDialog?.mode === "create"
             ? t("localityCreationTitle")
             : upsertLocalityDialog?.mode === "update"
-            ? t("localityEditionTitle")
-            : undefined
+              ? t("localityEditionTitle")
+              : undefined
         }
       >
         {upsertLocalityDialog?.mode === "create" && (

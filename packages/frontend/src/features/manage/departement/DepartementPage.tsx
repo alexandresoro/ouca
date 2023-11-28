@@ -152,8 +152,8 @@ const DepartementPage: FunctionComponent = () => {
           upsertDepartmentDialog?.mode === "create"
             ? t("departmentCreationTitle")
             : upsertDepartmentDialog?.mode === "update"
-            ? t("departmentEditionTitle")
-            : undefined
+              ? t("departmentEditionTitle")
+              : undefined
         }
       >
         {upsertDepartmentDialog?.mode === "create" && (

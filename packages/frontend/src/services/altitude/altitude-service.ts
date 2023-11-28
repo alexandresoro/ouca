@@ -82,10 +82,10 @@ export const getAltitudeToDisplay = async (
       // Round the altitude returned by the service
       altitude,
     };
-  } else {
-    defaultAtomStore.set(altitudeServiceStatusAtom, "error");
-    return {
-      outcome: "error",
-    };
   }
+
+  defaultAtomStore.set(altitudeServiceStatusAtom, "error");
+  return {
+    outcome: "error",
+  };
 };

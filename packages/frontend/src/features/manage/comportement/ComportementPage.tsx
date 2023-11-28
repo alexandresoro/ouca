@@ -152,8 +152,8 @@ const ComportementPage: FunctionComponent = () => {
           upsertBehaviorDialog?.mode === "create"
             ? t("behaviorCreationTitle")
             : upsertBehaviorDialog?.mode === "update"
-            ? t("behaviorEditionTitle")
-            : undefined
+              ? t("behaviorEditionTitle")
+              : undefined
         }
       >
         {upsertBehaviorDialog?.mode === "create" && (

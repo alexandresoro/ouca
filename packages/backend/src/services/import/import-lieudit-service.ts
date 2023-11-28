@@ -38,6 +38,7 @@ export class ImportLieuxditService extends ImportService {
       return Promise.reject(
         "Veuillez choisir le système de coordonnées de l'application dans la page de configuration"
       );
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }

@@ -155,8 +155,8 @@ const EstimationNombrePage: FunctionComponent = () => {
           upsertNumberEstimateDialog?.mode === "create"
             ? t("numberPrecisionCreationTitle")
             : upsertNumberEstimateDialog?.mode === "update"
-            ? t("numberPrecisionEditionTitle")
-            : undefined
+              ? t("numberPrecisionEditionTitle")
+              : undefined
         }
       >
         {upsertNumberEstimateDialog?.mode === "create" && (
