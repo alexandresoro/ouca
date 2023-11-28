@@ -71,8 +71,8 @@ const observersController: FastifyPluginCallback<{
     }
 
     switch (observerCreateResult.error) {
-      case "unauthorized":
-        return await reply.status(401).send();
+      case "notAllowed":
+        return await reply.status(403).send();
       case "alreadyExists":
         return await reply.status(409).send();
       default:
@@ -102,8 +102,8 @@ const observersController: FastifyPluginCallback<{
     }
 
     switch (observerUpdateResult.error) {
-      case "unauthorized":
-        return await reply.status(401).send();
+      case "notAllowed":
+        return await reply.status(403).send();
       case "alreadyExists":
         return await reply.status(409).send();
       default:

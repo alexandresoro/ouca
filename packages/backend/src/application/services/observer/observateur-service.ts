@@ -100,7 +100,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     loggedUser: LoggedUser | null
   ): Promise<Result<Observer, ObserverFailureReason>> => {
     if (!loggedUser) {
-      return err("unauthorized");
+      return err("notAllowed");
     }
 
     // Create a new observer
@@ -120,7 +120,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     loggedUser: LoggedUser | null
   ): Promise<Result<Observer, ObserverFailureReason>> => {
     if (!loggedUser) {
-      return err("unauthorized");
+      return err("notAllowed");
     }
 
     // Check that the user is allowed to modify the existing data
@@ -128,7 +128,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
       const existingData = await observerRepository.findObserverById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
-        return err("unauthorized");
+        return err("notAllowed");
       }
     }
 

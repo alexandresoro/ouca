@@ -1,4 +1,4 @@
-export type AccessFailureReason = "unauthorized";
+export type AccessFailureReason = "notAllowed";
 
 export type EntityFailureReason = "alreadyExists";
 

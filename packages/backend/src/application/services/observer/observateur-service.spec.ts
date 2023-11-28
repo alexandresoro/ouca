@@ -211,7 +211,7 @@ describe("Update of an observer", () => {
 
     const updateResult = await observateurService.updateObservateur(12, observerData, user);
 
-    expect(updateResult).toEqual(err("unauthorized"));
+    expect(updateResult).toEqual(err("notAllowed"));
     expect(observerRepository.updateObserver).not.toHaveBeenCalled();
   });
 
@@ -234,7 +234,7 @@ describe("Update of an observer", () => {
 
     const updateResult = await observateurService.updateObservateur(12, observerData, null);
 
-    expect(updateResult).toEqual(err("unauthorized"));
+    expect(updateResult).toEqual(err("notAllowed"));
     expect(observerRepository.updateObserver).not.toHaveBeenCalled();
   });
 });
@@ -278,7 +278,7 @@ describe("Creation of an observer", () => {
 
     const createResult = await observateurService.createObservateur(observerData, null);
 
-    expect(createResult).toEqual(err("unauthorized"));
+    expect(createResult).toEqual(err("notAllowed"));
     expect(observerRepository.createObserver).not.toHaveBeenCalled();
   });
 });
