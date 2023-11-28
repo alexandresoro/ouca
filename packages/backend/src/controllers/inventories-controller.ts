@@ -76,7 +76,7 @@ const inventoriesController: FastifyPluginCallback<{
     const parsedQueryParamsResult = getInventoryIndexParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
     const inventoryIndex = await inventaireService.findInventoryIndex(
@@ -95,7 +95,7 @@ const inventoriesController: FastifyPluginCallback<{
     const parsedQueryParamsResult = getInventoriesQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
     const { data: queryParams } = parsedQueryParamsResult;
@@ -124,7 +124,7 @@ const inventoriesController: FastifyPluginCallback<{
     const parsedInputResult = upsertInventoryInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send(parsedInputResult.error);
+      return await reply.status(422).send(parsedInputResult.error);
     }
 
     const { data: input } = parsedInputResult;
@@ -151,7 +151,7 @@ const inventoriesController: FastifyPluginCallback<{
     const parsedInputResult = upsertInventoryInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send(parsedInputResult.error);
+      return await reply.status(422).send(parsedInputResult.error);
     }
 
     const { data: input } = parsedInputResult;

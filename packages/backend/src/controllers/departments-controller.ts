@@ -36,7 +36,7 @@ const departmentsController: FastifyPluginCallback<{
     const parsedQueryParamsResult = getDepartmentsQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
     const {
@@ -78,7 +78,7 @@ const departmentsController: FastifyPluginCallback<{
     const parsedInputResult = upsertDepartmentInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;
@@ -104,7 +104,7 @@ const departmentsController: FastifyPluginCallback<{
     const parsedInputResult = upsertDepartmentInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;

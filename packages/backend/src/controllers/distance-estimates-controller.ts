@@ -1,5 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { getDistanceEstimateResponse, getDistanceEstimatesExtendedResponse, getDistanceEstimatesQueryParamsSchema, getDistanceEstimatesResponse, upsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
+import {
+  getDistanceEstimateResponse,
+  getDistanceEstimatesExtendedResponse,
+  getDistanceEstimatesQueryParamsSchema,
+  getDistanceEstimatesResponse,
+  upsertDistanceEstimateInput,
+  upsertDistanceEstimateResponse,
+} from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
@@ -29,7 +36,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     const parsedQueryParamsResult = getDistanceEstimatesQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
     const {
@@ -45,7 +52,10 @@ const distanceEstimatesController: FastifyPluginCallback<{
     if (extended) {
       data = await Promise.all(
         distanceEstimatesData.map(async (distanceEstimateData) => {
-          const entriesCount = await estimationDistanceService.getDonneesCountByEstimationDistance(distanceEstimateData.id, req.user);
+          const entriesCount = await estimationDistanceService.getDonneesCountByEstimationDistance(
+            distanceEstimateData.id,
+            req.user
+          );
           return {
             ...distanceEstimateData,
             entriesCount,
@@ -67,7 +77,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;
@@ -93,7 +103,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;

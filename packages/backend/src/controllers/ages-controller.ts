@@ -35,7 +35,7 @@ const agesController: FastifyPluginCallback<{
     const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
     const {
@@ -73,7 +73,7 @@ const agesController: FastifyPluginCallback<{
     const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;
@@ -99,7 +99,7 @@ const agesController: FastifyPluginCallback<{
     const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;

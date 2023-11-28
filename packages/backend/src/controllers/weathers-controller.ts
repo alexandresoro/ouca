@@ -36,7 +36,7 @@ const weathersController: FastifyPluginCallback<{
     const parsedQueryParamsResult = getWeathersQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
-      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
     const {
@@ -74,7 +74,7 @@ const weathersController: FastifyPluginCallback<{
     const parsedInputResult = upsertWeatherInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;
@@ -100,7 +100,7 @@ const weathersController: FastifyPluginCallback<{
     const parsedInputResult = upsertWeatherInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(422).send();
     }
 
     const { data: input } = parsedInputResult;
