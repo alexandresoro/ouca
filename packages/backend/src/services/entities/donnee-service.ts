@@ -169,6 +169,7 @@ export const buildDonneeService = ({
         code: "OUCA0004",
         message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
       });
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
         const updatedDonnee = await donneeRepository.updateDonnee(

@@ -90,7 +90,7 @@ export const buildAndClause = (
           type: "SLONIK_TOKEN_FRAGMENT";
           sql: string;
           values: PrimitiveValueExpression[];
-        }>?
+        }>?,
       ])[]
     | null
     | undefined
@@ -111,8 +111,10 @@ export const buildAndClause = (
   const conditionsFragments = filteredConditions.map(([identifier, value, overrideConditionComparator]) => {
     if (value === null) {
       return sql.join([identifier, sql.fragment`NULL`], sql.fragment` IS `);
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else if (Array.isArray(value)) {
       return sql.join([identifier, sql.fragment`(${sql.join(value, sql.fragment`,`)})`], sql.fragment` IN `);
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       return sql.join(
         [identifier, value],

@@ -70,6 +70,7 @@ const useApiMutation = <TData, TVariables extends MutationVariables, TError exte
     if (schema) {
       // If response schema is provided, use it
       return schema.parse(jsonResponse);
+      // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       return jsonResponse;
     }

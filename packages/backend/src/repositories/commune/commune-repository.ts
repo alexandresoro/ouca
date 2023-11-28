@@ -138,8 +138,8 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       !isSortByNbDonnees && !isSortByNbLieuxDits && !isSortByDepartement && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`
         : q
-        ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC, (commune.nom ~* ${matchStartNom}) DESC, commune.nom ASC` // If no order provided, return in priority the towns that match by code if q provided
-        : sql.fragment``
+          ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC, (commune.nom ~* ${matchStartNom}) DESC, commune.nom ASC` // If no order provided, return in priority the towns that match by code if q provided
+          : sql.fragment``
     }${buildSortOrderFragment({
       orderBy,
       sortOrder,

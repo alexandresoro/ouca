@@ -17,7 +17,7 @@ export type GetSpeciesResponse = z.infer<typeof getSpeciesResponse>;
  *  Retrieve paginated species results
  */
 export const SPECIES_ORDER_BY_ELEMENTS = ["id", "code", "nomFrancais", "nomLatin", "nomClasse", "nbDonnees"] as const;
-export type SpeciesOrderBy = typeof SPECIES_ORDER_BY_ELEMENTS[number];
+export type SpeciesOrderBy = (typeof SPECIES_ORDER_BY_ELEMENTS)[number];
 
 export const getSpeciesQueryParamsSchema = entitiesCommonQueryParamsSchema
   .extend({

@@ -61,9 +61,9 @@ const fetchApi = async <T = unknown>({
   if (schema) {
     // If response schema is provided, use it
     return schema.parse(jsonResponse);
-  } else {
-    return jsonResponse;
   }
+
+  return jsonResponse;
 };
 
 /**

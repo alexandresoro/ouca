@@ -12,9 +12,9 @@ const settingsController: FastifyPluginCallback<{
     if (settings) {
       const response = getSettingsResponse.parse(settings);
       return await reply.send(response);
-    } else {
-      return await reply.status(404).send();
     }
+
+    return await reply.status(404).send();
   });
 
   fastify.put("/", async (req, reply) => {

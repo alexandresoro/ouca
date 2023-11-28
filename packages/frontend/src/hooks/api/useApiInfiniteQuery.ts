@@ -24,7 +24,7 @@ const useApiInfiniteQuery = <
   TQueryFnData extends z.infer<PaginatedResponseSchemaType<S>>,
   TError extends FetchErrorType = FetchErrorType,
   TData = TQueryFnData,
-  TQueryKey extends unknown[] = unknown[]
+  TQueryKey extends unknown[] = unknown[],
 >(
   {
     queryKeyPrefix,

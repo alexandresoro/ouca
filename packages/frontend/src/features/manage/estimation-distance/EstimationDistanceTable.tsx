@@ -26,26 +26,27 @@ const COLUMNS = [
   },
 ] as const;
 
-const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({ onClickUpdateDistanceEstimate, onClickDeleteDistanceEstimate }) => {
+const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({
+  onClickUpdateDistanceEstimate,
+  onClickDeleteDistanceEstimate,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
-  usePaginationParams<EntitiesWithLabelOrderBy>();
+    usePaginationParams<EntitiesWithLabelOrderBy>();
 
-  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
-    {
-      path: "/distance-estimates",
-      queryKeyPrefix: "distanceEstimateTable",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getDistanceEstimatesExtendedResponse,
-    }
-  );
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
+    path: "/distance-estimates",
+    queryKeyPrefix: "distanceEstimateTable",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
+    },
+    schema: getDistanceEstimatesExtendedResponse,
+  });
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -62,40 +63,47 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
         }}
         count={data?.pages?.[0].meta.count}
       />
-      <InfiniteTable   
-        tableHead={ 
-            <>
-              {COLUMNS.map((column) => (
-                <th key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </th>
-              ))}
-              <th align="right" className="pr-8">{t("actions")}</th>
-            </>}
+      <InfiniteTable
+        tableHead={
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
+          </>
+        }
         tableRows={data?.pages.map((page) => {
-            return <Fragment key={page.meta.pageNumber}>{page.data.map((estimationDistance) => {
-              return (
-                <tr className="hover:bg-base-200" key={estimationDistance?.id}>
-                  <td>{estimationDistance.libelle}</td>
-                  <td>{estimationDistance.entriesCount}</td>
-                  <td align="right" className="pr-6">
-                    <TableCellActionButtons
-                      disabledEdit={!estimationDistance.editable}
-                      disabledDelete={!estimationDistance.editable || estimationDistance.entriesCount > 0}
-                      onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance)}
-                      onDeleteClicked={() => onClickDeleteDistanceEstimate(estimationDistance)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}</Fragment>;
-          })}
+          return (
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((estimationDistance) => {
+                return (
+                  <tr className="hover:bg-base-200" key={estimationDistance?.id}>
+                    <td>{estimationDistance.libelle}</td>
+                    <td>{estimationDistance.entriesCount}</td>
+                    <td align="right" className="pr-6">
+                      <TableCellActionButtons
+                        disabledEdit={!estimationDistance.editable}
+                        disabledDelete={!estimationDistance.editable || estimationDistance.entriesCount > 0}
+                        onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance)}
+                        onDeleteClicked={() => onClickDeleteDistanceEstimate(estimationDistance)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </Fragment>
+          );
+        })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
       />

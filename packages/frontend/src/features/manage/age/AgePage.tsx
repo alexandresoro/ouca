@@ -152,8 +152,8 @@ const AgePage: FunctionComponent = () => {
           upsertAgeDialog?.mode === "create"
             ? t("ageCreationTitle")
             : upsertAgeDialog?.mode === "update"
-            ? t("ageEditionTitle")
-            : undefined
+              ? t("ageEditionTitle")
+              : undefined
         }
       >
         {upsertAgeDialog?.mode === "create" && (

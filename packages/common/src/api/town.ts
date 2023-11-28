@@ -16,7 +16,7 @@ export type GetTownResponse = z.infer<typeof getTownResponse>;
  *  Retrieve paginated towns results
  */
 export const TOWNS_ORDER_BY_ELEMENTS = ["id", "code", "nom", "departement", "nbLieuxDits", "nbDonnees"] as const;
-export type TownsOrderBy = typeof TOWNS_ORDER_BY_ELEMENTS[number];
+export type TownsOrderBy = (typeof TOWNS_ORDER_BY_ELEMENTS)[number];
 
 export const getTownsQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(TOWNS_ORDER_BY_ELEMENTS).optional(),

@@ -68,9 +68,8 @@ const InventoryPage: FunctionComponent = () => {
   if (error) {
     if (error.status === 404) {
       return <>{t("inventoryPage.inventoryNotFound")}</>;
-    } else {
-      return <>{t("inventoryPage.genericError")}</>;
     }
+    return <>{t("inventoryPage.genericError")}</>;
   }
 
   return (

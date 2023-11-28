@@ -5,19 +5,21 @@ import { type SubmitHandler } from "react-hook-form";
 import EstimationDistanceEdit from "./EstimationDistanceEdit";
 
 type EstimationDistanceUpdateProps = {
-  distanceEstimate: DistanceEstimate
+  distanceEstimate: DistanceEstimate;
   onCancel: () => void;
   onSubmit: (id: string, input: UpsertDistanceEstimateInput) => void;
 };
 
-const EstimationDistanceUpdate: FunctionComponent<EstimationDistanceUpdateProps> = ({distanceEstimate, onCancel, onSubmit}) => {
+const EstimationDistanceUpdate: FunctionComponent<EstimationDistanceUpdateProps> = ({
+  distanceEstimate,
+  onCancel,
+  onSubmit,
+}) => {
   const handleSubmit: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
-    onSubmit(distanceEstimate.id, input)
+    onSubmit(distanceEstimate.id, input);
   };
 
-  return (
-        <EstimationDistanceEdit defaultValues={distanceEstimate} onCancel={onCancel} onSubmit={handleSubmit} />
-  );
+  return <EstimationDistanceEdit defaultValues={distanceEstimate} onCancel={onCancel} onSubmit={handleSubmit} />;
 };
 
 export default EstimationDistanceUpdate;

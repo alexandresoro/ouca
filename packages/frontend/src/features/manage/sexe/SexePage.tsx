@@ -152,8 +152,8 @@ const SexePage: FunctionComponent = () => {
           upsertSexDialog?.mode === "create"
             ? t("sexCreationTitle")
             : upsertSexDialog?.mode === "update"
-            ? t("sexEditionTitle")
-            : undefined
+              ? t("sexEditionTitle")
+              : undefined
         }
       >
         {upsertSexDialog?.mode === "create" && (

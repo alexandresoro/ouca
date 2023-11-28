@@ -16,7 +16,7 @@ export type GetDepartmentResponse = z.infer<typeof getDepartmentResponse>;
  *  Retrieve paginated departments results
  */
 export const DEPARTMENTS_ORDER_BY_ELEMENTS = ["id", "code", "nbCommunes", "nbLieuxDits", "nbDonnees"] as const;
-export type DepartmentsOrderBy = typeof DEPARTMENTS_ORDER_BY_ELEMENTS[number];
+export type DepartmentsOrderBy = (typeof DEPARTMENTS_ORDER_BY_ELEMENTS)[number];
 
 export const getDepartmentsQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(DEPARTMENTS_ORDER_BY_ELEMENTS).optional(),

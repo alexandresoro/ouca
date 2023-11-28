@@ -152,8 +152,8 @@ const EspecePage: FunctionComponent = () => {
           upsertSpeciesDialog?.mode === "create"
             ? t("speciesCreationTitle")
             : upsertSpeciesDialog?.mode === "update"
-            ? t("speciesEditionTitle")
-            : undefined
+              ? t("speciesEditionTitle")
+              : undefined
         }
       >
         {upsertSpeciesDialog?.mode === "create" && (

@@ -147,8 +147,8 @@ const ObservateurPage: FunctionComponent = () => {
           upsertObserverDialog?.mode === "create"
             ? t("observerCreationTitle")
             : upsertObserverDialog?.mode === "update"
-            ? t("observerEditionTitle")
-            : undefined
+              ? t("observerEditionTitle")
+              : undefined
         }
       >
         {upsertObserverDialog?.mode === "create" && (

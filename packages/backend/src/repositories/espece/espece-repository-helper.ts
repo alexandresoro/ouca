@@ -19,9 +19,9 @@ export const buildSearchEspeceClause = ({ q, searchCriteria }: Pick<EspeceFindMa
     return sql.fragment`WHERE ${builtSearchCriteriaAndParameters}${
       q ? sql.fragment` AND (${buildQClause(q)})` : sql.fragment``
     }`;
-  } else {
-    return q ? sql.fragment`WHERE ${buildQClause(q)}` : sql.fragment``;
   }
+
+  return q ? sql.fragment`WHERE ${buildQClause(q)}` : sql.fragment``;
 };
 
 export const buildOrderByIdentifier = (

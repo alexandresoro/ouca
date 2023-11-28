@@ -26,7 +26,7 @@ export const LOCALITIES_ORDER_BY_ELEMENTS = [
   "departement",
   "nbDonnees",
 ] as const;
-export type LocalitiesOrderBy = typeof LOCALITIES_ORDER_BY_ELEMENTS[number];
+export type LocalitiesOrderBy = (typeof LOCALITIES_ORDER_BY_ELEMENTS)[number];
 
 export const getLocalitiesQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
   orderBy: z.enum(LOCALITIES_ORDER_BY_ELEMENTS).optional(),

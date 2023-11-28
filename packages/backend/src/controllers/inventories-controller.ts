@@ -181,8 +181,10 @@ const inventoriesController: FastifyPluginCallback<{
     } catch (e) {
       if (e instanceof NotFoundError) {
         return await reply.status(404).send();
+        // biome-ignore lint/style/noUselessElse: <explanation>
       } else if (e instanceof OucaError && e.name === "OUCA0001") {
         return await reply.status(403).send();
+        // biome-ignore lint/style/noUselessElse: <explanation>
       } else if (e instanceof OucaError && e.name === "OUCA0005") {
         return await reply.status(409).send("This inventory is still used by existing entries");
       }

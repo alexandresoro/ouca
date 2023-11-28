@@ -1,12 +1,15 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
+import {
+  type DistanceEstimatesSearchParams,
+  type UpsertDistanceEstimateInput,
+} from "@ou-ca/common/api/distance-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type EstimationDistance,
-  type EstimationDistanceCreateInput
+  type EstimationDistanceCreateInput,
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
@@ -201,10 +204,7 @@ describe("Update of a distance estimate", () => {
     await estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
-      12,
-      distanceEstimateData
-    );
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
   test("should be allowed when requested by the owner ", async () => {
@@ -221,10 +221,7 @@ describe("Update of a distance estimate", () => {
     await estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
-      12,
-      distanceEstimateData
-    );
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -241,9 +238,9 @@ describe("Update of a distance estimate", () => {
 
     estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
-    await expect(estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, user)).rejects.toThrowError(
-      new OucaError("OUCA0001")
-    );
+    await expect(
+      estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, user)
+    ).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(estimationDistanceRepository.updateEstimationDistance).not.toHaveBeenCalled();
   });
@@ -260,10 +257,7 @@ describe("Update of a distance estimate", () => {
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
-      12,
-      distanceEstimateData
-    );
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
