@@ -49,19 +49,22 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
       return null;
     }
 
-    const query = sql.type(observerSimpleSchema)`
-      SELECT 
-        observateur.id::text,
-        observateur.libelle,
-        observateur.owner_id
-      FROM
-        basenaturaliste.observateur
-      LEFT JOIN basenaturaliste.inventaire ON observateur.id = inventaire.observateur_id
-      WHERE
-        inventaire.id = ${inventaireId}
-    `;
+    const observerResult = await kysely
+      .selectFrom("basenaturaliste.observateur")
+      .leftJoin(
+        "basenaturaliste.inventaire",
+        "basenaturaliste.inventaire.observateurId",
+        "basenaturaliste.observateur.id"
+      )
+      .select([
+        sqlKysely<string>`basenaturaliste.observateur.id::text`.as("id"),
+        "libelle",
+        "basenaturaliste.observateur.ownerId",
+      ])
+      .where("basenaturaliste.inventaire.id", "=", inventaireId)
+      .executeTakeFirst();
 
-    return slonik.maybeOne(query);
+    return observerResult ? observerSimpleSchema.parse(observerResult) : null;
   };
 
   const findAssociatesOfInventoryId = async (inventaireId: number | undefined): Promise<ObserverSimple[]> => {
@@ -69,21 +72,22 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
       return [];
     }
 
-    const query = sql.type(observerSimpleSchema)`
-      SELECT 
-        observateur.id::text,
-        observateur.libelle,
-        observateur.owner_id
-      FROM
-        basenaturaliste.observateur
-      LEFT JOIN basenaturaliste.inventaire_associe ON observateur.id = inventaire_associe.observateur_id
-      WHERE
-      inventaire_associe.inventaire_id = ${inventaireId}
-    `;
+    const associatesResult = await kysely
+      .selectFrom("basenaturaliste.observateur")
+      .leftJoin(
+        "basenaturaliste.inventaire_associe",
+        "basenaturaliste.inventaire_associe.observateurId",
+        "basenaturaliste.observateur.id"
+      )
+      .select([
+        sqlKysely<string>`basenaturaliste.observateur.id::text`.as("id"),
+        "libelle",
+        "basenaturaliste.observateur.ownerId",
+      ])
+      .where("basenaturaliste.inventaire_associe.inventaireId", "=", inventaireId)
+      .execute();
 
-    const associates = await slonik.any(query);
-
-    return [...associates];
+    return z.array(observerSimpleSchema).parse(associatesResult);
   };
 
   const findObservers = async ({
