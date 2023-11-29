@@ -26,27 +26,27 @@ import { type User } from "./database/User.js";
 import { type Weather } from "./database/Weather.js";
 
 export type Database = {
-  "basenaturaliste.age": Age;
-  "basenaturaliste.classe": SpeciesClass;
-  "basenaturaliste.commune": Town;
-  "basenaturaliste.comportement": Behavior;
-  "basenaturaliste.departement": Department;
-  "basenaturaliste.donnee": Entry;
-  "basenaturaliste.donnee_comportement": EntryBehavior;
-  "basenaturaliste.donnee_milieu": EntryEnvironment;
-  "basenaturaliste.espece": Species;
-  "basenaturaliste.estimation_distance": DistanceEstimate;
-  "basenaturaliste.estimation_nombre": NumberEstimate;
-  "basenaturaliste.inventaire": Inventory;
-  "basenaturaliste.inventaire_associe": InventoryAssociate;
-  "basenaturaliste.inventaire_meteo": InventoryWeather;
-  "basenaturaliste.lieudit": Locality;
-  "basenaturaliste.meteo": Weather;
-  "basenaturaliste.milieu": Environment;
-  "basenaturaliste.observateur": Observer;
-  "basenaturaliste.settings": Settings;
-  "basenaturaliste.sexe": Sex;
-  "basenaturaliste.user": User;
+  age: Age;
+  classe: SpeciesClass;
+  commune: Town;
+  comportement: Behavior;
+  departement: Department;
+  donnee: Entry;
+  donnee_comportement: EntryBehavior;
+  donnee_milieu: EntryEnvironment;
+  espece: Species;
+  estimation_distance: DistanceEstimate;
+  estimation_nombre: NumberEstimate;
+  inventaire: Inventory;
+  inventaire_associe: InventoryAssociate;
+  inventaire_meteo: InventoryWeather;
+  lieudit: Locality;
+  meteo: Weather;
+  milieu: Environment;
+  observateur: Observer;
+  settings: Settings;
+  sexe: Sex;
+  user: User;
 };
 
 const kyselyLogger = logger.child({ module: "kysely" });
@@ -88,4 +88,4 @@ export const getKyselyInstance = () => {
   });
 };
 
-export const kysely = getKyselyInstance();
+export const kysely = getKyselyInstance().withSchema("basenaturaliste");

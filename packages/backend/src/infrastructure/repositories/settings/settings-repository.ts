@@ -5,7 +5,7 @@ import { sql, type Transaction } from "kysely";
 export const buildSettingsRepository = () => {
   const getUserSettings = async (userId: string): Promise<Settings | null> => {
     const userSettings = await kysely
-      .selectFrom("basenaturaliste.settings")
+      .selectFrom("settings")
       .select([
         sql`id::text`.as("id"),
         sql`default_observateur_id::text`.as("default_observateur_id"),
@@ -28,7 +28,7 @@ export const buildSettingsRepository = () => {
 
   const createDefaultSettings = async (userId: string, transaction?: Transaction<Database>): Promise<void> => {
     await (transaction ?? kysely)
-      .insertInto("basenaturaliste.settings")
+      .insertInto("settings")
       .values({
         userId,
       })
@@ -37,7 +37,7 @@ export const buildSettingsRepository = () => {
 
   const updateUserSettings = async (userId: string, updateSettingsInput: UpdateSettingsInput): Promise<Settings> => {
     const updatedUserResult = await kysely
-      .updateTable("basenaturaliste.settings")
+      .updateTable("settings")
       .set(updateSettingsInput)
       .where("userId", "=", userId)
       .returning([

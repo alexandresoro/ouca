@@ -17,7 +17,7 @@ export type AgeRepositoryDependencies = {
 export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
   const findAgeById = async (id: number): Promise<Age | null> => {
     const ageResult = await kysely
-      .selectFrom("basenaturaliste.age")
+      .selectFrom("age")
       .select([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
       .where("id", "=", id)
       .executeTakeFirst();
@@ -78,7 +78,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
   };
 
   const getCount = async (q?: string | null): Promise<number> => {
-    let query = kysely.selectFrom("basenaturaliste.age").select((eb) => eb.fn.countAll().as("count"));
+    let query = kysely.selectFrom("age").select((eb) => eb.fn.countAll().as("count"));
 
     if (q?.length) {
       query = query.where(sqlKysely`unaccent(libelle)`, "ilike", sqlKysely`unaccent(${`%${q}%`})`);
@@ -91,7 +91,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
 
   const createAge = async (ageInput: AgeCreateInput): Promise<Age> => {
     const createdAge = await kysely
-      .insertInto("basenaturaliste.age")
+      .insertInto("age")
       .values({
         libelle: ageInput.libelle,
         ownerId: ageInput.ownerId,
@@ -104,7 +104,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
 
   const createAges = async (ageInputs: AgeCreateInput[]): Promise<Age[]> => {
     const createdAges = await kysely
-      .insertInto("basenaturaliste.age")
+      .insertInto("age")
       .values(
         ageInputs.map((ageInput) => {
           return {
@@ -138,7 +138,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
 
   const deleteAgeById = async (ageId: number): Promise<Age | null> => {
     const deletedAge = await kysely
-      .deleteFrom("basenaturaliste.age")
+      .deleteFrom("age")
       .where("id", "=", ageId)
       .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
       .executeTakeFirst();

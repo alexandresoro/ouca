@@ -42,7 +42,7 @@ const findUserByExternalIdFromStorage = async ({
   externalProviderId,
 }: { externalProviderName: string; externalProviderId: string }): Promise<User | null> => {
   const userResult = await kysely
-    .selectFrom("basenaturaliste.user")
+    .selectFrom("user")
     .selectAll()
     .where("extProviderName", "=", externalProviderName)
     .where("extProviderId", "=", externalProviderId)
@@ -53,11 +53,7 @@ const findUserByExternalIdFromStorage = async ({
 
 export const buildUserRepository = ({ settingsRepository }: { settingsRepository: SettingsRepository }) => {
   const getUserInfoById = async (userId: string): Promise<User | null> => {
-    const userResult = await kysely
-      .selectFrom("basenaturaliste.user")
-      .selectAll()
-      .where("id", "=", userId)
-      .executeTakeFirst();
+    const userResult = await kysely.selectFrom("user").selectAll().where("id", "=", userId).executeTakeFirst();
 
     return userResult ? userSchema.parse(userResult) : null;
   };
@@ -93,7 +89,7 @@ export const buildUserRepository = ({ settingsRepository }: { settingsRepository
   }): Promise<User> => {
     const createdUser = await kysely.transaction().execute(async (transaction) => {
       const createdUser = await transaction
-        .insertInto("basenaturaliste.user")
+        .insertInto("user")
         .values({
           extProviderId,
           extProviderName,
@@ -110,11 +106,7 @@ export const buildUserRepository = ({ settingsRepository }: { settingsRepository
   };
 
   const deleteUserById = async (userId: string): Promise<boolean> => {
-    const deletedUsers = await kysely
-      .deleteFrom("basenaturaliste.user")
-      .where("id", "=", userId)
-      .returningAll()
-      .execute();
+    const deletedUsers = await kysely.deleteFrom("user").where("id", "=", userId).returningAll().execute();
     return deletedUsers.length === 1;
   };
 
