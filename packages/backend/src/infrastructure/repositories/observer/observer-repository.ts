@@ -9,18 +9,12 @@ import {
 import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
-import { sql as sqlKysely } from "kysely";
+import { sql } from "kysely";
 import { fromPromise, type Result } from "neverthrow";
-import { sql, type DatabasePool } from "slonik";
 import { z } from "zod";
-import { buildPaginationFragment, buildSortOrderFragment } from "../../../repositories/repository-helpers.js";
 import { countSchema } from "../common.js";
 
-export type ObservateurRepositoryDependencies = {
-  slonik: DatabasePool;
-};
-
-export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDependencies) => {
+export const buildObserverRepository = () => {
   const findObserverById = async (id: number): Promise<Observer | null> => {
     const observerResult = await kysely
       .selectFrom("basenaturaliste.observateur")
@@ -31,7 +25,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
       )
       .leftJoin("basenaturaliste.donnee", "basenaturaliste.donnee.inventaireId", "basenaturaliste.inventaire.id")
       .select([
-        sqlKysely<string>`basenaturaliste.observateur.id::text`.as("id"),
+        sql<string>`basenaturaliste.observateur.id::text`.as("id"),
         "libelle",
         "basenaturaliste.observateur.ownerId",
       ])
@@ -57,7 +51,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
         "basenaturaliste.observateur.id"
       )
       .select([
-        sqlKysely<string>`basenaturaliste.observateur.id::text`.as("id"),
+        sql<string>`basenaturaliste.observateur.id::text`.as("id"),
         "libelle",
         "basenaturaliste.observateur.ownerId",
       ])
@@ -80,7 +74,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
         "basenaturaliste.observateur.id"
       )
       .select([
-        sqlKysely<string>`basenaturaliste.observateur.id::text`.as("id"),
+        sql<string>`basenaturaliste.observateur.id::text`.as("id"),
         "libelle",
         "basenaturaliste.observateur.ownerId",
       ])
@@ -98,57 +92,65 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
     limit,
   }: ObserverFindManyInput = {}): Promise<readonly ObserverSimple[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
-    const libelleLike = q ? `%${q}%` : null;
-    // If no explicit order is requested and a query is provided, return the matches in the following order:
-    // The ones for which libelle starts with query
-    // Then the ones which libelle contains the query
-    // Then two groups are finally sorted alphabetically
-    const matchStartLibelle = q ? `^${q}` : null;
-    const query = sql.type(observerSimpleSchema)`
-    SELECT 
-      observateur.id::text,
-      observateur.libelle,
-      observateur.owner_id
-    FROM
-      basenaturaliste.observateur
-    ${
-      isSortByNbDonnees
-        ? sql.fragment`
-        LEFT JOIN basenaturaliste.inventaire ON observateur.id = inventaire.observateur_id
-        LEFT JOIN basenaturaliste.donnee ON inventaire.id = donnee.inventaire_id`
-        : sql.fragment``
-    }
-    ${
-      libelleLike
-        ? sql.fragment`
-    WHERE unaccent(libelle) ILIKE unaccent(${libelleLike})
-    `
-        : sql.fragment``
-    }
-    ${isSortByNbDonnees ? sql.fragment`GROUP BY observateur."id"` : sql.fragment``}
-    ${isSortByNbDonnees ? sql.fragment`ORDER BY COUNT(donnee."id")` : sql.fragment``}
-    ${
-      !orderBy && q
-        ? sql.fragment`ORDER BY (observateur.libelle ~* ${matchStartLibelle}) DESC, observateur.libelle ASC`
-        : sql.fragment``
-    }
-    ${
-      !isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}` : sql.fragment``
-    }${buildSortOrderFragment({
-      orderBy,
-      sortOrder,
-    })}
-    ${buildPaginationFragment({ offset, limit })}
-  `;
 
-    return slonik.any(query);
+    let queryObs;
+    if (isSortByNbDonnees) {
+      queryObs = kysely
+        .selectFrom("basenaturaliste.observateur")
+        .leftJoin(
+          "basenaturaliste.inventaire",
+          "basenaturaliste.inventaire.observateurId",
+          "basenaturaliste.observateur.id"
+        )
+        .leftJoin("basenaturaliste.donnee", "basenaturaliste.donnee.inventaireId", "basenaturaliste.inventaire.id")
+        .select([sql`basenaturaliste.observateur.id::text`.as("id"), "libelle", "basenaturaliste.observateur.ownerId"]);
+
+      if (q?.length) {
+        queryObs = queryObs.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
+
+      queryObs = queryObs
+        .groupBy("basenaturaliste.observateur.id")
+        .orderBy((eb) => eb.fn.count("basenaturaliste.donnee.id"), sortOrder ?? undefined);
+    } else {
+      queryObs = kysely
+        .selectFrom("basenaturaliste.observateur")
+        .select([sql`basenaturaliste.observateur.id::text`.as("id"), "libelle", "basenaturaliste.observateur.ownerId"]);
+
+      if (q?.length) {
+        queryObs = queryObs.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
+
+      if (orderBy) {
+        queryObs = queryObs.orderBy(orderBy, sortOrder ?? undefined);
+      } else if (q) {
+        // If no explicit order is requested and a query is provided, return the matches in the following order:
+        // The ones for which libelle starts with query
+        // Then the ones which libelle contains the query
+        // Then two groups are finally sorted alphabetically
+        queryObs = queryObs
+          .orderBy(sql`"basenaturaliste"."observateur"."libelle" ~* ${`^${q}`}`, "desc")
+          .orderBy("libelle", "asc");
+      }
+    }
+
+    if (offset) {
+      queryObs = queryObs.offset(offset);
+    }
+    if (limit) {
+      queryObs = queryObs.limit(limit);
+    }
+
+    const observersResult = await queryObs.execute();
+
+    return z.array(observerSimpleSchema).parse(observersResult);
   };
 
   const getCount = async (q?: string | null): Promise<number> => {
     let query = kysely.selectFrom("basenaturaliste.observateur").select((eb) => eb.fn.countAll().as("count"));
 
     if (q?.length) {
-      query = query.where(sqlKysely`unaccent(libelle)`, "ilike", sqlKysely`unaccent(${`%${q}%`})`);
+      query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
     }
 
     const countResult = await query.executeTakeFirstOrThrow();
@@ -164,7 +166,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
           libelle: observerInput.libelle,
           ownerId: observerInput.ownerId,
         })
-        .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+        .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
       handleDatabaseError
     ).map((createdObserver) => observerSchema.parse({ ...createdObserver, inventoriesCount: 0, entriesCount: 0 }));
@@ -181,7 +183,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
           };
         })
       )
-      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
 
     return z.array(observerSimpleSchema).nonempty().parse(createdObservers);
@@ -201,7 +203,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
             ownerId: observateurInput.ownerId,
           })
           .where("id", "=", observateurId)
-          .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+          .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
           .executeTakeFirstOrThrow();
 
         // Compute counts
@@ -235,7 +237,7 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
     const deletedObserver = await kysely
       .deleteFrom("basenaturaliste.observateur")
       .where("id", "=", observerId)
-      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
       .executeTakeFirst();
 
     return deletedObserver ? observerSimpleSchema.parse(deletedObserver) : null;

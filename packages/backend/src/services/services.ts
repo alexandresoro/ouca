@@ -94,7 +94,7 @@ export const buildServices = async (): Promise<Services> => {
   const lieuditRepository = buildLieuditRepository({ slonik });
   const meteoRepository = buildMeteoRepository({ slonik });
   const milieuRepository = buildMilieuRepository({ slonik });
-  const observerRepository = buildObserverRepository({ slonik });
+  const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();
   const sexeRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ settingsRepository });
