@@ -145,23 +145,15 @@ export const buildObserverRepository = ({ slonik }: ObservateurRepositoryDepende
   };
 
   const getCount = async (q?: string | null): Promise<number> => {
-    const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.observateur
-      ${
-        libelleLike
-          ? sql.fragment`
-              WHERE
-                unaccent(libelle) ILIKE unaccent(${libelleLike})
-          `
-          : sql.fragment``
-      }
-    `;
+    let query = kysely.selectFrom("basenaturaliste.observateur").select((eb) => eb.fn.countAll().as("count"));
 
-    return slonik.oneFirst(query);
+    if (q?.length) {
+      query = query.where(sqlKysely`unaccent(libelle)`, "ilike", sqlKysely`unaccent(${`%${q}%`})`);
+    }
+
+    const countResult = await query.executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
   };
 
   const createObserver = async (observerInput: ObserverCreateInput): Promise<Result<Observer, EntityFailureReason>> => {
