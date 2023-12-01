@@ -12,7 +12,7 @@ export const initSentry = () => {
     environment: sentryConfig.environment,
     release: sentryConfig.release,
     tracesSampleRate: 1.0,
-    integrations: [...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()],
+    integrations: [new Sentry.Integrations.Postgres()],
   });
 };
 

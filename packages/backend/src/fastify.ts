@@ -21,7 +21,7 @@ import { type Logger } from "pino";
 import downloadController from "./controllers/download-controller.js";
 import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
-import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
+import sentryPlugin from "./fastify/sentry-plugin.js";
 import { startImportTask } from "./services/import-manager.js";
 import { type Services } from "./services/services.js";
 import { logger as loggerParent } from "./utils/logger.js";
@@ -78,7 +78,7 @@ export const buildServer = async (
 
   logger.debug("Fastify static server successfully registered");
 
-  await server.register(sentryMetricsPlugin);
+  await server.register(sentryPlugin);
 
   // Register API routes
   await server.register(apiRoutesPlugin, { services, prefix: API_V1_PREFIX });
