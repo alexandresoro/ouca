@@ -29,9 +29,10 @@ export const initApp = async () => {
   // Sentry
   if (config.sentry) {
     const { initializeSentry } = await import("../sentry/sentry");
-    const { sentryRouter } = initializeSentry(config);
+    const { sentryRouter, ErrorBoundary } = initializeSentry(config);
     return {
       sentryRouter,
+      ErrorBoundary: ErrorBoundary,
     };
   }
 

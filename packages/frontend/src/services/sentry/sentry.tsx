@@ -62,6 +62,7 @@ export const initializeSentry = (config: AppConfig) => {
   });
   return {
     sentryRouter: Sentry.wrapCreateBrowserRouter(createBrowserRouter),
+    ErrorBoundary: <Sentry.ErrorBoundary showDialog />,
   };
 };
 
@@ -76,5 +77,3 @@ export const setUser = (user: User | null | undefined): void => {
       : null
   );
 };
-
-export const getErrorBoundary = () => Sentry.ErrorBoundary;

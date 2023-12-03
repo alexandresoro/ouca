@@ -11,8 +11,8 @@ import { routes } from "./router/routes";
 const Root = createRoot(document.getElementById("root")!);
 
 initApp()
-  .then(({ sentryRouter }) => {
-    const router = (sentryRouter ?? createBrowserRouter)(routes);
+  .then(({ sentryRouter, ErrorBoundary }) => {
+    const router = (sentryRouter ?? createBrowserRouter)(routes(ErrorBoundary));
 
     Root.render(
       <StrictMode>
