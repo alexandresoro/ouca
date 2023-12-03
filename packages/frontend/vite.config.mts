@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
           uploadLegacySourcemaps: {
             paths: ["**/assets/*"],
             ext: ["js", "map"],
-            urlPrefix: "assets",
+            urlPrefix: "~/assets",
           },
         },
         sourcemaps: {
