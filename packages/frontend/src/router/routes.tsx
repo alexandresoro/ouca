@@ -1,26 +1,32 @@
-import * as Sentry from "@sentry/react";
-import { type ComponentType } from "react";
+import type * as Sentry from "@sentry/react";
+import { Fragment } from "react";
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 import UserSettingsProvider from "../contexts/UserSettingsContext";
 import { AuthHandler } from "../features/AuthHandler";
+import ErrorBoundary from "../features/ErrorBoundary";
 import Layout from "../features/Layout";
 import LastInventory from "../features/observation/inventory/last-inventory/LastInventory";
 import { lazyRoute } from "./lazy-route";
 import { routesManage } from "./routes-manage";
 
-export const routes: (CustomErrorBoundary?: ComponentType) => RouteObject[] = (CustomErrorBoundary?: ComponentType) => {
+export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => RouteObject[] = (
+  SentryErrorBoundary?: typeof Sentry.ErrorBoundary
+) => {
+  const GlobalErrorBoundary = SentryErrorBoundary ?? Fragment;
+
   return [
     {
       path: "/",
       element: (
-        <Sentry.ErrorBoundary showDialog>
+        <GlobalErrorBoundary showDialog fallback={<ErrorBoundary />}>
           <AuthHandler>
             <UserSettingsProvider>
               <Layout />
             </UserSettingsProvider>
           </AuthHandler>
-        </Sentry.ErrorBoundary>
+        </GlobalErrorBoundary>
       ),
+      errorElement: SentryErrorBoundary == null ? <ErrorBoundary /> : undefined,
       children: [
         {
           index: true,
