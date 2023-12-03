@@ -32,7 +32,7 @@ export const initApp = async () => {
     const { sentryRouter, ErrorBoundary } = initializeSentry(config);
     return {
       sentryRouter,
-      ErrorBoundary: ErrorBoundary,
+      ErrorBoundary,
     };
   }
 

@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ComponentType } from "react";
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 import UserSettingsProvider from "../contexts/UserSettingsContext";
 import { AuthHandler } from "../features/AuthHandler";
@@ -8,7 +8,7 @@ import LastInventory from "../features/observation/inventory/last-inventory/Last
 import { lazyRoute } from "./lazy-route";
 import { routesManage } from "./routes-manage";
 
-export const routes: (CustomErrorBoundary?: ReactNode) => RouteObject[] = (CustomErrorBoundary?: ReactNode) => {
+export const routes: (CustomErrorBoundary?: ComponentType) => RouteObject[] = (CustomErrorBoundary?: ComponentType) => {
   return [
     {
       path: "/",
@@ -19,7 +19,7 @@ export const routes: (CustomErrorBoundary?: ReactNode) => RouteObject[] = (Custo
           </UserSettingsProvider>
         </AuthHandler>
       ),
-      errorElement: CustomErrorBoundary ?? <ErrorBoundary />,
+      ErrorBoundary: CustomErrorBoundary ?? ErrorBoundary,
       children: [
         {
           index: true,

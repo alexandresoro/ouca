@@ -62,7 +62,7 @@ export const initializeSentry = (config: AppConfig) => {
   });
   return {
     sentryRouter: Sentry.wrapCreateBrowserRouter(createBrowserRouter),
-    ErrorBoundary: <Sentry.ErrorBoundary showDialog />,
+    ErrorBoundary: Sentry.ErrorBoundary,
   };
 };
 
