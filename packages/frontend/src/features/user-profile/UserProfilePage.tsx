@@ -1,6 +1,5 @@
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
-import { useFeatures } from "@services/app-features/features";
 import stringToColor from "@utils/user-profile/stringToColor";
 import { getFullName, getInitials } from "@utils/user-profile/usernameUtils";
 import { type User } from "oidc-client-ts";
@@ -28,14 +27,8 @@ const UserProfilePage: FunctionComponent = () => {
 
   const { user } = useAuth();
 
-  const features = useFeatures();
-
   if (!user) {
     return null;
-  }
-
-  if (!features.tmp_import) {
-    throw new Error("Test");
   }
 
   const fullName = getFullName(user);
