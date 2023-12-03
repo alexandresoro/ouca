@@ -33,7 +33,8 @@ export const initializeSentry = (config: AppConfig) => {
           matchRoutes
         ),
       }),
-      new Sentry.Replay({}),
+      // Disable replay as not supported by GlitchTip
+      // new Sentry.Replay({}),
       new ExtraErrorData(),
       new HttpClient(),
     ],
