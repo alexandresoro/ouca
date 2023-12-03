@@ -44,9 +44,13 @@ export default defineConfig(({ mode }) => {
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
           name: env.SENTRY_RELEASE,
-          setCommits: {
-            auto: true,
-          },
+          // Disabled while testing GlitchTip as it does not seem to work properly
+          // Probably because of GlitchTip does not link commits to releases at all
+          // setCommits: {
+          //   auto: true,
+          // },
+          // GlitchTip does not seem happy with the new source map format
+          uploadLegacySourcemaps: "**/assets/*.js.map",
         },
         sourcemaps: {
           filesToDeleteAfterUpload: "**/assets/*.js.map",
