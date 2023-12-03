@@ -13,13 +13,14 @@ export const routes: (CustomErrorBoundary?: ComponentType) => RouteObject[] = (C
     {
       path: "/",
       element: (
-        <AuthHandler>
-          <UserSettingsProvider>
-            <Layout />
-          </UserSettingsProvider>
-        </AuthHandler>
+        <Sentry.ErrorBoundary showDialog>
+          <AuthHandler>
+            <UserSettingsProvider>
+              <Layout />
+            </UserSettingsProvider>
+          </AuthHandler>
+        </Sentry.ErrorBoundary>
       ),
-      errorElement: <Sentry.ErrorBoundary showDialog />,
       children: [
         {
           index: true,
