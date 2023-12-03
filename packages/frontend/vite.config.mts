@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
           //   auto: true,
           // },
           // GlitchTip does not seem happy with the new source map format
-          uploadLegacySourcemaps: "**/assets/*.js.map",
+          uploadLegacySourcemaps: "**/assets/*",
         },
         sourcemaps: {
           filesToDeleteAfterUpload: "**/assets/*.js.map",
