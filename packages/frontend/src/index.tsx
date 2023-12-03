@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react";
 import { initApp } from "@services/init-app/init-app";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -13,7 +12,7 @@ const Root = createRoot(document.getElementById("root")!);
 
 initApp()
   .then(({ sentryRouter, ErrorBoundary }) => {
-    const router = (sentryRouter ?? createBrowserRouter)(routes(Sentry.ErrorBoundary));
+    const router = (sentryRouter ?? createBrowserRouter)(routes(ErrorBoundary));
 
     Root.render(
       <StrictMode>

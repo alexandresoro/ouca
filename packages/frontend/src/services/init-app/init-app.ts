@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { loadAnalytics } from "@services/analytics/umami";
 import { initConfig, type AppConfig } from "@services/config/config";
 
@@ -32,7 +33,7 @@ export const initApp = async () => {
     const { sentryRouter, ErrorBoundary } = initializeSentry(config);
     return {
       sentryRouter,
-      ErrorBoundary,
+      ErrorBoundary: Sentry.ErrorBoundary,
     };
   }
 
