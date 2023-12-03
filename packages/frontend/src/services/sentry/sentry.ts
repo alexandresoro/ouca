@@ -76,3 +76,5 @@ export const setUser = (user: User | null | undefined): void => {
       : null
   );
 };
+
+export const getErrorBoundary = () => Sentry.ErrorBoundary;

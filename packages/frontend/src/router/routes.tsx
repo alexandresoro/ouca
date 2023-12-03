@@ -1,6 +1,7 @@
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 import UserSettingsProvider from "../contexts/UserSettingsContext";
 import { AuthHandler } from "../features/AuthHandler";
+import ErrorBoundary from "../features/ErrorBoundary";
 import Layout from "../features/Layout";
 import LastInventory from "../features/observation/inventory/last-inventory/LastInventory";
 import { lazyRoute } from "./lazy-route";
@@ -16,6 +17,7 @@ export const routes: RouteObject[] = [
         </UserSettingsProvider>
       </AuthHandler>
     ),
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,
