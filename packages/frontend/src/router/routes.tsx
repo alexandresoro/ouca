@@ -19,7 +19,7 @@ export const routes: (CustomErrorBoundary?: ComponentType) => RouteObject[] = (C
           </UserSettingsProvider>
         </AuthHandler>
       ),
-      ErrorBoundary: Sentry.ErrorBoundary,
+      errorElement: <Sentry.ErrorBoundary showDialog />,
       children: [
         {
           index: true,
