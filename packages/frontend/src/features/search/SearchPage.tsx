@@ -11,10 +11,6 @@ const SearchPage: FunctionComponent = () => {
 
   const features = useFeatures();
 
-  if (!features.tmp_import) {
-    throw new Error("Quick and ugly test error");
-  }
-
   return (
     <div className="container mx-auto flex gap-16 mt-6">
       <div className="flex-shrink-0 w-80">
