@@ -279,7 +279,7 @@ importers:
         version: 2.4.2
       jotai:
         specifier: 2.6.0
-        version: 2.6.0(@types/react@18.2.39)(react@18.2.0)
+        version: 2.6.0(@types/react@18.2.41)(react@18.2.0)
       lru-cache:
         specifier: 10.1.0
         version: 10.1.0
@@ -345,8 +345,8 @@ importers:
         specifier: 20.10.1
         version: 20.10.1
       '@types/react':
-        specifier: 18.2.39
-        version: 18.2.39
+        specifier: 18.2.41
+        version: 18.2.41
       '@types/react-dom':
         specifier: 18.2.17
         version: 18.2.17
@@ -2299,11 +2299,11 @@ packages:
   /@types/react-dom@18.2.17:
     resolution: {integrity: sha512-rvrT/M7Df5eykWFxn6MYt5Pem/Dbyc1N8Y0S9Mrkw2WFCRiqUgw9P7ul2NpwsXCSM1DVdENzdG9J5SreqfAIWg==}
     dependencies:
-      '@types/react': 18.2.39
+      '@types/react': 18.2.41
     dev: true
 
-  /@types/react@18.2.39:
-    resolution: {integrity: sha512-Oiw+ppED6IremMInLV4HXGbfbG6GyziY3kqAwJYOR0PNbkYDmLWQA3a95EhdSmamsvbkJN96ZNN+YD+fGjzSBA==}
+  /@types/react@18.2.41:
+    resolution: {integrity: sha512-CwOGr/PiLiNBxEBqpJ7fO3kocP/2SSuC9fpH5K7tusrg4xPSRT/193rzolYwQnTN02We/ATXKnb6GqA5w4fRxw==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.3
@@ -4878,7 +4878,7 @@ packages:
     hasBin: true
     dev: true
 
-  /jotai@2.6.0(@types/react@18.2.39)(react@18.2.0):
+  /jotai@2.6.0(@types/react@18.2.41)(react@18.2.0):
     resolution: {integrity: sha512-Vt6hsc04Km4j03l+Ax+Sc+FVft5cRJhqgxt6GTz6GM2eM3DyX3CdBdzcG0z2FrlZToL1/0OAkqDghIyARWnSuQ==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
@@ -4890,7 +4890,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': 18.2.39
+      '@types/react': 18.2.41
       react: 18.2.0
     dev: false
 
