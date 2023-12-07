@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@floating-ui/react": "0.26.3",
-    "@fontsource-variable/nunito": "5.0.16",
+    "@fontsource-variable/nunito": "5.0.17",
     "@fontsource/carter-one": "5.0.8",
     "@headlessui/react": "1.7.17",
     "@hookform/resolvers": "3.3.2",
