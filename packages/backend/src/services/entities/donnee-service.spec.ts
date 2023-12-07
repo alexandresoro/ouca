@@ -286,7 +286,7 @@ describe("Deletion of a data", () => {
     expect(result).toEqual(deletedDonnee);
   });
 
-  test("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
+  describe("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
     test("when the inventory exists", async () => {
       const loggedUser = mock<LoggedUser>({
         id: "12",
