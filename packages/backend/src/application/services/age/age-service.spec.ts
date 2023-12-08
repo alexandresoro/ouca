@@ -258,6 +258,8 @@ describe("Creation of an age", () => {
 
     const loggedUser = loggedUserFactory.build();
 
+    ageRepository.createAge.mockResolvedValueOnce(ok(ageFactory.build()));
+
     await ageService.createAge(ageData, loggedUser);
 
     expect(ageRepository.createAge).toHaveBeenCalledTimes(1);

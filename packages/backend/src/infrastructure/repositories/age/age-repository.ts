@@ -1,6 +1,9 @@
 import { ageSchema, type Age, type AgeCreateInput, type AgeFindManyInput } from "@domain/age/age.js";
+import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql as sqlKysely } from "kysely";
+import { fromPromise, type Result } from "neverthrow";
 import { sql, type DatabasePool } from "slonik";
 import { z } from "zod";
 import {
@@ -89,17 +92,18 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     return countSchema.parse(countResult).count;
   };
 
-  const createAge = async (ageInput: AgeCreateInput): Promise<Age> => {
-    const createdAge = await kysely
-      .insertInto("age")
-      .values({
-        libelle: ageInput.libelle,
-        ownerId: ageInput.ownerId,
-      })
-      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
-      .executeTakeFirstOrThrow();
-
-    return ageSchema.parse(createdAge);
+  const createAge = async (ageInput: AgeCreateInput): Promise<Result<Age, EntityFailureReason>> => {
+    return fromPromise(
+      kysely
+        .insertInto("age")
+        .values({
+          libelle: ageInput.libelle,
+          ownerId: ageInput.ownerId,
+        })
+        .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+        .executeTakeFirstOrThrow(),
+      handleDatabaseError
+    ).map((createdAge) => ageSchema.parse(createdAge));
   };
 
   const createAges = async (ageInputs: AgeCreateInput[]): Promise<Age[]> => {

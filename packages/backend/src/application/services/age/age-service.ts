@@ -107,12 +107,14 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     }
 
     try {
-      const createdAge = await ageRepository.createAge({
+      const createdAgeResult = await ageRepository.createAge({
         ...input,
         ownerId: loggedUser.id,
       });
 
-      return ok(enrichEntityWithEditableStatus(createdAge, loggedUser));
+      return createdAgeResult.map((createdAge) => {
+        return enrichEntityWithEditableStatus(createdAge, loggedUser);
+      });
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         return err("alreadyExists");
