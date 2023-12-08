@@ -77,7 +77,7 @@ const agesController: FastifyPluginCallback<{
     if (extended) {
       data = await Promise.all(
         agesData.map(async (ageData) => {
-          const entriesCount = await ageService.getDonneesCountByAge(ageData.id, req.user);
+          const entriesCount = (await ageService.getDonneesCountByAge(ageData.id, req.user))._unsafeUnwrap();
           return {
             ...ageData,
             entriesCount,
