@@ -1,5 +1,8 @@
-import { type SortOrder } from "@domain/shared/sort-order.js";
 import { z } from "zod";
+import { type CommonFailureReason } from "../shared/failure-reason.js";
+import { type SortOrder } from "../shared/sort-order.js";
+
+export type AgeFailureReason = CommonFailureReason;
 
 export const ageSchema = z.object({
   id: z.string(),

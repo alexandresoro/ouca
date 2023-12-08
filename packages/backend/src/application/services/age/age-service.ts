@@ -1,14 +1,14 @@
-import { type AgeCreateInput } from "@domain/age/age.js";
-import { OucaError } from "@domain/errors/ouca-error.js";
+import { type AgeCreateInput, type AgeFailureReason } from "@domain/age/age.js";
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type AgeRepository } from "@interfaces/age-repository-interface.js";
 import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type AgeSimple } from "@ou-ca/common/api/entities/age";
+import { err, ok, type Result } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
-import { validateAuthorization } from "../authorization/authorization-utils.js";
 
 type AgeServiceDependencies = {
   ageRepository: AgeRepository;
@@ -16,27 +16,39 @@ type AgeServiceDependencies = {
 };
 
 export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceDependencies) => {
-  const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<AgeSimple | null> => {
-    validateAuthorization(loggedUser);
+  const findAge = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const age = await ageRepository.findAgeById(id);
-    return enrichEntityWithEditableStatus(age, loggedUser);
+    return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
   const findAgeOfDonneeId = async (
     donneeId: string | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<AgeSimple | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const age = await ageRepository.findAgeByDonneeId(donneeId ? parseInt(donneeId) : undefined);
-    return enrichEntityWithEditableStatus(age, loggedUser);
+    return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
-  const getDonneesCountByAge = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getDonneesCountByAge = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return donneeRepository.getCountByAgeId(parseInt(id));
+    return ok(await donneeRepository.getCountByAgeId(parseInt(id)));
   };
 
   const findAllAges = async (): Promise<AgeSimple[]> => {
@@ -51,8 +63,13 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return [...enrichedAges];
   };
 
-  const findPaginatedAges = async (loggedUser: LoggedUser | null, options: AgesSearchParams): Promise<AgeSimple[]> => {
-    validateAuthorization(loggedUser);
+  const findPaginatedAges = async (
+    loggedUser: LoggedUser | null,
+    options: AgesSearchParams
+  ): Promise<Result<AgeSimple[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -67,17 +84,27 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
       return enrichEntityWithEditableStatus(age, loggedUser);
     });
 
-    return [...enrichedAges];
+    return ok([...enrichedAges]);
   };
 
-  const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getAgesCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return ageRepository.getCount(q);
+    return ok(await ageRepository.getCount(q));
   };
 
-  const createAge = async (input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<AgeSimple> => {
-    validateAuthorization(loggedUser);
+  const createAge = async (
+    input: UpsertAgeInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<AgeSimple, AgeFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdAge = await ageRepository.createAge({
@@ -85,53 +112,64 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
         ownerId: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdAge, loggedUser);
+      return ok(enrichEntityWithEditableStatus(createdAge, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const updateAge = async (id: number, input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<AgeSimple> => {
-    validateAuthorization(loggedUser);
+  const updateAge = async (
+    id: number,
+    input: UpsertAgeInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<AgeSimple, AgeFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await ageRepository.findAgeById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     try {
       const upsertedAge = await ageRepository.updateAge(id, input);
 
-      return enrichEntityWithEditableStatus(upsertedAge, loggedUser);
+      return ok(enrichEntityWithEditableStatus(upsertedAge, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<AgeSimple | null> => {
-    validateAuthorization(loggedUser);
+  const deleteAge = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await ageRepository.findAgeById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedAge = await ageRepository.deleteAgeById(id);
-    return deletedAge ? enrichEntityWithEditableStatus(deletedAge, loggedUser) : null;
+    return ok(deletedAge ? enrichEntityWithEditableStatus(deletedAge, loggedUser) : null);
   };
 
   const createAges = async (

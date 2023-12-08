@@ -186,7 +186,7 @@ export const generateDonneesExport = async (
       const meteos = await meteoService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
       const espece = await especeService.findEspeceOfDonneeId(donnee?.id, loggedUser);
       const classe = await classeService.findClasseOfEspeceId(espece?.id, loggedUser);
-      const age = await ageService.findAgeOfDonneeId(donnee?.id, loggedUser);
+      const age = (await ageService.findAgeOfDonneeId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = await sexeService.findSexeOfDonneeId(donnee?.id, loggedUser);
       const estimationDistance = await estimationDistanceService.findEstimationDistanceOfDonneeId(
         donnee?.id,

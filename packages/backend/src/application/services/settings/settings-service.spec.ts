@@ -1,6 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { ageServiceFactory } from "@fixtures/services/age/age-service.fixtures.js";
 import { observerServiceFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
@@ -38,6 +39,7 @@ describe("Fetch app configuration for user", () => {
       defaultObservateurId: "13",
     });
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
+    ageService.findAge.mockResolvedValueOnce(ok(ageServiceFactory.build()));
     observateurService.findObservateur.mockResolvedValueOnce(ok(observerServiceFactory.build()));
 
     await settingsService.getSettings(loggedUser);
@@ -58,6 +60,7 @@ describe("Fetch app configuration for user", () => {
       defaultObservateurId: null,
     });
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
+    ageService.findAge.mockResolvedValueOnce(ok(ageServiceFactory.build()));
 
     await settingsService.getSettings(loggedUser);
 
@@ -94,6 +97,7 @@ test("should update settings with parameters for user", async () => {
     defaultObservateurId: "5",
   });
   settingsRepository.updateUserSettings.mockResolvedValueOnce(mockResolved);
+  ageService.findAge.mockResolvedValueOnce(ok(ageServiceFactory.build()));
   observateurService.findObservateur.mockResolvedValueOnce(ok(observerServiceFactory.build()));
 
   await settingsService.updateUserSettings(updatedAppConfiguration, loggedUser);

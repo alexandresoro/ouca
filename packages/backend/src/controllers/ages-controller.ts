@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getAgeResponse,
   getAgesExtendedResponse,
@@ -9,7 +8,9 @@ import {
 } from "@ou-ca/common/api/age";
 import { type Age, type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { type FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const agesController: FastifyPluginCallback<{
@@ -22,7 +23,20 @@ const agesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const age = await ageService.findAge(req.params.id, req.user);
+    const ageResult = await ageService.findAge(req.params.id, req.user);
+
+    if (ageResult.isErr()) {
+      switch (ageResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: ageResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const age = ageResult.value;
+
     if (!age) {
       return await reply.status(404).send();
     }
@@ -42,10 +56,22 @@ const agesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [agesData, count] = await Promise.all([
-      ageService.findPaginatedAges(req.user, queryParams),
-      ageService.getAgesCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await ageService.findPaginatedAges(req.user, queryParams),
+      await ageService.getAgesCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [agesData, count] = paginatedResults.value;
 
     let data: AgeSimple[] | Age[] = agesData;
     if (extended) {
@@ -78,17 +104,22 @@ const agesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const age = await ageService.createAge(input, req.user);
-      const response = upsertAgeResponse.parse(age);
+    const ageCreateResult = await ageService.createAge(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (ageCreateResult.isErr()) {
+      switch (ageCreateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: ageCreateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertAgeResponse.parse(ageCreateResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -104,17 +135,22 @@ const agesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const age = await ageService.updateAge(req.params.id, input, req.user);
-      const response = upsertAgeResponse.parse(age);
+    const ageUpdateResult = await ageService.updateAge(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (ageUpdateResult.isErr()) {
+      switch (ageUpdateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: ageUpdateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertAgeResponse.parse(ageUpdateResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -122,7 +158,19 @@ const agesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedAge = await ageService.deleteAge(req.params.id, req.user);
+    const deletedAgeResult = await ageService.deleteAge(req.params.id, req.user);
+
+    if (deletedAgeResult.isErr()) {
+      switch (deletedAgeResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedAgeResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedAge = deletedAgeResult.value;
 
     if (!deletedAge) {
       return await reply.status(404).send();

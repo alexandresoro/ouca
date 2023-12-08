@@ -52,7 +52,9 @@ export const buildSettingsService = ({
         ? (await observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultSexeId != null ? sexeService.findSexe(parseInt(defaultSexeId), loggedUser) : Promise.resolve(null),
-      defaultAgeId != null ? ageService.findAge(parseInt(defaultAgeId), loggedUser) : Promise.resolve(null),
+      defaultAgeId != null
+        ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
+        : Promise.resolve(null),
       defaultEstimationNombreId != null
         ? estimationNombreService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
@@ -103,7 +105,9 @@ export const buildSettingsService = ({
         ? (await observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultSexeId != null ? sexeService.findSexe(parseInt(defaultSexeId), loggedUser) : Promise.resolve(null),
-      defaultAgeId != null ? ageService.findAge(parseInt(defaultAgeId), loggedUser) : Promise.resolve(null),
+      defaultAgeId != null
+        ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
+        : Promise.resolve(null),
       defaultEstimationNombreId != null
         ? estimationNombreService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
