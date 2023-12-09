@@ -2,26 +2,16 @@ import { ageSchema, type Age, type AgeCreateInput, type AgeFindManyInput } from 
 import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
-import { sql as sqlKysely } from "kysely";
+import { sql } from "kysely";
 import { fromPromise, type Result } from "neverthrow";
-import { sql, type DatabasePool } from "slonik";
 import { z } from "zod";
-import {
-  buildPaginationFragment,
-  buildSortOrderFragment,
-  objectToKeyValueSet,
-} from "../../../repositories/repository-helpers.js";
 import { countSchema } from "../common.js";
 
-export type AgeRepositoryDependencies = {
-  slonik: DatabasePool;
-};
-
-export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
+export const buildAgeRepository = () => {
   const findAgeById = async (id: number): Promise<Age | null> => {
     const ageResult = await kysely
       .selectFrom("age")
-      .select([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .select([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .where("id", "=", id)
       .executeTakeFirst();
 
@@ -33,58 +23,63 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
       return null;
     }
 
-    const query = sql.type(ageSchema)`
-      SELECT 
-        age.id::text,
-        age.libelle,
-        age.owner_id
-      FROM
-        basenaturaliste.age
-      LEFT JOIN basenaturaliste.donnee ON age.id = donnee.age_id
-      WHERE
-        donnee.id = ${donneeId}
-    `;
+    const ageResult = await kysely
+      .selectFrom("age")
+      .leftJoin("donnee", "donnee.ageId", "age.id")
+      .select([sql<string>`basenaturaliste.age.id::text`.as("id"), "libelle", "ownerId"])
+      .where("donnee.id", "=", donneeId)
+      .executeTakeFirst();
 
-    return slonik.maybeOne(query);
+    return ageResult ? ageSchema.parse(ageResult) : null;
   };
 
   const findAges = async ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {}): Promise<readonly Age[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
-    const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(ageSchema)`
-      SELECT 
-        age.id::text,
-        age.libelle,
-        age.owner_id
-      FROM
-        basenaturaliste.age
-      ${isSortByNbDonnees ? sql.fragment`LEFT JOIN basenaturaliste.donnee ON age.id = donnee.age_id` : sql.fragment``}
-      ${
-        libelleLike
-          ? sql.fragment`
-      WHERE unaccent(libelle) ILIKE unaccent(${libelleLike})
-      `
-          : sql.fragment``
-      }
-      ${isSortByNbDonnees ? sql.fragment`GROUP BY age."id"` : sql.fragment``}
-      ${isSortByNbDonnees ? sql.fragment`ORDER BY COUNT(donnee."id")` : sql.fragment``}
-      ${
-        !isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}` : sql.fragment``
-      }${buildSortOrderFragment({
-        orderBy,
-        sortOrder,
-      })}
-      ${buildPaginationFragment({ offset, limit })}
-    `;
 
-    return slonik.any(query);
+    let queryAge;
+
+    if (isSortByNbDonnees) {
+      queryAge = kysely
+        .selectFrom("age")
+        .leftJoin("donnee", "donnee.ageId", "age.id")
+        .select([sql`basenaturaliste.age.id::text`.as("id"), "libelle", "age.ownerId"]);
+
+      if (q?.length) {
+        queryAge = queryAge.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
+
+      queryAge = queryAge.groupBy("age.id").orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined);
+    } else {
+      queryAge = kysely
+        .selectFrom("age")
+        .select([sql`basenaturaliste.age.id::text`.as("id"), "libelle", "age.ownerId"]);
+
+      if (q?.length) {
+        queryAge = queryAge.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
+
+      if (orderBy) {
+        queryAge = queryAge.orderBy(orderBy, sortOrder ?? undefined);
+      }
+    }
+
+    if (offset) {
+      queryAge = queryAge.offset(offset);
+    }
+    if (limit) {
+      queryAge = queryAge.limit(limit);
+    }
+
+    const agesResult = await queryAge.execute();
+
+    return z.array(ageSchema).parse(agesResult);
   };
 
   const getCount = async (q?: string | null): Promise<number> => {
     let query = kysely.selectFrom("age").select((eb) => eb.fn.countAll().as("count"));
 
     if (q?.length) {
-      query = query.where(sqlKysely`unaccent(libelle)`, "ilike", sqlKysely`unaccent(${`%${q}%`})`);
+      query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
     }
 
     const countResult = await query.executeTakeFirstOrThrow();
@@ -100,7 +95,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
           libelle: ageInput.libelle,
           ownerId: ageInput.ownerId,
         })
-        .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+        .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
       handleDatabaseError
     ).map((createdAge) => ageSchema.parse(createdAge));
@@ -117,34 +112,32 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
           };
         })
       )
-      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
 
     return z.array(ageSchema).nonempty().parse(createdAges);
   };
 
-  const updateAge = async (ageId: number, ageInput: AgeCreateInput): Promise<Age> => {
-    const query = sql.type(ageSchema)`
-      UPDATE
-        basenaturaliste.age
-      SET
-        ${objectToKeyValueSet(ageInput)}
-      WHERE
-        id = ${ageId}
-      RETURNING
-        age.id::text,
-        age.libelle,
-        age.owner_id
-    `;
-
-    return slonik.one(query);
+  const updateAge = async (ageId: number, ageInput: AgeCreateInput): Promise<Result<Age, EntityFailureReason>> => {
+    return fromPromise(
+      kysely
+        .updateTable("age")
+        .set({
+          libelle: ageInput.libelle,
+          ownerId: ageInput.ownerId,
+        })
+        .where("id", "=", ageId)
+        .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
+        .executeTakeFirstOrThrow(),
+      handleDatabaseError
+    ).map((updatedAge) => ageSchema.parse(updatedAge));
   };
 
   const deleteAgeById = async (ageId: number): Promise<Age | null> => {
     const deletedAge = await kysely
       .deleteFrom("age")
       .where("id", "=", ageId)
-      .returning([sqlKysely<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .executeTakeFirst();
 
     return deletedAge ? ageSchema.parse(deletedAge) : null;

@@ -4,7 +4,6 @@ import { upsertAgeInputFactory } from "@fixtures/services/age/age-service.fixtur
 import { type AgeRepository } from "@interfaces/age-repository-interface.js";
 import { type AgesSearchParams } from "@ou-ca/common/api/age";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { mockVi } from "../../../utils/mock.js";
@@ -17,12 +16,6 @@ const ageService = buildAgeService({
   ageRepository,
   donneeRepository,
 });
-
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(new Error("errorMessage"));
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
 
 describe("Find age", () => {
   test("should handle a matching age", async () => {
@@ -185,6 +178,8 @@ describe("Update of an age", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    ageRepository.updateAge.mockResolvedValueOnce(ok(ageFactory.build()));
+
     await ageService.updateAge(12, ageData, loggedUser);
 
     expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
@@ -201,6 +196,7 @@ describe("Update of an age", () => {
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     ageRepository.findAgeById.mockResolvedValueOnce(existingData);
+    ageRepository.updateAge.mockResolvedValueOnce(ok(ageFactory.build()));
 
     await ageService.updateAge(12, ageData, loggedUser);
 
@@ -233,7 +229,7 @@ describe("Update of an age", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    ageRepository.updateAge.mockImplementation(uniqueConstraintFailed);
+    ageRepository.updateAge.mockResolvedValueOnce(err("alreadyExists"));
 
     const updateResult = await ageService.updateAge(12, ageData, loggedUser);
 
@@ -274,7 +270,7 @@ describe("Creation of an age", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.createAge.mockImplementation(uniqueConstraintFailed);
+    ageRepository.createAge.mockResolvedValueOnce(err("alreadyExists"));
 
     const createResult = await ageService.createAge(ageData, loggedUser);
 

@@ -5,7 +5,6 @@ import { type AgeRepository } from "@interfaces/age-repository-interface.js";
 import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { err, ok, type Result } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
@@ -106,21 +105,14 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
       return err("notAllowed");
     }
 
-    try {
-      const createdAgeResult = await ageRepository.createAge({
-        ...input,
-        ownerId: loggedUser.id,
-      });
+    const createdAgeResult = await ageRepository.createAge({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return createdAgeResult.map((createdAge) => {
-        return enrichEntityWithEditableStatus(createdAge, loggedUser);
-      });
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdAgeResult.map((createdAge) => {
+      return enrichEntityWithEditableStatus(createdAge, loggedUser);
+    });
   };
 
   const updateAge = async (
@@ -141,16 +133,11 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
       }
     }
 
-    try {
-      const upsertedAge = await ageRepository.updateAge(id, input);
+    const upsertedAgeResult = await ageRepository.updateAge(id, input);
 
-      return ok(enrichEntityWithEditableStatus(upsertedAge, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return upsertedAgeResult.map((upsertedAge) => {
+      return enrichEntityWithEditableStatus(upsertedAge, loggedUser);
+    });
   };
 
   const deleteAge = async (

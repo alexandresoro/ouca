@@ -9,6 +9,6 @@ export type AgeRepository = {
   getCount: (q?: string | null) => Promise<number>;
   createAge: (ageInput: AgeCreateInput) => Promise<Result<Age, EntityFailureReason>>;
   createAges: (ageInputs: AgeCreateInput[]) => Promise<Age[]>;
-  updateAge: (ageId: number, ageInput: AgeCreateInput) => Promise<Age>;
+  updateAge: (ageId: number, ageInput: AgeCreateInput) => Promise<Result<Age, EntityFailureReason>>;
   deleteAgeById: (ageId: number) => Promise<Age | null>;
 };
