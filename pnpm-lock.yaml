@@ -60,8 +60,8 @@ importers:
         specifier: 5.5.3
         version: 5.5.3
       csv-stringify:
-        specifier: 6.4.4
-        version: 6.4.4
+        specifier: 6.4.5
+        version: 6.4.5
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -3232,8 +3232,8 @@ packages:
     resolution: {integrity: sha512-v0KW6C0qlZzoGjk6u5tLmVfyZxNgPGXZsWTXshpAgKVGmGXzaVWGdlCFxNx5iuzcXT/oJN1HHM9DZKwtAtYa+A==}
     dev: false
 
-  /csv-stringify@6.4.4:
-    resolution: {integrity: sha512-NDshLupGa7gp4UG4sSNIqwYJqgSwvds0SvENntxoVoVvTzXcrHvd5gG2MWpbRpSNvk59dlmIe1IwNvSxN4IVmg==}
+  /csv-stringify@6.4.5:
+    resolution: {integrity: sha512-SPu1Vnh8U5EnzpNOi1NDBL5jU5Rx7DVHr15DNg9LXDTAbQlAVAmEbVt16wZvEW9Fu9Qt4Ji8kmeCJ2B1+4rFTQ==}
     dev: false
 
   /culori@3.2.0:
