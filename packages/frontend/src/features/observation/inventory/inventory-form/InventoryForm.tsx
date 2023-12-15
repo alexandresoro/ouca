@@ -1,11 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Inventory } from "@ou-ca/common/api/entities/inventory";
 import { upsertInventoryInput, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { z } from "zod";
 import useUserSettingsContext from "../../../../hooks/useUserSettingsContext";
 import {
   inventoryAltitudeAtom,
@@ -25,6 +27,21 @@ type InventoryFormProps = {
   submitFormText?: string;
   disableIfNoChanges?: boolean;
 };
+
+const upsertInventoryFormInput = upsertInventoryInput.omit({ duration: true }).extend({
+  duration: z
+    .union([z.string(), z.number()])
+    .nullable()
+    .transform((value) => {
+      if (typeof value === "string" && !value.length) return null;
+      if (typeof value === "string") return getMinutesFromTime(value);
+      return value;
+    })
+    .refine((value) => {
+      if (value === null) return true;
+      if (typeof value === "number") return Number.isFinite(value);
+    }),
+});
 
 const InventoryForm: FunctionComponent<InventoryFormProps> = ({
   initialData,
@@ -103,7 +120,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
     resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
     values: formValues,
-    resolver: zodResolver(upsertInventoryInput),
+    resolver: zodResolver(upsertInventoryFormInput),
     mode: "onTouched",
   });
 
