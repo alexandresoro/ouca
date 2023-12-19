@@ -305,8 +305,8 @@ importers:
         specifier: 9.5.3
         version: 9.5.3(react@18.2.0)
       react-map-gl:
-        specifier: 7.1.6
-        version: 7.1.6(maplibre-gl@3.6.2)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.7
+        version: 7.1.7(maplibre-gl@3.6.2)(react-dom@18.2.0)(react@18.2.0)
       react-oidc-context:
         specifier: 2.3.1
         version: 2.3.1(oidc-client-ts@2.4.0)(react@18.2.0)
@@ -1516,18 +1516,6 @@ packages:
   /@mapbox/whoots-js@3.1.0:
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
-    dev: false
-
-  /@maplibre/maplibre-gl-style-spec@19.3.0:
-    resolution: {integrity: sha512-ZbhX9CTV+Z7vHwkRIasDOwTSzr76e8Q6a55RMsAibjyX6+P0ZNL1qAKNzOjjBDP3+aEfNMl7hHo5knuY6pTAUQ==}
-    hasBin: true
-    dependencies:
-      '@mapbox/jsonlint-lines-primitives': 2.0.2
-      '@mapbox/unitbezier': 0.0.1
-      json-stringify-pretty-compact: 3.0.0
-      minimist: 1.2.8
-      rw: 1.3.3
-      sort-object: 3.0.3
     dev: false
 
   /@maplibre/maplibre-gl-style-spec@19.3.3:
@@ -6174,8 +6162,8 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-map-gl@7.1.6(maplibre-gl@3.6.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-9XbrvpFF67Fyi+e6vRLJFnGpo3UF6ZHifIa8cS/wUYSsnv9sVyzGsN++FJy57zkz3Jh3kmf0xKZemR8K0FZLVw==}
+  /react-map-gl@7.1.7(maplibre-gl@3.6.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-mwjc0obkBJOXCcoXQr3VoLqmqwo9vS4bXfbGsdxXzEgVCv/PM0v+1QggL7W0d/ccIy+VCjbXNlGij+PENz6VNg==}
     peerDependencies:
       mapbox-gl: '>=1.13.0'
       maplibre-gl: '>=1.13.0'
@@ -6187,7 +6175,7 @@ packages:
       maplibre-gl:
         optional: true
     dependencies:
-      '@maplibre/maplibre-gl-style-spec': 19.3.0
+      '@maplibre/maplibre-gl-style-spec': 19.3.3
       '@types/mapbox-gl': 2.7.13
       maplibre-gl: 3.6.2
       react: 18.2.0
