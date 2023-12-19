@@ -126,7 +126,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
 
   const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {
     // FIXME assertion is done thanks to zod resolver, however types are not inferred
-    onSubmitForm?.(inventoryFormData as unknown as UpsertInventoryInput);
+    onSubmitForm?.(inventoryFormData as z.infer<typeof upsertInventoryFormInput>);
   };
 
   return (
