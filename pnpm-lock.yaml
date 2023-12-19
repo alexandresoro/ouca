@@ -154,8 +154,8 @@ importers:
         specifier: 1.4.1
         version: 1.4.1
       '@cloudflare/workers-types':
-        specifier: 4.20231121.0
-        version: 4.20231121.0
+        specifier: 4.20231218.0
+        version: 4.20231218.0
       '@ou-ca/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -750,8 +750,8 @@ packages:
     dev: true
     optional: true
 
-  /@cloudflare/workers-types@4.20231121.0:
-    resolution: {integrity: sha512-+kWfpCkqiepwAKXyHoE0gnkPgkLhz0/9HOBIGhHRsUvUKvhUtm3mbqqoGRWgF1qcjzrDUBbrrOq4MYHfFtc2RA==}
+  /@cloudflare/workers-types@4.20231218.0:
+    resolution: {integrity: sha512-Vs1FKjfUjXYGbCsXzkl+ITp0Iyb6QiW6+vTERTNThC+v96T0IvPVAioH4tT20rXwoxAfxh380mAaxYtTrJUNVg==}
     dev: true
 
   /@emotion/is-prop-valid@1.2.1:

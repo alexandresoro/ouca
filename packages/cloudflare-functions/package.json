@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.4.1",
-    "@cloudflare/workers-types": "4.20231121.0",
+    "@cloudflare/workers-types": "4.20231218.0",
     "@ou-ca/eslint-config": "workspace:*",
     "typescript": "5.3.3"
   }
