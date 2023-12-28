@@ -11,7 +11,6 @@ import {
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { COLUMN_NOM } from "../../utils/constants.js";
 import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
@@ -57,7 +56,7 @@ export const buildCommuneService = ({
 
   const findAllCommunes = async (): Promise<Town[]> => {
     const communes = await communeRepository.findCommunes({
-      orderBy: COLUMN_NOM,
+      orderBy: "nom",
     });
 
     const enrichedTowns = communes.map((town) => {

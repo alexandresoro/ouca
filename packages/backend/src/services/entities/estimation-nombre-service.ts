@@ -7,7 +7,6 @@ import { validateAuthorization } from "../../application/services/authorization/
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EstimationNombreCreateInput } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
 
@@ -47,7 +46,7 @@ export const buildEstimationNombreService = ({
 
   const findAllEstimationsNombre = async (): Promise<NumberEstimate[]> => {
     const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedNumberEstimates = estimationNombres.map((numberEstimate) => {

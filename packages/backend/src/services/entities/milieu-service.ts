@@ -7,7 +7,6 @@ import { validateAuthorization } from "../../application/services/authorization/
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type MilieuServiceDependencies = {
@@ -54,7 +53,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
   const findAllMilieux = async (): Promise<Environment[]> => {
     const milieux = await milieuRepository.findMilieux({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedEnvironments = milieux.map((environment) => {

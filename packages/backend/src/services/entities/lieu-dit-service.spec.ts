@@ -9,7 +9,6 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { COLUMN_NOM } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 import { buildLieuditService } from "./lieu-dit-service.js";
@@ -140,7 +139,7 @@ test("Find all localities", async () => {
 
   expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
   expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_NOM,
+    orderBy: "nom",
   });
 });
 
@@ -176,7 +175,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
     expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_NOM,
+      orderBy: "nom",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

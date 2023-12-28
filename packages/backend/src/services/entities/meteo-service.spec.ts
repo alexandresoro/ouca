@@ -6,7 +6,6 @@ import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildMeteoService } from "./meteo-service.js";
 
@@ -99,7 +98,7 @@ test("Find all weathers", async () => {
 
   expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
   expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -135,7 +134,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
     expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

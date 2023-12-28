@@ -9,7 +9,6 @@ import { type DepartementCreateInput } from "../../repositories/departement/depa
 import { type DepartementRepository } from "../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { COLUMN_CODE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type DepartementServiceDependencies = {
@@ -64,7 +63,7 @@ export const buildDepartementService = ({
 
   const findAllDepartements = async (): Promise<Department[]> => {
     const departements = await departementRepository.findDepartements({
-      orderBy: COLUMN_CODE,
+      orderBy: "code",
     });
 
     const enrichedDepartments = departements.map((department) => {

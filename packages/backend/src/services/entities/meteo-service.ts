@@ -7,7 +7,6 @@ import { validateAuthorization } from "../../application/services/authorization/
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type MeteoServiceDependencies = {
@@ -54,7 +53,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
 
   const findAllMeteos = async (): Promise<Weather[]> => {
     const meteos = await meteoRepository.findMeteos({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedWeathers = meteos.map((weather) => {

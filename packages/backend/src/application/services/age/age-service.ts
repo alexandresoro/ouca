@@ -7,7 +7,6 @@ import { type AgeSimple } from "@ou-ca/common/api/entities/age";
 import { err, ok, type Result } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
-import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 
 type AgeServiceDependencies = {
   ageRepository: AgeRepository;
@@ -52,7 +51,7 @@ export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDe
 
   const findAllAges = async (): Promise<AgeSimple[]> => {
     const ages = await ageRepository.findAges({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedAges = ages.map((age) => {

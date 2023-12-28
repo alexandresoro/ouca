@@ -6,7 +6,6 @@ import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildMilieuService } from "./milieu-service.js";
 
@@ -99,7 +98,7 @@ test("Find all environments", async () => {
 
   expect(milieuRepository.findMilieux).toHaveBeenCalledTimes(1);
   expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -135,7 +134,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(milieuRepository.findMilieux).toHaveBeenCalledTimes(1);
     expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

@@ -7,7 +7,6 @@ import { type Classe, type ClasseCreateInput } from "../../repositories/classe/c
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildClasseService } from "./classe-service.js";
 
@@ -119,7 +118,7 @@ test("Find all classes", async () => {
 
   expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
   expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -155,7 +154,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
     expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

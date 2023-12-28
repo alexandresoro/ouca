@@ -10,7 +10,6 @@ import { validateAuthorization } from "../../application/services/authorization/
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EstimationDistanceCreateInput } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type EstimationDistanceServiceDependencies = {
@@ -52,7 +51,7 @@ export const buildEstimationDistanceService = ({
 
   const findAllEstimationsDistance = async (): Promise<DistanceEstimate[]> => {
     const estimationDistances = await estimationDistanceRepository.findEstimationsDistance({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedDistanceEstimates = estimationDistances.map((age) => {

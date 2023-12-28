@@ -10,7 +10,6 @@ import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
 import { type ObserverService } from "../application/services/observer/observer-service.js";
 import { type SexService } from "../application/services/sex/sex-service.js";
-import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type ClasseService } from "./entities/classe-service.js";
 import { type CommuneService } from "./entities/commune-service.js";
@@ -26,6 +25,8 @@ import { type MeteoService } from "./entities/meteo-service.js";
 import { type MilieuService } from "./entities/milieu-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
+
+const SEPARATOR_COMMA = ", ";
 
 const storeExportInCache = async (
   entitiesToExport: Record<string, unknown>[],

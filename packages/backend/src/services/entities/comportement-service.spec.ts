@@ -9,7 +9,6 @@ import {
 } from "../../repositories/comportement/comportement-repository-types.js";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { COLUMN_CODE, COLUMN_LIBELLE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildComportementService } from "./comportement-service.js";
 
@@ -106,7 +105,7 @@ test("Find all behaviors", async () => {
 
   expect(comportementRepository.findComportements).toHaveBeenCalledTimes(1);
   expect(comportementRepository.findComportements).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_CODE,
+    orderBy: "code",
   });
 });
 
@@ -142,7 +141,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(comportementRepository.findComportements).toHaveBeenCalledTimes(1);
     expect(comportementRepository.findComportements).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

@@ -8,7 +8,6 @@ import { type ClasseCreateInput } from "../../repositories/classe/classe-reposit
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ClasseServiceDependencies = {
@@ -53,7 +52,7 @@ export const buildClasseService = ({
 
   const findAllClasses = async (): Promise<SpeciesClass[]> => {
     const classes = await classeRepository.findClasses({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedClasses = classes.map((speciesClass) => {

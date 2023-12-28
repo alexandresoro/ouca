@@ -11,7 +11,6 @@ import {
   type LieuditWithCommuneAndDepartementCode,
 } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { COLUMN_NOM } from "../../utils/constants.js";
 import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 
@@ -57,7 +56,7 @@ export const buildLieuditService = ({
 
   const findAllLieuxDits = async (): Promise<Locality[]> => {
     const lieuxDits = await lieuditRepository.findLieuxdits({
-      orderBy: COLUMN_NOM,
+      orderBy: "nom",
     });
 
     const enrichedLocalities = lieuxDits.map((locality) => {

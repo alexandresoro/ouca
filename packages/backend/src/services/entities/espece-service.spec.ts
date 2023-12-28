@@ -7,7 +7,6 @@ import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { COLUMN_CODE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { type ClasseService } from "./classe-service.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
@@ -115,7 +114,7 @@ test("Find all species", async () => {
 
   expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
   expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_CODE,
+    orderBy: "code",
   });
 });
 
@@ -151,7 +150,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
     expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_CODE,
+      orderBy: "code",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
@@ -187,7 +186,7 @@ describe("Entities paginated find by search criteria", () => {
         townIds: [3, 6],
         toDate: "2010-01-01",
       },
-      orderBy: COLUMN_CODE,
+      orderBy: "code",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

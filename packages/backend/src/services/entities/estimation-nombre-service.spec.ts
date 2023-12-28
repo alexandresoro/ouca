@@ -10,7 +10,6 @@ import {
   type EstimationNombreCreateInput,
 } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
 import { buildEstimationNombreService } from "./estimation-nombre-service.js";
@@ -119,7 +118,7 @@ test("Find all estimationsNombre", async () => {
 
   expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
   expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -155,7 +154,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
     expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

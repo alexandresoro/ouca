@@ -12,7 +12,6 @@ import {
   type EstimationDistanceCreateInput,
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
-import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildEstimationDistanceService } from "./estimation-distance-service.js";
 
@@ -111,7 +110,7 @@ test("Find all estimationsDistance", async () => {
 
   expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
   expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -155,7 +154,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

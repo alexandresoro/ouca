@@ -11,7 +11,6 @@ import {
 import { type DepartementRepository } from "../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { COLUMN_CODE } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildDepartementService } from "./departement-service.js";
 
@@ -146,7 +145,7 @@ test("Find all departments", async () => {
 
   expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
   expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_CODE,
+    orderBy: "code",
   });
 });
 
@@ -182,7 +181,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
     expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_CODE,
+      orderBy: "code",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

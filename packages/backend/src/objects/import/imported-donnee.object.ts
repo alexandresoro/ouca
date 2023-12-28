@@ -3,9 +3,10 @@ import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
 import { format } from "date-fns";
-import { DATE_PATTERN } from "../../utils/constants.js";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
+
+const DATE_PATTERN = "yyyy-MM-dd";
 
 const OBSERVATEUR_INDEX = 0;
 const ASSOCIES_INDEX = 1;

@@ -12,7 +12,6 @@ import {
 } from "../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { COLUMN_CODE } from "../../utils/constants.js";
 import { type ClasseService } from "./classe-service.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
@@ -66,7 +65,7 @@ export const buildEspeceService = ({
 
   const findAllEspeces = async (): Promise<Species[]> => {
     const especes = await especeRepository.findEspeces({
-      orderBy: COLUMN_CODE,
+      orderBy: "code",
     });
 
     const enrichedSpecies = await Promise.all(

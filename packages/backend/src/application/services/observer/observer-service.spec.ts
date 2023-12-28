@@ -4,7 +4,6 @@ import { upsertObserverInputFactory } from "@fixtures/services/observer/observer
 import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
 import { type ObserversSearchParams } from "@ou-ca/common/api/observer";
 import { err, ok } from "neverthrow";
-import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildObserverService } from "./observer-service.js";
 
@@ -98,7 +97,7 @@ test("Find all observers", async () => {
 
   expect(observerRepository.findObservers).toHaveBeenCalledTimes(1);
   expect(observerRepository.findObservers).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -134,7 +133,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(observerRepository.findObservers).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObservers).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

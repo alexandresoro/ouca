@@ -8,7 +8,6 @@ import { type Commune, type CommuneCreateInput } from "../../repositories/commun
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { COLUMN_NOM } from "../../utils/constants.js";
 import { mockVi } from "../../utils/mock.js";
 import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { buildCommuneService } from "./commune-service.js";
@@ -130,7 +129,7 @@ test("Find all cities", async () => {
 
   expect(communeRepository.findCommunes).toHaveBeenCalledTimes(1);
   expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_NOM,
+    orderBy: "nom",
   });
 });
 
@@ -166,7 +165,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(communeRepository.findCommunes).toHaveBeenCalledTimes(1);
     expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_NOM,
+      orderBy: "nom",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

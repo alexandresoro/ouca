@@ -7,7 +7,6 @@ import { validateAuthorization } from "../../application/services/authorization/
 import { type ComportementCreateInput } from "../../repositories/comportement/comportement-repository-types.js";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { COLUMN_CODE } from "../../utils/constants.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ComportementServiceDependencies = {
@@ -59,7 +58,7 @@ export const buildComportementService = ({
 
   const findAllComportements = async (): Promise<Behavior[]> => {
     const comportements = await comportementRepository.findComportements({
-      orderBy: COLUMN_CODE,
+      orderBy: "code",
     });
 
     const enrichedBehaviors = comportements.map((behavior) => {
