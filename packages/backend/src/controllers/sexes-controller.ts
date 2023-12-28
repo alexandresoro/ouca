@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/sex";
 import { type FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
@@ -159,28 +158,25 @@ const sexesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const deletedSexResult = await sexService.deleteSex(req.params.id, req.user);
+    const deletedSexResult = await sexService.deleteSex(req.params.id, req.user);
 
-      if (deletedSexResult.isErr()) {
-        switch (deletedSexResult.error) {
-          case "notAllowed":
-            return await reply.status(403).send();
-          default:
-            logger.error({ error: deletedSexResult.error }, "Unexpected error");
-            return await reply.status(500).send();
-        }
+    if (deletedSexResult.isErr()) {
+      switch (deletedSexResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedSexResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-
-      const deletedSex = deletedSexResult.value;
-
-      return await reply.send({ id: deletedSex.id });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
     }
+
+    const deletedSex = deletedSexResult.value;
+
+    if (!deletedSex) {
+      return await reply.status(404).send();
+    }
+
+    return await reply.send({ id: deletedSex.id });
   });
 
   done();

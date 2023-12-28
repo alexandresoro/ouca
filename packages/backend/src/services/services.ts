@@ -2,6 +2,7 @@ import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
+import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
@@ -26,7 +27,6 @@ import { buildInventaireRepository } from "../repositories/inventaire/inventaire
 import { buildLieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import { buildMeteoRepository } from "../repositories/meteo/meteo-repository.js";
 import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
-import { buildSexeRepository } from "../repositories/sexe/sexe-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { buildClasseService, type ClasseService } from "./entities/classe-service.js";
@@ -96,7 +96,7 @@ export const buildServices = async (): Promise<Services> => {
   const milieuRepository = buildMilieuRepository({ slonik });
   const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();
-  const sexRepository = buildSexeRepository({ slonik });
+  const sexRepository = buildSexRepository();
   const userRepository = buildUserRepository({ settingsRepository });
 
   const ageService = buildAgeService({

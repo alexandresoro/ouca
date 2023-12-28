@@ -1,18 +1,15 @@
-import { type SexFailureReason } from "@domain/sex/sex.js";
+import { type SexCreateInput, type SexFailureReason } from "@domain/sex/sex.js";
 import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type SexRepository } from "@interfaces/sex-repository-interface.js";
 import { type Sex } from "@ou-ca/common/api/entities/sex";
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { err, ok, type Result } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type SexeCreateInput } from "../../../repositories/sexe/sexe-repository-types.js";
-import { type SexeRepository } from "../../../repositories/sexe/sexe-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
-import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 
 type SexServiceDependencies = {
-  sexRepository: SexeRepository;
+  sexRepository: SexRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -25,7 +22,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
       return err("notAllowed");
     }
 
-    const sex = await sexRepository.findSexeById(id);
+    const sex = await sexRepository.findSexById(id);
     return ok(enrichEntityWithEditableStatus(sex, loggedUser));
   };
 
@@ -37,7 +34,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
       return err("notAllowed");
     }
 
-    const sex = await sexRepository.findSexeByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const sex = await sexRepository.findSexByEntryId(donneeId ? parseInt(donneeId) : undefined);
     return ok(enrichEntityWithEditableStatus(sex, loggedUser));
   };
 
@@ -54,7 +51,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const findAllSexes = async (): Promise<Sex[]> => {
     const sexes = await sexRepository.findSexes({
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
     });
 
     const enrichedSexes = sexes.map((sex) => {
@@ -107,19 +104,14 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
       return err("notAllowed");
     }
 
-    try {
-      const createdSex = await sexRepository.createSexe({
-        ...input,
-        owner_id: loggedUser.id,
-      });
+    const createdSexResult = await sexRepository.createSex({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdSex, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdSexResult.map((createdSex) => {
+      return enrichEntityWithEditableStatus(createdSex, loggedUser);
+    });
   };
 
   const updateSex = async (
@@ -133,50 +125,48 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await sexRepository.findSexeById(id);
+      const existingData = await sexRepository.findSexById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updatedSex = await sexRepository.updateSexe(id, input);
+    const updatedSexResult = await sexRepository.updateSex(id, input);
 
-      return ok(enrichEntityWithEditableStatus(updatedSex, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updatedSexResult.map((updatedSex) => {
+      return enrichEntityWithEditableStatus(updatedSex, loggedUser);
+    });
   };
 
-  const deleteSex = async (id: number, loggedUser: LoggedUser | null): Promise<Result<Sex, SexFailureReason>> => {
+  const deleteSex = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<Sex | null, SexFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await sexRepository.findSexeById(id);
+      const existingData = await sexRepository.findSexById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedSex = await sexRepository.deleteSexeById(id);
-    return ok(enrichEntityWithEditableStatus(deletedSex, loggedUser));
+    const deletedSex = await sexRepository.deleteSexById(id);
+    return ok(deletedSex ? enrichEntityWithEditableStatus(deletedSex, loggedUser) : null);
   };
 
   const createSexes = async (
-    sexes: Omit<SexeCreateInput[], "owner_id">,
+    sexes: Omit<SexCreateInput, "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Sex[]> => {
     const createdSexes = await sexRepository.createSexes(
       sexes.map((sexe) => {
-        return { ...sexe, owner_id: loggedUser.id };
+        return { ...sexe, ownerId: loggedUser.id };
       })
     );
 

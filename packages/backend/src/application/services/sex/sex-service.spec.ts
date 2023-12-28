@@ -1,15 +1,14 @@
 import { sexCreateInputFactory, sexFactory } from "@fixtures/domain/sex/sex.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSexInputFactory } from "@fixtures/services/sex/sex-service.fixtures.js";
+import { type SexRepository } from "@interfaces/sex-repository-interface.js";
 import { type SexesSearchParams } from "@ou-ca/common/api/sex";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type SexeRepository } from "../../../repositories/sexe/sexe-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildSexService } from "./sex-service.js";
 
-const sexRepository = mockVi<SexeRepository>();
+const sexRepository = mockVi<SexRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
 const sexService = buildSexService({
@@ -17,43 +16,34 @@ const sexService = buildSexService({
   entryRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint"
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
-
 describe("Find sex", () => {
   test("should handle a matching sex", async () => {
     const sexData = sexFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.findSexeById.mockResolvedValueOnce(sexData);
+    sexRepository.findSexById.mockResolvedValueOnce(sexData);
 
     await sexService.findSex(12, loggedUser);
 
-    expect(sexRepository.findSexeById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexeById).toHaveBeenLastCalledWith(12);
+    expect(sexRepository.findSexById).toHaveBeenCalledTimes(1);
+    expect(sexRepository.findSexById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle sex not found", async () => {
-    sexRepository.findSexeById.mockResolvedValueOnce(null);
+    sexRepository.findSexById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
     await expect(sexService.findSex(10, loggedUser)).resolves.toEqual(ok(null));
 
-    expect(sexRepository.findSexeById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexeById).toHaveBeenLastCalledWith(10);
+    expect(sexRepository.findSexById).toHaveBeenCalledTimes(1);
+    expect(sexRepository.findSexById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await sexService.findSex(11, null);
 
     expect(findResult).toEqual(err("notAllowed"));
-    expect(sexRepository.findSexeById).not.toHaveBeenCalled();
+    expect(sexRepository.findSexById).not.toHaveBeenCalled();
   });
 });
 
@@ -79,12 +69,12 @@ describe("Find sex by data ID", () => {
     const sexData = sexFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.findSexeByDonneeId.mockResolvedValueOnce(sexData);
+    sexRepository.findSexByEntryId.mockResolvedValueOnce(sexData);
 
     const sexResult = await sexService.findSexOfEntryId("43", loggedUser);
 
-    expect(sexRepository.findSexeByDonneeId).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexeByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(sexRepository.findSexByEntryId).toHaveBeenCalledTimes(1);
+    expect(sexRepository.findSexByEntryId).toHaveBeenLastCalledWith(43);
     expect(sexResult.isOk()).toBeTruthy();
     expect(sexResult._unsafeUnwrap()?.id).toEqual(sexData.id);
   });
@@ -187,10 +177,12 @@ describe("Update of a sex", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    sexRepository.updateSex.mockResolvedValueOnce(ok(sexFactory.build()));
+
     await sexService.updateSex(12, sexData, loggedUser);
 
-    expect(sexRepository.updateSexe).toHaveBeenCalledTimes(1);
-    expect(sexRepository.updateSexe).toHaveBeenLastCalledWith(12, sexData);
+    expect(sexRepository.updateSex).toHaveBeenCalledTimes(1);
+    expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
   });
 
   test("should be allowed when requested by the owner ", async () => {
@@ -202,12 +194,13 @@ describe("Update of a sex", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    sexRepository.findSexeById.mockResolvedValueOnce(existingData);
+    sexRepository.findSexById.mockResolvedValueOnce(existingData);
+    sexRepository.updateSex.mockResolvedValueOnce(ok(sexFactory.build()));
 
     await sexService.updateSex(12, sexData, loggedUser);
 
-    expect(sexRepository.updateSexe).toHaveBeenCalledTimes(1);
-    expect(sexRepository.updateSexe).toHaveBeenLastCalledWith(12, sexData);
+    expect(sexRepository.updateSex).toHaveBeenCalledTimes(1);
+    expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -222,12 +215,12 @@ describe("Update of a sex", () => {
       role: "contributor",
     } as const;
 
-    sexRepository.findSexeById.mockResolvedValueOnce(existingData);
+    sexRepository.findSexById.mockResolvedValueOnce(existingData);
 
     const updateResult = await sexService.updateSex(12, sexData, user);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(sexRepository.updateSexe).not.toHaveBeenCalled();
+    expect(sexRepository.updateSex).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when trying to update to a sex that exists", async () => {
@@ -235,13 +228,13 @@ describe("Update of a sex", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    sexRepository.updateSexe.mockImplementation(uniqueConstraintFailed);
+    sexRepository.updateSex.mockResolvedValueOnce(err("alreadyExists"));
 
     const updateResult = await sexService.updateSex(12, sexData, loggedUser);
 
     expect(updateResult).toEqual(err("alreadyExists"));
-    expect(sexRepository.updateSexe).toHaveBeenCalledTimes(1);
-    expect(sexRepository.updateSexe).toHaveBeenLastCalledWith(12, sexData);
+    expect(sexRepository.updateSex).toHaveBeenCalledTimes(1);
+    expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -250,7 +243,7 @@ describe("Update of a sex", () => {
     const updateResult = await sexService.updateSex(12, sexData, null);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(sexRepository.updateSexe).not.toHaveBeenCalled();
+    expect(sexRepository.updateSex).not.toHaveBeenCalled();
   });
 });
 
@@ -260,12 +253,14 @@ describe("Creation of a sex", () => {
 
     const loggedUser = loggedUserFactory.build();
 
+    sexRepository.createSex.mockResolvedValueOnce(ok(sexFactory.build()));
+
     await sexService.createSex(sexData, loggedUser);
 
-    expect(sexRepository.createSexe).toHaveBeenCalledTimes(1);
-    expect(sexRepository.createSexe).toHaveBeenLastCalledWith({
+    expect(sexRepository.createSex).toHaveBeenCalledTimes(1);
+    expect(sexRepository.createSex).toHaveBeenLastCalledWith({
       ...sexData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -274,15 +269,15 @@ describe("Creation of a sex", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.createSexe.mockImplementation(uniqueConstraintFailed);
+    sexRepository.createSex.mockResolvedValueOnce(err("alreadyExists"));
 
     const createResult = await sexService.createSex(sexData, loggedUser);
 
     expect(createResult).toEqual(err("alreadyExists"));
-    expect(sexRepository.createSexe).toHaveBeenCalledTimes(1);
-    expect(sexRepository.createSexe).toHaveBeenLastCalledWith({
+    expect(sexRepository.createSex).toHaveBeenCalledTimes(1);
+    expect(sexRepository.createSex).toHaveBeenLastCalledWith({
       ...sexData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -292,7 +287,7 @@ describe("Creation of a sex", () => {
     const createResult = await sexService.createSex(sexData, null);
 
     expect(createResult).toEqual(err("notAllowed"));
-    expect(sexRepository.createSexe).not.toHaveBeenCalled();
+    expect(sexRepository.createSex).not.toHaveBeenCalled();
   });
 });
 
@@ -307,12 +302,12 @@ describe("Deletion of a sex", () => {
       ownerId: loggedUser.id,
     });
 
-    sexRepository.findSexeById.mockResolvedValueOnce(sex);
+    sexRepository.findSexById.mockResolvedValueOnce(sex);
 
     await sexService.deleteSex(11, loggedUser);
 
-    expect(sexRepository.deleteSexeById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.deleteSexeById).toHaveBeenLastCalledWith(11);
+    expect(sexRepository.deleteSexById).toHaveBeenCalledTimes(1);
+    expect(sexRepository.deleteSexById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any sex if admin", async () => {
@@ -320,12 +315,12 @@ describe("Deletion of a sex", () => {
       role: "admin",
     });
 
-    sexRepository.findSexeById.mockResolvedValueOnce(sexFactory.build());
+    sexRepository.findSexById.mockResolvedValueOnce(sexFactory.build());
 
     await sexService.deleteSex(11, loggedUser);
 
-    expect(sexRepository.deleteSexeById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.deleteSexeById).toHaveBeenLastCalledWith(11);
+    expect(sexRepository.deleteSexById).toHaveBeenCalledTimes(1);
+    expect(sexRepository.deleteSexById).toHaveBeenLastCalledWith(11);
   });
 
   test("should not be allowed when deleting a non-owned sex as non-admin", async () => {
@@ -336,14 +331,14 @@ describe("Deletion of a sex", () => {
     const deleteResult = await sexService.deleteSex(11, loggedUser);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(sexRepository.deleteSexeById).not.toHaveBeenCalled();
+    expect(sexRepository.deleteSexById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await sexService.deleteSex(11, null);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(sexRepository.deleteSexeById).not.toHaveBeenCalled();
+    expect(sexRepository.deleteSexById).not.toHaveBeenCalled();
   });
 });
 
@@ -361,7 +356,7 @@ test("Create multiple sexes", async () => {
     sexesData.map((sex) => {
       return {
         ...sex,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     })
   );
