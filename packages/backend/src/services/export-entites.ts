@@ -8,7 +8,8 @@ import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper"
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
-import { type ObservateurService } from "../application/services/observer/observer-service.js";
+import { type ObserverService } from "../application/services/observer/observer-service.js";
+import { type SexService } from "../application/services/sex/sex-service.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type ClasseService } from "./entities/classe-service.js";
@@ -23,7 +24,6 @@ import { type InventaireService } from "./entities/inventaire-service.js";
 import { type LieuditService } from "./entities/lieu-dit-service.js";
 import { type MeteoService } from "./entities/meteo-service.js";
 import { type MilieuService } from "./entities/milieu-service.js";
-import { type SexeService } from "./entities/sexe-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 
@@ -138,8 +138,8 @@ export const generateDonneesExport = async (
     lieuditService,
     meteoService,
     milieuService,
-    observateurService,
-    sexeService,
+    observerService,
+    sexService,
   }: {
     ageService: AgeService;
     classeService: ClasseService;
@@ -154,8 +154,8 @@ export const generateDonneesExport = async (
     lieuditService: LieuditService;
     meteoService: MeteoService;
     milieuService: MilieuService;
-    observateurService: ObservateurService;
-    sexeService: SexeService;
+    observerService: ObserverService;
+    sexService: SexService;
   },
   loggedUser: LoggedUser | null,
   searchCriteria: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> &
@@ -175,19 +175,19 @@ export const generateDonneesExport = async (
       }
 
       const observateur = (
-        await observateurService.findObservateurOfInventaireId(parseInt(inventaire.id), loggedUser)
+        await observerService.findObserverOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
       const lieudit = await lieuditService.findLieuDitOfInventaireId(parseInt(inventaire.id), loggedUser);
       const commune = await communeService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
       const departement = await departementService.findDepartementOfCommuneId(commune?.id, loggedUser);
       const associes = (
-        await observateurService.findAssociesOfInventaireId(parseInt(inventaire.id), loggedUser)
+        await observerService.findAssociatesOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
       const meteos = await meteoService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
       const espece = await especeService.findEspeceOfDonneeId(donnee?.id, loggedUser);
       const classe = await classeService.findClasseOfEspeceId(espece?.id, loggedUser);
       const age = (await ageService.findAgeOfDonneeId(donnee?.id, loggedUser))._unsafeUnwrap();
-      const sexe = await sexeService.findSexeOfDonneeId(donnee?.id, loggedUser);
+      const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const estimationDistance = await estimationDistanceService.findEstimationDistanceOfDonneeId(
         donnee?.id,
         loggedUser
@@ -343,9 +343,9 @@ export const generateMilieuxExport = async ({ milieuService }: { milieuService: 
 };
 
 export const generateObservateursExport = async ({
-  observateurService,
-}: { observateurService: ObservateurService }): Promise<string> => {
-  const observateurs = await observateurService.findAllObservateurs();
+  observerService,
+}: { observerService: ObserverService }): Promise<string> => {
+  const observateurs = await observerService.findAllObservers();
 
   const objectsToExport = observateurs.map((object) => {
     return {
@@ -357,8 +357,8 @@ export const generateObservateursExport = async ({
   return id;
 };
 
-export const generateSexesExport = async ({ sexeService }: { sexeService: SexeService }): Promise<string> => {
-  const sexes = await sexeService.findAllSexes();
+export const generateSexesExport = async ({ sexService }: { sexService: SexService }): Promise<string> => {
+  const sexes = await sexService.findAllSexes();
 
   const objectsToExport = sexes.map((object) => {
     return {

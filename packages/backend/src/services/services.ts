@@ -5,8 +5,9 @@ import { buildSettingsRepository } from "@infrastructure/repositories/settings/s
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
-import { buildObservateurService, type ObservateurService } from "../application/services/observer/observer-service.js";
+import { buildObserverService, type ObserverService } from "../application/services/observer/observer-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
+import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildAgeRepository } from "../infrastructure/repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
@@ -43,7 +44,6 @@ import { buildInventaireService, type InventaireService } from "./entities/inven
 import { buildLieuditService, type LieuditService } from "./entities/lieu-dit-service.js";
 import { buildMeteoService, type MeteoService } from "./entities/meteo-service.js";
 import { buildMilieuService, type MilieuService } from "./entities/milieu-service.js";
-import { buildSexeService, type SexeService } from "./entities/sexe-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
@@ -63,8 +63,8 @@ export type Services = {
   lieuditService: LieuditService;
   meteoService: MeteoService;
   milieuService: MilieuService;
-  observateurService: ObservateurService;
-  sexeService: SexeService;
+  observerService: ObserverService;
+  sexService: SexService;
   settingsService: SettingsService;
   userService: UserService;
   geojsonService: GeoJSONService;
@@ -82,7 +82,7 @@ export const buildServices = async (): Promise<Services> => {
   const communeRepository = buildCommuneRepository({ slonik });
   const comportementRepository = buildComportementRepository({ slonik });
   const departementRepository = buildDepartementRepository({ slonik });
-  const donneeRepository = buildDonneeRepository({ slonik });
+  const entryRepository = buildDonneeRepository({ slonik });
   const donneeComportementRepository = buildDonneeComportementRepository({ slonik });
   const donneeMilieuRepository = buildDonneeMilieuRepository({ slonik });
   const especeRepository = buildEspeceRepository({ slonik });
@@ -96,42 +96,42 @@ export const buildServices = async (): Promise<Services> => {
   const milieuRepository = buildMilieuRepository({ slonik });
   const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();
-  const sexeRepository = buildSexeRepository({ slonik });
+  const sexRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ settingsRepository });
 
   const ageService = buildAgeService({
     ageRepository,
-    donneeRepository,
+    entryRepository,
   });
 
   const classeService = buildClasseService({
     classeRepository,
     especeRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const communeService = buildCommuneService({
     communeRepository,
     lieuditRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const comportementService = buildComportementService({
     comportementRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const departementService = buildDepartementService({
     departementRepository,
     communeRepository,
     lieuditRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const donneeService = buildDonneeService({
     slonik,
     inventaireRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
     donneeComportementRepository,
     donneeMilieuRepository,
   });
@@ -139,17 +139,17 @@ export const buildServices = async (): Promise<Services> => {
   const especeService = buildEspeceService({
     classeService,
     especeRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const estimationDistanceService = buildEstimationDistanceService({
     estimationDistanceRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const estimationNombreService = buildEstimationNombreService({
     estimationNombreRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const inventaireService = buildInventaireService({
@@ -157,33 +157,33 @@ export const buildServices = async (): Promise<Services> => {
     inventaireRepository,
     inventaireAssocieRepository,
     inventaireMeteoRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
     lieuditRepository,
   });
 
   const lieuditService = buildLieuditService({
     lieuditRepository,
     inventaireRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const meteoService = buildMeteoService({
     meteoRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
   const milieuService = buildMilieuService({
     milieuRepository,
-    donneeRepository,
+    donneeRepository: entryRepository,
   });
 
-  const observateurService = buildObservateurService({
+  const observerService = buildObserverService({
     observerRepository,
   });
 
-  const sexeService = buildSexeService({
-    sexeRepository,
-    donneeRepository,
+  const sexService = buildSexService({
+    sexRepository,
+    entryRepository,
   });
 
   const userService = buildUserService({
@@ -193,8 +193,8 @@ export const buildServices = async (): Promise<Services> => {
   const settingsService = buildSettingsService({
     settingsRepository,
     departementService,
-    observateurService,
-    sexeService,
+    observerService,
+    sexService,
     ageService,
     estimationNombreService,
   });
@@ -226,8 +226,8 @@ export const buildServices = async (): Promise<Services> => {
     lieuditService,
     meteoService,
     milieuService,
-    observateurService,
-    sexeService,
+    observerService,
+    sexService,
     settingsService,
     userService,
     geojsonService,

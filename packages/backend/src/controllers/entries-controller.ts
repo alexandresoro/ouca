@@ -25,7 +25,7 @@ const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser
     services.estimationDistanceService.findEstimationDistanceOfDonneeId(entry.id, user),
     services.estimationNombreService.findEstimationNombreOfDonneeId(entry.id, user),
     services.milieuService.findMilieuxOfDonneeId(entry.id, user),
-    services.sexeService.findSexeOfDonneeId(entry.id, user),
+    (await services.sexService.findSexOfEntryId(entry.id, user))._unsafeUnwrap(),
   ]);
 
   if (!age || !species || !numberEstimate || !sex) {

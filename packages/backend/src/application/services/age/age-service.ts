@@ -11,10 +11,10 @@ import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 
 type AgeServiceDependencies = {
   ageRepository: AgeRepository;
-  donneeRepository: DonneeRepository;
+  entryRepository: DonneeRepository;
 };
 
-export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceDependencies) => {
+export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDependencies) => {
   const findAge = async (
     id: number,
     loggedUser: LoggedUser | null
@@ -39,7 +39,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
-  const getDonneesCountByAge = async (
+  const getEntriesCountByAge = async (
     id: string,
     loggedUser: LoggedUser | null
   ): Promise<Result<number, AccessFailureReason>> => {
@@ -47,7 +47,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
       return err("notAllowed");
     }
 
-    return ok(await donneeRepository.getCountByAgeId(parseInt(id)));
+    return ok(await entryRepository.getCountByAgeId(parseInt(id)));
   };
 
   const findAllAges = async (): Promise<AgeSimple[]> => {
@@ -181,7 +181,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   return {
     findAge,
     findAgeOfDonneeId,
-    getDonneesCountByAge,
+    getEntriesCountByAge,
     findAllAges,
     findPaginatedAges,
     getAgesCount,

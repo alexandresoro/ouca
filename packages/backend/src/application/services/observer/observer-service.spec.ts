@@ -6,11 +6,11 @@ import { type ObserversSearchParams } from "@ou-ca/common/api/observer";
 import { err, ok } from "neverthrow";
 import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildObservateurService } from "./observer-service.js";
+import { buildObserverService } from "./observer-service.js";
 
 const observerRepository = mockVi<ObserverRepository>();
 
-const observateurService = buildObservateurService({
+const observerService = buildObserverService({
   observerRepository,
 });
 
@@ -21,7 +21,7 @@ describe("Find observer", () => {
 
     observerRepository.findObserverById.mockResolvedValueOnce(observerData);
 
-    await observateurService.findObservateur(12, loggedUser);
+    await observerService.findObserver(12, loggedUser);
 
     expect(observerRepository.findObserverById).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObserverById).toHaveBeenLastCalledWith(12);
@@ -31,14 +31,14 @@ describe("Find observer", () => {
     observerRepository.findObserverById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(observateurService.findObservateur(10, loggedUser)).resolves.toEqual(ok(null));
+    await expect(observerService.findObserver(10, loggedUser)).resolves.toEqual(ok(null));
 
     expect(observerRepository.findObserverById).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObserverById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    const findResult = await observateurService.findObservateur(11, null);
+    const findResult = await observerService.findObserver(11, null);
 
     expect(findResult).toEqual(err("notAllowed"));
     expect(observerRepository.findObserverById).not.toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe("Find observer by inventary ID", () => {
 
     observerRepository.findObserverByInventoryId.mockResolvedValueOnce(observerData);
 
-    const observerResult = await observateurService.findObservateurOfInventaireId(43, loggedUser);
+    const observerResult = await observerService.findObserverOfInventoryId(43, loggedUser);
 
     expect(observerRepository.findObserverByInventoryId).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObserverByInventoryId).toHaveBeenLastCalledWith(43);
@@ -61,7 +61,7 @@ describe("Find observer by inventary ID", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await observateurService.findObservateurOfInventaireId(12, null);
+    const findResult = await observerService.findObserverOfInventoryId(12, null);
 
     expect(findResult).toEqual(err("notAllowed"));
   });
@@ -74,7 +74,7 @@ describe("Find associates by inventory ID", () => {
 
     observerRepository.findAssociatesOfInventoryId.mockResolvedValueOnce(associatesData);
 
-    const associatesResult = await observateurService.findAssociesOfInventaireId(43, loggedUser);
+    const associatesResult = await observerService.findAssociatesOfInventoryId(43, loggedUser);
 
     expect(observerRepository.findAssociatesOfInventoryId).toHaveBeenCalledTimes(1);
     expect(observerRepository.findAssociatesOfInventoryId).toHaveBeenLastCalledWith(43);
@@ -83,7 +83,7 @@ describe("Find associates by inventory ID", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await observateurService.findAssociesOfInventaireId(12, null);
+    const findResult = await observerService.findAssociatesOfInventoryId(12, null);
 
     expect(findResult).toEqual(err("notAllowed"));
   });
@@ -94,7 +94,7 @@ test("Find all observers", async () => {
 
   observerRepository.findObservers.mockResolvedValueOnce(observersData);
 
-  await observateurService.findAllObservateurs();
+  await observerService.findAllObservers();
 
   expect(observerRepository.findObservers).toHaveBeenCalledTimes(1);
   expect(observerRepository.findObservers).toHaveBeenLastCalledWith({
@@ -109,7 +109,7 @@ describe("Entities paginated find by search criteria", () => {
 
     observerRepository.findObservers.mockResolvedValueOnce(observersData);
 
-    await observateurService.findPaginatedObservateurs(loggedUser, {});
+    await observerService.findPaginatedObservers(loggedUser, {});
 
     expect(observerRepository.findObservers).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObservers).toHaveBeenLastCalledWith({});
@@ -129,7 +129,7 @@ describe("Entities paginated find by search criteria", () => {
 
     observerRepository.findObservers.mockResolvedValueOnce([observersData[0]]);
 
-    await observateurService.findPaginatedObservateurs(loggedUser, searchParams);
+    await observerService.findPaginatedObservers(loggedUser, searchParams);
 
     expect(observerRepository.findObservers).toHaveBeenCalledTimes(1);
     expect(observerRepository.findObservers).toHaveBeenLastCalledWith({
@@ -142,7 +142,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const entitiesPaginatedResult = await observateurService.findPaginatedObservateurs(null, {});
+    const entitiesPaginatedResult = await observerService.findPaginatedObservers(null, {});
     expect(entitiesPaginatedResult).toEqual(err("notAllowed"));
   });
 });
@@ -151,7 +151,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await observateurService.getObservateursCount(loggedUser);
+    await observerService.getObserversCount(loggedUser);
 
     expect(observerRepository.getCount).toHaveBeenCalledTimes(1);
     expect(observerRepository.getCount).toHaveBeenLastCalledWith(undefined);
@@ -160,14 +160,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await observateurService.getObservateursCount(loggedUser, "test");
+    await observerService.getObserversCount(loggedUser, "test");
 
     expect(observerRepository.getCount).toHaveBeenCalledTimes(1);
     expect(observerRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const entitiesCountResult = await observateurService.getObservateursCount(null);
+    const entitiesCountResult = await observerService.getObserversCount(null);
     expect(entitiesCountResult).toEqual(err("notAllowed"));
   });
 });
@@ -180,7 +180,7 @@ describe("Update of an observer", () => {
 
     observerRepository.updateObserver.mockResolvedValueOnce(ok(observerFactory.build()));
 
-    await observateurService.updateObservateur(12, observerData, loggedUser);
+    await observerService.updateObserver(12, observerData, loggedUser);
 
     expect(observerRepository.updateObserver).toHaveBeenCalledTimes(1);
     expect(observerRepository.updateObserver).toHaveBeenLastCalledWith(12, observerData);
@@ -198,7 +198,7 @@ describe("Update of an observer", () => {
     observerRepository.findObserverById.mockResolvedValueOnce(existingData);
     observerRepository.updateObserver.mockResolvedValueOnce(ok(observerFactory.build()));
 
-    await observateurService.updateObservateur(12, observerData, loggedUser);
+    await observerService.updateObserver(12, observerData, loggedUser);
 
     expect(observerRepository.updateObserver).toHaveBeenCalledTimes(1);
     expect(observerRepository.updateObserver).toHaveBeenLastCalledWith(12, observerData);
@@ -218,7 +218,7 @@ describe("Update of an observer", () => {
 
     observerRepository.findObserverById.mockResolvedValueOnce(existingData);
 
-    const updateResult = await observateurService.updateObservateur(12, observerData, user);
+    const updateResult = await observerService.updateObserver(12, observerData, user);
 
     expect(updateResult).toEqual(err("notAllowed"));
     expect(observerRepository.updateObserver).not.toHaveBeenCalled();
@@ -231,7 +231,7 @@ describe("Update of an observer", () => {
 
     observerRepository.updateObserver.mockResolvedValueOnce(err("alreadyExists"));
 
-    const updateResult = await observateurService.updateObservateur(12, observerData, loggedUser);
+    const updateResult = await observerService.updateObserver(12, observerData, loggedUser);
 
     expect(updateResult).toEqual(err("alreadyExists"));
     expect(observerRepository.updateObserver).toHaveBeenCalledTimes(1);
@@ -241,7 +241,7 @@ describe("Update of an observer", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    const updateResult = await observateurService.updateObservateur(12, observerData, null);
+    const updateResult = await observerService.updateObserver(12, observerData, null);
 
     expect(updateResult).toEqual(err("notAllowed"));
     expect(observerRepository.updateObserver).not.toHaveBeenCalled();
@@ -256,7 +256,7 @@ describe("Creation of an observer", () => {
 
     observerRepository.createObserver.mockResolvedValueOnce(ok(observerFactory.build()));
 
-    await observateurService.createObservateur(observerData, loggedUser);
+    await observerService.createObserver(observerData, loggedUser);
 
     expect(observerRepository.createObserver).toHaveBeenCalledTimes(1);
     expect(observerRepository.createObserver).toHaveBeenLastCalledWith({
@@ -272,7 +272,7 @@ describe("Creation of an observer", () => {
 
     observerRepository.createObserver.mockResolvedValueOnce(err("alreadyExists"));
 
-    const createResult = await observateurService.createObservateur(observerData, loggedUser);
+    const createResult = await observerService.createObserver(observerData, loggedUser);
 
     expect(createResult).toEqual(err("alreadyExists"));
     expect(observerRepository.createObserver).toHaveBeenCalledTimes(1);
@@ -285,7 +285,7 @@ describe("Creation of an observer", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    const createResult = await observateurService.createObservateur(observerData, null);
+    const createResult = await observerService.createObserver(observerData, null);
 
     expect(createResult).toEqual(err("notAllowed"));
     expect(observerRepository.createObserver).not.toHaveBeenCalled();
@@ -303,7 +303,7 @@ describe("Deletion of an observer", () => {
 
     observerRepository.findObserverById.mockResolvedValueOnce(observer);
 
-    await observateurService.deleteObservateur(11, loggedUser);
+    await observerService.deleteObserver(11, loggedUser);
 
     expect(observerRepository.deleteObserverById).toHaveBeenCalledTimes(1);
     expect(observerRepository.deleteObserverById).toHaveBeenLastCalledWith(11);
@@ -312,7 +312,7 @@ describe("Deletion of an observer", () => {
   test("should handle the deletion of any observer if admin", async () => {
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    await observateurService.deleteObservateur(11, loggedUser);
+    await observerService.deleteObserver(11, loggedUser);
 
     expect(observerRepository.deleteObserverById).toHaveBeenCalledTimes(1);
     expect(observerRepository.deleteObserverById).toHaveBeenLastCalledWith(11);
@@ -323,14 +323,14 @@ describe("Deletion of an observer", () => {
       id: "12",
     });
 
-    const deleteResult = await observateurService.deleteObservateur(11, loggedUser);
+    const deleteResult = await observerService.deleteObserver(11, loggedUser);
 
     expect(deleteResult).toEqual(err("notAllowed"));
     expect(observerRepository.deleteObserverById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const deleteResult = await observateurService.deleteObservateur(11, null);
+    const deleteResult = await observerService.deleteObserver(11, null);
 
     expect(deleteResult).toEqual(err("notAllowed"));
     expect(observerRepository.deleteObserverById).not.toHaveBeenCalled();
@@ -344,7 +344,7 @@ test("Create multiple observers", async () => {
 
   observerRepository.createObservers.mockResolvedValueOnce([]);
 
-  await observateurService.createObservateurs(observersData, loggedUser);
+  await observerService.createObservers(observersData, loggedUser);
 
   expect(observerRepository.createObservers).toHaveBeenCalledTimes(1);
   expect(observerRepository.createObservers).toHaveBeenLastCalledWith(

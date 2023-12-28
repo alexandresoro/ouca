@@ -5,7 +5,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportSexeService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.sexeService.findAllSexes();
+    this.entities = await this.services.sexService.findAllSexes();
   };
 
   protected getThisEntityName(): string {
@@ -13,6 +13,6 @@ export class ImportSexeService extends ImportEntiteAvecLibelleService {
   }
 
   protected saveEntities = (ages: Omit<Sex, "id" | "ownerId">[], loggedUser: LoggedUser): Promise<readonly Sex[]> => {
-    return this.services.sexeService.createSexes(ages, loggedUser);
+    return this.services.sexService.createSexes(ages, loggedUser);
   };
 }

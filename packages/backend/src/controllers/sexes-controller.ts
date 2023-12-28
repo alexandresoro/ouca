@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { type Sex, type SexExtended } from "@ou-ca/common/api/entities/sex";
 import {
   getSexResponse,
@@ -9,21 +8,36 @@ import {
   upsertSexResponse,
 } from "@ou-ca/common/api/sex";
 import { type FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const sexesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { sexeService } = services;
+  const { sexService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const sex = await sexeService.findSexe(req.params.id, req.user);
+    const sexResult = await sexService.findSex(req.params.id, req.user);
+
+    if (sexResult.isErr()) {
+      switch (sexResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: sexResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const sex = sexResult.value;
+
     if (!sex) {
       return await reply.status(404).send();
     }
@@ -43,16 +57,28 @@ const sexesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [sexesData, count] = await Promise.all([
-      sexeService.findPaginatedSexes(req.user, queryParams),
-      sexeService.getSexesCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await sexService.findPaginatedSexes(req.user, queryParams),
+      await sexService.getSexesCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [sexesData, count] = paginatedResults.value;
 
     let data: Sex[] | SexExtended[] = sexesData;
     if (extended) {
       data = await Promise.all(
         sexesData.map(async (sexData) => {
-          const entriesCount = await sexeService.getDonneesCountBySexe(sexData.id, req.user);
+          const entriesCount = (await sexService.getEntriesCountBySex(sexData.id, req.user))._unsafeUnwrap();
           return {
             ...sexData,
             entriesCount,
@@ -79,17 +105,22 @@ const sexesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const sex = await sexeService.createSexe(input, req.user);
-      const response = upsertSexResponse.parse(sex);
+    const sexCreateResult = await sexService.createSex(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (sexCreateResult.isErr()) {
+      switch (sexCreateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: sexCreateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertSexResponse.parse(sexCreateResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -105,17 +136,22 @@ const sexesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const sex = await sexeService.updateSexe(req.params.id, input, req.user);
-      const response = upsertSexResponse.parse(sex);
+    const sexUpdateResult = await sexService.updateSex(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (sexUpdateResult.isErr()) {
+      switch (sexUpdateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: sexUpdateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertSexResponse.parse(sexUpdateResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -124,8 +160,21 @@ const sexesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await sexeService.deleteSexe(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
+      const deletedSexResult = await sexService.deleteSex(req.params.id, req.user);
+
+      if (deletedSexResult.isErr()) {
+        switch (deletedSexResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          default:
+            logger.error({ error: deletedSexResult.error }, "Unexpected error");
+            return await reply.status(500).send();
+        }
+      }
+
+      const deletedSex = deletedSexResult.value;
+
+      return await reply.send({ id: deletedSex.id });
     } catch (e) {
       if (e instanceof NotFoundError) {
         return await reply.status(404).send();

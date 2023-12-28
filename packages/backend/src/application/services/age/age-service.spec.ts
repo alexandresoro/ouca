@@ -5,16 +5,15 @@ import { type AgeRepository } from "@interfaces/age-repository-interface.js";
 import { type AgesSearchParams } from "@ou-ca/common/api/age";
 import { err, ok } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildAgeService } from "./age-service.js";
 
 const ageRepository = mockVi<AgeRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const ageService = buildAgeService({
   ageRepository,
-  donneeRepository,
+  entryRepository,
 });
 
 describe("Find age", () => {
@@ -52,14 +51,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await ageService.getDonneesCountByAge("12", loggedUser);
+    await ageService.getEntriesCountByAge("12", loggedUser);
 
-    expect(donneeRepository.getCountByAgeId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByAgeId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByAgeId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByAgeId).toHaveBeenLastCalledWith(12);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const entitiesCountResult = await ageService.getDonneesCountByAge("12", null);
+    const entitiesCountResult = await ageService.getEntriesCountByAge("12", null);
 
     expect(entitiesCountResult).toEqual(err("notAllowed"));
   });
@@ -96,7 +95,7 @@ test("Find all ages", async () => {
 
   expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
   expect(ageRepository.findAges).toHaveBeenLastCalledWith({
-    orderBy: COLUMN_LIBELLE,
+    orderBy: "libelle",
   });
 });
 
@@ -132,7 +131,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
     expect(ageRepository.findAges).toHaveBeenLastCalledWith({
       q: "Bob",
-      orderBy: COLUMN_LIBELLE,
+      orderBy: "libelle",
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,

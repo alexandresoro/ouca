@@ -47,13 +47,13 @@ export class ImportDonneeService extends ImportService {
   protected init = async (): Promise<void> => {
     this.newDonnees = [];
 
-    this.observateurs = await this.services.observateurService.findAllObservateurs();
+    this.observateurs = await this.services.observerService.findAllObservers();
     this.departements = await this.services.departementService.findAllDepartements();
     this.communes = await this.services.communeService.findAllCommunes();
     this.lieuxDits = await this.services.lieuditService.findAllLieuxDits();
     this.meteos = await this.services.meteoService.findAllMeteos();
     this.especes = await this.services.especeService.findAllEspeces();
-    this.sexes = await this.services.sexeService.findAllSexes();
+    this.sexes = await this.services.sexService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await this.services.estimationNombreService.findAllEstimationsNombre();
     this.estimationsDistance = await this.services.estimationDistanceService.findAllEstimationsDistance();
@@ -235,9 +235,7 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.coordinates?.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
-          new Set(
-            await this.services.observateurService.findAssociesIdsOfInventaireId(parseInt(existingInventaire.id))
-          ),
+          new Set(await this.services.observerService.findAssociateIdsOfInventoryId(parseInt(existingInventaire.id))),
           new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(

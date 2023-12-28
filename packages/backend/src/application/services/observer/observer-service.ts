@@ -7,14 +7,13 @@ import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/o
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { err, ok, type Result } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
-import { COLUMN_LIBELLE } from "../../../utils/constants.js";
 
-type ObservateurServiceDependencies = {
+type ObserverServiceDependencies = {
   observerRepository: ObserverRepository;
 };
 
-export const buildObservateurService = ({ observerRepository }: ObservateurServiceDependencies) => {
-  const findObservateur = async (
+export const buildObserverService = ({ observerRepository }: ObserverServiceDependencies) => {
+  const findObserver = async (
     id: number,
     loggedUser: LoggedUser | null
   ): Promise<Result<Observer | null, AccessFailureReason>> => {
@@ -26,7 +25,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
-  const findObservateurOfInventaireId = async (
+  const findObserverOfInventoryId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
@@ -38,7 +37,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
-  const findAssociesIdsOfInventaireId = async (inventaireId: number): Promise<string[]> => {
+  const findAssociateIdsOfInventoryId = async (inventaireId: number): Promise<string[]> => {
     const associesIds = await observerRepository
       .findAssociatesOfInventoryId(inventaireId)
       .then((associes) => associes.map(({ id }) => id));
@@ -46,7 +45,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return [...associesIds];
   };
 
-  const findAssociesOfInventaireId = async (
+  const findAssociatesOfInventoryId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
@@ -63,19 +62,19 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return ok([...enrichedAssociates]);
   };
 
-  const findAllObservateurs = async (): Promise<ObserverSimple[]> => {
-    const observateurs = await observerRepository.findObservers({
-      orderBy: COLUMN_LIBELLE,
+  const findAllObservers = async (): Promise<ObserverSimple[]> => {
+    const observers = await observerRepository.findObservers({
+      orderBy: "libelle",
     });
 
-    const enrichedObservers = observateurs.map((observer) => {
+    const enrichedObservers = observers.map((observer) => {
       return enrichEntityWithEditableStatus(observer, null);
     });
 
     return [...enrichedObservers];
   };
 
-  const findPaginatedObservateurs = async (
+  const findPaginatedObservers = async (
     loggedUser: LoggedUser | null,
     options: ObserversSearchParams
   ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
@@ -85,21 +84,21 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const observateurs = await observerRepository.findObservers({
+    const observers = await observerRepository.findObservers({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    const enrichedObservers = observateurs.map((observer) => {
+    const enrichedObservers = observers.map((observer) => {
       return enrichEntityWithEditableStatus(observer, loggedUser);
     });
 
     return ok([...enrichedObservers]);
   };
 
-  const getObservateursCount = async (
+  const getObserversCount = async (
     loggedUser: LoggedUser | null,
     q?: string | null
   ): Promise<Result<number, AccessFailureReason>> => {
@@ -110,7 +109,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return ok(await observerRepository.getCount(q));
   };
 
-  const createObservateur = async (
+  const createObserver = async (
     input: UpsertObserverInput,
     loggedUser: LoggedUser | null
   ): Promise<Result<Observer, ObserverFailureReason>> => {
@@ -129,7 +128,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     });
   };
 
-  const updateObservateur = async (
+  const updateObserver = async (
     id: number,
     input: UpsertObserverInput,
     loggedUser: LoggedUser | null
@@ -155,7 +154,7 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     });
   };
 
-  const deleteObservateur = async (
+  const deleteObserver = async (
     id: number,
     loggedUser: LoggedUser | null
   ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
@@ -176,12 +175,12 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
     return ok(deletedObserver ? enrichEntityWithEditableStatus(deletedObserver, loggedUser) : null);
   };
 
-  const createObservateurs = async (
-    observateurs: Omit<AgeCreateInput, "ownerId">[],
+  const createObservers = async (
+    observers: Omit<AgeCreateInput, "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly ObserverSimple[]> => {
     const createdObservers = await observerRepository.createObservers(
-      observateurs.map((observateur) => {
+      observers.map((observateur) => {
         return { ...observateur, ownerId: loggedUser.id };
       })
     );
@@ -194,18 +193,18 @@ export const buildObservateurService = ({ observerRepository }: ObservateurServi
   };
 
   return {
-    findObservateur,
-    findObservateurOfInventaireId,
-    findAssociesOfInventaireId,
-    findAssociesIdsOfInventaireId,
-    findAllObservateurs,
-    findPaginatedObservateurs,
-    getObservateursCount,
-    createObservateur,
-    updateObservateur,
-    deleteObservateur,
-    createObservateurs,
+    findObserver,
+    findObserverOfInventoryId,
+    findAssociatesOfInventoryId,
+    findAssociateIdsOfInventoryId,
+    findAllObservers,
+    findPaginatedObservers,
+    getObserversCount,
+    createObserver,
+    updateObserver,
+    deleteObserver,
+    createObservers,
   };
 };
 
-export type ObservateurService = ReturnType<typeof buildObservateurService>;
+export type ObserverService = ReturnType<typeof buildObserverService>;

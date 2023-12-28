@@ -23,8 +23,8 @@ export const enrichedInventory = async (
   user: LoggedUser | null
 ): Promise<InventoryExtended> => {
   const [observer, associates, locality, weathers] = await Promise.all([
-    (await services.observateurService.findObservateurOfInventaireId(parseInt(inventory.id), user))._unsafeUnwrap(),
-    (await services.observateurService.findAssociesOfInventaireId(parseInt(inventory.id), user))._unsafeUnwrap(),
+    (await services.observerService.findObserverOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
+    (await services.observerService.findAssociatesOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
     services.lieuditService.findLieuDitOfInventaireId(parseInt(inventory.id), user),
     services.meteoService.findMeteosOfInventaireId(parseInt(inventory.id), user),
   ]);

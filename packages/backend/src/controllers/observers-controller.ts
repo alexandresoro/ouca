@@ -15,14 +15,14 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const observersController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { observateurService } = services;
+  const { observerService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const observerResult = await observateurService.findObservateur(req.params.id, req.user);
+    const observerResult = await observerService.findObserver(req.params.id, req.user);
 
     if (observerResult.isErr()) {
       switch (observerResult.error) {
@@ -56,8 +56,8 @@ const observersController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await observateurService.findPaginatedObservateurs(req.user, queryParams),
-      await observateurService.getObservateursCount(req.user, queryParams.q),
+      await observerService.findPaginatedObservers(req.user, queryParams),
+      await observerService.getObserversCount(req.user, queryParams.q),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -89,7 +89,7 @@ const observersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const observerCreateResult = await observateurService.createObservateur(input, req.user);
+    const observerCreateResult = await observerService.createObserver(input, req.user);
 
     if (observerCreateResult.isErr()) {
       switch (observerCreateResult.error) {
@@ -120,7 +120,7 @@ const observersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const observerUpdateResult = await observateurService.updateObservateur(req.params.id, input, req.user);
+    const observerUpdateResult = await observerService.updateObserver(req.params.id, input, req.user);
 
     if (observerUpdateResult.isErr()) {
       switch (observerUpdateResult.error) {
@@ -143,7 +143,7 @@ const observersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedObserverResult = await observateurService.deleteObservateur(req.params.id, req.user);
+    const deletedObserverResult = await observerService.deleteObserver(req.params.id, req.user);
 
     if (deletedObserverResult.isErr()) {
       switch (deletedObserverResult.error) {
