@@ -10,23 +10,20 @@ import { type DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ComportementServiceDependencies = {
-  comportementRepository: ComportementRepository;
-  donneeRepository: DonneeRepository;
+  behaviorRepository: ComportementRepository;
+  entryRepository: DonneeRepository;
 };
 
-export const buildComportementService = ({
-  comportementRepository,
-  donneeRepository,
-}: ComportementServiceDependencies) => {
+export const buildComportementService = ({ behaviorRepository, entryRepository }: ComportementServiceDependencies) => {
   const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior | null> => {
     validateAuthorization(loggedUser);
 
-    const behavior = await comportementRepository.findComportementById(id);
+    const behavior = await behaviorRepository.findComportementById(id);
     return enrichEntityWithEditableStatus(behavior, loggedUser);
   };
 
   const findComportementsIdsOfDonneeId = async (donneeId: string): Promise<string[]> => {
-    const comportementsIds = await comportementRepository
+    const comportementsIds = await behaviorRepository
       .findComportementsOfDonneeId(parseInt(donneeId))
       .then((comportements) => comportements.map(({ id }) => id));
 
@@ -39,7 +36,7 @@ export const buildComportementService = ({
   ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
-    const comportements = await comportementRepository.findComportementsOfDonneeId(
+    const comportements = await behaviorRepository.findComportementsOfDonneeId(
       donneeId ? parseInt(donneeId) : undefined
     );
 
@@ -53,11 +50,11 @@ export const buildComportementService = ({
   const getDonneesCountByComportement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByComportementId(parseInt(id));
+    return entryRepository.getCountByComportementId(parseInt(id));
   };
 
   const findAllComportements = async (): Promise<Behavior[]> => {
-    const comportements = await comportementRepository.findComportements({
+    const comportements = await behaviorRepository.findComportements({
       orderBy: "code",
     });
 
@@ -76,7 +73,7 @@ export const buildComportementService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const comportements = await comportementRepository.findComportements({
+    const comportements = await behaviorRepository.findComportements({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -93,14 +90,14 @@ export const buildComportementService = ({
   const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return comportementRepository.getCount(q);
+    return behaviorRepository.getCount(q);
   };
 
   const createComportement = async (input: UpsertBehaviorInput, loggedUser: LoggedUser | null): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdComportement = await comportementRepository.createComportement({
+      const createdComportement = await behaviorRepository.createComportement({
         ...input,
         owner_id: loggedUser.id,
       });
@@ -123,7 +120,7 @@ export const buildComportementService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await comportementRepository.findComportementById(id);
+      const existingData = await behaviorRepository.findComportementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -131,7 +128,7 @@ export const buildComportementService = ({
     }
 
     try {
-      const updatedComportement = await comportementRepository.updateComportement(id, input);
+      const updatedComportement = await behaviorRepository.updateComportement(id, input);
 
       return enrichEntityWithEditableStatus(updatedComportement, loggedUser);
     } catch (e) {
@@ -147,14 +144,14 @@ export const buildComportementService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await comportementRepository.findComportementById(id);
+      const existingData = await behaviorRepository.findComportementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedComportement = await comportementRepository.deleteComportementById(id);
+    const deletedComportement = await behaviorRepository.deleteComportementById(id);
     return enrichEntityWithEditableStatus(deletedComportement, loggedUser);
   };
 
@@ -162,7 +159,7 @@ export const buildComportementService = ({
     comportements: Omit<ComportementCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Behavior[]> => {
-    const createdBehaviors = await comportementRepository.createComportements(
+    const createdBehaviors = await behaviorRepository.createComportements(
       comportements.map((comportement) => {
         return { ...comportement, owner_id: loggedUser.id };
       })

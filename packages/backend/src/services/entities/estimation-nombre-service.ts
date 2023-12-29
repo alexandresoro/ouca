@@ -11,18 +11,18 @@ import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-uti
 import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
 
 type EstimationNombreServiceDependencies = {
-  estimationNombreRepository: EstimationNombreRepository;
-  donneeRepository: DonneeRepository;
+  numberEstimateRepository: EstimationNombreRepository;
+  entryRepository: DonneeRepository;
 };
 
 export const buildEstimationNombreService = ({
-  estimationNombreRepository,
-  donneeRepository,
+  numberEstimateRepository,
+  entryRepository,
 }: EstimationNombreServiceDependencies) => {
   const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    const numberEstimate = await estimationNombreRepository.findEstimationNombreById(id);
+    const numberEstimate = await numberEstimateRepository.findEstimationNombreById(id);
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 
@@ -32,7 +32,7 @@ export const buildEstimationNombreService = ({
   ): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    const numberEstimate = await estimationNombreRepository.findEstimationNombreByDonneeId(
+    const numberEstimate = await numberEstimateRepository.findEstimationNombreByDonneeId(
       donneeId ? parseInt(donneeId) : undefined
     );
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
@@ -41,11 +41,11 @@ export const buildEstimationNombreService = ({
   const getDonneesCountByEstimationNombre = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByEstimationNombreId(parseInt(id));
+    return entryRepository.getCountByEstimationNombreId(parseInt(id));
   };
 
   const findAllEstimationsNombre = async (): Promise<NumberEstimate[]> => {
-    const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
+    const estimationNombres = await numberEstimateRepository.findEstimationsNombre({
       orderBy: "libelle",
     });
 
@@ -64,7 +64,7 @@ export const buildEstimationNombreService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
+    const estimationNombres = await numberEstimateRepository.findEstimationsNombre({
       q: q,
       ...getSqlPagination(pagination),
       orderBy: orderByField === "nonCompte" ? "non_compte" : orderByField,
@@ -81,7 +81,7 @@ export const buildEstimationNombreService = ({
   const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return estimationNombreRepository.getCount(q);
+    return numberEstimateRepository.getCount(q);
   };
 
   const createEstimationNombre = async (
@@ -91,7 +91,7 @@ export const buildEstimationNombreService = ({
     validateAuthorization(loggedUser);
 
     try {
-      const createdEstimationNombre = await estimationNombreRepository.createEstimationNombre({
+      const createdEstimationNombre = await numberEstimateRepository.createEstimationNombre({
         ...reshapeInputEstimationNombreUpsertData(input),
         owner_id: loggedUser.id,
       });
@@ -114,7 +114,7 @@ export const buildEstimationNombreService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await estimationNombreRepository.findEstimationNombreById(id);
+      const existingData = await numberEstimateRepository.findEstimationNombreById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -122,7 +122,7 @@ export const buildEstimationNombreService = ({
     }
 
     try {
-      const updatedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
+      const updatedEstimationNombre = await numberEstimateRepository.updateEstimationNombre(
         id,
         reshapeInputEstimationNombreUpsertData(input)
       );
@@ -141,14 +141,14 @@ export const buildEstimationNombreService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await estimationNombreRepository.findEstimationNombreById(id);
+      const existingData = await numberEstimateRepository.findEstimationNombreById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedNumberEstimate = await estimationNombreRepository.deleteEstimationNombreById(id);
+    const deletedNumberEstimate = await numberEstimateRepository.deleteEstimationNombreById(id);
     return enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser);
   };
 
@@ -156,7 +156,7 @@ export const buildEstimationNombreService = ({
     estimationsNombre: Omit<EstimationNombreCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly NumberEstimate[]> => {
-    const createdNumberEstimates = await estimationNombreRepository.createEstimationsNombre(
+    const createdNumberEstimates = await numberEstimateRepository.createEstimationsNombre(
       estimationsNombre.map((estimationNombre) => {
         return { ...estimationNombre, owner_id: loggedUser.id };
       })

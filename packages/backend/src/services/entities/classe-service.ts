@@ -11,33 +11,33 @@ import { type EspeceRepository } from "../../repositories/espece/espece-reposito
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ClasseServiceDependencies = {
-  classeRepository: ClasseRepository;
-  especeRepository: EspeceRepository;
-  donneeRepository: DonneeRepository;
+  classRepository: ClasseRepository;
+  speciesRepository: EspeceRepository;
+  entryRepository: DonneeRepository;
 };
 
 export const buildClasseService = ({
-  classeRepository,
-  especeRepository,
-  donneeRepository,
+  classRepository,
+  speciesRepository,
+  entryRepository,
 }: ClasseServiceDependencies) => {
   const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
     validateAuthorization(loggedUser);
 
-    const speciesClass = await classeRepository.findClasseById(id);
+    const speciesClass = await classRepository.findClasseById(id);
     return enrichEntityWithEditableStatus(speciesClass, loggedUser);
   };
 
   const getEspecesCountByClasse = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return especeRepository.getCountByClasseId(parseInt(id));
+    return speciesRepository.getCountByClasseId(parseInt(id));
   };
 
   const getDonneesCountByClasse = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByClasseId(parseInt(id));
+    return entryRepository.getCountByClasseId(parseInt(id));
   };
 
   const findClasseOfEspeceId = async (
@@ -46,12 +46,12 @@ export const buildClasseService = ({
   ): Promise<SpeciesClass | null> => {
     validateAuthorization(loggedUser);
 
-    const speciesClass = await classeRepository.findClasseByEspeceId(especeId ? parseInt(especeId) : undefined);
+    const speciesClass = await classRepository.findClasseByEspeceId(especeId ? parseInt(especeId) : undefined);
     return enrichEntityWithEditableStatus(speciesClass, loggedUser);
   };
 
   const findAllClasses = async (): Promise<SpeciesClass[]> => {
-    const classes = await classeRepository.findClasses({
+    const classes = await classRepository.findClasses({
       orderBy: "libelle",
     });
 
@@ -70,7 +70,7 @@ export const buildClasseService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const classes = await classeRepository.findClasses({
+    const classes = await classRepository.findClasses({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -87,7 +87,7 @@ export const buildClasseService = ({
   const getClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return classeRepository.getCount(q);
+    return classRepository.getCount(q);
   };
 
   const createClasse = async (input: UpsertClassInput, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
@@ -95,7 +95,7 @@ export const buildClasseService = ({
 
     // Create a new class
     try {
-      const createdClass = await classeRepository.createClasse({
+      const createdClass = await classRepository.createClasse({
         ...input,
         owner_id: loggedUser?.id,
       });
@@ -118,7 +118,7 @@ export const buildClasseService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
-      const existingData = await classeRepository.findClasseById(id);
+      const existingData = await classRepository.findClasseById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
         throw new OucaError("OUCA0001");
@@ -127,7 +127,7 @@ export const buildClasseService = ({
 
     // Update an existing class
     try {
-      const updatedClass = await classeRepository.updateClasse(id, input);
+      const updatedClass = await classRepository.updateClasse(id, input);
 
       return enrichEntityWithEditableStatus(updatedClass, loggedUser);
     } catch (e) {
@@ -143,14 +143,14 @@ export const buildClasseService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
-      const existingData = await classeRepository.findClasseById(id);
+      const existingData = await classRepository.findClasseById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedClass = await classeRepository.deleteClasseById(id);
+    const deletedClass = await classRepository.deleteClasseById(id);
     return enrichEntityWithEditableStatus(deletedClass, loggedUser);
   };
 
@@ -158,7 +158,7 @@ export const buildClasseService = ({
     classes: Omit<ClasseCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly SpeciesClass[]> => {
-    const createdClasses = await classeRepository.createClasses(
+    const createdClasses = await classRepository.createClasses(
       classes.map((classe) => {
         return { ...classe, owner_id: loggedUser.id };
       })

@@ -14,16 +14,16 @@ import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repos
 import { mockVi } from "../../utils/mock.js";
 import { buildDepartementService } from "./departement-service.js";
 
-const departementRepository = mockVi<DepartementRepository>();
-const communeRepository = mockVi<CommuneRepository>();
-const lieuditRepository = mockVi<LieuditRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const departmentRepository = mockVi<DepartementRepository>();
+const townRepository = mockVi<CommuneRepository>();
+const localityRepository = mockVi<LieuditRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const departementService = buildDepartementService({
-  departementRepository,
-  communeRepository,
-  lieuditRepository,
-  donneeRepository,
+  departmentRepository,
+  townRepository,
+  localityRepository,
+  entryRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -40,27 +40,27 @@ describe("Find department", () => {
     const departmentData = mock<Departement>();
     const loggedUser = mock<LoggedUser>();
 
-    departementRepository.findDepartementById.mockResolvedValueOnce(departmentData);
+    departmentRepository.findDepartementById.mockResolvedValueOnce(departmentData);
 
     await departementService.findDepartement(12, loggedUser);
 
-    expect(departementRepository.findDepartementById).toHaveBeenCalledTimes(1);
-    expect(departementRepository.findDepartementById).toHaveBeenLastCalledWith(12);
+    expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle department not found", async () => {
-    departementRepository.findDepartementById.mockResolvedValueOnce(null);
+    departmentRepository.findDepartementById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(departementService.findDepartement(10, loggedUser)).resolves.toBe(null);
 
-    expect(departementRepository.findDepartementById).toHaveBeenCalledTimes(1);
-    expect(departementRepository.findDepartementById).toHaveBeenLastCalledWith(10);
+    expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(departementService.findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(departementRepository.findDepartementById).not.toHaveBeenCalled();
+    expect(departmentRepository.findDepartementById).not.toHaveBeenCalled();
   });
 });
 
@@ -70,8 +70,8 @@ describe("Cities count per entity", () => {
 
     await departementService.getCommunesCountByDepartement("12", loggedUser);
 
-    expect(communeRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
-    expect(communeRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
+    expect(townRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
+    expect(townRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -87,8 +87,8 @@ describe("Localities count per entity", () => {
 
     await departementService.getLieuxDitsCountByDepartement("12", loggedUser);
 
-    expect(lieuditRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
+    expect(localityRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
+    expect(localityRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -104,8 +104,8 @@ describe("Data count per entity", () => {
 
     await departementService.getDonneesCountByDepartement("12", loggedUser);
 
-    expect(donneeRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -122,12 +122,12 @@ describe("Find department by city ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    departementRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
+    departmentRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
 
     const department = await departementService.findDepartementOfCommuneId("43", loggedUser);
 
-    expect(departementRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
-    expect(departementRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
+    expect(departmentRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
     expect(department?.id).toEqual("256");
   });
 
@@ -139,12 +139,12 @@ describe("Find department by city ID", () => {
 test("Find all departments", async () => {
   const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
 
-  departementRepository.findDepartements.mockResolvedValueOnce(departementsData);
+  departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
   await departementService.findAllDepartements();
 
-  expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
-  expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
+  expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
+  expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({
     orderBy: "code",
   });
 });
@@ -154,12 +154,12 @@ describe("Entities paginated find by search criteria", () => {
     const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
     const loggedUser = mock<LoggedUser>();
 
-    departementRepository.findDepartements.mockResolvedValueOnce(departementsData);
+    departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
     await departementService.findPaginatedDepartements(loggedUser, {});
 
-    expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
-    expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({});
+    expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated departments ", async () => {
@@ -174,12 +174,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    departementRepository.findDepartements.mockResolvedValueOnce([departementsData[0]]);
+    departmentRepository.findDepartements.mockResolvedValueOnce([departementsData[0]]);
 
     await departementService.findPaginatedDepartements(loggedUser, searchParams);
 
-    expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
-    expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
+    expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "code",
       sortOrder: "desc",
@@ -199,8 +199,8 @@ describe("Entities count by search criteria", () => {
 
     await departementService.getDepartementsCount(loggedUser);
 
-    expect(departementRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(departementRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(departmentRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -208,8 +208,8 @@ describe("Entities count by search criteria", () => {
 
     await departementService.getDepartementsCount(loggedUser, "test");
 
-    expect(departementRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(departementRepository.getCount).toHaveBeenLastCalledWith("test");
+    expect(departmentRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -225,8 +225,8 @@ describe("Update of a department", () => {
 
     await departementService.updateDepartement(12, departmentData, loggedUser);
 
-    expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
+    expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -238,12 +238,12 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    departementRepository.findDepartementById.mockResolvedValueOnce(existingData);
+    departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
     await departementService.updateDepartement(12, departmentData, loggedUser);
 
-    expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
+    expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -258,13 +258,13 @@ describe("Update of a department", () => {
       role: "contributor",
     } as const;
 
-    departementRepository.findDepartementById.mockResolvedValueOnce(existingData);
+    departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
     await expect(departementService.updateDepartement(12, departmentData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
-    expect(departementRepository.updateDepartement).not.toHaveBeenCalled();
+    expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a department that exists", async () => {
@@ -272,14 +272,14 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    departementRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
+    departmentRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => departementService.updateDepartement(12, departmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
+    expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -288,7 +288,7 @@ describe("Update of a department", () => {
     await expect(departementService.updateDepartement(12, departmentData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
-    expect(departementRepository.updateDepartement).not.toHaveBeenCalled();
+    expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
   });
 });
 
@@ -300,8 +300,8 @@ describe("Creation of a department", () => {
 
     await departementService.createDepartement(departmentData, loggedUser);
 
-    expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
+    expect(departmentRepository.createDepartement).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.createDepartement).toHaveBeenLastCalledWith({
       ...departmentData,
       owner_id: loggedUser.id,
     });
@@ -312,14 +312,14 @@ describe("Creation of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    departementRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
+    departmentRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => departementService.createDepartement(departmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
+    expect(departmentRepository.createDepartement).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.createDepartement).toHaveBeenLastCalledWith({
       ...departmentData,
       owner_id: loggedUser.id,
     });
@@ -329,7 +329,7 @@ describe("Creation of a department", () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
     await expect(departementService.createDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(departementRepository.createDepartement).not.toHaveBeenCalled();
+    expect(departmentRepository.createDepartement).not.toHaveBeenCalled();
   });
 });
 
@@ -344,12 +344,12 @@ describe("Deletion of a department", () => {
       ownerId: loggedUser.id,
     });
 
-    departementRepository.findDepartementById.mockResolvedValueOnce(department);
+    departmentRepository.findDepartementById.mockResolvedValueOnce(department);
 
     await departementService.deleteDepartement(11, loggedUser);
 
-    expect(departementRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
-    expect(departementRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
+    expect(departmentRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any department if admin", async () => {
@@ -357,12 +357,12 @@ describe("Deletion of a department", () => {
       role: "admin",
     });
 
-    departementRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
+    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
 
     await departementService.deleteDepartement(11, loggedUser);
 
-    expect(departementRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
-    expect(departementRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
+    expect(departmentRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned department as non-admin", async () => {
@@ -370,16 +370,16 @@ describe("Deletion of a department", () => {
       role: "contributor",
     });
 
-    departementRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
+    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
 
     await expect(departementService.deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(departementRepository.deleteDepartementById).not.toHaveBeenCalled();
+    expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(departementService.deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(departementRepository.deleteDepartementById).not.toHaveBeenCalled();
+    expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 });
 
@@ -392,12 +392,12 @@ test("Create multiple departments", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  departementRepository.createDepartements.mockResolvedValueOnce([]);
+  departmentRepository.createDepartements.mockResolvedValueOnce([]);
 
   await departementService.createDepartements(departmentsData, loggedUser);
 
-  expect(departementRepository.createDepartements).toHaveBeenCalledTimes(1);
-  expect(departementRepository.createDepartements).toHaveBeenLastCalledWith(
+  expect(departmentRepository.createDepartements).toHaveBeenCalledTimes(1);
+  expect(departmentRepository.createDepartements).toHaveBeenLastCalledWith(
     departmentsData.map((department) => {
       return {
         ...department,

@@ -18,25 +18,25 @@ import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.j
 
 type InventaireServiceDependencies = {
   slonik: DatabasePool;
-  inventaireRepository: InventaireRepository;
-  inventaireAssocieRepository: InventaireAssocieRepository;
-  inventaireMeteoRepository: InventaireMeteoRepository;
-  donneeRepository: DonneeRepository;
-  lieuditRepository: LieuditRepository;
+  inventoryRepository: InventaireRepository;
+  inventoryAssociateRepository: InventaireAssocieRepository;
+  inventoryWeatherRepository: InventaireMeteoRepository;
+  entryRepository: DonneeRepository;
+  localityRepository: LieuditRepository;
 };
 
 export const buildInventaireService = ({
   slonik,
-  inventaireRepository,
-  inventaireAssocieRepository,
-  inventaireMeteoRepository,
-  donneeRepository,
-  lieuditRepository,
+  inventoryRepository,
+  inventoryAssociateRepository,
+  inventoryWeatherRepository,
+  entryRepository,
+  localityRepository,
 }: InventaireServiceDependencies) => {
   const findInventaire = async (id: number, loggedUser: LoggedUser | null): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
-    const inventaire = await inventaireRepository.findInventaireById(id);
+    const inventaire = await inventoryRepository.findInventaireById(id);
 
     return inventaire;
   };
@@ -50,7 +50,7 @@ export const buildInventaireService = ({
     loggedUser: LoggedUser | null
   ): Promise<number | null> => {
     validateAuthorization(loggedUser);
-    return inventaireRepository.findInventoryIndex(id, order);
+    return inventoryRepository.findInventoryIndex(id, order);
   };
 
   const findInventaireOfDonneeId = async (
@@ -59,11 +59,11 @@ export const buildInventaireService = ({
   ): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
-    return inventaireRepository.findInventaireByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    return inventoryRepository.findInventaireByDonneeId(donneeId ? parseInt(donneeId) : undefined);
   };
 
   const findAllInventaires = async (): Promise<Inventaire[]> => {
-    const inventaires = await inventaireRepository.findInventaires();
+    const inventaires = await inventoryRepository.findInventaires();
 
     return [...inventaires];
   };
@@ -76,7 +76,7 @@ export const buildInventaireService = ({
 
     const { orderBy: orderByField, sortOrder, pageSize, pageNumber } = options;
 
-    const inventories = await inventaireRepository.findInventaires({
+    const inventories = await inventoryRepository.findInventaires({
       ...getSqlPagination({
         pageNumber,
         pageSize,
@@ -91,7 +91,7 @@ export const buildInventaireService = ({
   const getInventairesCount = async (loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return inventaireRepository.getCount();
+    return inventoryRepository.getCount();
   };
 
   const createInventaire = async (input: UpsertInventoryInput, loggedUser: LoggedUser | null): Promise<Inventaire> => {
@@ -99,7 +99,7 @@ export const buildInventaireService = ({
 
     const { associateIds, weatherIds } = input;
 
-    const locality = await lieuditRepository.findLieuditById(parseInt(input.localityId));
+    const locality = await localityRepository.findLieuditById(parseInt(input.localityId));
     if (!locality) {
       logger.warn(
         {
@@ -111,7 +111,7 @@ export const buildInventaireService = ({
     }
 
     // Check if an exact same inventaire already exists or not
-    const existingInventaire = await inventaireRepository.findExistingInventaire({
+    const existingInventaire = await inventoryRepository.findExistingInventaire({
       ...reshapeInputInventaireUpsertData(input, locality),
       associateIds,
       weatherIds,
@@ -128,13 +128,13 @@ export const buildInventaireService = ({
 
       // Create a new inventaire
       const createdInventaire = await slonik.transaction(async (transactionConnection) => {
-        const createdInventaire = await inventaireRepository.createInventaire(
+        const createdInventaire = await inventoryRepository.createInventaire(
           reshapeInputInventaireUpsertData(input, locality, loggedUser.id),
           transactionConnection
         );
 
         if (associateIds?.length) {
-          await inventaireAssocieRepository.insertInventaireWithAssocies(
+          await inventoryAssociateRepository.insertInventaireWithAssocies(
             parseInt(createdInventaire.id),
             associateIds.map((associateId) => parseInt(associateId)),
             transactionConnection
@@ -142,7 +142,7 @@ export const buildInventaireService = ({
         }
 
         if (weatherIds?.length) {
-          await inventaireMeteoRepository.insertInventaireWithMeteos(
+          await inventoryWeatherRepository.insertInventaireWithMeteos(
             parseInt(createdInventaire.id),
             weatherIds.map((weatherId) => parseInt(weatherId)),
             transactionConnection
@@ -166,7 +166,7 @@ export const buildInventaireService = ({
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
     const { associateIds, weatherIds } = inputData;
 
-    const locality = await lieuditRepository.findLieuditById(parseInt(input.localityId));
+    const locality = await localityRepository.findLieuditById(parseInt(input.localityId));
     if (!locality) {
       logger.warn(
         {
@@ -178,7 +178,7 @@ export const buildInventaireService = ({
     }
 
     // Check if an exact same inventaire already exists or not
-    const existingInventaire = await inventaireRepository.findExistingInventaire({
+    const existingInventaire = await inventoryRepository.findExistingInventaire({
       ...reshapeInputInventaireUpsertData(inputData, locality),
       associateIds,
       weatherIds,
@@ -209,8 +209,8 @@ export const buildInventaireService = ({
 
       // We update the inventaire ID for the donnees and we delete the duplicated inventaire
       await slonik.transaction(async (transactionConnection) => {
-        await donneeRepository.updateAssociatedInventaire(id, parseInt(existingInventaire.id), transactionConnection);
-        await inventaireRepository.deleteInventaireById(id, transactionConnection);
+        await entryRepository.updateAssociatedInventaire(id, parseInt(existingInventaire.id), transactionConnection);
+        await inventoryRepository.deleteInventaireById(id, transactionConnection);
       });
 
       // We wished to create an inventaire but we already found one,
@@ -223,26 +223,26 @@ export const buildInventaireService = ({
 
       // Update an existing inventaire
       const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
-        const updatedInventaire = await inventaireRepository.updateInventaire(
+        const updatedInventaire = await inventoryRepository.updateInventaire(
           id,
           reshapeInputInventaireUpsertData(inputData, locality, loggedUser.id),
           transactionConnection
         );
 
-        await inventaireAssocieRepository.deleteAssociesOfInventaireId(id, transactionConnection);
+        await inventoryAssociateRepository.deleteAssociesOfInventaireId(id, transactionConnection);
 
         if (associateIds?.length) {
-          await inventaireAssocieRepository.insertInventaireWithAssocies(
+          await inventoryAssociateRepository.insertInventaireWithAssocies(
             id,
             associateIds.map((associateId) => parseInt(associateId)),
             transactionConnection
           );
         }
 
-        await inventaireMeteoRepository.deleteMeteosOfInventaireId(id, transactionConnection);
+        await inventoryWeatherRepository.deleteMeteosOfInventaireId(id, transactionConnection);
 
         if (weatherIds?.length) {
-          await inventaireMeteoRepository.insertInventaireWithMeteos(
+          await inventoryWeatherRepository.insertInventaireWithMeteos(
             id,
             weatherIds.map((weatherId) => parseInt(weatherId)),
             transactionConnection
@@ -261,7 +261,7 @@ export const buildInventaireService = ({
 
     // Check that the user is allowed to modify the existing inventory
     if (loggedUser?.role !== "admin") {
-      const existingInventory = await inventaireRepository.findInventaireById(parseInt(id));
+      const existingInventory = await inventoryRepository.findInventaireById(parseInt(id));
 
       if (existingInventory?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -269,12 +269,12 @@ export const buildInventaireService = ({
     }
 
     const deletedInventory = await slonik.transaction(async (transactionConnection) => {
-      const entriesOfInventory = await donneeRepository.getCountByInventaireId(parseInt(id), transactionConnection);
+      const entriesOfInventory = await entryRepository.getCountByInventaireId(parseInt(id), transactionConnection);
 
       if (entriesOfInventory > 0) {
         throw new OucaError("OUCA0005");
       }
-      return inventaireRepository.deleteInventaireById(parseInt(id), transactionConnection);
+      return inventoryRepository.deleteInventaireById(parseInt(id), transactionConnection);
     });
 
     return deletedInventory;

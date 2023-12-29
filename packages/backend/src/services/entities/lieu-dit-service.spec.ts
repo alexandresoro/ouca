@@ -13,14 +13,14 @@ import { mockVi } from "../../utils/mock.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 import { buildLieuditService } from "./lieu-dit-service.js";
 
-const lieuditRepository = mockVi<LieuditRepository>();
-const inventaireRepository = mockVi<InventaireRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const localityRepository = mockVi<LieuditRepository>();
+const inventoryRepository = mockVi<InventaireRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const lieuditService = buildLieuditService({
-  lieuditRepository,
-  inventaireRepository,
-  donneeRepository,
+  localityRepository,
+  inventoryRepository,
+  entryRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -48,29 +48,29 @@ describe("Find locality", () => {
     const localityData = mockDeep<Lieudit>();
     const loggedUser = mock<LoggedUser>();
 
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(localityData);
+    localityRepository.findLieuditById.mockResolvedValueOnce(localityData);
 
     await lieuditService.findLieuDit(12, loggedUser);
 
-    expect(lieuditRepository.findLieuditById).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.findLieuditById).toHaveBeenLastCalledWith(12);
+    expect(localityRepository.findLieuditById).toHaveBeenCalledTimes(1);
+    expect(localityRepository.findLieuditById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle locality not found", async () => {
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(null);
+    localityRepository.findLieuditById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(null);
 
     await expect(lieuditService.findLieuDit(10, loggedUser)).resolves.toBe(null);
 
-    expect(lieuditRepository.findLieuditById).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.findLieuditById).toHaveBeenLastCalledWith(10);
+    expect(localityRepository.findLieuditById).toHaveBeenCalledTimes(1);
+    expect(localityRepository.findLieuditById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(lieuditService.findLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(lieuditRepository.findLieuditById).not.toHaveBeenCalled();
+    expect(localityRepository.findLieuditById).not.toHaveBeenCalled();
   });
 });
 
@@ -80,8 +80,8 @@ describe("Inventory count per entity", () => {
 
     await lieuditService.getInventoriesCountByLocality("12", loggedUser);
 
-    expect(inventaireRepository.getCountByLocality).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.getCountByLocality).toHaveBeenLastCalledWith(12);
+    expect(inventoryRepository.getCountByLocality).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.getCountByLocality).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -95,8 +95,8 @@ describe("Data count per entity", () => {
 
     await lieuditService.getDonneesCountByLieuDit("12", loggedUser);
 
-    expect(donneeRepository.getCountByLieuditId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByLieuditId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByLieuditId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByLieuditId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -111,7 +111,7 @@ describe("Find locality by inventary ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    lieuditRepository.findLieuditByInventaireId.mockResolvedValueOnce(localityData);
+    localityRepository.findLieuditByInventaireId.mockResolvedValueOnce(localityData);
     mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(
       mock<Locality>({
         id: "258",
@@ -120,8 +120,8 @@ describe("Find locality by inventary ID", () => {
 
     const locality = await lieuditService.findLieuDitOfInventaireId(43, loggedUser);
 
-    expect(lieuditRepository.findLieuditByInventaireId).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.findLieuditByInventaireId).toHaveBeenLastCalledWith(43);
+    expect(localityRepository.findLieuditByInventaireId).toHaveBeenCalledTimes(1);
+    expect(localityRepository.findLieuditByInventaireId).toHaveBeenLastCalledWith(43);
     expect(locality?.id).toEqual("258");
   });
 
@@ -133,12 +133,12 @@ describe("Find locality by inventary ID", () => {
 test("Find all localities", async () => {
   const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
 
-  lieuditRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
+  localityRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
   await lieuditService.findAllLieuxDits();
 
-  expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
-  expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({
+  expect(localityRepository.findLieuxdits).toHaveBeenCalledTimes(1);
+  expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({
     orderBy: "nom",
   });
 });
@@ -148,12 +148,12 @@ describe("Entities paginated find by search criteria", () => {
     const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
     const loggedUser = mock<LoggedUser>();
 
-    lieuditRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
+    localityRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
     await lieuditService.findPaginatedLieuxDits(loggedUser, {});
 
-    expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({});
+    expect(localityRepository.findLieuxdits).toHaveBeenCalledTimes(1);
+    expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated localities ", async () => {
@@ -168,12 +168,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    lieuditRepository.findLieuxdits.mockResolvedValueOnce([localitiesData[0]]);
+    localityRepository.findLieuxdits.mockResolvedValueOnce([localitiesData[0]]);
 
     await lieuditService.findPaginatedLieuxDits(loggedUser, searchParams);
 
-    expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({
+    expect(localityRepository.findLieuxdits).toHaveBeenCalledTimes(1);
+    expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "nom",
       sortOrder: "desc",
@@ -193,8 +193,8 @@ describe("Entities count by search criteria", () => {
 
     await lieuditService.getLieuxDitsCount(loggedUser, {});
 
-    expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith(undefined, undefined);
+    expect(localityRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(localityRepository.getCount).toHaveBeenLastCalledWith(undefined, undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -202,8 +202,8 @@ describe("Entities count by search criteria", () => {
 
     await lieuditService.getLieuxDitsCount(loggedUser, { q: "test", townId: "12" });
 
-    expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith("test", 12);
+    expect(localityRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(localityRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -219,13 +219,13 @@ describe("Update of a locality", () => {
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
-    lieuditRepository.updateLieudit.mockResolvedValueOnce(mockDeep<Lieudit>());
+    localityRepository.updateLieudit.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.updateLieuDit(12, localityData, loggedUser);
 
-    expect(lieuditRepository.updateLieudit).toHaveBeenCalledTimes(1);
+    expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -240,13 +240,13 @@ describe("Update of a locality", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(existingData);
+    localityRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
     await lieuditService.updateLieuDit(12, localityData, loggedUser);
 
-    expect(lieuditRepository.updateLieudit).toHaveBeenCalledTimes(1);
+    expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -261,11 +261,11 @@ describe("Update of a locality", () => {
       role: "contributor",
     } as const;
 
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(existingData);
+    localityRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
     await expect(lieuditService.updateLieuDit(12, localityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(lieuditRepository.updateLieudit).not.toHaveBeenCalled();
+    expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a locality that exists", async () => {
@@ -276,22 +276,22 @@ describe("Update of a locality", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    lieuditRepository.updateLieudit.mockImplementation(uniqueConstraintFailed);
+    localityRepository.updateLieudit.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => lieuditService.updateLieuDit(12, localityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(lieuditRepository.updateLieudit).toHaveBeenCalledTimes(1);
+    expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
     await expect(lieuditService.updateLieuDit(12, localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(lieuditRepository.updateLieudit).not.toHaveBeenCalled();
+    expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
   });
 });
 
@@ -304,13 +304,13 @@ describe("Creation of a locality", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    lieuditRepository.createLieudit.mockResolvedValueOnce(mockDeep<Lieudit>());
+    localityRepository.createLieudit.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.createLieuDit(localityData, loggedUser);
 
-    expect(lieuditRepository.createLieudit).toHaveBeenCalledTimes(1);
+    expect(localityRepository.createLieudit).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.createLieudit).toHaveBeenLastCalledWith({
+    expect(localityRepository.createLieudit).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
     });
@@ -324,15 +324,15 @@ describe("Creation of a locality", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    lieuditRepository.createLieudit.mockImplementation(uniqueConstraintFailed);
+    localityRepository.createLieudit.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => lieuditService.createLieuDit(localityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(lieuditRepository.createLieudit).toHaveBeenCalledTimes(1);
+    expect(localityRepository.createLieudit).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.createLieudit).toHaveBeenLastCalledWith({
+    expect(localityRepository.createLieudit).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
     });
@@ -342,7 +342,7 @@ describe("Creation of a locality", () => {
     const localityData = mock<UpsertLocalityInput>();
 
     await expect(lieuditService.createLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(lieuditRepository.createLieudit).not.toHaveBeenCalled();
+    expect(localityRepository.createLieudit).not.toHaveBeenCalled();
   });
 });
 
@@ -357,13 +357,13 @@ describe("Deletion of a locality", () => {
       ownerId: loggedUser.id,
     });
 
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(locality);
-    lieuditRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Lieudit>());
+    localityRepository.findLieuditById.mockResolvedValueOnce(locality);
+    localityRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.deleteLieuDit(11, loggedUser);
 
-    expect(lieuditRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
+    expect(localityRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
+    expect(localityRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any locality if admin", async () => {
@@ -371,13 +371,13 @@ describe("Deletion of a locality", () => {
       role: "admin",
     });
 
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(mock<Lieudit>());
-    lieuditRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Lieudit>());
+    localityRepository.findLieuditById.mockResolvedValueOnce(mock<Lieudit>());
+    localityRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.deleteLieuDit(11, loggedUser);
 
-    expect(lieuditRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
+    expect(localityRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
+    expect(localityRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned locality as non-admin", async () => {
@@ -385,16 +385,16 @@ describe("Deletion of a locality", () => {
       role: "contributor",
     });
 
-    lieuditRepository.findLieuditById.mockResolvedValueOnce(mock<Lieudit>());
+    localityRepository.findLieuditById.mockResolvedValueOnce(mock<Lieudit>());
 
     await expect(lieuditService.deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(lieuditRepository.deleteLieuditById).not.toHaveBeenCalled();
+    expect(localityRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(lieuditService.deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(lieuditRepository.deleteLieuditById).not.toHaveBeenCalled();
+    expect(localityRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 });
 
@@ -407,12 +407,12 @@ test("Create multiple localities", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  lieuditRepository.createLieuxdits.mockResolvedValueOnce([]);
+  localityRepository.createLieuxdits.mockResolvedValueOnce([]);
 
   await lieuditService.createLieuxDits(lieuDitsData, loggedUser);
 
-  expect(lieuditRepository.createLieuxdits).toHaveBeenCalledTimes(1);
-  expect(lieuditRepository.createLieuxdits).toHaveBeenLastCalledWith(
+  expect(localityRepository.createLieuxdits).toHaveBeenCalledTimes(1);
+  expect(localityRepository.createLieuxdits).toHaveBeenLastCalledWith(
     lieuDitsData.map((lieuDit) => {
       return {
         ...lieuDit,

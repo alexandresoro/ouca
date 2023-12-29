@@ -17,22 +17,22 @@ import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repos
 import { mockVi } from "../../utils/mock.js";
 import { buildInventaireService } from "./inventaire-service.js";
 
-const inventaireRepository = mockVi<InventaireRepository>();
-const inventaireAssocieRepository = mockVi<InventaireAssocieRepository>();
-const inventaireMeteoRepository = mockVi<InventaireMeteoRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
-const lieuditRepository = mockVi<LieuditRepository>();
+const inventoryRepository = mockVi<InventaireRepository>();
+const inventoryAssociateRepository = mockVi<InventaireAssocieRepository>();
+const inventoryWeatherRepository = mockVi<InventaireMeteoRepository>();
+const entryRepository = mockVi<DonneeRepository>();
+const localityRepository = mockVi<LieuditRepository>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
 
 const inventaireService = buildInventaireService({
   slonik,
-  inventaireRepository,
-  inventaireAssocieRepository,
-  inventaireMeteoRepository,
-  donneeRepository,
-  lieuditRepository,
+  inventoryRepository,
+  inventoryAssociateRepository,
+  inventoryWeatherRepository,
+  entryRepository,
+  localityRepository,
 });
 
 const reshapeInputInventaireUpsertData = vi.fn();
@@ -52,27 +52,27 @@ describe("Find inventary", () => {
     const inventaryData = mock<Inventaire>();
     const loggedUser = mock<LoggedUser>();
 
-    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventaryData);
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventaryData);
 
     await inventaireService.findInventaire(12, loggedUser);
 
-    expect(inventaireRepository.findInventaireById).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.findInventaireById).toHaveBeenLastCalledWith(12);
+    expect(inventoryRepository.findInventaireById).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle inventary not found", async () => {
-    inventaireRepository.findInventaireById.mockResolvedValueOnce(null);
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toBe(null);
 
-    expect(inventaireRepository.findInventaireById).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.findInventaireById).toHaveBeenLastCalledWith(10);
+    expect(inventoryRepository.findInventaireById).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(inventaireService.findInventaire(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(inventaireRepository.findInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.findInventaireById).not.toHaveBeenCalled();
   });
 });
 
@@ -81,12 +81,12 @@ describe("Find inventary by data ID", () => {
     const inventaryData = mock<Inventaire>();
     const loggedUser = mock<LoggedUser>();
 
-    inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(inventaryData);
+    inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(inventaryData);
 
     const inventary = await inventaireService.findInventaireOfDonneeId("43", loggedUser);
 
-    expect(inventaireRepository.findInventaireByDonneeId).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.findInventaireByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(inventoryRepository.findInventaireByDonneeId).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.findInventaireByDonneeId).toHaveBeenLastCalledWith(43);
     expect(inventary).toEqual(inventaryData);
   });
 
@@ -98,11 +98,11 @@ describe("Find inventary by data ID", () => {
 test("Find all inventaries", async () => {
   const inventariesData = [mock<Inventaire>(), mock<Inventaire>(), mock<Inventaire>()];
 
-  inventaireRepository.findInventaires.mockResolvedValueOnce(inventariesData);
+  inventoryRepository.findInventaires.mockResolvedValueOnce(inventariesData);
 
   await inventaireService.findAllInventaires();
 
-  expect(inventaireRepository.findInventaires).toHaveBeenCalledTimes(1);
+  expect(inventoryRepository.findInventaires).toHaveBeenCalledTimes(1);
 });
 
 describe("Inventories paginated find by search criteria", () => {
@@ -117,12 +117,12 @@ describe("Inventories paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    inventaireRepository.findInventaires.mockResolvedValueOnce([inventoriesData[0]]);
+    inventoryRepository.findInventaires.mockResolvedValueOnce([inventoriesData[0]]);
 
     await inventaireService.findPaginatedInventaires(loggedUser, searchParams);
 
-    expect(inventaireRepository.findInventaires).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.findInventaires).toHaveBeenLastCalledWith({
+    expect(inventoryRepository.findInventaires).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.findInventaires).toHaveBeenLastCalledWith({
       orderBy: "creationDate",
       sortOrder: "desc",
       offset: 0,
@@ -143,8 +143,8 @@ describe("Entities count by search criteria", () => {
 
     await inventaireService.getInventairesCount(loggedUser);
 
-    expect(inventaireRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.getCount).toHaveBeenLastCalledWith();
+    expect(inventoryRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.getCount).toHaveBeenLastCalledWith();
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -161,8 +161,8 @@ describe("Update of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
-      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
+      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
         })
@@ -173,8 +173,8 @@ describe("Update of an inventory", () => {
         correspondingInventaireFound: "345",
       });
 
-      expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
-      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(entryRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
+      expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
     });
 
     test("should handle migration of existing data if requested", async () => {
@@ -184,8 +184,8 @@ describe("Update of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
-      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
+      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
         })
@@ -193,10 +193,10 @@ describe("Update of an inventory", () => {
 
       const result = await inventaireService.updateInventaire(12, inventoryData, loggedUser);
 
-      expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledTimes(1);
-      expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
-      expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
-      expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledWith(12, any());
+      expect(entryRepository.updateAssociatedInventaire).toHaveBeenCalledTimes(1);
+      expect(entryRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
+      expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+      expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledWith(12, any());
       expect(result.id).toEqual("345");
     });
 
@@ -206,7 +206,7 @@ describe("Update of an inventory", () => {
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
         new OucaError("OUCA0001")
       );
-      expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 
@@ -219,9 +219,9 @@ describe("Update of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
-      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(null);
-      inventaireRepository.updateInventaire.mockResolvedValueOnce(
+      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
+      inventoryRepository.updateInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "12",
         })
@@ -232,20 +232,20 @@ describe("Update of an inventory", () => {
 
       await inventaireService.updateInventaire(12, inventoryData, loggedUser);
 
-      expect(inventaireRepository.updateInventaire).toHaveBeenCalledTimes(1);
-      expect(inventaireRepository.updateInventaire).toHaveBeenLastCalledWith(12, any(), any());
-      expect(inventaireAssocieRepository.deleteAssociesOfInventaireId).toHaveBeenCalledTimes(1);
-      expect(inventaireAssocieRepository.deleteAssociesOfInventaireId).toHaveBeenLastCalledWith(12, any());
-      expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
-      expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(
+      expect(inventoryRepository.updateInventaire).toHaveBeenCalledTimes(1);
+      expect(inventoryRepository.updateInventaire).toHaveBeenLastCalledWith(12, any(), any());
+      expect(inventoryAssociateRepository.deleteAssociesOfInventaireId).toHaveBeenCalledTimes(1);
+      expect(inventoryAssociateRepository.deleteAssociesOfInventaireId).toHaveBeenLastCalledWith(12, any());
+      expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
+      expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(
         anyNumber(),
         expect.arrayContaining([2, 3]),
         anyObject()
       );
-      expect(inventaireMeteoRepository.deleteMeteosOfInventaireId).toHaveBeenCalledTimes(1);
-      expect(inventaireMeteoRepository.deleteMeteosOfInventaireId).toHaveBeenLastCalledWith(12, any());
-      expect(inventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
-      expect(inventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(
+      expect(inventoryWeatherRepository.deleteMeteosOfInventaireId).toHaveBeenCalledTimes(1);
+      expect(inventoryWeatherRepository.deleteMeteosOfInventaireId).toHaveBeenLastCalledWith(12, any());
+      expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
+      expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(
         anyNumber(),
         expect.arrayContaining([4, 5]),
         anyObject()
@@ -258,7 +258,7 @@ describe("Update of an inventory", () => {
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
         new OucaError("OUCA0001")
       );
-      expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 });
@@ -272,8 +272,8 @@ describe("Creation of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
-      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
+      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
         })
@@ -281,8 +281,8 @@ describe("Creation of an inventory", () => {
 
       const result = await inventaireService.createInventaire(inventoryData, loggedUser);
 
-      expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
-      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(entryRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
+      expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
       expect(result.id).toEqual("345");
     });
 
@@ -290,7 +290,7 @@ describe("Creation of an inventory", () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-      expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 
@@ -304,9 +304,9 @@ describe("Creation of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
-      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(null);
-      inventaireRepository.createInventaire.mockResolvedValueOnce(
+      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
+      inventoryRepository.createInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "322",
         })
@@ -317,12 +317,12 @@ describe("Creation of an inventory", () => {
 
       await inventaireService.createInventaire(inventoryData, loggedUser);
 
-      expect(inventaireRepository.createInventaire).toHaveBeenCalledTimes(1);
-      expect(inventaireRepository.createInventaire).toHaveBeenLastCalledWith(any(), any());
-      expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
+      expect(inventoryRepository.createInventaire).toHaveBeenCalledTimes(1);
+      expect(inventoryRepository.createInventaire).toHaveBeenLastCalledWith(any(), any());
+      expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
       // TODO investigate why this check is failing
-      // expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(322, [2, 3], any());
-      expect(inventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
+      // expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(322, [2, 3], any());
+      expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
       // expect(nventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(322, [4, 5], any());
     });
 
@@ -330,7 +330,7 @@ describe("Creation of an inventory", () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-      expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 });
@@ -345,13 +345,13 @@ describe("Deletion of an inventory", () => {
       ownerId: loggedUser.id,
     });
 
-    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventory);
-    donneeRepository.getCountByInventaireId.mockResolvedValueOnce(0);
-    inventaireRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    entryRepository.getCountByInventaireId.mockResolvedValueOnce(0);
+    inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
 
     const result = await inventaireService.deleteInventory("11", loggedUser);
 
-    expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
     expect(result).toEqual(inventory);
   });
 
@@ -365,13 +365,13 @@ describe("Deletion of an inventory", () => {
       ownerId: loggedUser.id,
     });
 
-    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventory);
-    donneeRepository.getCountByInventaireId.mockResolvedValueOnce(0);
-    inventaireRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    entryRepository.getCountByInventaireId.mockResolvedValueOnce(0);
+    inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
 
     const result = await inventaireService.deleteInventory("11", loggedUser);
 
-    expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
     expect(result).toEqual(inventory);
   });
 
@@ -385,12 +385,12 @@ describe("Deletion of an inventory", () => {
       ownerId: loggedUser.id,
     });
 
-    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventory);
-    donneeRepository.getCountByInventaireId.mockResolvedValueOnce(3);
-    inventaireRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    entryRepository.getCountByInventaireId.mockResolvedValueOnce(3);
+    inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
 
     await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0005"));
-    expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to delete an inventory belonging to a non-owned inventory", async () => {
@@ -398,14 +398,14 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    inventaireRepository.findInventaireById.mockResolvedValueOnce(mock<Inventaire>());
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(mock<Inventaire>());
 
     await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(inventaireService.deleteInventory("11", null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 });

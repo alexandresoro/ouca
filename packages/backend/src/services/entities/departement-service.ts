@@ -12,41 +12,41 @@ import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repos
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type DepartementServiceDependencies = {
-  departementRepository: DepartementRepository;
-  communeRepository: CommuneRepository;
-  lieuditRepository: LieuditRepository;
-  donneeRepository: DonneeRepository;
+  departmentRepository: DepartementRepository;
+  townRepository: CommuneRepository;
+  localityRepository: LieuditRepository;
+  entryRepository: DonneeRepository;
 };
 
 export const buildDepartementService = ({
-  departementRepository,
-  communeRepository,
-  lieuditRepository,
-  donneeRepository,
+  departmentRepository,
+  townRepository,
+  localityRepository,
+  entryRepository,
 }: DepartementServiceDependencies) => {
   const findDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Department | null> => {
     validateAuthorization(loggedUser);
 
-    const department = await departementRepository.findDepartementById(id);
+    const department = await departmentRepository.findDepartementById(id);
     return enrichEntityWithEditableStatus(department, loggedUser);
   };
 
   const getDonneesCountByDepartement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByDepartementId(parseInt(id));
+    return entryRepository.getCountByDepartementId(parseInt(id));
   };
 
   const getLieuxDitsCountByDepartement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.getCountByDepartementId(parseInt(id));
+    return localityRepository.getCountByDepartementId(parseInt(id));
   };
 
   const getCommunesCountByDepartement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return communeRepository.getCountByDepartementId(parseInt(id));
+    return townRepository.getCountByDepartementId(parseInt(id));
   };
 
   const findDepartementOfCommuneId = async (
@@ -55,14 +55,14 @@ export const buildDepartementService = ({
   ): Promise<Department | null> => {
     validateAuthorization(loggedUser);
 
-    const department = await departementRepository.findDepartementByCommuneId(
+    const department = await departmentRepository.findDepartementByCommuneId(
       communeId ? parseInt(communeId) : undefined
     );
     return enrichEntityWithEditableStatus(department, loggedUser);
   };
 
   const findAllDepartements = async (): Promise<Department[]> => {
-    const departements = await departementRepository.findDepartements({
+    const departements = await departmentRepository.findDepartements({
       orderBy: "code",
     });
 
@@ -81,7 +81,7 @@ export const buildDepartementService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const departements = await departementRepository.findDepartements({
+    const departements = await departmentRepository.findDepartements({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -98,7 +98,7 @@ export const buildDepartementService = ({
   const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return departementRepository.getCount(q);
+    return departmentRepository.getCount(q);
   };
 
   const createDepartement = async (
@@ -108,7 +108,7 @@ export const buildDepartementService = ({
     validateAuthorization(loggedUser);
 
     try {
-      const createdDepartement = await departementRepository.createDepartement({
+      const createdDepartement = await departmentRepository.createDepartement({
         ...input,
         owner_id: loggedUser.id,
       });
@@ -131,7 +131,7 @@ export const buildDepartementService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await departementRepository.findDepartementById(id);
+      const existingData = await departmentRepository.findDepartementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -139,7 +139,7 @@ export const buildDepartementService = ({
     }
 
     try {
-      const updatedDepartement = await departementRepository.updateDepartement(id, input);
+      const updatedDepartement = await departmentRepository.updateDepartement(id, input);
 
       return enrichEntityWithEditableStatus(updatedDepartement, loggedUser);
     } catch (e) {
@@ -155,14 +155,14 @@ export const buildDepartementService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await departementRepository.findDepartementById(id);
+      const existingData = await departmentRepository.findDepartementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedDepartment = await departementRepository.deleteDepartementById(id);
+    const deletedDepartment = await departmentRepository.deleteDepartementById(id);
     return enrichEntityWithEditableStatus(deletedDepartment, loggedUser);
   };
 
@@ -170,7 +170,7 @@ export const buildDepartementService = ({
     departements: Omit<DepartementCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Department[]> => {
-    const createdDepartments = await departementRepository.createDepartements(
+    const createdDepartments = await departmentRepository.createDepartements(
       departements.map((departement) => {
         return { ...departement, owner_id: loggedUser.id };
       })

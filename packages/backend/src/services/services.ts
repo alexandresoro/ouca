@@ -78,26 +78,26 @@ export const buildServices = async (): Promise<Services> => {
   logger.debug("Connection to database successful");
 
   const ageRepository = buildAgeRepository();
-  const classeRepository = buildClasseRepository({ slonik });
-  const communeRepository = buildCommuneRepository({ slonik });
-  const comportementRepository = buildComportementRepository({ slonik });
-  const departementRepository = buildDepartementRepository({ slonik });
+  const behaviorRepository = buildComportementRepository({ slonik });
+  const classRepository = buildClasseRepository({ slonik });
+  const departmentRepository = buildDepartementRepository({ slonik });
+  const distanceEstimateRepository = buildEstimationDistanceRepository({ slonik });
   const entryRepository = buildDonneeRepository({ slonik });
-  const donneeComportementRepository = buildDonneeComportementRepository({ slonik });
-  const donneeMilieuRepository = buildDonneeMilieuRepository({ slonik });
-  const especeRepository = buildEspeceRepository({ slonik });
-  const estimationDistanceRepository = buildEstimationDistanceRepository({ slonik });
-  const estimationNombreRepository = buildEstimationNombreRepository({ slonik });
-  const inventaireRepository = buildInventaireRepository({ slonik });
-  const inventaireAssocieRepository = buildInventaireAssocieRepository({ slonik });
-  const inventaireMeteoRepository = buildInventaireMeteoRepository({ slonik });
-  const lieuditRepository = buildLieuditRepository({ slonik });
-  const meteoRepository = buildMeteoRepository({ slonik });
-  const milieuRepository = buildMilieuRepository({ slonik });
+  const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
+  const entryEnvironmentRepository = buildDonneeMilieuRepository({ slonik });
+  const environmentRepository = buildMilieuRepository({ slonik });
+  const inventoryRepository = buildInventaireRepository({ slonik });
+  const inventoryAssociateRepository = buildInventaireAssocieRepository({ slonik });
+  const inventoryWeatherRepository = buildInventaireMeteoRepository({ slonik });
+  const localityRepository = buildLieuditRepository({ slonik });
+  const numberEstimateRepository = buildEstimationNombreRepository({ slonik });
   const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();
   const sexRepository = buildSexRepository();
+  const speciesRepository = buildEspeceRepository({ slonik });
+  const townRepository = buildCommuneRepository({ slonik });
   const userRepository = buildUserRepository({ settingsRepository });
+  const weatherRepository = buildMeteoRepository({ slonik });
 
   const ageService = buildAgeService({
     ageRepository,
@@ -105,76 +105,76 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const classService = buildClasseService({
-    classeRepository,
-    especeRepository,
-    donneeRepository: entryRepository,
+    classRepository,
+    speciesRepository,
+    entryRepository,
   });
 
   const townService = buildCommuneService({
-    communeRepository,
-    lieuditRepository,
-    donneeRepository: entryRepository,
+    townRepository,
+    localityRepository,
+    entryRepository,
   });
 
   const behaviorService = buildComportementService({
-    comportementRepository,
-    donneeRepository: entryRepository,
+    behaviorRepository,
+    entryRepository,
   });
 
   const departmentService = buildDepartementService({
-    departementRepository,
-    communeRepository,
-    lieuditRepository,
-    donneeRepository: entryRepository,
+    departmentRepository,
+    townRepository,
+    localityRepository,
+    entryRepository,
   });
 
   const entryService = buildDonneeService({
     slonik,
-    inventaireRepository,
-    donneeRepository: entryRepository,
-    donneeComportementRepository,
-    donneeMilieuRepository,
+    inventoryRepository,
+    entryRepository,
+    entryBehaviorRepository,
+    entryEnvironmentRepository,
   });
 
   const speciesService = buildEspeceService({
     classService,
-    especeRepository,
-    donneeRepository: entryRepository,
+    speciesRepository,
+    entryRepository,
   });
 
   const distanceEstimateService = buildEstimationDistanceService({
-    estimationDistanceRepository,
-    donneeRepository: entryRepository,
+    distanceEstimateRepository,
+    entryRepository,
   });
 
   const numberEstimateService = buildEstimationNombreService({
-    estimationNombreRepository,
-    donneeRepository: entryRepository,
+    numberEstimateRepository,
+    entryRepository,
   });
 
   const inventoryService = buildInventaireService({
     slonik,
-    inventaireRepository,
-    inventaireAssocieRepository,
-    inventaireMeteoRepository,
-    donneeRepository: entryRepository,
-    lieuditRepository,
+    inventoryRepository,
+    inventoryAssociateRepository,
+    inventoryWeatherRepository,
+    entryRepository,
+    localityRepository,
   });
 
   const localityService = buildLieuditService({
-    lieuditRepository,
-    inventaireRepository,
-    donneeRepository: entryRepository,
+    localityRepository,
+    inventoryRepository,
+    entryRepository,
   });
 
   const weatherService = buildMeteoService({
-    meteoRepository,
-    donneeRepository: entryRepository,
+    weatherRepository,
+    entryRepository,
   });
 
   const environmentService = buildMilieuService({
-    milieuRepository,
-    donneeRepository: entryRepository,
+    environmentRepository,
+    entryRepository,
   });
 
   const observerService = buildObserverService({
@@ -200,7 +200,7 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const geojsonService = buildGeoJSONService({
-    lieuditRepository,
+    localityRepository,
   });
 
   const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });

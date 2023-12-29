@@ -13,13 +13,13 @@ import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 import { buildEspeceService } from "./espece-service.js";
 
 const classService = mockVi<ClasseService>();
-const especeRepository = mockVi<EspeceRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const speciesRepository = mockVi<EspeceRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const especeService = buildEspeceService({
   classService,
-  especeRepository,
-  donneeRepository,
+  speciesRepository,
+  entryRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -45,27 +45,27 @@ describe("Find species", () => {
     const speciesData = mock<Espece>();
     const loggedUser = mock<LoggedUser>();
 
-    especeRepository.findEspeceById.mockResolvedValueOnce(speciesData);
+    speciesRepository.findEspeceById.mockResolvedValueOnce(speciesData);
 
     await especeService.findEspece(12, loggedUser);
 
-    expect(especeRepository.findEspeceById).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeceById).toHaveBeenLastCalledWith(12);
+    expect(speciesRepository.findEspeceById).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.findEspeceById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle species not found", async () => {
-    especeRepository.findEspeceById.mockResolvedValueOnce(null);
+    speciesRepository.findEspeceById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(especeService.findEspece(10, loggedUser)).resolves.toBe(null);
 
-    expect(especeRepository.findEspeceById).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeceById).toHaveBeenLastCalledWith(10);
+    expect(speciesRepository.findEspeceById).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.findEspeceById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(especeService.findEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(especeRepository.findEspeceById).not.toHaveBeenCalled();
+    expect(speciesRepository.findEspeceById).not.toHaveBeenCalled();
   });
 });
 
@@ -75,8 +75,8 @@ describe("Data count per entity", () => {
 
     await especeService.getDonneesCountByEspece("12", loggedUser);
 
-    expect(donneeRepository.getCountByEspeceId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByEspeceId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByEspeceId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByEspeceId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -91,12 +91,12 @@ describe("Find species by data ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    especeRepository.findEspeceByDonneeId.mockResolvedValueOnce(speciesData);
+    speciesRepository.findEspeceByDonneeId.mockResolvedValueOnce(speciesData);
 
     const species = await especeService.findEspeceOfDonneeId("43", loggedUser);
 
-    expect(especeRepository.findEspeceByDonneeId).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeceByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(speciesRepository.findEspeceByDonneeId).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.findEspeceByDonneeId).toHaveBeenLastCalledWith(43);
     expect(species?.id).toEqual("256");
   });
 
@@ -108,12 +108,12 @@ describe("Find species by data ID", () => {
 test("Find all species", async () => {
   const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
 
-  especeRepository.findEspeces.mockResolvedValueOnce(speciesData);
+  speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
   await especeService.findAllEspeces();
 
-  expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
-  expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+  expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
+  expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({
     orderBy: "code",
   });
 });
@@ -123,12 +123,12 @@ describe("Entities paginated find by search criteria", () => {
     const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
     const loggedUser = mock<LoggedUser>();
 
-    especeRepository.findEspeces.mockResolvedValueOnce(speciesData);
+    speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
     await especeService.findPaginatedEspeces(loggedUser, {});
 
-    expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({});
+    expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated species ", async () => {
@@ -143,12 +143,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    especeRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
+    speciesRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
     await especeService.findPaginatedEspeces(loggedUser, searchParams);
 
-    expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+    expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "code",
       sortOrder: "desc",
@@ -173,12 +173,12 @@ describe("Entities paginated find by search criteria", () => {
       toDate: "2010-01-01",
     };
 
-    especeRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
+    speciesRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
     await especeService.findPaginatedEspeces(loggedUser, searchParams);
 
-    expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+    expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({
       q: "Bob",
       searchCriteria: {
         ageIds: [12, 23],
@@ -204,8 +204,8 @@ describe("Entities count by search criteria", () => {
 
     await especeService.getEspecesCount(loggedUser, {});
 
-    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCount).toHaveBeenLastCalledWith({});
+    expect(speciesRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.getCount).toHaveBeenLastCalledWith({});
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -213,8 +213,8 @@ describe("Entities count by search criteria", () => {
 
     await especeService.getEspecesCount(loggedUser, { q: "test" });
 
-    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+    expect(speciesRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.getCount).toHaveBeenLastCalledWith({
       q: "test",
     });
   });
@@ -229,8 +229,8 @@ describe("Entities count by search criteria", () => {
       toDate: "2010-01-01",
     });
 
-    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+    expect(speciesRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.getCount).toHaveBeenLastCalledWith({
       searchCriteria: {
         ageIds: [12, 23],
         nombre: undefined,
@@ -251,8 +251,8 @@ describe("Entities count by search criteria", () => {
       toDate: "2010-01-01",
     });
 
-    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+    expect(speciesRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.getCount).toHaveBeenLastCalledWith({
       q: "test",
       searchCriteria: {
         ageIds: [12, 23],
@@ -280,13 +280,13 @@ describe("Update of a species", () => {
     const species = mock<Espece>({
       ownerId: loggedUser.id,
     });
-    especeRepository.updateEspece.mockResolvedValueOnce(species);
+    speciesRepository.updateEspece.mockResolvedValueOnce(species);
 
     await especeService.updateEspece(12, speciesData, loggedUser);
 
-    expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -301,18 +301,18 @@ describe("Update of a species", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
+    speciesRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
     const species = mock<Espece>({
       ownerId: loggedUser.id,
     });
-    especeRepository.updateEspece.mockResolvedValueOnce(species);
+    speciesRepository.updateEspece.mockResolvedValueOnce(species);
 
     await especeService.updateEspece(12, speciesData, loggedUser);
 
-    expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -327,11 +327,11 @@ describe("Update of a species", () => {
       role: "contributor",
     } as const;
 
-    especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
+    speciesRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
     await expect(especeService.updateEspece(12, speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(especeRepository.updateEspece).not.toHaveBeenCalled();
+    expect(speciesRepository.updateEspece).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a species that exists", async () => {
@@ -342,22 +342,22 @@ describe("Update of a species", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    especeRepository.updateEspece.mockImplementation(uniqueConstraintFailed);
+    speciesRepository.updateEspece.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => especeService.updateEspece(12, speciesData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     await expect(especeService.updateEspece(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(especeRepository.updateEspece).not.toHaveBeenCalled();
+    expect(speciesRepository.updateEspece).not.toHaveBeenCalled();
   });
 });
 
@@ -373,13 +373,13 @@ describe("Creation of a species", () => {
     const species = mock<Espece>({
       ownerId: loggedUser.id,
     });
-    especeRepository.createEspece.mockResolvedValueOnce(species);
+    speciesRepository.createEspece.mockResolvedValueOnce(species);
 
     await especeService.createEspece(speciesData, loggedUser);
 
-    expect(especeRepository.createEspece).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.createEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.createEspece).toHaveBeenLastCalledWith({
+    expect(speciesRepository.createEspece).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
     });
@@ -393,15 +393,15 @@ describe("Creation of a species", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    especeRepository.createEspece.mockImplementation(uniqueConstraintFailed);
+    speciesRepository.createEspece.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => especeService.createEspece(speciesData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(especeRepository.createEspece).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.createEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.createEspece).toHaveBeenLastCalledWith({
+    expect(speciesRepository.createEspece).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
     });
@@ -411,7 +411,7 @@ describe("Creation of a species", () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     await expect(especeService.createEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(especeRepository.createEspece).not.toHaveBeenCalled();
+    expect(speciesRepository.createEspece).not.toHaveBeenCalled();
   });
 });
 
@@ -426,12 +426,12 @@ describe("Deletion of a species", () => {
       ownerId: loggedUser.id,
     });
 
-    especeRepository.findEspeceById.mockResolvedValueOnce(species);
+    speciesRepository.findEspeceById.mockResolvedValueOnce(species);
 
     await especeService.deleteEspece(11, loggedUser);
 
-    expect(especeRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
-    expect(especeRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
+    expect(speciesRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any species if admin", async () => {
@@ -439,12 +439,12 @@ describe("Deletion of a species", () => {
       role: "admin",
     });
 
-    especeRepository.findEspeceById.mockResolvedValueOnce(mock<Espece>());
+    speciesRepository.findEspeceById.mockResolvedValueOnce(mock<Espece>());
 
     await especeService.deleteEspece(11, loggedUser);
 
-    expect(especeRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
-    expect(especeRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
+    expect(speciesRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned species as non-admin", async () => {
@@ -452,16 +452,16 @@ describe("Deletion of a species", () => {
       role: "contributor",
     });
 
-    especeRepository.findEspeceById.mockResolvedValueOnce(mock<Espece>());
+    speciesRepository.findEspeceById.mockResolvedValueOnce(mock<Espece>());
 
     await expect(especeService.deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(especeRepository.deleteEspeceById).not.toHaveBeenCalled();
+    expect(speciesRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(especeService.deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(especeRepository.deleteEspeceById).not.toHaveBeenCalled();
+    expect(speciesRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 });
 
@@ -474,12 +474,12 @@ test("Create multiple species", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  especeRepository.createEspeces.mockResolvedValueOnce([]);
+  speciesRepository.createEspeces.mockResolvedValueOnce([]);
 
   await especeService.createEspeces(speciesData, loggedUser);
 
-  expect(especeRepository.createEspeces).toHaveBeenCalledTimes(1);
-  expect(especeRepository.createEspeces).toHaveBeenLastCalledWith(
+  expect(speciesRepository.createEspeces).toHaveBeenCalledTimes(1);
+  expect(speciesRepository.createEspeces).toHaveBeenLastCalledWith(
     speciesData.map((species) => {
       return {
         ...species,

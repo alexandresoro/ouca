@@ -15,28 +15,28 @@ import { getSqlPagination } from "./entities-utils.js";
 
 type DonneeServiceDependencies = {
   slonik: DatabasePool;
-  inventaireRepository: InventaireRepository;
-  donneeRepository: DonneeRepository;
-  donneeComportementRepository: DonneeComportementRepository;
-  donneeMilieuRepository: DonneeMilieuRepository;
+  inventoryRepository: InventaireRepository;
+  entryRepository: DonneeRepository;
+  entryBehaviorRepository: DonneeComportementRepository;
+  entryEnvironmentRepository: DonneeMilieuRepository;
 };
 
 export const buildDonneeService = ({
   slonik,
-  inventaireRepository,
-  donneeRepository,
-  donneeComportementRepository,
-  donneeMilieuRepository,
+  inventoryRepository,
+  entryRepository,
+  entryBehaviorRepository,
+  entryEnvironmentRepository,
 }: DonneeServiceDependencies) => {
   const findDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee | null> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.findDonneeById(id);
+    return entryRepository.findDonneeById(id);
   };
 
   // Be careful when calling it, it will retrieve a lot of data!
   const findAllDonnees = async (): Promise<Donnee[]> => {
-    const donnees = await donneeRepository.findDonnees();
+    const donnees = await entryRepository.findDonnees();
 
     return [...donnees];
   };
@@ -51,7 +51,7 @@ export const buildDonneeService = ({
 
     const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
-    const donnees = await donneeRepository.findDonnees({
+    const donnees = await entryRepository.findDonnees({
       searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
         pageNumber,
@@ -69,16 +69,16 @@ export const buildDonneeService = ({
 
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
-    return donneeRepository.getCount(reshapedSearchCriteria);
+    return entryRepository.getCount(reshapedSearchCriteria);
   };
 
   const findDonneeNavigationData = async (loggedUser: LoggedUser | null, entryId: string): Promise<EntryNavigation> => {
     validateAuthorization(loggedUser);
 
     const [previousEntryId, nextEntryId, index] = await Promise.all([
-      donneeRepository.findPreviousDonneeId(parseInt(entryId)),
-      donneeRepository.findNextDonneeId(parseInt(entryId)),
-      donneeRepository.findDonneeIndex(parseInt(entryId)),
+      entryRepository.findPreviousDonneeId(parseInt(entryId)),
+      entryRepository.findNextDonneeId(parseInt(entryId)),
+      entryRepository.findDonneeIndex(parseInt(entryId)),
     ]);
 
     return {
@@ -91,7 +91,7 @@ export const buildDonneeService = ({
   const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<string | null> => {
     validateAuthorization(loggedUser);
 
-    const latestDonneeId = await donneeRepository.findLatestDonneeId();
+    const latestDonneeId = await entryRepository.findLatestDonneeId();
 
     return latestDonneeId;
   };
@@ -99,7 +99,7 @@ export const buildDonneeService = ({
   const findNextRegroupement = async (loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    const latestRegroupement = await donneeRepository.findLatestRegroupement();
+    const latestRegroupement = await entryRepository.findLatestRegroupement();
     return (latestRegroupement ?? 0) + 1;
   };
 
@@ -109,7 +109,7 @@ export const buildDonneeService = ({
     const { behaviorIds, environmentIds } = input;
 
     // Check if an exact same donnee already exists or not
-    const existingDonnee = await donneeRepository.findExistingDonnee({
+    const existingDonnee = await entryRepository.findExistingDonnee({
       ...reshapeInputDonneeUpsertData(input),
       behaviorIds,
       environmentIds,
@@ -124,13 +124,13 @@ export const buildDonneeService = ({
     }
 
     const createdDonnee = await slonik.transaction(async (transactionConnection) => {
-      const createdDonnee = await donneeRepository.createDonnee(
+      const createdDonnee = await entryRepository.createDonnee(
         reshapeInputDonneeUpsertData(input),
         transactionConnection
       );
 
       if (behaviorIds?.length) {
-        await donneeComportementRepository.insertDonneeWithComportements(
+        await entryBehaviorRepository.insertDonneeWithComportements(
           parseInt(createdDonnee.id),
           behaviorIds.map((behavior) => parseInt(behavior)),
           transactionConnection
@@ -138,7 +138,7 @@ export const buildDonneeService = ({
       }
 
       if (environmentIds?.length) {
-        await donneeMilieuRepository.insertDonneeWithMilieux(
+        await entryEnvironmentRepository.insertDonneeWithMilieux(
           parseInt(createdDonnee.id),
           environmentIds.map((environment) => parseInt(environment)),
           transactionConnection
@@ -157,7 +157,7 @@ export const buildDonneeService = ({
     const { behaviorIds, environmentIds } = input;
 
     // Check if an exact same donnee already exists or not
-    const existingDonnee = await donneeRepository.findExistingDonnee({
+    const existingDonnee = await entryRepository.findExistingDonnee({
       ...reshapeInputDonneeUpsertData(input),
       behaviorIds,
       environmentIds,
@@ -172,26 +172,26 @@ export const buildDonneeService = ({
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
-        const updatedDonnee = await donneeRepository.updateDonnee(
+        const updatedDonnee = await entryRepository.updateDonnee(
           parseInt(id),
           reshapeInputDonneeUpsertData(input),
           transactionConnection
         );
 
-        await donneeComportementRepository.deleteComportementsOfDonneeId(parseInt(id), transactionConnection);
+        await entryBehaviorRepository.deleteComportementsOfDonneeId(parseInt(id), transactionConnection);
 
         if (behaviorIds?.length) {
-          await donneeComportementRepository.insertDonneeWithComportements(
+          await entryBehaviorRepository.insertDonneeWithComportements(
             parseInt(id),
             behaviorIds.map((behavior) => parseInt(behavior)),
             transactionConnection
           );
         }
 
-        await donneeMilieuRepository.deleteMilieuxOfDonneeId(parseInt(id), transactionConnection);
+        await entryEnvironmentRepository.deleteMilieuxOfDonneeId(parseInt(id), transactionConnection);
 
         if (environmentIds?.length) {
-          await donneeMilieuRepository.insertDonneeWithMilieux(
+          await entryEnvironmentRepository.insertDonneeWithMilieux(
             parseInt(id),
             environmentIds.map((environment) => parseInt(environment)),
             transactionConnection
@@ -210,14 +210,14 @@ export const buildDonneeService = ({
 
     const deletedDonnee = await slonik.transaction(async (transactionConnection) => {
       // First get the corresponding inventaire
-      const inventaire = await inventaireRepository.findInventaireByDonneeId(id, transactionConnection);
+      const inventaire = await inventoryRepository.findInventaireByDonneeId(id, transactionConnection);
 
       if (loggedUser.role !== "admin" && inventaire?.ownerId !== loggedUser.id) {
         throw new OucaError("OUCA0001");
       }
 
       // Delete the actual donnee
-      const deletedDonnee = await donneeRepository.deleteDonneeById(id, transactionConnection);
+      const deletedDonnee = await entryRepository.deleteDonneeById(id, transactionConnection);
 
       return deletedDonnee;
     });

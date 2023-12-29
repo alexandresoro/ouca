@@ -10,14 +10,14 @@ import { type EspeceRepository } from "../../repositories/espece/espece-reposito
 import { mockVi } from "../../utils/mock.js";
 import { buildClasseService } from "./classe-service.js";
 
-const classeRepository = mockVi<ClasseRepository>();
-const especeRepository = mockVi<EspeceRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const classRepository = mockVi<ClasseRepository>();
+const speciesRepository = mockVi<EspeceRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const classeService = buildClasseService({
-  classeRepository,
-  especeRepository,
-  donneeRepository,
+  classRepository,
+  speciesRepository,
+  entryRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -34,27 +34,27 @@ describe("Find class", () => {
     const classData: Classe = mock<Classe>();
     const loggedUser = mock<LoggedUser>();
 
-    classeRepository.findClasseById.mockResolvedValueOnce(classData);
+    classRepository.findClasseById.mockResolvedValueOnce(classData);
 
     await classeService.findClasse(12, loggedUser);
 
-    expect(classeRepository.findClasseById).toHaveBeenCalledTimes(1);
-    expect(classeRepository.findClasseById).toHaveBeenLastCalledWith(12);
+    expect(classRepository.findClasseById).toHaveBeenCalledTimes(1);
+    expect(classRepository.findClasseById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle class not found", async () => {
-    classeRepository.findClasseById.mockResolvedValueOnce(null);
+    classRepository.findClasseById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(classeService.findClasse(10, loggedUser)).resolves.toBe(null);
 
-    expect(classeRepository.findClasseById).toHaveBeenCalledTimes(1);
-    expect(classeRepository.findClasseById).toHaveBeenLastCalledWith(10);
+    expect(classRepository.findClasseById).toHaveBeenCalledTimes(1);
+    expect(classRepository.findClasseById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(classeService.findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(classeRepository.findClasseById).not.toHaveBeenCalled();
+    expect(classRepository.findClasseById).not.toHaveBeenCalled();
   });
 });
 
@@ -64,8 +64,8 @@ describe("Species count per entity", () => {
 
     await classeService.getEspecesCountByClasse("12", loggedUser);
 
-    expect(especeRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
+    expect(speciesRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
+    expect(speciesRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -79,8 +79,8 @@ describe("Data count per entity", () => {
 
     await classeService.getDonneesCountByClasse("12", loggedUser);
 
-    expect(donneeRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -95,12 +95,12 @@ describe("Find class by species ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    classeRepository.findClasseByEspeceId.mockResolvedValueOnce(classData);
+    classRepository.findClasseByEspeceId.mockResolvedValueOnce(classData);
 
     const classe = await classeService.findClasseOfEspeceId("43", loggedUser);
 
-    expect(classeRepository.findClasseByEspeceId).toHaveBeenCalledTimes(1);
-    expect(classeRepository.findClasseByEspeceId).toHaveBeenLastCalledWith(43);
+    expect(classRepository.findClasseByEspeceId).toHaveBeenCalledTimes(1);
+    expect(classRepository.findClasseByEspeceId).toHaveBeenLastCalledWith(43);
     expect(classe?.id).toEqual("256");
   });
 
@@ -112,12 +112,12 @@ describe("Find class by species ID", () => {
 test("Find all classes", async () => {
   const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
 
-  classeRepository.findClasses.mockResolvedValueOnce(classesData);
+  classRepository.findClasses.mockResolvedValueOnce(classesData);
 
   await classeService.findAllClasses();
 
-  expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
-  expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
+  expect(classRepository.findClasses).toHaveBeenCalledTimes(1);
+  expect(classRepository.findClasses).toHaveBeenLastCalledWith({
     orderBy: "libelle",
   });
 });
@@ -127,12 +127,12 @@ describe("Entities paginated find by search criteria", () => {
     const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
     const loggedUser = mock<LoggedUser>();
 
-    classeRepository.findClasses.mockResolvedValueOnce(classesData);
+    classRepository.findClasses.mockResolvedValueOnce(classesData);
 
     await classeService.findPaginatedClasses(loggedUser, {});
 
-    expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
-    expect(classeRepository.findClasses).toHaveBeenLastCalledWith({});
+    expect(classRepository.findClasses).toHaveBeenCalledTimes(1);
+    expect(classRepository.findClasses).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated classes ", async () => {
@@ -147,12 +147,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     });
 
-    classeRepository.findClasses.mockResolvedValueOnce(classesData);
+    classRepository.findClasses.mockResolvedValueOnce(classesData);
 
     await classeService.findPaginatedClasses(loggedUser, searchParams);
 
-    expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
-    expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
+    expect(classRepository.findClasses).toHaveBeenCalledTimes(1);
+    expect(classRepository.findClasses).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "libelle",
       sortOrder: "desc",
@@ -172,8 +172,8 @@ describe("Entities count by search criteria", () => {
 
     await classeService.getClassesCount(loggedUser);
 
-    expect(classeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(classeRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(classRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(classRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -181,8 +181,8 @@ describe("Entities count by search criteria", () => {
 
     await classeService.getClassesCount(loggedUser, "test");
 
-    expect(classeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(classeRepository.getCount).toHaveBeenLastCalledWith("test");
+    expect(classRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(classRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -198,8 +198,8 @@ describe("Update of a class", () => {
 
     await classeService.updateClasse(12, classData, loggedUser);
 
-    expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
+    expect(classRepository.updateClasse).toHaveBeenCalledTimes(1);
+    expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -211,12 +211,12 @@ describe("Update of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    classeRepository.findClasseById.mockResolvedValueOnce(existingData);
+    classRepository.findClasseById.mockResolvedValueOnce(existingData);
 
     await classeService.updateClasse(12, classData, loggedUser);
 
-    expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
+    expect(classRepository.updateClasse).toHaveBeenCalledTimes(1);
+    expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -231,11 +231,11 @@ describe("Update of a class", () => {
       role: "contributor",
     } as const;
 
-    classeRepository.findClasseById.mockResolvedValueOnce(existingData);
+    classRepository.findClasseById.mockResolvedValueOnce(existingData);
 
     await expect(classeService.updateClasse(12, classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(classeRepository.updateClasse).not.toHaveBeenCalled();
+    expect(classRepository.updateClasse).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a class that exists", async () => {
@@ -243,21 +243,21 @@ describe("Update of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    classeRepository.updateClasse.mockImplementation(uniqueConstraintFailed);
+    classRepository.updateClasse.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => classeService.updateClasse(12, classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
+    expect(classRepository.updateClasse).toHaveBeenCalledTimes(1);
+    expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
     const classData = mock<UpsertClassInput>();
 
     await expect(classeService.updateClasse(12, classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(classeRepository.updateClasse).not.toHaveBeenCalled();
+    expect(classRepository.updateClasse).not.toHaveBeenCalled();
   });
 });
 
@@ -269,8 +269,8 @@ describe("Creation of a class", () => {
 
     await classeService.createClasse(classData, loggedUser);
 
-    expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
+    expect(classRepository.createClasse).toHaveBeenCalledTimes(1);
+    expect(classRepository.createClasse).toHaveBeenLastCalledWith({
       ...classData,
       owner_id: loggedUser.id,
     });
@@ -281,14 +281,14 @@ describe("Creation of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    classeRepository.createClasse.mockImplementation(uniqueConstraintFailed);
+    classRepository.createClasse.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => classeService.createClasse(classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
+    expect(classRepository.createClasse).toHaveBeenCalledTimes(1);
+    expect(classRepository.createClasse).toHaveBeenLastCalledWith({
       ...classData,
       owner_id: loggedUser.id,
     });
@@ -298,7 +298,7 @@ describe("Creation of a class", () => {
     const classData = mock<UpsertClassInput>();
 
     await expect(classeService.createClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(classeRepository.createClasse).not.toHaveBeenCalled();
+    expect(classRepository.createClasse).not.toHaveBeenCalled();
   });
 });
 
@@ -313,12 +313,12 @@ describe("Deletion of a class", () => {
       ownerId: loggedUser.id,
     });
 
-    classeRepository.findClasseById.mockResolvedValueOnce(classe);
+    classRepository.findClasseById.mockResolvedValueOnce(classe);
 
     await classeService.deleteClasse(11, loggedUser);
 
-    expect(classeRepository.deleteClasseById).toHaveBeenCalledTimes(1);
-    expect(classeRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
+    expect(classRepository.deleteClasseById).toHaveBeenCalledTimes(1);
+    expect(classRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any class if admin", async () => {
@@ -326,12 +326,12 @@ describe("Deletion of a class", () => {
       role: "admin",
     });
 
-    classeRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
+    classRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
 
     await classeService.deleteClasse(11, loggedUser);
 
-    expect(classeRepository.deleteClasseById).toHaveBeenCalledTimes(1);
-    expect(classeRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
+    expect(classRepository.deleteClasseById).toHaveBeenCalledTimes(1);
+    expect(classRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned class as non-admin", async () => {
@@ -339,16 +339,16 @@ describe("Deletion of a class", () => {
       role: "contributor",
     });
 
-    classeRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
+    classRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
 
     await expect(classeService.deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(classeRepository.deleteClasseById).not.toHaveBeenCalled();
+    expect(classRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(classeService.deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(classeRepository.deleteClasseById).not.toHaveBeenCalled();
+    expect(classRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 });
 
@@ -361,12 +361,12 @@ test("Create multiple classes", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  classeRepository.createClasses.mockResolvedValueOnce([]);
+  classRepository.createClasses.mockResolvedValueOnce([]);
 
   await classeService.createClasses(classesData, loggedUser);
 
-  expect(classeRepository.createClasses).toHaveBeenCalledTimes(1);
-  expect(classeRepository.createClasses).toHaveBeenLastCalledWith(
+  expect(classRepository.createClasses).toHaveBeenCalledTimes(1);
+  expect(classRepository.createClasses).toHaveBeenLastCalledWith(
     classesData.map((classe) => {
       return {
         ...classe,

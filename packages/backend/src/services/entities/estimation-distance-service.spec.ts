@@ -15,12 +15,12 @@ import { type EstimationDistanceRepository } from "../../repositories/estimation
 import { mockVi } from "../../utils/mock.js";
 import { buildEstimationDistanceService } from "./estimation-distance-service.js";
 
-const estimationDistanceRepository = mockVi<EstimationDistanceRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const distanceEstimateRepository = mockVi<EstimationDistanceRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const estimationDistanceService = buildEstimationDistanceService({
-  estimationDistanceRepository,
-  donneeRepository,
+  distanceEstimateRepository,
+  entryRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -37,27 +37,27 @@ describe("Find distance estimate", () => {
     const distanceEstimateData = mock<EstimationDistance>();
     const loggedUser = mock<LoggedUser>();
 
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimateData);
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimateData);
 
     await estimationDistanceService.findEstimationDistance(12, loggedUser);
 
-    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(12);
+    expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle distance estimate not found", async () => {
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(null);
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(estimationDistanceService.findEstimationDistance(10, loggedUser)).resolves.toBe(null);
 
-    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(10);
+    expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(estimationDistanceService.findEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(estimationDistanceRepository.findEstimationDistanceById).not.toHaveBeenCalled();
+    expect(distanceEstimateRepository.findEstimationDistanceById).not.toHaveBeenCalled();
   });
 });
 
@@ -67,8 +67,8 @@ describe("Data count per entity", () => {
 
     await estimationDistanceService.getDonneesCountByEstimationDistance("12", loggedUser);
 
-    expect(donneeRepository.getCountByEstimationDistanceId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByEstimationDistanceId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByEstimationDistanceId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByEstimationDistanceId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -85,12 +85,12 @@ describe("Find distance estimate by data ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    estimationDistanceRepository.findEstimationDistanceByDonneeId.mockResolvedValueOnce(distanceEstimateData);
+    distanceEstimateRepository.findEstimationDistanceByDonneeId.mockResolvedValueOnce(distanceEstimateData);
 
     const distanceEstimate = await estimationDistanceService.findEstimationDistanceOfDonneeId("43", loggedUser);
 
-    expect(estimationDistanceRepository.findEstimationDistanceByDonneeId).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.findEstimationDistanceByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(distanceEstimateRepository.findEstimationDistanceByDonneeId).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.findEstimationDistanceByDonneeId).toHaveBeenLastCalledWith(43);
     expect(distanceEstimate?.id).toEqual("256");
   });
 
@@ -104,12 +104,12 @@ describe("Find distance estimate by data ID", () => {
 test("Find all estimationsDistance", async () => {
   const estimationsDistanceData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
 
-  estimationDistanceRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
+  distanceEstimateRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
 
   await estimationDistanceService.findAllEstimationsDistance();
 
-  expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
-  expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
+  expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
+  expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
     orderBy: "libelle",
   });
 });
@@ -123,12 +123,12 @@ describe("Entities paginated find by search criteria", () => {
     ];
     const loggedUser = mock<LoggedUser>();
 
-    estimationDistanceRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
+    distanceEstimateRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
 
     await estimationDistanceService.findPaginatedEstimationsDistance(loggedUser, {});
 
-    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({});
+    expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated estimationsDistance ", async () => {
@@ -147,12 +147,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    estimationDistanceRepository.findEstimationsDistance.mockResolvedValueOnce([estimationsDistanceData[0]]);
+    distanceEstimateRepository.findEstimationsDistance.mockResolvedValueOnce([estimationsDistanceData[0]]);
 
     await estimationDistanceService.findPaginatedEstimationsDistance(loggedUser, searchParams);
 
-    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
+    expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "libelle",
       sortOrder: "desc",
@@ -174,8 +174,8 @@ describe("Entities count by search criteria", () => {
 
     await estimationDistanceService.getEstimationsDistanceCount(loggedUser);
 
-    expect(estimationDistanceRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(distanceEstimateRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -183,8 +183,8 @@ describe("Entities count by search criteria", () => {
 
     await estimationDistanceService.getEstimationsDistanceCount(loggedUser, "test");
 
-    expect(estimationDistanceRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.getCount).toHaveBeenLastCalledWith("test");
+    expect(distanceEstimateRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -202,8 +202,8 @@ describe("Update of a distance estimate", () => {
 
     await estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
+    expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
   test("should be allowed when requested by the owner ", async () => {
@@ -215,12 +215,12 @@ describe("Update of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
     await estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
+    expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -235,13 +235,13 @@ describe("Update of a distance estimate", () => {
       role: "contributor",
     } as const;
 
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
     await expect(
       estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, user)
     ).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(estimationDistanceRepository.updateEstimationDistance).not.toHaveBeenCalled();
+    expect(distanceEstimateRepository.updateEstimationDistance).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a distance estimate that exists", async () => {
@@ -249,14 +249,14 @@ describe("Update of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    estimationDistanceRepository.updateEstimationDistance.mockImplementation(uniqueConstraintFailed);
+    distanceEstimateRepository.updateEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
     await expect(() =>
       estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser)
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
+    expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -265,7 +265,7 @@ describe("Update of a distance estimate", () => {
     await expect(estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
-    expect(estimationDistanceRepository.updateEstimationDistance).not.toHaveBeenCalled();
+    expect(distanceEstimateRepository.updateEstimationDistance).not.toHaveBeenCalled();
   });
 });
 
@@ -277,8 +277,8 @@ describe("Creation of a distance estimate", () => {
 
     await estimationDistanceService.createEstimationDistance(distanceEstimateData, loggedUser);
 
-    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
+    expect(distanceEstimateRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.createEstimationDistance).toHaveBeenLastCalledWith({
       ...distanceEstimateData,
       owner_id: loggedUser.id,
     });
@@ -289,14 +289,14 @@ describe("Creation of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    estimationDistanceRepository.createEstimationDistance.mockImplementation(uniqueConstraintFailed);
+    distanceEstimateRepository.createEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
     await expect(() =>
       estimationDistanceService.createEstimationDistance(distanceEstimateData, loggedUser)
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
-    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
+    expect(distanceEstimateRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.createEstimationDistance).toHaveBeenLastCalledWith({
       ...distanceEstimateData,
       owner_id: loggedUser.id,
     });
@@ -308,7 +308,7 @@ describe("Creation of a distance estimate", () => {
     await expect(estimationDistanceService.createEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
-    expect(estimationDistanceRepository.createEstimationDistance).not.toHaveBeenCalled();
+    expect(distanceEstimateRepository.createEstimationDistance).not.toHaveBeenCalled();
   });
 });
 
@@ -323,12 +323,12 @@ describe("Deletion of a distance estimate", () => {
       ownerId: loggedUser.id,
     });
 
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimate);
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimate);
 
     await estimationDistanceService.deleteEstimationDistance(11, loggedUser);
 
-    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenLastCalledWith(11);
+    expect(distanceEstimateRepository.deleteEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.deleteEstimationDistanceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any distance estimate if admin", async () => {
@@ -336,12 +336,12 @@ describe("Deletion of a distance estimate", () => {
       role: "admin",
     });
 
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
 
     await estimationDistanceService.deleteEstimationDistance(11, loggedUser);
 
-    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenCalledTimes(1);
-    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenLastCalledWith(11);
+    expect(distanceEstimateRepository.deleteEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(distanceEstimateRepository.deleteEstimationDistanceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
@@ -349,20 +349,20 @@ describe("Deletion of a distance estimate", () => {
       role: "contributor",
     });
 
-    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
 
     await expect(estimationDistanceService.deleteEstimationDistance(11, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
 
-    expect(estimationDistanceRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
+    expect(distanceEstimateRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(estimationDistanceService.deleteEstimationDistance(11, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
-    expect(estimationDistanceRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
+    expect(distanceEstimateRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
   });
 });
 
@@ -375,12 +375,12 @@ test("Create multiple estimationsDistance", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  estimationDistanceRepository.createEstimationsDistance.mockResolvedValueOnce([]);
+  distanceEstimateRepository.createEstimationsDistance.mockResolvedValueOnce([]);
 
   await estimationDistanceService.createEstimationsDistance(estimationsDistanceData, loggedUser);
 
-  expect(estimationDistanceRepository.createEstimationsDistance).toHaveBeenCalledTimes(1);
-  expect(estimationDistanceRepository.createEstimationsDistance).toHaveBeenLastCalledWith(
+  expect(distanceEstimateRepository.createEstimationsDistance).toHaveBeenCalledTimes(1);
+  expect(distanceEstimateRepository.createEstimationsDistance).toHaveBeenLastCalledWith(
     estimationsDistanceData.map((distanceEstimate) => {
       return {
         ...distanceEstimate,

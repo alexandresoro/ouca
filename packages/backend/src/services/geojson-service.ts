@@ -11,10 +11,10 @@ import { logger } from "../utils/logger.js";
 const GEOJSON_DATA_REDIS_KEY = "geoJsonLocalities";
 
 type GeoJSONServiceDependencies = {
-  lieuditRepository: LieuditRepository;
+  localityRepository: LieuditRepository;
 };
 
-export const buildGeoJSONService = ({ lieuditRepository }: GeoJSONServiceDependencies) => {
+export const buildGeoJSONService = ({ localityRepository }: GeoJSONServiceDependencies) => {
   const getLocalities = async (loggedUser: LoggedUser | null): Promise<unknown> => {
     validateAuthorization(loggedUser);
 
@@ -24,7 +24,7 @@ export const buildGeoJSONService = ({ lieuditRepository }: GeoJSONServiceDepende
   };
 
   const updateGeoJSONData = async (): Promise<unknown> => {
-    const geoJsonLocalities = await lieuditRepository.getLocatiesForGeoJSON();
+    const geoJsonLocalities = await localityRepository.getLocatiesForGeoJSON();
 
     const localityPoints =
       geoJsonLocalities?.map((geoJsonLocality) => {

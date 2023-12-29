@@ -18,11 +18,11 @@ import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 
 type EspeceServiceDependencies = {
   classService: ClasseService;
-  especeRepository: EspeceRepository;
-  donneeRepository: DonneeRepository;
+  speciesRepository: EspeceRepository;
+  entryRepository: DonneeRepository;
 };
 
-export const buildEspeceService = ({ especeRepository, donneeRepository, classService }: EspeceServiceDependencies) => {
+export const buildEspeceService = ({ speciesRepository, entryRepository, classService }: EspeceServiceDependencies) => {
   const enrichSpecies = async (species: Espece, loggedUser: LoggedUser | null): Promise<Species> => {
     // TODO this can be called from import with loggedUser = null and will fail validation
     // Ideally, even import should have a user
@@ -33,7 +33,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
   const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Species | null> => {
     validateAuthorization(loggedUser);
 
-    const species = await especeRepository.findEspeceById(id);
+    const species = await speciesRepository.findEspeceById(id);
     if (!species) {
       return null;
     }
@@ -43,7 +43,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
   const getDonneesCountByEspece = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByEspeceId(parseInt(id));
+    return entryRepository.getCountByEspeceId(parseInt(id));
   };
 
   const findEspeceOfDonneeId = async (
@@ -52,7 +52,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
   ): Promise<Species | null> => {
     validateAuthorization(loggedUser);
 
-    const species = await especeRepository.findEspeceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const species = await speciesRepository.findEspeceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
     if (!species) {
       return null;
     }
@@ -60,7 +60,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
   };
 
   const findAllEspeces = async (): Promise<Species[]> => {
-    const especes = await especeRepository.findEspeces({
+    const especes = await speciesRepository.findEspeces({
       orderBy: "code",
     });
 
@@ -74,7 +74,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
   };
 
   const findAllEspecesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
-    const especesWithClasses = await especeRepository.findAllEspecesWithClasseLibelle();
+    const especesWithClasses = await speciesRepository.findAllEspecesWithClasseLibelle();
     return [...especesWithClasses];
   };
 
@@ -88,7 +88,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
 
     const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
-    const especes = await especeRepository.findEspeces({
+    const especes = await speciesRepository.findEspeces({
       q,
       searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
@@ -113,7 +113,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
 
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
-    return especeRepository.getCount({
+    return speciesRepository.getCount({
       q: options.q,
       searchCriteria: reshapedSearchCriteria,
     });
@@ -123,7 +123,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
     validateAuthorization(loggedUser);
 
     try {
-      const createdEspece = await especeRepository.createEspece({
+      const createdEspece = await speciesRepository.createEspece({
         ...reshapeInputEspeceUpsertData(input),
         owner_id: loggedUser?.id,
       });
@@ -146,7 +146,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await especeRepository.findEspeceById(id);
+      const existingData = await speciesRepository.findEspeceById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -154,7 +154,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
     }
 
     try {
-      const updatedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(input));
+      const updatedEspece = await speciesRepository.updateEspece(id, reshapeInputEspeceUpsertData(input));
 
       return enrichSpecies(updatedEspece, loggedUser);
     } catch (e) {
@@ -170,7 +170,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await especeRepository.findEspeceById(id);
+      const existingData = await speciesRepository.findEspeceById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -179,7 +179,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
 
     const speciesClass = await classService.findClasseOfEspeceId(`${id}`, loggedUser);
 
-    const deletedSpecies = await especeRepository.deleteEspeceById(id);
+    const deletedSpecies = await speciesRepository.deleteEspeceById(id);
     return enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser);
   };
 
@@ -187,7 +187,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository, classSe
     especes: Omit<EspeceCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Species[]> => {
-    const createdSpecies = await especeRepository.createEspeces(
+    const createdSpecies = await speciesRepository.createEspeces(
       especes.map((espece) => {
         return { ...espece, owner_id: loggedUser.id };
       })

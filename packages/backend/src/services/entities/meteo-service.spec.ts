@@ -9,12 +9,12 @@ import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.
 import { mockVi } from "../../utils/mock.js";
 import { buildMeteoService } from "./meteo-service.js";
 
-const meteoRepository = mockVi<MeteoRepository>();
-const donneeRepository = mockVi<DonneeRepository>();
+const weatherRepository = mockVi<MeteoRepository>();
+const entryRepository = mockVi<DonneeRepository>();
 
 const meteoService = buildMeteoService({
-  meteoRepository,
-  donneeRepository,
+  weatherRepository,
+  entryRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -31,27 +31,27 @@ describe("Find weather", () => {
     const weatherData = mock<Meteo>();
     const loggedUser = mock<LoggedUser>();
 
-    meteoRepository.findMeteoById.mockResolvedValueOnce(weatherData);
+    weatherRepository.findMeteoById.mockResolvedValueOnce(weatherData);
 
     await meteoService.findMeteo(12, loggedUser);
 
-    expect(meteoRepository.findMeteoById).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.findMeteoById).toHaveBeenLastCalledWith(12);
+    expect(weatherRepository.findMeteoById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findMeteoById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle weather not found", async () => {
-    meteoRepository.findMeteoById.mockResolvedValueOnce(null);
+    weatherRepository.findMeteoById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(meteoService.findMeteo(10, loggedUser)).resolves.toBe(null);
 
-    expect(meteoRepository.findMeteoById).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.findMeteoById).toHaveBeenLastCalledWith(10);
+    expect(weatherRepository.findMeteoById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findMeteoById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(meteoService.findMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(meteoRepository.findMeteoById).not.toHaveBeenCalled();
+    expect(weatherRepository.findMeteoById).not.toHaveBeenCalled();
   });
 });
 
@@ -61,8 +61,8 @@ describe("Data count per entity", () => {
 
     await meteoService.getDonneesCountByMeteo("12", loggedUser);
 
-    expect(donneeRepository.getCountByMeteoId).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCountByMeteoId).toHaveBeenLastCalledWith(12);
+    expect(entryRepository.getCountByMeteoId).toHaveBeenCalledTimes(1);
+    expect(entryRepository.getCountByMeteoId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -75,12 +75,12 @@ describe("Find weathers by inventary ID", () => {
     const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
     const loggedUser = mock<LoggedUser>();
 
-    meteoRepository.findMeteosOfInventaireId.mockResolvedValueOnce(weathersData);
+    weatherRepository.findMeteosOfInventaireId.mockResolvedValueOnce(weathersData);
 
     const weathers = await meteoService.findMeteosOfInventaireId(43, loggedUser);
 
-    expect(meteoRepository.findMeteosOfInventaireId).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.findMeteosOfInventaireId).toHaveBeenLastCalledWith(43);
+    expect(weatherRepository.findMeteosOfInventaireId).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findMeteosOfInventaireId).toHaveBeenLastCalledWith(43);
     expect(weathers.length).toEqual(weathersData.length);
   });
 
@@ -92,12 +92,12 @@ describe("Find weathers by inventary ID", () => {
 test("Find all weathers", async () => {
   const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
 
-  meteoRepository.findMeteos.mockResolvedValueOnce(weathersData);
+  weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
   await meteoService.findAllMeteos();
 
-  expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
-  expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({
+  expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
+  expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({
     orderBy: "libelle",
   });
 });
@@ -107,12 +107,12 @@ describe("Entities paginated find by search criteria", () => {
     const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
     const loggedUser = mock<LoggedUser>();
 
-    meteoRepository.findMeteos.mockResolvedValueOnce(weathersData);
+    weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
     await meteoService.findPaginatedMeteos(loggedUser, {});
 
-    expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({});
+    expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated weathers ", async () => {
@@ -127,12 +127,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    meteoRepository.findMeteos.mockResolvedValueOnce([weathersData[0]]);
+    weatherRepository.findMeteos.mockResolvedValueOnce([weathersData[0]]);
 
     await meteoService.findPaginatedMeteos(loggedUser, searchParams);
 
-    expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({
+    expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "libelle",
       sortOrder: "desc",
@@ -152,8 +152,8 @@ describe("Entities count by search criteria", () => {
 
     await meteoService.getMeteosCount(loggedUser);
 
-    expect(meteoRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(weatherRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -161,8 +161,8 @@ describe("Entities count by search criteria", () => {
 
     await meteoService.getMeteosCount(loggedUser, "test");
 
-    expect(meteoRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.getCount).toHaveBeenLastCalledWith("test");
+    expect(weatherRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -178,8 +178,8 @@ describe("Update of an weather", () => {
 
     await meteoService.updateMeteo(12, weatherData, loggedUser);
 
-    expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
+    expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -191,12 +191,12 @@ describe("Update of an weather", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    meteoRepository.findMeteoById.mockResolvedValueOnce(existingData);
+    weatherRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
     await meteoService.updateMeteo(12, weatherData, loggedUser);
 
-    expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
+    expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
@@ -211,11 +211,11 @@ describe("Update of an weather", () => {
       role: "contributor",
     } as const;
 
-    meteoRepository.findMeteoById.mockResolvedValueOnce(existingData);
+    weatherRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
     await expect(meteoService.updateMeteo(12, weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
+    expect(weatherRepository.updateMeteo).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an weather that exists", async () => {
@@ -223,21 +223,21 @@ describe("Update of an weather", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    meteoRepository.updateMeteo.mockImplementation(uniqueConstraintFailed);
+    weatherRepository.updateMeteo.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => meteoService.updateMeteo(12, weatherData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
+    expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
     const weatherData = mock<UpsertWeatherInput>();
 
     await expect(meteoService.updateMeteo(12, weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
+    expect(weatherRepository.updateMeteo).not.toHaveBeenCalled();
   });
 });
 
@@ -249,8 +249,8 @@ describe("Creation of an weather", () => {
 
     await meteoService.createMeteo(weatherData, loggedUser);
 
-    expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
+    expect(weatherRepository.createMeteo).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.createMeteo).toHaveBeenLastCalledWith({
       ...weatherData,
       owner_id: loggedUser.id,
     });
@@ -261,14 +261,14 @@ describe("Creation of an weather", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    meteoRepository.createMeteo.mockImplementation(uniqueConstraintFailed);
+    weatherRepository.createMeteo.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => meteoService.createMeteo(weatherData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
+    expect(weatherRepository.createMeteo).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.createMeteo).toHaveBeenLastCalledWith({
       ...weatherData,
       owner_id: loggedUser.id,
     });
@@ -278,7 +278,7 @@ describe("Creation of an weather", () => {
     const weatherData = mock<UpsertWeatherInput>();
 
     await expect(meteoService.createMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(meteoRepository.createMeteo).not.toHaveBeenCalled();
+    expect(weatherRepository.createMeteo).not.toHaveBeenCalled();
   });
 });
 
@@ -293,12 +293,12 @@ describe("Deletion of an weather", () => {
       ownerId: loggedUser.id,
     });
 
-    meteoRepository.findMeteoById.mockResolvedValueOnce(weather);
+    weatherRepository.findMeteoById.mockResolvedValueOnce(weather);
 
     await meteoService.deleteMeteo(11, loggedUser);
 
-    expect(meteoRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
+    expect(weatherRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any weather if admin", async () => {
@@ -306,12 +306,12 @@ describe("Deletion of an weather", () => {
       role: "admin",
     });
 
-    meteoRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
+    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
 
     await meteoService.deleteMeteo(11, loggedUser);
 
-    expect(meteoRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
+    expect(weatherRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when trying to delete a non-owned weather as non-admin", async () => {
@@ -319,16 +319,16 @@ describe("Deletion of an weather", () => {
       role: "contributor",
     });
 
-    meteoRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
+    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
 
     await expect(meteoService.deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(meteoRepository.deleteMeteoById).not.toHaveBeenCalled();
+    expect(weatherRepository.deleteMeteoById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(meteoService.deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(meteoRepository.deleteMeteoById).not.toHaveBeenCalled();
+    expect(weatherRepository.deleteMeteoById).not.toHaveBeenCalled();
   });
 });
 
@@ -341,12 +341,12 @@ test("Create multiple weathers", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  meteoRepository.createMeteos.mockResolvedValueOnce([]);
+  weatherRepository.createMeteos.mockResolvedValueOnce([]);
 
   await meteoService.createMeteos(weathersData, loggedUser);
 
-  expect(meteoRepository.createMeteos).toHaveBeenCalledTimes(1);
-  expect(meteoRepository.createMeteos).toHaveBeenLastCalledWith(
+  expect(weatherRepository.createMeteos).toHaveBeenCalledTimes(1);
+  expect(weatherRepository.createMeteos).toHaveBeenLastCalledWith(
     weathersData.map((weather) => {
       return {
         ...weather,

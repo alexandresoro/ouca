@@ -15,33 +15,33 @@ import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 
 type LieuditServiceDependencies = {
-  lieuditRepository: LieuditRepository;
-  inventaireRepository: InventaireRepository;
-  donneeRepository: DonneeRepository;
+  localityRepository: LieuditRepository;
+  inventoryRepository: InventaireRepository;
+  entryRepository: DonneeRepository;
 };
 
 export const buildLieuditService = ({
-  lieuditRepository,
-  inventaireRepository,
-  donneeRepository,
+  localityRepository,
+  inventoryRepository,
+  entryRepository,
 }: LieuditServiceDependencies) => {
   const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
-    const locality = await lieuditRepository.findLieuditById(id);
+    const locality = await localityRepository.findLieuditById(id);
     return reshapeLocalityRepositoryToApi(locality, loggedUser);
   };
 
   const getInventoriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return inventaireRepository.getCountByLocality(parseInt(id));
+    return inventoryRepository.getCountByLocality(parseInt(id));
   };
 
   const getDonneesCountByLieuDit = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByLieuditId(parseInt(id));
+    return entryRepository.getCountByLieuditId(parseInt(id));
   };
 
   const findLieuDitOfInventaireId = async (
@@ -50,12 +50,12 @@ export const buildLieuditService = ({
   ): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
-    const locality = await lieuditRepository.findLieuditByInventaireId(inventaireId);
+    const locality = await localityRepository.findLieuditByInventaireId(inventaireId);
     return reshapeLocalityRepositoryToApi(locality, loggedUser);
   };
 
   const findAllLieuxDits = async (): Promise<Locality[]> => {
-    const lieuxDits = await lieuditRepository.findLieuxdits({
+    const lieuxDits = await localityRepository.findLieuxdits({
       orderBy: "nom",
     });
 
@@ -74,7 +74,7 @@ export const buildLieuditService = ({
 
     const { q, townId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const lieuxDits = await lieuditRepository.findLieuxdits({
+    const lieuxDits = await localityRepository.findLieuxdits({
       q,
       ...getSqlPagination(pagination),
       townId: townId ? parseInt(townId) : undefined,
@@ -91,7 +91,7 @@ export const buildLieuditService = ({
 
   const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
     const lieuxditsWithCommuneAndDepartementCode =
-      await lieuditRepository.findAllLieuxDitsWithCommuneAndDepartementCode();
+      await localityRepository.findAllLieuxDitsWithCommuneAndDepartementCode();
     return [...lieuxditsWithCommuneAndDepartementCode];
   };
 
@@ -101,14 +101,14 @@ export const buildLieuditService = ({
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.getCount(q, townId ? parseInt(townId) : undefined);
+    return localityRepository.getCount(q, townId ? parseInt(townId) : undefined);
   };
 
   const createLieuDit = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdLocality = await lieuditRepository.createLieudit({
+      const createdLocality = await localityRepository.createLieudit({
         ...reshapeInputLieuditUpsertData(input),
         owner_id: loggedUser.id,
       });
@@ -131,7 +131,7 @@ export const buildLieuditService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await lieuditRepository.findLieuditById(id);
+      const existingData = await localityRepository.findLieuditById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -139,7 +139,7 @@ export const buildLieuditService = ({
     }
 
     try {
-      const updatedLocality = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
+      const updatedLocality = await localityRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
 
       return reshapeLocalityRepositoryToApi(updatedLocality, loggedUser);
     } catch (e) {
@@ -155,14 +155,14 @@ export const buildLieuditService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await lieuditRepository.findLieuditById(id);
+      const existingData = await localityRepository.findLieuditById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedLocality = await lieuditRepository.deleteLieuditById(id);
+    const deletedLocality = await localityRepository.deleteLieuditById(id);
     return reshapeLocalityRepositoryToApi(deletedLocality, loggedUser);
   };
 
@@ -170,7 +170,7 @@ export const buildLieuditService = ({
     lieuxdits: Omit<LieuditCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Locality[]> => {
-    const createdLocalities = await lieuditRepository.createLieuxdits(
+    const createdLocalities = await localityRepository.createLieuxdits(
       lieuxdits.map((lieudit) => {
         return { ...lieudit, owner_id: loggedUser.id };
       })

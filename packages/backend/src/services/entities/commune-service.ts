@@ -15,33 +15,33 @@ import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type CommuneServiceDependencies = {
-  communeRepository: CommuneRepository;
-  lieuditRepository: LieuditRepository;
-  donneeRepository: DonneeRepository;
+  townRepository: CommuneRepository;
+  localityRepository: LieuditRepository;
+  entryRepository: DonneeRepository;
 };
 
 export const buildCommuneService = ({
-  communeRepository,
-  lieuditRepository,
-  donneeRepository,
+  townRepository,
+  localityRepository,
+  entryRepository,
 }: CommuneServiceDependencies) => {
   const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
-    const town = await communeRepository.findCommuneById(id);
+    const town = await townRepository.findCommuneById(id);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
   const getDonneesCountByCommune = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByCommuneId(parseInt(id));
+    return entryRepository.getCountByCommuneId(parseInt(id));
   };
 
   const getLieuxDitsCountByCommune = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.getCountByCommuneId(parseInt(id));
+    return localityRepository.getCountByCommuneId(parseInt(id));
   };
 
   const findCommuneOfLieuDitId = async (
@@ -50,12 +50,12 @@ export const buildCommuneService = ({
   ): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
-    const town = await communeRepository.findCommuneByLieuDitId(lieuditId ? parseInt(lieuditId) : undefined);
+    const town = await townRepository.findCommuneByLieuDitId(lieuditId ? parseInt(lieuditId) : undefined);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
   const findAllCommunes = async (): Promise<Town[]> => {
-    const communes = await communeRepository.findCommunes({
+    const communes = await townRepository.findCommunes({
       orderBy: "nom",
     });
 
@@ -71,7 +71,7 @@ export const buildCommuneService = ({
 
     const { q, departmentId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const communes = await communeRepository.findCommunes({
+    const communes = await townRepository.findCommunes({
       q,
       ...getSqlPagination(pagination),
       departmentId: departmentId ? parseInt(departmentId) : undefined,
@@ -87,7 +87,7 @@ export const buildCommuneService = ({
   };
 
   const findAllCommunesWithDepartements = async (): Promise<CommuneWithDepartementCode[]> => {
-    const communesWithDepartements = await communeRepository.findAllCommunesWithDepartementCode();
+    const communesWithDepartements = await townRepository.findAllCommunesWithDepartementCode();
     return [...communesWithDepartements];
   };
 
@@ -97,14 +97,14 @@ export const buildCommuneService = ({
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return communeRepository.getCount(q, departmentId ? parseInt(departmentId) : undefined);
+    return townRepository.getCount(q, departmentId ? parseInt(departmentId) : undefined);
   };
 
   const createCommune = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdCommune = await communeRepository.createCommune({
+      const createdCommune = await townRepository.createCommune({
         ...reshapeInputCommuneUpsertData(input),
         owner_id: loggedUser.id,
       });
@@ -123,7 +123,7 @@ export const buildCommuneService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await communeRepository.findCommuneById(id);
+      const existingData = await townRepository.findCommuneById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -131,7 +131,7 @@ export const buildCommuneService = ({
     }
 
     try {
-      const updatedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(input));
+      const updatedCommune = await townRepository.updateCommune(id, reshapeInputCommuneUpsertData(input));
 
       return enrichEntityWithEditableStatus(updatedCommune, loggedUser);
     } catch (e) {
@@ -147,14 +147,14 @@ export const buildCommuneService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await communeRepository.findCommuneById(id);
+      const existingData = await townRepository.findCommuneById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedCommune = await communeRepository.deleteCommuneById(id);
+    const deletedCommune = await townRepository.deleteCommuneById(id);
     return enrichEntityWithEditableStatus(deletedCommune, loggedUser);
   };
 
@@ -162,7 +162,7 @@ export const buildCommuneService = ({
     communes: Omit<CommuneCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Town[]> => {
-    const createdTowns = await communeRepository.createCommunes(
+    const createdTowns = await townRepository.createCommunes(
       communes.map((commune) => {
         return { ...commune, owner_id: loggedUser.id };
       })

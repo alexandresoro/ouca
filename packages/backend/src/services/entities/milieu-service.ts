@@ -10,20 +10,20 @@ import { type MilieuRepository } from "../../repositories/milieu/milieu-reposito
 import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type MilieuServiceDependencies = {
-  milieuRepository: MilieuRepository;
-  donneeRepository: DonneeRepository;
+  environmentRepository: MilieuRepository;
+  entryRepository: DonneeRepository;
 };
 
-export const buildMilieuService = ({ milieuRepository, donneeRepository }: MilieuServiceDependencies) => {
+export const buildMilieuService = ({ environmentRepository, entryRepository }: MilieuServiceDependencies) => {
   const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
     validateAuthorization(loggedUser);
 
-    const environment = await milieuRepository.findMilieuById(id);
+    const environment = await environmentRepository.findMilieuById(id);
     return enrichEntityWithEditableStatus(environment, loggedUser);
   };
 
   const findMilieuxIdsOfDonneeId = async (donneeId: string): Promise<string[]> => {
-    const milieuxIds = await milieuRepository
+    const milieuxIds = await environmentRepository
       .findMilieuxOfDonneeId(parseInt(donneeId))
       .then((milieux) => milieux.map(({ id }) => id));
 
@@ -36,7 +36,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
   ): Promise<Environment[]> => {
     validateAuthorization(loggedUser);
 
-    const milieux = await milieuRepository.findMilieuxOfDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const milieux = await environmentRepository.findMilieuxOfDonneeId(donneeId ? parseInt(donneeId) : undefined);
 
     const enrichedEnvironments = milieux.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);
@@ -48,11 +48,11 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
   const getDonneesCountByMilieu = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByMilieuId(parseInt(id));
+    return entryRepository.getCountByMilieuId(parseInt(id));
   };
 
   const findAllMilieux = async (): Promise<Environment[]> => {
-    const milieux = await milieuRepository.findMilieux({
+    const milieux = await environmentRepository.findMilieux({
       orderBy: "libelle",
     });
 
@@ -71,7 +71,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const milieux = await milieuRepository.findMilieux({
+    const milieux = await environmentRepository.findMilieux({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -88,14 +88,14 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
   const getMilieuxCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return milieuRepository.getCount(q);
+    return environmentRepository.getCount(q);
   };
 
   const createMilieu = async (input: UpsertEnvironmentInput, loggedUser: LoggedUser | null): Promise<Environment> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdMilieu = await milieuRepository.createMilieu({
+      const createdMilieu = await environmentRepository.createMilieu({
         ...input,
         owner_id: loggedUser.id,
       });
@@ -118,7 +118,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await milieuRepository.findMilieuById(id);
+      const existingData = await environmentRepository.findMilieuById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -126,7 +126,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     }
 
     try {
-      const updatedMilieu = await milieuRepository.updateMilieu(id, input);
+      const updatedMilieu = await environmentRepository.updateMilieu(id, input);
 
       return enrichEntityWithEditableStatus(updatedMilieu, loggedUser);
     } catch (e) {
@@ -142,14 +142,14 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await milieuRepository.findMilieuById(id);
+      const existingData = await environmentRepository.findMilieuById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    const deletedEnvironment = await milieuRepository.deleteMilieuById(id);
+    const deletedEnvironment = await environmentRepository.deleteMilieuById(id);
     return enrichEntityWithEditableStatus(deletedEnvironment, loggedUser);
   };
 
@@ -157,7 +157,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     milieux: Omit<MilieuCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Environment[]> => {
-    const createdEnvironments = await milieuRepository.createMilieux(
+    const createdEnvironments = await environmentRepository.createMilieux(
       milieux.map((milieu) => {
         return { ...milieu, owner_id: loggedUser.id };
       })
