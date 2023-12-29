@@ -16,7 +16,7 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const distanceEstimatesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { estimationDistanceService } = services;
+  const { distanceEstimateService: estimationDistanceService } = services;
 
   fastify.get<{
     Params: {

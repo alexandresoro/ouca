@@ -57,8 +57,8 @@ export const generateAgesExport = async ({ ageService }: { ageService: AgeServic
   return id;
 };
 
-export const generateClassesExport = async ({ classeService }: { classeService: ClasseService }): Promise<string> => {
-  const classes = await classeService.findAllClasses();
+export const generateClassesExport = async ({ classService }: { classService: ClasseService }): Promise<string> => {
+  const classes = await classService.findAllClasses();
 
   const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };
@@ -68,10 +68,8 @@ export const generateClassesExport = async ({ classeService }: { classeService: 
   return id;
 };
 
-export const generateCommunesExport = async ({
-  communeService,
-}: { communeService: CommuneService }): Promise<string> => {
-  const communesDb = await communeService.findAllCommunesWithDepartements();
+export const generateCommunesExport = async ({ townService }: { townService: CommuneService }): Promise<string> => {
+  const communesDb = await townService.findAllCommunesWithDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
     return {
@@ -86,9 +84,9 @@ export const generateCommunesExport = async ({
 };
 
 export const generateComportementsExport = async ({
-  comportementService,
-}: { comportementService: ComportementService }): Promise<string> => {
-  const comportementsDb = await comportementService.findAllComportements();
+  behaviorService,
+}: { behaviorService: ComportementService }): Promise<string> => {
+  const comportementsDb = await behaviorService.findAllComportements();
 
   const comportementsToExport = comportementsDb.map((object) => {
     return {
@@ -102,9 +100,9 @@ export const generateComportementsExport = async ({
 };
 
 export const generateDepartementsExport = async ({
-  departementService,
-}: { departementService: DepartementService }): Promise<string> => {
-  const departementsDb = await departementService.findAllDepartements();
+  departmentService,
+}: { departmentService: DepartementService }): Promise<string> => {
+  const departementsDb = await departmentService.findAllDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
     return {
@@ -127,34 +125,34 @@ const getMilieu = (milieux: Environment[], index: number): string => {
 export const generateDonneesExport = async (
   {
     ageService,
-    classeService,
-    communeService,
-    comportementService,
-    departementService,
-    donneeService,
-    especeService,
-    estimationDistanceService,
-    estimationNombreService,
-    inventaireService,
-    lieuditService,
-    meteoService,
-    milieuService,
+    classService,
+    townService,
+    behaviorService,
+    departmentService,
+    entryService,
+    speciesService,
+    distanceEstimateService,
+    numberEstimateService,
+    inventoryService,
+    localityService,
+    weatherService,
+    environmentService,
     observerService,
     sexService,
   }: {
     ageService: AgeService;
-    classeService: ClasseService;
-    communeService: CommuneService;
-    comportementService: ComportementService;
-    departementService: DepartementService;
-    donneeService: DonneeService;
-    especeService: EspeceService;
-    estimationDistanceService: EstimationDistanceService;
-    estimationNombreService: EstimationNombreService;
-    inventaireService: InventaireService;
-    lieuditService: LieuditService;
-    meteoService: MeteoService;
-    milieuService: MilieuService;
+    classService: ClasseService;
+    townService: CommuneService;
+    behaviorService: ComportementService;
+    departmentService: DepartementService;
+    entryService: DonneeService;
+    speciesService: EspeceService;
+    distanceEstimateService: EstimationDistanceService;
+    numberEstimateService: EstimationNombreService;
+    inventoryService: InventaireService;
+    localityService: LieuditService;
+    weatherService: MeteoService;
+    environmentService: MilieuService;
     observerService: ObserverService;
     sexService: SexService;
   },
@@ -165,11 +163,11 @@ export const generateDonneesExport = async (
   const coordinatesSystem = GPS_COORDINATES;
   const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
 
-  const donnees = await donneeService.findPaginatedDonnees(loggedUser, searchCriteria ?? {});
+  const donnees = await entryService.findPaginatedDonnees(loggedUser, searchCriteria ?? {});
 
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {
-      const inventaire = await inventaireService.findInventaireOfDonneeId(donnee.id, loggedUser);
+      const inventaire = await inventoryService.findInventaireOfDonneeId(donnee.id, loggedUser);
 
       if (!inventaire) {
         return Promise.reject("Should not happen");
@@ -178,24 +176,21 @@ export const generateDonneesExport = async (
       const observateur = (
         await observerService.findObserverOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const lieudit = await lieuditService.findLieuDitOfInventaireId(parseInt(inventaire.id), loggedUser);
-      const commune = await communeService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
-      const departement = await departementService.findDepartementOfCommuneId(commune?.id, loggedUser);
+      const lieudit = await localityService.findLieuDitOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const commune = await townService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
+      const departement = await departmentService.findDepartementOfCommuneId(commune?.id, loggedUser);
       const associes = (
         await observerService.findAssociatesOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const meteos = await meteoService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
-      const espece = await especeService.findEspeceOfDonneeId(donnee?.id, loggedUser);
-      const classe = await classeService.findClasseOfEspeceId(espece?.id, loggedUser);
+      const meteos = await weatherService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const espece = await speciesService.findEspeceOfDonneeId(donnee?.id, loggedUser);
+      const classe = await classService.findClasseOfEspeceId(espece?.id, loggedUser);
       const age = (await ageService.findAgeOfDonneeId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
-      const estimationDistance = await estimationDistanceService.findEstimationDistanceOfDonneeId(
-        donnee?.id,
-        loggedUser
-      );
-      const estimationNombre = await estimationNombreService.findEstimationNombreOfDonneeId(donnee?.id, loggedUser);
-      const comportements = await comportementService.findComportementsOfDonneeId(donnee?.id, loggedUser);
-      const milieux = await milieuService.findMilieuxOfDonneeId(donnee.id, loggedUser);
+      const estimationDistance = await distanceEstimateService.findEstimationDistanceOfDonneeId(donnee?.id, loggedUser);
+      const estimationNombre = await numberEstimateService.findEstimationNombreOfDonneeId(donnee?.id, loggedUser);
+      const comportements = await behaviorService.findComportementsOfDonneeId(donnee?.id, loggedUser);
+      const milieux = await environmentService.findMilieuxOfDonneeId(donnee.id, loggedUser);
 
       const nicheurStatus = getNicheurStatusToDisplay(comportements, "");
 
@@ -249,8 +244,8 @@ export const generateDonneesExport = async (
   return id;
 };
 
-export const generateEspecesExport = async ({ especeService }: { especeService: EspeceService }): Promise<string> => {
-  const especes = await especeService.findAllEspecesWithClasses();
+export const generateEspecesExport = async ({ speciesService }: { speciesService: EspeceService }): Promise<string> => {
+  const especes = await speciesService.findAllEspecesWithClasses();
 
   const objectsToExport = especes.map((espece) => {
     return {
@@ -266,9 +261,9 @@ export const generateEspecesExport = async ({ especeService }: { especeService: 
 };
 
 export const generateEstimationsDistanceExport = async ({
-  estimationDistanceService,
-}: { estimationDistanceService: EstimationDistanceService }): Promise<string> => {
-  const estimations = await estimationDistanceService.findAllEstimationsDistance();
+  distanceEstimateService,
+}: { distanceEstimateService: EstimationDistanceService }): Promise<string> => {
+  const estimations = await distanceEstimateService.findAllEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
     return {
@@ -281,9 +276,9 @@ export const generateEstimationsDistanceExport = async ({
 };
 
 export const generateEstimationsNombreExport = async ({
-  estimationNombreService,
-}: { estimationNombreService: EstimationNombreService }): Promise<string> => {
-  const estimations = await estimationNombreService.findAllEstimationsNombre();
+  numberEstimateService,
+}: { numberEstimateService: EstimationNombreService }): Promise<string> => {
+  const estimations = await numberEstimateService.findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
     return {
@@ -296,9 +291,9 @@ export const generateEstimationsNombreExport = async ({
 };
 
 export const generateLieuxDitsExport = async ({
-  lieuditService,
-}: { lieuditService: LieuditService }): Promise<string> => {
-  const lieuxDits = await lieuditService.findAllLieuxDitsWithCommuneAndDepartement();
+  localityService,
+}: { localityService: LieuditService }): Promise<string> => {
+  const lieuxDits = await localityService.findAllLieuxDitsWithCommuneAndDepartement();
 
   const objectsToExport = lieuxDits.map((lieudit) => {
     return {
@@ -316,8 +311,8 @@ export const generateLieuxDitsExport = async ({
   return id;
 };
 
-export const generateMeteosExport = async ({ meteoService }: { meteoService: MeteoService }): Promise<string> => {
-  const meteos = await meteoService.findAllMeteos();
+export const generateMeteosExport = async ({ weatherService }: { weatherService: MeteoService }): Promise<string> => {
+  const meteos = await weatherService.findAllMeteos();
 
   const objectsToExport = meteos.map((object) => {
     return {
@@ -329,8 +324,10 @@ export const generateMeteosExport = async ({ meteoService }: { meteoService: Met
   return id;
 };
 
-export const generateMilieuxExport = async ({ milieuService }: { milieuService: MilieuService }): Promise<string> => {
-  const milieuxDb = await milieuService.findAllMilieux();
+export const generateMilieuxExport = async ({
+  environmentService,
+}: { environmentService: MilieuService }): Promise<string> => {
+  const milieuxDb = await environmentService.findAllMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {
     return {

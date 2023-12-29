@@ -16,7 +16,7 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const townsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { communeService, departementService } = services;
+  const { townService: communeService, departmentService: departementService } = services;
 
   fastify.get<{
     Params: {

@@ -16,19 +16,19 @@ import { type SexService } from "../sex/sex-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mockVi<SettingsRepository>();
-const departementService = mockVi<DepartementService>();
+const departmentService = mockVi<DepartementService>();
 const observerService = mockVi<ObserverService>();
 const sexService = mockVi<SexService>();
 const ageService = mockVi<AgeService>();
-const estimationNombreService = mockVi<EstimationNombreService>();
+const numberEstimateService = mockVi<EstimationNombreService>();
 
 const settingsService = buildSettingsService({
   settingsRepository,
-  departementService,
+  departmentService,
   observerService,
   sexService,
   ageService,
-  estimationNombreService,
+  numberEstimateService,
 });
 
 describe("Fetch app configuration for user", () => {
@@ -48,8 +48,8 @@ describe("Fetch app configuration for user", () => {
 
     expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
     expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
-    expect(departementService.findDepartement).toHaveBeenCalledTimes(1);
-    expect(departementService.findDepartement).toHaveBeenCalledWith(7, loggedUser);
+    expect(departmentService.findDepartement).toHaveBeenCalledTimes(1);
+    expect(departmentService.findDepartement).toHaveBeenCalledWith(7, loggedUser);
     expect(observerService.findObserver).toHaveBeenCalledTimes(1);
     expect(observerService.findObserver).toHaveBeenCalledWith(13, loggedUser);
   });
@@ -69,7 +69,7 @@ describe("Fetch app configuration for user", () => {
 
     expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
     expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
-    expect(departementService.findDepartement).not.toHaveBeenCalled();
+    expect(departmentService.findDepartement).not.toHaveBeenCalled();
     expect(observerService.findObserver).not.toHaveBeenCalled();
   });
 
@@ -119,8 +119,8 @@ test("should update settings with parameters for user", async () => {
     isMeteoDisplayed: true,
     isRegroupementDisplayed: true,
   });
-  expect(departementService.findDepartement).toHaveBeenCalledTimes(1);
-  expect(departementService.findDepartement).toHaveBeenCalledWith(2, loggedUser);
+  expect(departmentService.findDepartement).toHaveBeenCalledTimes(1);
+  expect(departmentService.findDepartement).toHaveBeenCalledWith(2, loggedUser);
   expect(observerService.findObserver).toHaveBeenCalledTimes(1);
   expect(observerService.findObserver).toHaveBeenCalledWith(5, loggedUser);
 });

@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libel
 export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.milieuService.findAllMilieux();
+    this.entities = await this.services.environmentService.findAllMilieux();
   };
 
   protected getAnEntityName(): string {
@@ -17,6 +17,6 @@ export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
     milieux: Omit<Milieu, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Environment[]> => {
-    return this.services.milieuService.createMilieux(milieux, loggedUser);
+    return this.services.environmentService.createMilieux(milieux, loggedUser);
   };
 }

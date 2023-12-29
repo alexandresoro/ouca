@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportClasseService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.classeService.findAllClasses();
+    this.entities = await this.services.classService.findAllClasses();
   };
 
   protected getThisEntityName(): string {
@@ -17,6 +17,6 @@ export class ImportClasseService extends ImportEntiteAvecLibelleService {
     classes: Omit<Classe, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly SpeciesClass[]> => {
-    return this.services.classeService.createClasses(classes, loggedUser);
+    return this.services.classService.createClasses(classes, loggedUser);
   };
 }

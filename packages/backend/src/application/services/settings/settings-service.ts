@@ -12,20 +12,20 @@ import { type SexService } from "../sex/sex-service.js";
 
 type SettingsServiceDependencies = {
   settingsRepository: SettingsRepository;
-  departementService: DepartementService;
+  departmentService: DepartementService;
   observerService: ObserverService;
   sexService: SexService;
   ageService: AgeService;
-  estimationNombreService: EstimationNombreService;
+  numberEstimateService: EstimationNombreService;
 };
 
 export const buildSettingsService = ({
   settingsRepository,
-  departementService,
+  departmentService,
   observerService,
   sexService,
   ageService,
-  estimationNombreService,
+  numberEstimateService,
 }: SettingsServiceDependencies) => {
   const getSettings = async (loggedUser: LoggedUser | null): Promise<SettingsEnriched | null> => {
     validateAuthorization(loggedUser);
@@ -46,7 +46,7 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
       defaultDepartementId != null
-        ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
+        ? departmentService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
         ? (await observerService.findObserver(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
@@ -58,7 +58,7 @@ export const buildSettingsService = ({
         ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultEstimationNombreId != null
-        ? estimationNombreService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
+        ? numberEstimateService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -101,7 +101,7 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
       defaultDepartementId != null
-        ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
+        ? departmentService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
         ? (await observerService.findObserver(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
@@ -113,7 +113,7 @@ export const buildSettingsService = ({
         ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultEstimationNombreId != null
-        ? estimationNombreService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
+        ? numberEstimateService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
     ]);
 

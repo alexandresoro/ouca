@@ -12,12 +12,12 @@ import { type ClasseService } from "./classe-service.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 import { buildEspeceService } from "./espece-service.js";
 
-const classeService = mockVi<ClasseService>();
+const classService = mockVi<ClasseService>();
 const especeRepository = mockVi<EspeceRepository>();
 const donneeRepository = mockVi<DonneeRepository>();
 
 const especeService = buildEspeceService({
-  classeService,
+  classService,
   especeRepository,
   donneeRepository,
 });

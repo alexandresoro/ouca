@@ -16,7 +16,7 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const speciesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { especeService, classeService } = services;
+  const { speciesService: especeService, classService: classeService } = services;
 
   fastify.get<{
     Params: {

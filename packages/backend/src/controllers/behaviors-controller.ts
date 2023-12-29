@@ -16,7 +16,7 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const behaviorsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { comportementService } = services;
+  const { behaviorService: comportementService } = services;
 
   fastify.get<{
     Params: {

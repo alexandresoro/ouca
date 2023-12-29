@@ -16,7 +16,7 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const weathersController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { meteoService } = services;
+  const { weatherService: meteoService } = services;
 
   fastify.get<{
     Params: {

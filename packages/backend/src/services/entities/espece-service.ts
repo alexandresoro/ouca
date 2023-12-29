@@ -17,20 +17,16 @@ import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-uti
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 
 type EspeceServiceDependencies = {
-  classeService: ClasseService;
+  classService: ClasseService;
   especeRepository: EspeceRepository;
   donneeRepository: DonneeRepository;
 };
 
-export const buildEspeceService = ({
-  especeRepository,
-  donneeRepository,
-  classeService,
-}: EspeceServiceDependencies) => {
+export const buildEspeceService = ({ especeRepository, donneeRepository, classService }: EspeceServiceDependencies) => {
   const enrichSpecies = async (species: Espece, loggedUser: LoggedUser | null): Promise<Species> => {
     // TODO this can be called from import with loggedUser = null and will fail validation
     // Ideally, even import should have a user
-    const speciesClass = await classeService.findClasseOfEspeceId(species.id, loggedUser);
+    const speciesClass = await classService.findClasseOfEspeceId(species.id, loggedUser);
     return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
   };
 
@@ -181,7 +177,7 @@ export const buildEspeceService = ({
       }
     }
 
-    const speciesClass = await classeService.findClasseOfEspeceId(`${id}`, loggedUser);
+    const speciesClass = await classService.findClasseOfEspeceId(`${id}`, loggedUser);
 
     const deletedSpecies = await especeRepository.deleteEspeceById(id);
     return enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser);

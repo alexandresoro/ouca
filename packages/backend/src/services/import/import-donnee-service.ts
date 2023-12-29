@@ -48,19 +48,19 @@ export class ImportDonneeService extends ImportService {
     this.newDonnees = [];
 
     this.observateurs = await this.services.observerService.findAllObservers();
-    this.departements = await this.services.departementService.findAllDepartements();
-    this.communes = await this.services.communeService.findAllCommunes();
-    this.lieuxDits = await this.services.lieuditService.findAllLieuxDits();
-    this.meteos = await this.services.meteoService.findAllMeteos();
-    this.especes = await this.services.especeService.findAllEspeces();
+    this.departements = await this.services.departmentService.findAllDepartements();
+    this.communes = await this.services.townService.findAllCommunes();
+    this.lieuxDits = await this.services.localityService.findAllLieuxDits();
+    this.meteos = await this.services.weatherService.findAllMeteos();
+    this.especes = await this.services.speciesService.findAllEspeces();
     this.sexes = await this.services.sexService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
-    this.estimationsNombre = await this.services.estimationNombreService.findAllEstimationsNombre();
-    this.estimationsDistance = await this.services.estimationDistanceService.findAllEstimationsDistance();
-    this.comportements = await this.services.comportementService.findAllComportements();
-    this.milieux = await this.services.milieuService.findAllMilieux();
-    this.inventaires = await this.services.inventaireService.findAllInventaires();
-    this.existingDonnees = await this.services.donneeService.findAllDonnees();
+    this.estimationsNombre = await this.services.numberEstimateService.findAllEstimationsNombre();
+    this.estimationsDistance = await this.services.distanceEstimateService.findAllEstimationsDistance();
+    this.comportements = await this.services.behaviorService.findAllComportements();
+    this.milieux = await this.services.environmentService.findAllMilieux();
+    this.inventaires = await this.services.inventoryService.findAllInventaires();
+    this.existingDonnees = await this.services.entryService.findAllDonnees();
   };
 
   protected validateAndPrepareEntity = async (donneeTab: string[], loggedUser: LoggedUser): Promise<string | null> => {
@@ -239,7 +239,7 @@ export class ImportDonneeService extends ImportService {
           new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(parseInt(existingInventaire.id))),
+          new Set(await this.services.weatherService.findMeteosIdsOfInventaireId(parseInt(existingInventaire.id))),
           new Set(inputInventaire.weatherIds)
         )
       );
@@ -259,11 +259,11 @@ export class ImportDonneeService extends ImportService {
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
-          new Set(await this.services.comportementService.findComportementsIdsOfDonneeId(donnee.id)),
+          new Set(await this.services.behaviorService.findComportementsIdsOfDonneeId(donnee.id)),
           comportementsIds
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.milieuService.findMilieuxIdsOfDonneeId(donnee.id)),
+          new Set(await this.services.environmentService.findMilieuxIdsOfDonneeId(donnee.id)),
           milieuxIds
         )
       );
@@ -300,7 +300,7 @@ export class ImportDonneeService extends ImportService {
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
-      const inventaire = await this.services.inventaireService.createInventaire(inputInventaire, loggedUser);
+      const inventaire = await this.services.inventoryService.createInventaire(inputInventaire, loggedUser);
       inventaireId = `${inventaire.id}`;
 
       // Add the inventaire to the list
@@ -328,7 +328,7 @@ export class ImportDonneeService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     for (const inputDonnee of this.newDonnees) {
-      await this.services.donneeService.createDonnee(inputDonnee, loggedUser);
+      await this.services.entryService.createDonnee(inputDonnee, loggedUser);
     }
   };
 

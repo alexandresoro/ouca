@@ -25,8 +25,8 @@ export const enrichedInventory = async (
   const [observer, associates, locality, weathers] = await Promise.all([
     (await services.observerService.findObserverOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
     (await services.observerService.findAssociatesOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
-    services.lieuditService.findLieuDitOfInventaireId(parseInt(inventory.id), user),
-    services.meteoService.findMeteosOfInventaireId(parseInt(inventory.id), user),
+    services.localityService.findLieuDitOfInventaireId(parseInt(inventory.id), user),
+    services.weatherService.findMeteosOfInventaireId(parseInt(inventory.id), user),
   ]);
 
   if (!observer || !locality) {
@@ -47,7 +47,7 @@ export const enrichedInventory = async (
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { inventaireService } = services;
+  const { inventoryService: inventaireService } = services;
 
   fastify.get<{
     Params: {

@@ -18,8 +18,8 @@ export class ImportCommuneService extends ImportService {
   protected init = async (): Promise<void> => {
     this.communesToInsert = [];
     [this.departements, this.communes] = await Promise.all([
-      this.services.departementService.findAllDepartements(),
-      this.services.communeService.findAllCommunes(),
+      this.services.departmentService.findAllDepartements(),
+      this.services.townService.findAllCommunes(),
     ]);
   };
 
@@ -61,7 +61,7 @@ export class ImportCommuneService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.communesToInsert.length) {
-      await this.services.communeService.createCommunes(this.communesToInsert, loggedUser);
+      await this.services.townService.createCommunes(this.communesToInsert, loggedUser);
     }
   };
 }

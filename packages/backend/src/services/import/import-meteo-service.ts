@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportMeteoService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.meteoService.findAllMeteos();
+    this.entities = await this.services.weatherService.findAllMeteos();
   };
 
   protected getThisEntityName(): string {
@@ -17,6 +17,6 @@ export class ImportMeteoService extends ImportEntiteAvecLibelleService {
     ages: Omit<Meteo, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Weather[]> => {
-    return this.services.meteoService.createMeteos(ages, loggedUser);
+    return this.services.weatherService.createMeteos(ages, loggedUser);
   };
 }

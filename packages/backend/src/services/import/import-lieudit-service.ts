@@ -28,9 +28,9 @@ export class ImportLieuxditService extends ImportService {
     let coordinatesSystemType: CoordinatesSystemType | undefined;
 
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
-      this.services.departementService.findAllDepartements(),
-      this.services.communeService.findAllCommunes(),
-      this.services.lieuditService.findAllLieuxDits(),
+      this.services.departmentService.findAllDepartements(),
+      this.services.townService.findAllCommunes(),
+      this.services.localityService.findAllLieuxDits(),
       "gps",
     ]);
 
@@ -93,7 +93,7 @@ export class ImportLieuxditService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.lieuxDitsToInsert.length) {
-      await this.services.lieuditService.createLieuxDits(this.lieuxDitsToInsert, loggedUser);
+      await this.services.localityService.createLieuxDits(this.lieuxDitsToInsert, loggedUser);
     }
   };
 }
