@@ -144,6 +144,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, commune.code ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 

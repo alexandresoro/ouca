@@ -48,7 +48,10 @@ export const buildAgeRepository = () => {
         queryAge = queryAge.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
       }
 
-      queryAge = queryAge.groupBy("age.id").orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined);
+      queryAge = queryAge
+        .groupBy("age.id")
+        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy("age.libelle asc");
     } else {
       queryAge = kysely
         .selectFrom("age")

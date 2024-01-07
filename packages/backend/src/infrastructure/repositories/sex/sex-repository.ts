@@ -54,7 +54,10 @@ export const buildSexRepository = () => {
         querySex = querySex.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
       }
 
-      querySex = querySex.groupBy("sexe.id").orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined);
+      querySex = querySex
+        .groupBy("sexe.id")
+        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy("sexe.libelle asc");
     } else {
       querySex = kysely
         .selectFrom("sexe")

@@ -90,6 +90,7 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
         orderBy,
         sortOrder,
       })}
+      ${isSortByNbDonnees ? sql.fragment`, estimation_distance.libelle ASC` : sql.fragment``}
       ${buildPaginationFragment({ offset, limit })}
     `;
 

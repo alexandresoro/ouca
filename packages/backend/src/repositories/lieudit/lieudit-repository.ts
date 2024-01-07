@@ -152,6 +152,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, lieudit.nom ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 

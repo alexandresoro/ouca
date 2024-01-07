@@ -154,6 +154,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
         orderBy,
         sortOrder,
       })}
+      ${isSortByNbDonnees ? sql.fragment`, espece.code ASC` : sql.fragment``}
       ${buildPaginationFragment({ offset, limit })}
     `;
 

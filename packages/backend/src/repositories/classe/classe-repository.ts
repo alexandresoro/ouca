@@ -101,6 +101,7 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, classe.libelle ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 

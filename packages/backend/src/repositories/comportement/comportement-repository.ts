@@ -105,6 +105,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, comportement.code ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 

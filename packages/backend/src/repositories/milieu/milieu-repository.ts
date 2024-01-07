@@ -102,6 +102,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, milieu.code ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 

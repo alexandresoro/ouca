@@ -81,7 +81,10 @@ export const buildObserverRepository = () => {
         queryObs = queryObs.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
       }
 
-      queryObs = queryObs.groupBy("observateur.id").orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined);
+      queryObs = queryObs
+        .groupBy("observateur.id")
+        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy("observateur.libelle asc");
     } else {
       queryObs = kysely
         .selectFrom("observateur")

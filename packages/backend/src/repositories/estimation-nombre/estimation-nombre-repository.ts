@@ -93,6 +93,7 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
         orderBy,
         sortOrder,
       })}
+      ${isSortByNbDonnees ? sql.fragment`, estimation_nombre.libelle ASC` : sql.fragment``}
       ${buildPaginationFragment({ offset, limit })}
     `;
 

@@ -88,6 +88,7 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, meteo.libelle ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 

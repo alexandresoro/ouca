@@ -124,6 +124,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
       orderBy,
       sortOrder,
     })}
+    ${isSortByNbDonnees ? sql.fragment`, departement.code ASC` : sql.fragment``}
     ${buildPaginationFragment({ offset, limit })}
   `;
 
