@@ -18,7 +18,7 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.4.1",
+    "@biomejs/biome": "1.5.0",
     "@cloudflare/workers-types": "4.20231218.0",
     "@ou-ca/eslint-config": "workspace:*",
     "typescript": "5.3.3"
