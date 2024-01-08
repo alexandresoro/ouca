@@ -21,7 +21,7 @@
     "biome:ci": "biome ci *"
   },
   "dependencies": {
-    "@floating-ui/react": "0.26.4",
+    "@floating-ui/react": "0.26.5",
     "@fontsource-variable/nunito": "5.0.17",
     "@fontsource/carter-one": "5.0.8",
     "@headlessui/react": "1.7.18",
