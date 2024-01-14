@@ -8,7 +8,10 @@ class Matcher<T> {
   $$typeof: symbol;
   inverse?: boolean;
 
-  constructor(readonly asymmetricMatch: MatcherFn<T>, private readonly description: string) {
+  constructor(
+    readonly asymmetricMatch: MatcherFn<T>,
+    private readonly description: string
+  ) {
     this.$$typeof = Symbol.for("vi.asymmetricMatcher");
   }
 

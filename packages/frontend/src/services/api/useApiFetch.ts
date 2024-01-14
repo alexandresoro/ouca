@@ -20,10 +20,7 @@ function useApiFetch<T>({
 }: { path: string; method?: string; schema?: z.ZodType<T> }): (
   options?: Omit<UseApiFetchCallParams, "path">
 ) => Promise<T>;
-function useApiFetch<T>({
-  method,
-  schema,
-}: Omit<UseApiFetchParams<T>, "path">): ({
+function useApiFetch<T>({ method, schema }: Omit<UseApiFetchParams<T>, "path">): ({
   path,
   body,
   queryParams,

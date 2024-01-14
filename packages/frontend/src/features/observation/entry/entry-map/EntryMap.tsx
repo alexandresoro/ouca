@@ -96,7 +96,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
       return null;
     }
 
-    let selectionFeatureCollection;
+    let selectionFeatureCollection: FeatureCollection<Point>;
     if (!localitySelection) {
       selectionFeatureCollection = localitiesGeoJson;
     } else {
