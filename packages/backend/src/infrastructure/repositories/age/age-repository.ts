@@ -36,6 +36,7 @@ export const buildAgeRepository = () => {
   const findAges = async ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {}): Promise<readonly Age[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
 
+    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
     let queryAge;
 
     if (isSortByNbDonnees) {

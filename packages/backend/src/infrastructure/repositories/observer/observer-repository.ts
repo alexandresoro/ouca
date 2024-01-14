@@ -69,6 +69,7 @@ export const buildObserverRepository = () => {
   }: ObserverFindManyInput = {}): Promise<readonly ObserverSimple[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
 
+    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
     let queryObs;
     if (isSortByNbDonnees) {
       queryObs = kysely

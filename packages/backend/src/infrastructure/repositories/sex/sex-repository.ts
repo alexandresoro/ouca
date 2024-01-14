@@ -42,6 +42,7 @@ export const buildSexRepository = () => {
   }: SexFindManyInput = {}): Promise<readonly Sex[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
 
+    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
     let querySex;
 
     if (isSortByNbDonnees) {
