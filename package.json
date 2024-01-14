@@ -24,6 +24,7 @@
     "build:ci": "pnpm -r run build"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.4.1",
     "husky": "8.0.3",
     "lint-staged": "15.2.0"
   },
