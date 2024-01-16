@@ -42,7 +42,7 @@
     "content-disposition": "0.5.4",
     "csv-parse": "5.5.3",
     "csv-stringify": "6.4.5",
-    "date-fns": "2.30.0",
+    "date-fns": "3.2.0",
     "exceljs": "4.4.0",
     "fastify": "4.25.2",
     "fastify-plugin": "4.5.1",
