@@ -275,8 +275,8 @@ importers:
         specifier: 2.30.0
         version: 2.30.0
       i18next:
-        specifier: 23.7.16
-        version: 23.7.16
+        specifier: 23.7.18
+        version: 23.7.18
       i18next-http-backend:
         specifier: 2.4.2
         version: 2.4.2
@@ -303,7 +303,7 @@ importers:
         version: 7.49.3(react@18.2.0)
       react-i18next:
         specifier: 14.0.1
-        version: 14.0.1(i18next@23.7.16)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.0.1(i18next@23.7.18)(react-dom@18.2.0)(react@18.2.0)
       react-intersection-observer:
         specifier: 9.5.3
         version: 9.5.3(react@18.2.0)
@@ -612,6 +612,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
+    dev: true
 
   /@babel/runtime@7.23.8:
     resolution: {integrity: sha512-Y7KbAP984rn1VGMbGqKmBLio9V7y5Je9GvU4rQPCPinCyNfUcToxIXl06d59URp/F3LwinvODxab5N/G6qggkw==}
@@ -4289,10 +4290,10 @@ packages:
       - encoding
     dev: false
 
-  /i18next@23.7.16:
-    resolution: {integrity: sha512-SrqFkMn9W6Wb43ZJ9qrO6U2U4S80RsFMA7VYFSqp7oc7RllQOYDCdRfsse6A7Cq/V8MnpxKvJCYgM8++27n4Fw==}
+  /i18next@23.7.18:
+    resolution: {integrity: sha512-b9N2KjRCYQNlUvE1Kc83g8knyUkL5NiZQOp9BsTR/v/LXk6Fzz+doOzTg2/826XK28mCgBkYLNAtixjE58qpCw==}
     dependencies:
-      '@babel/runtime': 7.23.2
+      '@babel/runtime': 7.23.8
     dev: false
 
   /ieee754@1.2.1:
@@ -5953,7 +5954,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-i18next@14.0.1(i18next@23.7.16)(react-dom@18.2.0)(react@18.2.0):
+  /react-i18next@14.0.1(i18next@23.7.18)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-TMV8hFismBmpMdIehoFHin/okfvgjFhp723RYgIqB4XyhDobVMyukyM3Z8wtTRmajyFMZrBl/OaaXF2P6WjUAw==}
     peerDependencies:
       i18next: '>= 23.2.3'
@@ -5968,7 +5969,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.8
       html-parse-stringify: 3.0.1
-      i18next: 23.7.16
+      i18next: 23.7.18
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
