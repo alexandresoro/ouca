@@ -130,8 +130,8 @@ importers:
         specifier: 1.2.1
         version: 1.2.1(vitest@1.2.1)
       dotenv:
-        specifier: 16.3.1
-        version: 16.3.1
+        specifier: 16.3.2
+        version: 16.3.2
       fishery:
         specifier: 2.2.2
         version: 2.2.2
@@ -1570,7 +1570,7 @@ packages:
       '@sentry/cli': 2.22.3
       '@sentry/node': 7.94.1
       '@sentry/utils': 7.94.1
-      dotenv: 16.3.1
+      dotenv: 16.3.2
       find-up: 5.0.0
       glob: 9.3.2
       magic-string: 0.27.0
@@ -3256,8 +3256,8 @@ packages:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
     dev: true
 
-  /dotenv@16.3.1:
-    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+  /dotenv@16.3.2:
+    resolution: {integrity: sha512-HTlk5nmhkm8F6JcdXvHIzaorzCoziNQT9mGxLPVXW8wJF1TiGSL60ZGB4gHWabHOaMmWmhvk2/lPHfnBiT78AQ==}
     engines: {node: '>=12'}
     dev: true
 
