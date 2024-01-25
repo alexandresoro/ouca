@@ -63,7 +63,7 @@
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.8",
     "@types/node": "20.11.6",
-    "@types/pg": "8.10.9",
+    "@types/pg": "8.11.0",
     "@vitest/coverage-v8": "1.2.1",
     "dotenv": "16.4.1",
     "fishery": "2.2.2",
