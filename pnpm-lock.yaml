@@ -66,8 +66,8 @@ importers:
         specifier: 6.4.5
         version: 6.4.5
       date-fns:
-        specifier: 2.30.0
-        version: 2.30.0
+        specifier: 3.3.1
+        version: 3.3.1
       exceljs:
         specifier: 4.4.0
         version: 4.4.0
@@ -169,8 +169,8 @@ importers:
   packages/common:
     dependencies:
       date-fns:
-        specifier: 2.30.0
-        version: 2.30.0
+        specifier: 3.3.1
+        version: 3.3.1
       proj4:
         specifier: 2.10.0
         version: 2.10.0
@@ -272,8 +272,8 @@ importers:
         specifier: 6.5.0
         version: 6.5.0
       date-fns:
-        specifier: 2.30.0
-        version: 2.30.0
+        specifier: 3.3.1
+        version: 3.3.1
       i18next:
         specifier: 23.7.20
         version: 23.7.20
@@ -3136,11 +3136,8 @@ packages:
       - postcss
     dev: true
 
-  /date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
-    dependencies:
-      '@babel/runtime': 7.22.15
+  /date-fns@3.3.1:
+    resolution: {integrity: sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==}
     dev: false
 
   /dateformat@4.6.3:
