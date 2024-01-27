@@ -14,7 +14,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",
