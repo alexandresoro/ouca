@@ -32,7 +32,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "@ou-ca/eslint-config": "workspace:*",
-    "@types/node": "20.11.7",
+    "@types/node": "20.11.10",
     "@types/proj4": "2.5.5",
     "tsx": "4.7.0",
     "typescript": "5.3.3"
