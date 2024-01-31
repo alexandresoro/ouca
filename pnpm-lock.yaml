@@ -290,8 +290,8 @@ importers:
         specifier: 3.6.2
         version: 3.6.2
       oidc-client-ts:
-        specifier: 2.4.0
-        version: 2.4.0
+        specifier: 3.0.0
+        version: 3.0.0
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -312,7 +312,7 @@ importers:
         version: 7.1.7(maplibre-gl@3.6.2)(react-dom@18.2.0)(react@18.2.0)
       react-oidc-context:
         specifier: 2.3.1
-        version: 2.3.1(oidc-client-ts@2.4.0)(react@18.2.0)
+        version: 2.3.1(oidc-client-ts@3.0.0)(react@18.2.0)
       react-router-dom:
         specifier: 6.21.3
         version: 6.21.3(react-dom@18.2.0)(react@18.2.0)
@@ -3058,10 +3058,6 @@ packages:
       which: 2.0.2
     dev: true
 
-  /crypto-js@4.2.0:
-    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
-    dev: false
-
   /css-color-keywords@1.0.0:
     resolution: {integrity: sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg==}
     engines: {node: '>=4'}
@@ -4737,8 +4733,9 @@ packages:
       setimmediate: 1.0.5
     dev: false
 
-  /jwt-decode@3.1.2:
-    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
+  /jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
     dev: false
 
   /kdbush@4.0.2:
@@ -5343,12 +5340,11 @@ packages:
   /obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
 
-  /oidc-client-ts@2.4.0:
-    resolution: {integrity: sha512-WijhkTrlXK2VvgGoakWJiBdfIsVGz6CFzgjNNqZU1hPKV2kyeEaJgLs7RwuiSp2WhLfWBQuLvr2SxVlZnk3N1w==}
-    engines: {node: '>=12.13.0'}
+  /oidc-client-ts@3.0.0:
+    resolution: {integrity: sha512-YUcel/+C4AmXXhM/geNWc1jBsBVYzd+xhvSl1NMkxKpzZXqhLKmtj1ttSdxtDYm3P2YelnAr4zS4c96+p02iFQ==}
+    engines: {node: '>=18'}
     dependencies:
-      crypto-js: 4.2.0
-      jwt-decode: 3.1.2
+      jwt-decode: 4.0.0
     dev: false
 
   /on-exit-leak-free@2.1.0:
@@ -5996,14 +5992,14 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /react-oidc-context@2.3.1(oidc-client-ts@2.4.0)(react@18.2.0):
+  /react-oidc-context@2.3.1(oidc-client-ts@3.0.0)(react@18.2.0):
     resolution: {integrity: sha512-WdhmEU6odNzMk9pvOScxUkf6/1aduiI/nQryr7+iCl2VDnYLASDTIV/zy58KuK4VXG3fBaRKukc/mRpMjF9a3Q==}
     engines: {node: '>=12.13.0'}
     peerDependencies:
       oidc-client-ts: ^2.2.1
       react: '>=16.8.0'
     dependencies:
-      oidc-client-ts: 2.4.0
+      oidc-client-ts: 3.0.0
       react: 18.2.0
     dev: false
 
