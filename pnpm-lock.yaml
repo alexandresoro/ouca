@@ -102,8 +102,8 @@ importers:
         specifier: 37.2.0
         version: 37.2.0(zod@3.22.4)
       umzug:
-        specifier: 3.5.1
-        version: 3.5.1
+        specifier: 3.6.1
+        version: 3.6.1
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -6964,11 +6964,11 @@ packages:
   /type-fest@3.13.1:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
+    dev: true
 
   /type-fest@4.10.2:
     resolution: {integrity: sha512-anpAG63wSpdEbLwOqH8L84urkL6PiVIov3EMmgIhhThevh9aiMQov+6Btx0wldNcvm4wV+e2/Rt1QdDwKHFbHw==}
     engines: {node: '>=16'}
-    dev: true
 
   /typed-array-buffer@1.0.0:
     resolution: {integrity: sha512-Y8KTSIglk9OZEr8zywiIHG/kmQ7KWyjseXs1CbSo8vC42w7hg2HgYTxSWwP0+is7bWDc1H+Fo026CpHFwm8tkw==}
@@ -7035,15 +7035,15 @@ packages:
       random-bytes: 1.0.0
     dev: false
 
-  /umzug@3.5.1:
-    resolution: {integrity: sha512-jvhKP16BSjgQFNna4OhyTq5R8FYL51F1Pxdv9B+BVf/5zoazCWDmIQuyMWKsYPdbeLLJW4/dJzvpH2DvM7wcug==}
+  /umzug@3.6.1:
+    resolution: {integrity: sha512-+ztJ2muIkP/Qw8w+4GfXEOrBZ/1kf9xlAyk9PSg2ZOpM5zX45vtQFDfuV18CdQLE1HWDL7EYT3Qcw0hFMWcp2Q==}
     engines: {node: '>=12'}
     dependencies:
       '@rushstack/ts-command-line': 4.15.2
       emittery: 0.13.1
       glob: 8.1.0
       pony-cause: 2.1.10
-      type-fest: 3.13.1
+      type-fest: 4.10.2
     dev: false
 
   /unbox-primitive@1.0.2:
