@@ -275,8 +275,8 @@ importers:
         specifier: 3.3.1
         version: 3.3.1
       i18next:
-        specifier: 23.7.20
-        version: 23.7.20
+        specifier: 23.8.2
+        version: 23.8.2
       i18next-http-backend:
         specifier: 2.4.2
         version: 2.4.2
@@ -303,7 +303,7 @@ importers:
         version: 7.49.3(react@18.2.0)
       react-i18next:
         specifier: 14.0.1
-        version: 14.0.1(i18next@23.7.20)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.0.1(i18next@23.8.2)(react-dom@18.2.0)(react@18.2.0)
       react-intersection-observer:
         specifier: 9.5.3
         version: 9.5.3(react@18.2.0)
@@ -4294,10 +4294,10 @@ packages:
       - encoding
     dev: false
 
-  /i18next@23.7.20:
-    resolution: {integrity: sha512-6qykxPpFPuzxC/VlVCXn3JxkHY5VCxf1w+/8Hz+Wxu4ZvfB+m3sbVruJ3C/rDWlE0Z1GCZTR6sBHIx7KGp0yXA==}
+  /i18next@23.8.2:
+    resolution: {integrity: sha512-Z84zyEangrlERm0ZugVy4bIt485e/H8VecGUZkZWrH7BDePG6jT73QdL9EA1tRTTVVMpry/MgWIP1FjEn0DRXA==}
     dependencies:
-      '@babel/runtime': 7.23.8
+      '@babel/runtime': 7.23.9
     dev: false
 
   /ieee754@1.2.1:
@@ -5958,7 +5958,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-i18next@14.0.1(i18next@23.7.20)(react-dom@18.2.0)(react@18.2.0):
+  /react-i18next@14.0.1(i18next@23.8.2)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-TMV8hFismBmpMdIehoFHin/okfvgjFhp723RYgIqB4XyhDobVMyukyM3Z8wtTRmajyFMZrBl/OaaXF2P6WjUAw==}
     peerDependencies:
       i18next: '>= 23.2.3'
@@ -5973,7 +5973,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.8
       html-parse-stringify: 3.0.1
-      i18next: 23.7.20
+      i18next: 23.8.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
