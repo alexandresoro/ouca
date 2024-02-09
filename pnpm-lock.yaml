@@ -305,8 +305,8 @@ importers:
         specifier: 14.0.1
         version: 14.0.1(i18next@23.8.2)(react-dom@18.2.0)(react@18.2.0)
       react-intersection-observer:
-        specifier: 9.5.3
-        version: 9.5.3(react@18.2.0)
+        specifier: 9.8.0
+        version: 9.8.0(react-dom@18.2.0)(react@18.2.0)
       react-map-gl:
         specifier: 7.1.7
         version: 7.1.7(maplibre-gl@3.6.2)(react-dom@18.2.0)(react@18.2.0)
@@ -5978,12 +5978,17 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /react-intersection-observer@9.5.3(react@18.2.0):
-    resolution: {integrity: sha512-NJzagSdUPS5rPhaLsHXYeJbsvdpbJwL6yCHtMk91hc0ufQ2BnXis+0QQ9NBh6n9n+Q3OyjR6OQLShYbaNBkThQ==}
+  /react-intersection-observer@9.8.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-wXHvMQUsTagh3X0Z6jDtGkIXc3VVCd2tjDRYR9kII3GKrZr0XF0xtpfdamo2n8BSF+zzfeeBVOTjxZWpBp9X0g==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
     dependencies:
       react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-is@16.13.1:
