@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
-    "@faker-js/faker": "8.4.0",
+    "@faker-js/faker": "8.4.1",
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.8",
     "@types/node": "20.11.15",
