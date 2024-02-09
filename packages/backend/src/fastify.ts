@@ -3,7 +3,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import zlib from "node:zlib";
 /* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
@@ -49,11 +48,7 @@ export const buildServer = async (
 
   // Middlewares
   await server.register(fastifyMultipart);
-  await server.register(fastifyCompress, {
-    // Brotli default compression is max quality = 11, which is extermely slow
-    // Reduce compression level to match compression speed/size similar to gzip or deflate
-    brotliOptions: { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } },
-  });
+  await server.register(fastifyCompress);
   await server.register(fastifyCors, {
     origin: true,
     credentials: true,
