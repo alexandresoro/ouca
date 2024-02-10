@@ -234,17 +234,14 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const mapboxSource = mapRef.current!.getSource("localities")! as GeoJSONSource;
 
-        mapboxSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
-          if (err || !zoom) {
-            return;
-          }
+        const zoom = await mapboxSource.getClusterExpansionZoom(clusterId);
 
-          mapRef.current?.easeTo({
-            center: (feature.geometry as Point).coordinates as [number, number],
-            zoom,
-            duration: 500,
-          });
+        mapRef.current?.easeTo({
+          center: (feature.geometry as Point).coordinates as [number, number],
+          zoom,
+          duration: 500,
         });
+
         return;
       }
 
