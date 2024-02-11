@@ -9,6 +9,7 @@ const initLogger = pino({
 
 const envLogSchema = z.object({
   OUCA_LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("warn"),
+  OUCA_LOG_PRETTY: z.coerce.boolean().default(false),
 });
 
 const getLoggerConfig = () => {
@@ -24,6 +25,7 @@ const getLoggerConfig = () => {
 
   return {
     level: env.OUCA_LOG_LEVEL,
+    pretty: env.OUCA_LOG_PRETTY,
   };
 };
 

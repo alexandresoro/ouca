@@ -1,12 +1,10 @@
 import { loggerConfig } from "@infrastructure/config/logger-config.js";
-import { nodeEnvConfig } from "@infrastructure/config/node-env-config.js";
 import { pino, type TransportTargetOptions } from "pino";
 
-const getPinoTransportsToUse = ({ level }: typeof loggerConfig, isProduction: boolean) => {
+const getPinoTransportsToUse = ({ level, pretty }: typeof loggerConfig) => {
   const transports: TransportTargetOptions[] = [];
 
-  if (!isProduction) {
-    // In dev, prettify the logs
+  if (pretty) {
     transports.push({
       target: "pino-pretty",
       level,
@@ -16,7 +14,6 @@ const getPinoTransportsToUse = ({ level }: typeof loggerConfig, isProduction: bo
       },
     });
   } else {
-    // In prod, write to stdout
     transports.push({
       target: "pino/file",
       level,
@@ -34,5 +31,5 @@ const getPinoTransportsToUse = ({ level }: typeof loggerConfig, isProduction: bo
 export const logger = pino({
   level: loggerConfig.level,
   base: undefined,
-  transport: getPinoTransportsToUse(loggerConfig, nodeEnvConfig.isProduction),
+  transport: getPinoTransportsToUse(loggerConfig),
 });
