@@ -1,5 +1,6 @@
 import { type OidcConfig } from "@infrastructure/config/oidc-config.js";
 import { type z } from "zod";
+import { logger } from "../../utils/logger.js";
 
 /**
  * Calls the OIDC introspection endpoint and returns the response of the introspection
@@ -23,6 +24,16 @@ const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
     }),
   });
   const responseBody = await response.json();
+
+  // FIXME: remove those logs when we understand and reproduce the introspection parse error
+  logger.debug(
+    {
+      status: response.status,
+      jsonBody: responseBody,
+      ok: response.ok,
+    },
+    "Token instrospection response"
+  );
 
   const parsedResponse = introspectionResultSchema.parse(responseBody);
 
