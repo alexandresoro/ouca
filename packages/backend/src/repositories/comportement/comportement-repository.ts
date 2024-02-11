@@ -1,3 +1,4 @@
+import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -88,7 +89,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
       codeLike
         ? sql.fragment`
     WHERE
-      code ~* ${codeLike}
+      code ~* ${escapeStringRegexp(codeLike)}
       OR unaccent(libelle) ILIKE unaccent(${libelleLike})
     `
         : sql.fragment``
@@ -98,7 +99,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     ${!isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}` : sql.fragment``}
     ${
       !orderBy && codeLike
-        ? sql.fragment`ORDER BY (comportement.code ~* ${codeLike}) DESC, comportement.code ASC`
+        ? sql.fragment`ORDER BY (comportement.code ~* ${escapeStringRegexp(codeLike)}) DESC, comportement.code ASC`
         : sql.fragment``
     }
     ${buildSortOrderFragment({
@@ -124,7 +125,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
         codeLike
           ? sql.fragment`
               WHERE
-                code ~* ${codeLike}
+                code ~* ${escapeStringRegexp(codeLike)}
                 OR unaccent(libelle) ILIKE unaccent(${libelleLike})
           `
           : sql.fragment``

@@ -1,3 +1,4 @@
+import escapeStringRegexp from "escape-string-regexp";
 import { sql, type IdentifierSqlToken } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
 import { buildSearchCriteriaParameters } from "../search-criteria.js";
@@ -5,9 +6,9 @@ import { type EspeceFindManyInput } from "./espece-repository-types.js";
 
 export const buildQClause = (q: string) => {
   return sql.fragment`
-    espece.code ~* ${q}
-    OR unaccent(espece.nom_francais) ~* unaccent(${q})
-    OR unaccent(espece.nom_latin) ~* unaccent(${q})
+    espece.code ~* ${escapeStringRegexp(q)}
+    OR unaccent(espece.nom_francais) ~* unaccent(${escapeStringRegexp(q)})
+    OR unaccent(espece.nom_latin) ~* unaccent(${escapeStringRegexp(q)})
   `;
 };
 

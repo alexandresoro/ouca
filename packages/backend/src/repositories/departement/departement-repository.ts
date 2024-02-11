@@ -1,3 +1,4 @@
+import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -113,7 +114,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     ${isSortByNbCommunes ? sql.fragment`ORDER BY COUNT(commune."id")` : sql.fragment``}
     ${
       !orderBy && q
-        ? sql.fragment`ORDER BY (departement.code ~* ${matchStartCode}) DESC, departement.code ASC`
+        ? sql.fragment`ORDER BY (departement.code ~* ${escapeStringRegexp(
+            matchStartCode ?? ""
+          )}) DESC, departement.code ASC`
         : sql.fragment``
     }
     ${

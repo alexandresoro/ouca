@@ -9,6 +9,7 @@ import {
 import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
+import escapeStringRegexp from "escape-string-regexp";
 import { sql } from "kysely";
 import { fromPromise, type Result } from "neverthrow";
 import { z } from "zod";
@@ -103,7 +104,7 @@ export const buildObserverRepository = () => {
         // Then the ones which libelle contains the query
         // Then two groups are finally sorted alphabetically
         queryObs = queryObs
-          .orderBy(sql`"basenaturaliste"."observateur"."libelle" ~* ${`^${q}`}`, "desc")
+          .orderBy(sql`"basenaturaliste"."observateur"."libelle" ~* ${`^${escapeStringRegexp(q)}`}`, "desc")
           .orderBy("libelle", "asc");
       }
     }

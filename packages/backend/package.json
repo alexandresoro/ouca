@@ -43,6 +43,7 @@
     "csv-parse": "5.5.3",
     "csv-stringify": "6.4.5",
     "date-fns": "3.3.1",
+    "escape-string-regexp": "5.0.0",
     "exceljs": "4.4.0",
     "fastify": "4.26.0",
     "fastify-plugin": "4.5.1",

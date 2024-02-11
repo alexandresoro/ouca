@@ -1,4 +1,5 @@
 import { geoJSONLocalitySchema, type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -143,7 +144,11 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     ${isSortByCodeCommune ? sql.fragment`ORDER BY commune."code"` : sql.fragment``}
     ${isSortByNomCommune ? sql.fragment`ORDER BY commune."nom"` : sql.fragment``}
     ${isSortByDepartement ? sql.fragment`ORDER BY departement."code"` : sql.fragment``}
-    ${!orderBy && q ? sql.fragment`ORDER BY (lieudit.nom ~* ${matchStartNom}) DESC, lieudit.nom ASC` : sql.fragment``}
+    ${
+      !orderBy && q
+        ? sql.fragment`ORDER BY (lieudit.nom ~* ${escapeStringRegexp(matchStartNom ?? "")}) DESC, lieudit.nom ASC`
+        : sql.fragment``
+    }
     ${
       !isSortByNbDonnees && !isSortByCodeCommune && !isSortByNomCommune && !isSortByDepartement && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`
