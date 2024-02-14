@@ -105,8 +105,8 @@ importers:
         specifier: 37.2.0
         version: 37.2.0(zod@3.22.4)
       umzug:
-        specifier: 3.6.1
-        version: 3.6.1
+        specifier: 3.7.0
+        version: 3.7.0
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -7141,8 +7141,8 @@ packages:
       random-bytes: 1.0.0
     dev: false
 
-  /umzug@3.6.1:
-    resolution: {integrity: sha512-+ztJ2muIkP/Qw8w+4GfXEOrBZ/1kf9xlAyk9PSg2ZOpM5zX45vtQFDfuV18CdQLE1HWDL7EYT3Qcw0hFMWcp2Q==}
+  /umzug@3.7.0:
+    resolution: {integrity: sha512-r/L2Zlilgv3SKhmP2nkA9x2Xi1PKtu2K34/i/s7AYJ2mLjEO+IxETJAK7CKf6l3QOvoy5/ChykeX9qt6ykRz6Q==}
     engines: {node: '>=12'}
     dependencies:
       '@rushstack/ts-command-line': 4.15.2
