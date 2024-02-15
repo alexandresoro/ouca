@@ -333,8 +333,8 @@ importers:
         specifier: workspace:*
         version: link:../eslint-config
       '@sentry/vite-plugin':
-        specifier: 2.14.0
-        version: 2.14.0
+        specifier: 2.14.1
+        version: 2.14.1
       '@tanstack/react-query-devtools':
         specifier: 4.29.25
         version: 4.29.25(@tanstack/react-query@4.29.25)(react-dom@18.2.0)(react@18.2.0)
@@ -1588,8 +1588,8 @@ packages:
       '@sentry/types': 7.100.1
       '@sentry/utils': 7.100.1
 
-  /@sentry/babel-plugin-component-annotate@2.14.0:
-    resolution: {integrity: sha512-FWU4+Lx6fgxjAkwmc3S9j1Q/6pqKZyZzfi52B+8WMNw7a5QjGXgxc5ucBazZYgrcsJKCFBp4QG3PPxNAieFimQ==}
+  /@sentry/babel-plugin-component-annotate@2.14.1:
+    resolution: {integrity: sha512-NHVOr6m0vOoh1UNSZr+OpWQERjjQM7lO48WN/N/MzobIIxc2pymw2KAq3lNJ1SnVAy1t9RNP8u+g6aEFEMGZ/w==}
     engines: {node: '>= 14'}
     dev: true
 
@@ -1606,15 +1606,15 @@ packages:
       '@sentry/utils': 7.100.1
     dev: false
 
-  /@sentry/bundler-plugin-core@2.14.0:
-    resolution: {integrity: sha512-jVM47EPs8Na2z5HOWgthLFhpHLU9hwL2wY4TzHEnS1Bj+ODgXFa8QcIxQR2SO+W+L8YhSbY7z+BpPsYTpeZWUg==}
+  /@sentry/bundler-plugin-core@2.14.1:
+    resolution: {integrity: sha512-JbYkeQQ+FTy4KjuJmnjjRGKv1LOSH+Q9cbcMHkr+vNrwAbdxkQ7WURGEKUCFTciIekToMCOiFk+g3FQlRmzLPg==}
     engines: {node: '>= 14'}
     dependencies:
       '@babel/core': 7.18.5
-      '@sentry/babel-plugin-component-annotate': 2.14.0
+      '@sentry/babel-plugin-component-annotate': 2.14.1
       '@sentry/cli': 2.22.3
       '@sentry/node': 7.100.1
-      '@sentry/utils': 7.99.0
+      '@sentry/utils': 7.100.1
       dotenv: 16.4.4
       find-up: 5.0.0
       glob: 9.3.2
@@ -1771,29 +1771,17 @@ packages:
     resolution: {integrity: sha512-fLM+LedHuKzOd8IhXBqaQuym+AA519MGjeczBa5kGakes/BbAsUMwsNfjsKQedp7Kh44RgYF99jwoRPK2oDrXw==}
     engines: {node: '>=8'}
 
-  /@sentry/types@7.99.0:
-    resolution: {integrity: sha512-94qwOw4w40sAs5mCmzcGyj8ZUu/KhnWnuMZARRq96k+SjRW/tHFAOlIdnFSrt3BLPvSOK7R3bVAskZQ0N4FTmA==}
-    engines: {node: '>=8'}
-    dev: true
-
   /@sentry/utils@7.100.1:
     resolution: {integrity: sha512-Ve6dXr1o6xiBe3VCoJgiutmBKrugryI65EZAbYto5XI+t+PjiLLf9wXtEMF24ZrwImo4Lv3E9Uqza+fWkEbw6A==}
     engines: {node: '>=8'}
     dependencies:
       '@sentry/types': 7.100.1
 
-  /@sentry/utils@7.99.0:
-    resolution: {integrity: sha512-cYZy5WNTkWs5GgggGnjfGqC44CWir0pAv4GVVSx0fsup4D4pMKBJPrtub15f9uC+QkUf3vVkqwpBqeFxtmJQTQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.99.0
-    dev: true
-
-  /@sentry/vite-plugin@2.14.0:
-    resolution: {integrity: sha512-Y25rBys8hDkbcqRBBGc5kez8JoQ0K/IfQzVHzuVFgtavcwQVhTUKbP4P7tPXI6P9gf4sRkycPnMyJzgvf5XAIQ==}
+  /@sentry/vite-plugin@2.14.1:
+    resolution: {integrity: sha512-leNq+hWaKRhp0e+U1LYVbKBUAN4P+RXhG6GyMLvjKZL0LTsbLni05XeWg3Xy364Xoawcj6vgEN2lVvlpUvUnEQ==}
     engines: {node: '>= 14'}
     dependencies:
-      '@sentry/bundler-plugin-core': 2.14.0
+      '@sentry/bundler-plugin-core': 2.14.1
       unplugin: 1.0.1
     transitivePeerDependencies:
       - encoding
