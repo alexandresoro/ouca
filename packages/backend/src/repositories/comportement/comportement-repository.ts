@@ -89,7 +89,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
       codeLike
         ? sql.fragment`
     WHERE
-      code ~* ${escapeStringRegexp(codeLike)}
+      code ~* ${codeLike}
       OR unaccent(libelle) ILIKE unaccent(${libelleLike})
     `
         : sql.fragment``
