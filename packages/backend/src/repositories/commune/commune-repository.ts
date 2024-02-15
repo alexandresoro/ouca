@@ -82,7 +82,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     // The ones for which nom starts with query
     // Then the ones which nom contains the query
     // Then two groups are finally sorted alphabetically
-    const matchStartNom = q ? `^${q}` : null;
+    const matchStartNom = q ? `^${escapeStringRegexp(q)}` : null;
     const query = sql.type(communeSchema)`
     SELECT 
       commune.id::text,
@@ -139,9 +139,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       !isSortByNbDonnees && !isSortByNbLieuxDits && !isSortByDepartement && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`
         : q
-          ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC, (commune.nom ~* ${escapeStringRegexp(
-              matchStartNom ?? ""
-            )}) DESC, commune.nom ASC` // If no order provided, return in priority the towns that match by code if q provided
+          ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC, (commune.nom ~* ${matchStartNom}) DESC, commune.nom ASC` // If no order provided, return in priority the towns that match by code if q provided
           : sql.fragment``
     }${buildSortOrderFragment({
       orderBy,

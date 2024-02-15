@@ -96,7 +96,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     // The ones for which code starts with query
     // Then the ones which code contains the query
     // Finally the ones that don't match the code (i.e. nom francais or latin) sorted by code
-    const matchStartCode = q ? `^${q}` : null;
+    const matchStartCode = q ? `^${escapeStringRegexp(q)}` : null;
     const query = sql.type(especeSchema)`
       SELECT 
         espece.id::text,
@@ -148,9 +148,9 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
       ${!isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${buildOrderByIdentifier(orderBy)}` : sql.fragment``}
       ${
         !orderBy && q
-          ? sql.fragment`ORDER BY (espece.code ~* ${escapeStringRegexp(
-              matchStartCode ?? ""
-            )}) DESC, (espece.code ~* ${escapeStringRegexp(q)}) DESC, espece.code ASC`
+          ? sql.fragment`ORDER BY (espece.code ~* ${matchStartCode}) DESC, (espece.code ~* ${escapeStringRegexp(
+              q
+            )}) DESC, espece.code ASC`
           : sql.fragment``
       }
       ${buildSortOrderFragment({

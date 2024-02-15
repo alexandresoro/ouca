@@ -70,7 +70,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     // The ones for which code starts with query
     // Then the ones which code contains the query
     // Then two groups are finally sorted alphabetically
-    const matchStartCode = q ? `^${q}` : null;
+    const matchStartCode = q ? `^${escapeStringRegexp(q)}` : null;
     const query = sql.type(departementSchema)`
     SELECT 
       departement.id::text,
@@ -114,9 +114,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     ${isSortByNbCommunes ? sql.fragment`ORDER BY COUNT(commune."id")` : sql.fragment``}
     ${
       !orderBy && q
-        ? sql.fragment`ORDER BY (departement.code ~* ${escapeStringRegexp(
-            matchStartCode ?? ""
-          )}) DESC, departement.code ASC`
+        ? sql.fragment`ORDER BY (departement.code ~* ${matchStartCode}) DESC, departement.code ASC`
         : sql.fragment``
     }
     ${
