@@ -26,7 +26,7 @@ export const enrichedInventory = async (
     (await services.observerService.findObserverOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
     (await services.observerService.findAssociatesOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
     services.localityService.findLieuDitOfInventaireId(parseInt(inventory.id), user),
-    services.weatherService.findMeteosOfInventaireId(parseInt(inventory.id), user),
+    (await services.weatherService.findWeathersOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
   ]);
 
   if (!observer || !locality) {

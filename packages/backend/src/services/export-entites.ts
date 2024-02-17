@@ -10,6 +10,7 @@ import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
 import { type ObserverService } from "../application/services/observer/observer-service.js";
 import { type SexService } from "../application/services/sex/sex-service.js";
+import { type WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type ClasseService } from "./entities/classe-service.js";
 import { type CommuneService } from "./entities/commune-service.js";
@@ -21,7 +22,6 @@ import { type EstimationDistanceService } from "./entities/estimation-distance-s
 import { type EstimationNombreService } from "./entities/estimation-nombre-service.js";
 import { type InventaireService } from "./entities/inventaire-service.js";
 import { type LieuditService } from "./entities/lieu-dit-service.js";
-import { type MeteoService } from "./entities/meteo-service.js";
 import { type MilieuService } from "./entities/milieu-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
@@ -151,7 +151,7 @@ export const generateDonneesExport = async (
     numberEstimateService: EstimationNombreService;
     inventoryService: InventaireService;
     localityService: LieuditService;
-    weatherService: MeteoService;
+    weatherService: WeatherService;
     environmentService: MilieuService;
     observerService: ObserverService;
     sexService: SexService;
@@ -182,7 +182,9 @@ export const generateDonneesExport = async (
       const associes = (
         await observerService.findAssociatesOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const meteos = await weatherService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const meteos = (
+        await weatherService.findWeathersOfInventoryId(parseInt(inventaire.id), loggedUser)
+      )._unsafeUnwrap();
       const espece = await speciesService.findEspeceOfDonneeId(donnee?.id, loggedUser);
       const classe = await classService.findClasseOfEspeceId(espece?.id, loggedUser);
       const age = (await ageService.findAgeOfDonneeId(donnee?.id, loggedUser))._unsafeUnwrap();
@@ -311,8 +313,8 @@ export const generateLieuxDitsExport = async ({
   return id;
 };
 
-export const generateMeteosExport = async ({ weatherService }: { weatherService: MeteoService }): Promise<string> => {
-  const meteos = await weatherService.findAllMeteos();
+export const generateMeteosExport = async ({ weatherService }: { weatherService: WeatherService }): Promise<string> => {
+  const meteos = await weatherService.findAllWeathers();
 
   const objectsToExport = meteos.map((object) => {
     return {

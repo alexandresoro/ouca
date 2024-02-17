@@ -10,6 +10,7 @@ import { buildObserverService, type ObserverService } from "../application/servi
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
+import { buildWeatherService, type WeatherService } from "../application/services/weather/weather-service.js";
 import { buildAgeRepository } from "../infrastructure/repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
@@ -42,7 +43,6 @@ import {
 import { buildEstimationNombreService, type EstimationNombreService } from "./entities/estimation-nombre-service.js";
 import { buildInventaireService, type InventaireService } from "./entities/inventaire-service.js";
 import { buildLieuditService, type LieuditService } from "./entities/lieu-dit-service.js";
-import { buildMeteoService, type MeteoService } from "./entities/meteo-service.js";
 import { buildMilieuService, type MilieuService } from "./entities/milieu-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
@@ -64,7 +64,7 @@ export type Services = {
   sexService: SexService;
   speciesService: EspeceService;
   townService: CommuneService;
-  weatherService: MeteoService;
+  weatherService: WeatherService;
   settingsService: SettingsService;
   userService: UserService;
   geojsonService: GeoJSONService;
@@ -167,7 +167,7 @@ export const buildServices = async (): Promise<Services> => {
     entryRepository,
   });
 
-  const weatherService = buildMeteoService({
+  const weatherService = buildWeatherService({
     weatherRepository,
     entryRepository,
   });

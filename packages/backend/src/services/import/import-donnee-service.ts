@@ -51,7 +51,7 @@ export class ImportDonneeService extends ImportService {
     this.departements = await this.services.departmentService.findAllDepartements();
     this.communes = await this.services.townService.findAllCommunes();
     this.lieuxDits = await this.services.localityService.findAllLieuxDits();
-    this.meteos = await this.services.weatherService.findAllMeteos();
+    this.meteos = await this.services.weatherService.findAllWeathers();
     this.especes = await this.services.speciesService.findAllEspeces();
     this.sexes = await this.services.sexService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
@@ -239,7 +239,7 @@ export class ImportDonneeService extends ImportService {
           new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.weatherService.findMeteosIdsOfInventaireId(parseInt(existingInventaire.id))),
+          new Set(await this.services.weatherService.findWeatherIdsOfInventoryId(parseInt(existingInventaire.id))),
           new Set(inputInventaire.weatherIds)
         )
       );

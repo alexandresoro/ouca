@@ -1,19 +1,19 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Weather } from "@domain/weather/weather.js";
-import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
+import { weatherCreateInputFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { weatherFactory } from "@fixtures/domain/weather/weather.fixtures.js";
+import { upsertWeatherInputFactory } from "@fixtures/services/weather/weather-service.fixtures.js";
+import { type WeathersSearchParams } from "@ou-ca/common/api/weather";
+import { err, ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { mock } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
-import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildMeteoService } from "./meteo-service.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type MeteoRepository } from "../../../repositories/meteo/meteo-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { buildWeatherService } from "./weather-service.js";
 
 const weatherRepository = mockVi<MeteoRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const meteoService = buildMeteoService({
+const weatherService = buildWeatherService({
   weatherRepository,
   entryRepository,
 });
@@ -29,12 +29,12 @@ const uniqueConstraintFailed = () => {
 
 describe("Find weather", () => {
   test("should handle a matching weather", async () => {
-    const weatherData = mock<Weather>();
-    const loggedUser = mock<LoggedUser>();
+    const weatherData = weatherFactory.build();
+    const loggedUser = loggedUserFactory.build();
 
     weatherRepository.findMeteoById.mockResolvedValueOnce(weatherData);
 
-    await meteoService.findMeteo(12, loggedUser);
+    await weatherService.findWeather(12, loggedUser);
 
     expect(weatherRepository.findMeteoById).toHaveBeenCalledTimes(1);
     expect(weatherRepository.findMeteoById).toHaveBeenLastCalledWith(12);
@@ -42,60 +42,67 @@ describe("Find weather", () => {
 
   test("should handle weather not found", async () => {
     weatherRepository.findMeteoById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
-    await expect(meteoService.findMeteo(10, loggedUser)).resolves.toBe(null);
+    await expect(weatherService.findWeather(10, loggedUser)).resolves.toEqual(ok(null));
 
     expect(weatherRepository.findMeteoById).toHaveBeenCalledTimes(1);
     expect(weatherRepository.findMeteoById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
-    await expect(meteoService.findMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the no login details are provided", async () => {
+    const findResult = await weatherService.findWeather(11, null);
+
+    expect(findResult).toEqual(err("notAllowed"));
     expect(weatherRepository.findMeteoById).not.toHaveBeenCalled();
   });
 });
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
-    await meteoService.getDonneesCountByMeteo("12", loggedUser);
+    await weatherService.getEntriesCountByWeather("12", loggedUser);
 
     expect(entryRepository.getCountByMeteoId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByMeteoId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.getDonneesCountByMeteo("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const entitiesCountResult = await weatherService.getEntriesCountByWeather("12", null);
+
+    expect(entitiesCountResult).toEqual(err("notAllowed"));
   });
 });
 
 describe("Find weathers by inventary ID", () => {
   test("should handle observer found", async () => {
-    const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
-    const loggedUser = mock<LoggedUser>();
+    const weathersData = weatherFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
 
     weatherRepository.findMeteosOfInventaireId.mockResolvedValueOnce(weathersData);
 
-    const weathers = await meteoService.findMeteosOfInventaireId(43, loggedUser);
+    const weathersResult = await weatherService.findWeathersOfInventoryId(43, loggedUser);
 
     expect(weatherRepository.findMeteosOfInventaireId).toHaveBeenCalledTimes(1);
     expect(weatherRepository.findMeteosOfInventaireId).toHaveBeenLastCalledWith(43);
-    expect(weathers.length).toEqual(weathersData.length);
+    expect(weathersResult.isOk()).toBeTruthy();
+    expect(weathersResult._unsafeUnwrap().length).toEqual(weathersData.length);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.findMeteosOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const findResult = await weatherService.findWeathersOfInventoryId(12, null);
+
+    expect(findResult).toEqual(err("notAllowed"));
   });
 });
 
 test("Find all weathers", async () => {
-  const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
+  const weathersData = weatherFactory.buildList(3);
 
   weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
-  await meteoService.findAllMeteos();
+  await weatherService.findAllWeathers();
 
   expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
   expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({
@@ -105,20 +112,20 @@ test("Find all weathers", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
-    const loggedUser = mock<LoggedUser>();
+    const weathersData = weatherFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
 
     weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
-    await meteoService.findPaginatedMeteos(loggedUser, {});
+    await weatherService.findPaginatedWeathers(loggedUser, {});
 
     expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
     expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated weathers ", async () => {
-    const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
-    const loggedUser = mock<LoggedUser>();
+    const weathersData = weatherFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: WeathersSearchParams = {
       orderBy: "libelle",
@@ -130,7 +137,7 @@ describe("Entities paginated find by search criteria", () => {
 
     weatherRepository.findMeteos.mockResolvedValueOnce([weathersData[0]]);
 
-    await meteoService.findPaginatedMeteos(loggedUser, searchParams);
+    await weatherService.findPaginatedWeathers(loggedUser, searchParams);
 
     expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
     expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({
@@ -142,70 +149,74 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.findPaginatedMeteos(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const entitiesPaginatedResult = await weatherService.findPaginatedWeathers(null, {});
+
+    expect(entitiesPaginatedResult).toEqual(err("notAllowed"));
   });
 });
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
-    await meteoService.getMeteosCount(loggedUser);
+    await weatherService.getWeathersCount(loggedUser);
 
     expect(weatherRepository.getCount).toHaveBeenCalledTimes(1);
     expect(weatherRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
-    await meteoService.getMeteosCount(loggedUser, "test");
+    await weatherService.getWeathersCount(loggedUser, "test");
 
     expect(weatherRepository.getCount).toHaveBeenCalledTimes(1);
     expect(weatherRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.getMeteosCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const entitiesCountResult = await weatherService.getWeathersCount(null);
+
+    expect(entitiesCountResult).toEqual(err("notAllowed"));
   });
 });
 
 describe("Update of an weather", () => {
   test("should be allowed when requested by an admin", async () => {
-    const weatherData = mock<UpsertWeatherInput>();
+    const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    await meteoService.updateMeteo(12, weatherData, loggedUser);
+    await weatherService.updateWeather(12, weatherData, loggedUser);
 
     expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
     expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Weather>({
+    const existingData = weatherFactory.build({
       ownerId: "notAdmin",
     });
 
-    const weatherData = mock<UpsertWeatherInput>();
+    const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     weatherRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
-    await meteoService.updateMeteo(12, weatherData, loggedUser);
+    await weatherService.updateWeather(12, weatherData, loggedUser);
 
     expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
     expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
-  test("should throw an error when requested by an use that is nor owner nor admin", async () => {
-    const existingData = mock<Weather>({
+  test("should not be allowed when requested by an use that is nor owner nor admin", async () => {
+    const existingData = weatherFactory.build({
       ownerId: "notAdmin",
     });
 
-    const weatherData = mock<UpsertWeatherInput>();
+    const weatherData = upsertWeatherInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -214,41 +225,43 @@ describe("Update of an weather", () => {
 
     weatherRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
-    await expect(meteoService.updateMeteo(12, weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    const updateResult = await weatherService.updateWeather(12, weatherData, user);
 
+    expect(updateResult).toEqual(err("notAllowed"));
     expect(weatherRepository.updateMeteo).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to an weather that exists", async () => {
-    const weatherData = mock<UpsertWeatherInput>();
+  test("should not be allowed when trying to update to an weather that exists", async () => {
+    const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     weatherRepository.updateMeteo.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => meteoService.updateMeteo(12, weatherData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
-    );
+    const updateResult = await weatherService.updateWeather(12, weatherData, loggedUser);
 
+    expect(updateResult).toEqual(err("alreadyExists"));
     expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
     expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    const weatherData = mock<UpsertWeatherInput>();
+  test("should not be allowed when the requester is not logged", async () => {
+    const weatherData = upsertWeatherInputFactory.build();
 
-    await expect(meteoService.updateMeteo(12, weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const updateResult = await weatherService.updateWeather(12, weatherData, null);
+
+    expect(updateResult).toEqual(err("notAllowed"));
     expect(weatherRepository.updateMeteo).not.toHaveBeenCalled();
   });
 });
 
 describe("Creation of an weather", () => {
   test("should create new weather", async () => {
-    const weatherData = mock<UpsertWeatherInput>();
+    const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build();
 
-    await meteoService.createMeteo(weatherData, loggedUser);
+    await weatherService.createWeather(weatherData, loggedUser);
 
     expect(weatherRepository.createMeteo).toHaveBeenCalledTimes(1);
     expect(weatherRepository.createMeteo).toHaveBeenLastCalledWith({
@@ -257,17 +270,16 @@ describe("Creation of an weather", () => {
     });
   });
 
-  test("should throw an error when trying to create an weather that already exists", async () => {
-    const weatherData = mock<UpsertWeatherInput>();
+  test("should not be allowed when trying to create an weather that already exists", async () => {
+    const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build();
 
     weatherRepository.createMeteo.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => meteoService.createMeteo(weatherData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
-    );
+    const createResult = await weatherService.createWeather(weatherData, loggedUser);
 
+    expect(createResult).toEqual(err("alreadyExists"));
     expect(weatherRepository.createMeteo).toHaveBeenCalledTimes(1);
     expect(weatherRepository.createMeteo).toHaveBeenLastCalledWith({
       ...weatherData,
@@ -275,76 +287,75 @@ describe("Creation of an weather", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    const weatherData = mock<UpsertWeatherInput>();
+  test("should not be allowed when the requester is not logged", async () => {
+    const weatherData = upsertWeatherInputFactory.build();
 
-    await expect(meteoService.createMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const createResult = await weatherService.createWeather(weatherData, null);
+
+    expect(createResult).toEqual(err("notAllowed"));
     expect(weatherRepository.createMeteo).not.toHaveBeenCalled();
   });
 });
 
 describe("Deletion of an weather", () => {
   test("should handle the deletion of an owned weather", async () => {
-    const loggedUser: LoggedUser = {
+    const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
-    };
+    });
 
-    const weather = mock<Weather>({
+    const weather = weatherFactory.build({
       ownerId: loggedUser.id,
     });
 
     weatherRepository.findMeteoById.mockResolvedValueOnce(weather);
 
-    await meteoService.deleteMeteo(11, loggedUser);
+    await weatherService.deleteWeather(11, loggedUser);
 
     expect(weatherRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
     expect(weatherRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any weather if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Weather>());
+    weatherRepository.findMeteoById.mockResolvedValueOnce(weatherFactory.build());
 
-    await meteoService.deleteMeteo(11, loggedUser);
+    await weatherService.deleteWeather(11, loggedUser);
 
     expect(weatherRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
     expect(weatherRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when trying to delete a non-owned weather as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
-      role: "contributor",
+  test("should not be allowed when trying to delete a non-owned weather as non-admin", async () => {
+    const loggedUser = loggedUserFactory.build({
+      id: "12",
     });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Weather>());
+    const deleteResult = await weatherService.deleteWeather(11, loggedUser);
 
-    await expect(meteoService.deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
-
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(weatherRepository.deleteMeteoById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  test("should not be allowed when the requester is not logged", async () => {
+    const deleteResult = await weatherService.deleteWeather(11, null);
+
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(weatherRepository.deleteMeteoById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple weathers", async () => {
-  const weathersData = [
-    mock<Omit<MeteoCreateInput, "owner_id">>(),
-    mock<Omit<MeteoCreateInput, "owner_id">>(),
-    mock<Omit<MeteoCreateInput, "owner_id">>(),
-  ];
+  const weathersData = weatherCreateInputFactory.buildList(3);
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   weatherRepository.createMeteos.mockResolvedValueOnce([]);
 
-  await meteoService.createMeteos(weathersData, loggedUser);
+  await weatherService.createWeathers(weathersData, loggedUser);
 
   expect(weatherRepository.createMeteos).toHaveBeenCalledTimes(1);
   expect(weatherRepository.createMeteos).toHaveBeenLastCalledWith(
