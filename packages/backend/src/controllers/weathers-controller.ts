@@ -16,14 +16,14 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const weathersController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { weatherService: meteoService } = services;
+  const { weatherService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const weatherResult = await meteoService.findWeather(req.params.id, req.user);
+    const weatherResult = await weatherService.findWeather(req.params.id, req.user);
 
     if (weatherResult.isErr()) {
       switch (weatherResult.error) {
@@ -57,8 +57,8 @@ const weathersController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await meteoService.findPaginatedWeathers(req.user, queryParams),
-      await meteoService.getWeathersCount(req.user, queryParams.q),
+      await weatherService.findPaginatedWeathers(req.user, queryParams),
+      await weatherService.getWeathersCount(req.user, queryParams.q),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -77,7 +77,9 @@ const weathersController: FastifyPluginCallback<{
     if (extended) {
       data = await Promise.all(
         weathersData.map(async (weatherData) => {
-          const entriesCount = await meteoService.getEntriesCountByWeather(weatherData.id, req.user);
+          const entriesCount = (
+            await weatherService.getEntriesCountByWeather(weatherData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...weatherData,
             entriesCount,
@@ -104,7 +106,7 @@ const weathersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const weatherResult = await meteoService.createWeather(input, req.user);
+    const weatherResult = await weatherService.createWeather(input, req.user);
 
     if (weatherResult.isErr()) {
       switch (weatherResult.error) {
@@ -135,7 +137,7 @@ const weathersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const weatherResult = await meteoService.updateWeather(req.params.id, input, req.user);
+    const weatherResult = await weatherService.updateWeather(req.params.id, input, req.user);
 
     if (weatherResult.isErr()) {
       switch (weatherResult.error) {
@@ -158,7 +160,7 @@ const weathersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedWeatherResult = await meteoService.deleteWeather(req.params.id, req.user);
+    const deletedWeatherResult = await weatherService.deleteWeather(req.params.id, req.user);
 
     if (deletedWeatherResult.isErr()) {
       switch (deletedWeatherResult.error) {
