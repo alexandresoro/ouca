@@ -9,15 +9,15 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type EspeceCreateInput } from "../../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { type ClasseService } from "../species-class/species-class-service.js";
+import { type SpeciesClassService } from "../species-class/species-class-service.js";
 import { reshapeInputEspeceUpsertData } from "./species-service-reshape.js";
-import { buildEspeceService } from "./species-service.js";
+import { buildSpeciesService } from "./species-service.js";
 
-const classService = mockVi<ClasseService>();
+const classService = mockVi<SpeciesClassService>();
 const speciesRepository = mockVi<EspeceRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const speciesService = buildEspeceService({
+const speciesService = buildSpeciesService({
   classService,
   speciesRepository,
   entryRepository,

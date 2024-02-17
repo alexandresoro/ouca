@@ -10,17 +10,17 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
-type ClasseServiceDependencies = {
+type SpeciesClassServiceDependencies = {
   classRepository: ClasseRepository;
   speciesRepository: EspeceRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildClasseService = ({
+export const buildSpeciesClassService = ({
   classRepository,
   speciesRepository,
   entryRepository,
-}: ClasseServiceDependencies) => {
+}: SpeciesClassServiceDependencies) => {
   const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
     validateAuthorization(loggedUser);
 
@@ -186,4 +186,4 @@ export const buildClasseService = ({
   };
 };
 
-export type ClasseService = ReturnType<typeof buildClasseService>;
+export type SpeciesClassService = ReturnType<typeof buildSpeciesClassService>;

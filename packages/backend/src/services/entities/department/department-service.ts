@@ -11,19 +11,19 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
-type DepartementServiceDependencies = {
+type DepartmentServiceDependencies = {
   departmentRepository: DepartementRepository;
   townRepository: CommuneRepository;
   localityRepository: LieuditRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildDepartementService = ({
+export const buildDepartmentService = ({
   departmentRepository,
   townRepository,
   localityRepository,
   entryRepository,
-}: DepartementServiceDependencies) => {
+}: DepartmentServiceDependencies) => {
   const findDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Department | null> => {
     validateAuthorization(loggedUser);
 
@@ -199,4 +199,4 @@ export const buildDepartementService = ({
   };
 };
 
-export type DepartementService = ReturnType<typeof buildDepartementService>;
+export type DepartmentService = ReturnType<typeof buildDepartmentService>;

@@ -10,15 +10,15 @@ import { type EstimationNombreRepository } from "../../../repositories/estimatio
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 import { reshapeInputEstimationNombreUpsertData } from "./number-estimate-service-reshape.js";
 
-type EstimationNombreServiceDependencies = {
+type NumberEstimateServiceDependencies = {
   numberEstimateRepository: EstimationNombreRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildEstimationNombreService = ({
+export const buildNumberEstimateService = ({
   numberEstimateRepository,
   entryRepository,
-}: EstimationNombreServiceDependencies) => {
+}: NumberEstimateServiceDependencies) => {
   const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
@@ -183,4 +183,4 @@ export const buildEstimationNombreService = ({
   };
 };
 
-export type EstimationNombreService = ReturnType<typeof buildEstimationNombreService>;
+export type NumberEstimateService = ReturnType<typeof buildNumberEstimateService>;

@@ -10,14 +10,14 @@ import { type DepartementRepository } from "../../../repositories/departement/de
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildDepartementService } from "./department-service.js";
+import { buildDepartmentService } from "./department-service.js";
 
 const departmentRepository = mockVi<DepartementRepository>();
 const townRepository = mockVi<CommuneRepository>();
 const localityRepository = mockVi<LieuditRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const departmentService = buildDepartementService({
+const departmentService = buildDepartmentService({
   departmentRepository,
   townRepository,
   localityRepository,

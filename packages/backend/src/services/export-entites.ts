@@ -13,16 +13,16 @@ import { type SexService } from "../application/services/sex/sex-service.js";
 import { type WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type BehaviorService } from "./entities/behavior/behavior-service.js";
-import { type DepartementService } from "./entities/department/department-service.js";
-import { type EstimationDistanceService } from "./entities/distance-estimate/distance-estimate-service.js";
+import { type DepartmentService } from "./entities/department/department-service.js";
+import { type DistanceEstimateService } from "./entities/distance-estimate/distance-estimate-service.js";
 import { type DonneeService } from "./entities/donnee-service.js";
-import { type MilieuService } from "./entities/environment/environment-service.js";
+import { type EnvironmentService } from "./entities/environment/environment-service.js";
 import { type InventaireService } from "./entities/inventaire-service.js";
-import { type LieuditService } from "./entities/locality/locality-service.js";
-import { type EstimationNombreService } from "./entities/number-estimate/number-estimate-service.js";
-import { type ClasseService } from "./entities/species-class/species-class-service.js";
-import { type EspeceService } from "./entities/species/species-service.js";
-import { type CommuneService } from "./entities/town/town-service.js";
+import { type LocalityService } from "./entities/locality/locality-service.js";
+import { type NumberEstimateService } from "./entities/number-estimate/number-estimate-service.js";
+import { type SpeciesClassService } from "./entities/species-class/species-class-service.js";
+import { type SpeciesService } from "./entities/species/species-service.js";
+import { type TownService } from "./entities/town/town-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 
@@ -57,7 +57,9 @@ export const generateAgesExport = async ({ ageService }: { ageService: AgeServic
   return id;
 };
 
-export const generateClassesExport = async ({ classService }: { classService: ClasseService }): Promise<string> => {
+export const generateClassesExport = async ({
+  classService,
+}: { classService: SpeciesClassService }): Promise<string> => {
   const classes = await classService.findAllClasses();
 
   const objectsToExport = classes.map((object) => {
@@ -68,7 +70,7 @@ export const generateClassesExport = async ({ classService }: { classService: Cl
   return id;
 };
 
-export const generateCommunesExport = async ({ townService }: { townService: CommuneService }): Promise<string> => {
+export const generateCommunesExport = async ({ townService }: { townService: TownService }): Promise<string> => {
   const communesDb = await townService.findAllCommunesWithDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
@@ -101,7 +103,7 @@ export const generateComportementsExport = async ({
 
 export const generateDepartementsExport = async ({
   departmentService,
-}: { departmentService: DepartementService }): Promise<string> => {
+}: { departmentService: DepartmentService }): Promise<string> => {
   const departementsDb = await departmentService.findAllDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
@@ -141,18 +143,18 @@ export const generateDonneesExport = async (
     sexService,
   }: {
     ageService: AgeService;
-    classService: ClasseService;
-    townService: CommuneService;
+    classService: SpeciesClassService;
+    townService: TownService;
     behaviorService: BehaviorService;
-    departmentService: DepartementService;
+    departmentService: DepartmentService;
     entryService: DonneeService;
-    speciesService: EspeceService;
-    distanceEstimateService: EstimationDistanceService;
-    numberEstimateService: EstimationNombreService;
+    speciesService: SpeciesService;
+    distanceEstimateService: DistanceEstimateService;
+    numberEstimateService: NumberEstimateService;
     inventoryService: InventaireService;
-    localityService: LieuditService;
+    localityService: LocalityService;
     weatherService: WeatherService;
-    environmentService: MilieuService;
+    environmentService: EnvironmentService;
     observerService: ObserverService;
     sexService: SexService;
   },
@@ -246,7 +248,9 @@ export const generateDonneesExport = async (
   return id;
 };
 
-export const generateEspecesExport = async ({ speciesService }: { speciesService: EspeceService }): Promise<string> => {
+export const generateEspecesExport = async ({
+  speciesService,
+}: { speciesService: SpeciesService }): Promise<string> => {
   const especes = await speciesService.findAllEspecesWithClasses();
 
   const objectsToExport = especes.map((espece) => {
@@ -264,7 +268,7 @@ export const generateEspecesExport = async ({ speciesService }: { speciesService
 
 export const generateEstimationsDistanceExport = async ({
   distanceEstimateService,
-}: { distanceEstimateService: EstimationDistanceService }): Promise<string> => {
+}: { distanceEstimateService: DistanceEstimateService }): Promise<string> => {
   const estimations = await distanceEstimateService.findAllEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
@@ -279,7 +283,7 @@ export const generateEstimationsDistanceExport = async ({
 
 export const generateEstimationsNombreExport = async ({
   numberEstimateService,
-}: { numberEstimateService: EstimationNombreService }): Promise<string> => {
+}: { numberEstimateService: NumberEstimateService }): Promise<string> => {
   const estimations = await numberEstimateService.findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
@@ -294,7 +298,7 @@ export const generateEstimationsNombreExport = async ({
 
 export const generateLieuxDitsExport = async ({
   localityService,
-}: { localityService: LieuditService }): Promise<string> => {
+}: { localityService: LocalityService }): Promise<string> => {
   const lieuxDits = await localityService.findAllLieuxDitsWithCommuneAndDepartement();
 
   const objectsToExport = lieuxDits.map((lieudit) => {
@@ -328,7 +332,7 @@ export const generateMeteosExport = async ({ weatherService }: { weatherService:
 
 export const generateMilieuxExport = async ({
   environmentService,
-}: { environmentService: MilieuService }): Promise<string> => {
+}: { environmentService: EnvironmentService }): Promise<string> => {
   const milieuxDb = await environmentService.findAllMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {

@@ -11,12 +11,12 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type EstimationDistanceCreateInput } from "../../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../../repositories/estimation-distance/estimation-distance-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildEstimationDistanceService } from "./distance-estimate-service.js";
+import { buildDistanceEstimateService } from "./distance-estimate-service.js";
 
 const distanceEstimateRepository = mockVi<EstimationDistanceRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const distanceEstimateService = buildEstimationDistanceService({
+const distanceEstimateService = buildDistanceEstimateService({
   distanceEstimateRepository,
   entryRepository,
 });

@@ -14,17 +14,13 @@ import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-re
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 import { reshapeInputCommuneUpsertData } from "./town-service-reshape.js";
 
-type CommuneServiceDependencies = {
+type TownServiceDependencies = {
   townRepository: CommuneRepository;
   localityRepository: LieuditRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildCommuneService = ({
-  townRepository,
-  localityRepository,
-  entryRepository,
-}: CommuneServiceDependencies) => {
+export const buildTownService = ({ townRepository, localityRepository, entryRepository }: TownServiceDependencies) => {
   const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
@@ -191,4 +187,4 @@ export const buildCommuneService = ({
   };
 };
 
-export type CommuneService = ReturnType<typeof buildCommuneService>;
+export type TownService = ReturnType<typeof buildTownService>;

@@ -12,13 +12,13 @@ import { type LieuditCreateInput } from "../../../repositories/lieudit/lieudit-r
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
-import { buildLieuditService } from "./locality-service.js";
+import { buildLocalityService } from "./locality-service.js";
 
 const localityRepository = mockVi<LieuditRepository>();
 const inventoryRepository = mockVi<InventaireRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const localityService = buildLieuditService({
+const localityService = buildLocalityService({
   localityRepository,
   inventoryRepository,
   entryRepository,

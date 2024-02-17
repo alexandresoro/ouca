@@ -7,8 +7,8 @@ import { sexServiceFactory } from "@fixtures/services/sex/sex-service.fixtures.j
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { ok } from "neverthrow";
-import { type DepartementService } from "../../../services/entities/department/department-service.js";
-import { type EstimationNombreService } from "../../../services/entities/number-estimate/number-estimate-service.js";
+import { type DepartmentService } from "../../../services/entities/department/department-service.js";
+import { type NumberEstimateService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { mockVi } from "../../../utils/mock.js";
 import { type AgeService } from "../age/age-service.js";
 import { type ObserverService } from "../observer/observer-service.js";
@@ -16,11 +16,11 @@ import { type SexService } from "../sex/sex-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mockVi<SettingsRepository>();
-const departmentService = mockVi<DepartementService>();
+const departmentService = mockVi<DepartmentService>();
 const observerService = mockVi<ObserverService>();
 const sexService = mockVi<SexService>();
 const ageService = mockVi<AgeService>();
-const numberEstimateService = mockVi<EstimationNombreService>();
+const numberEstimateService = mockVi<NumberEstimateService>();
 
 const settingsService = buildSettingsService({
   settingsRepository,

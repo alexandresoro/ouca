@@ -8,12 +8,12 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildMilieuService } from "./environment-service.js";
+import { buildEnvironmentService } from "./environment-service.js";
 
 const environmentRepository = mockVi<MilieuRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const environmentService = buildMilieuService({
+const environmentService = buildEnvironmentService({
   environmentRepository,
   entryRepository,
 });

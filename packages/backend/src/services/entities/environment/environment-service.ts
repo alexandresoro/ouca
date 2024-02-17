@@ -9,12 +9,12 @@ import { type MilieuCreateInput } from "../../../repositories/milieu/milieu-repo
 import { type MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
-type MilieuServiceDependencies = {
+type EnvironmentServiceDependencies = {
   environmentRepository: MilieuRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildMilieuService = ({ environmentRepository, entryRepository }: MilieuServiceDependencies) => {
+export const buildEnvironmentService = ({ environmentRepository, entryRepository }: EnvironmentServiceDependencies) => {
   const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
     validateAuthorization(loggedUser);
 
@@ -185,4 +185,4 @@ export const buildMilieuService = ({ environmentRepository, entryRepository }: M
   };
 };
 
-export type MilieuService = ReturnType<typeof buildMilieuService>;
+export type EnvironmentService = ReturnType<typeof buildEnvironmentService>;

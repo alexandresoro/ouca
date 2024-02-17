@@ -12,15 +12,15 @@ import { type EstimationDistanceCreateInput } from "../../../repositories/estima
 import { type EstimationDistanceRepository } from "../../../repositories/estimation-distance/estimation-distance-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
-type EstimationDistanceServiceDependencies = {
+type DistanceEstimateServiceDependencies = {
   distanceEstimateRepository: EstimationDistanceRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildEstimationDistanceService = ({
+export const buildDistanceEstimateService = ({
   distanceEstimateRepository,
   entryRepository,
-}: EstimationDistanceServiceDependencies) => {
+}: DistanceEstimateServiceDependencies) => {
   const findEstimationDistance = async (
     id: number,
     loggedUser: LoggedUser | null
@@ -185,4 +185,4 @@ export const buildEstimationDistanceService = ({
   };
 };
 
-export type EstimationDistanceService = ReturnType<typeof buildEstimationDistanceService>;
+export type DistanceEstimateService = ReturnType<typeof buildDistanceEstimateService>;

@@ -10,13 +10,13 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { reshapeInputCommuneUpsertData } from "./town-service-reshape.js";
-import { buildCommuneService } from "./town-service.js";
+import { buildTownService } from "./town-service.js";
 
 const townRepository = mockVi<CommuneRepository>();
 const localityRepository = mockVi<LieuditRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const townService = buildCommuneService({
+const townService = buildTownService({
   townRepository,
   localityRepository,
   entryRepository,

@@ -31,22 +31,22 @@ import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { buildBehaviorService, type BehaviorService } from "./entities/behavior/behavior-service.js";
-import { buildDepartementService, type DepartementService } from "./entities/department/department-service.js";
+import { buildDepartmentService, type DepartmentService } from "./entities/department/department-service.js";
 import {
-  buildEstimationDistanceService,
-  type EstimationDistanceService,
+  buildDistanceEstimateService,
+  type DistanceEstimateService,
 } from "./entities/distance-estimate/distance-estimate-service.js";
 import { buildDonneeService, type DonneeService } from "./entities/donnee-service.js";
-import { buildMilieuService, type MilieuService } from "./entities/environment/environment-service.js";
+import { buildEnvironmentService, type EnvironmentService } from "./entities/environment/environment-service.js";
 import { buildInventaireService, type InventaireService } from "./entities/inventaire-service.js";
-import { buildLieuditService, type LieuditService } from "./entities/locality/locality-service.js";
+import { buildLocalityService, type LocalityService } from "./entities/locality/locality-service.js";
 import {
-  buildEstimationNombreService,
-  type EstimationNombreService,
+  buildNumberEstimateService,
+  type NumberEstimateService,
 } from "./entities/number-estimate/number-estimate-service.js";
-import { buildClasseService, type ClasseService } from "./entities/species-class/species-class-service.js";
-import { buildEspeceService, type EspeceService } from "./entities/species/species-service.js";
-import { buildCommuneService, type CommuneService } from "./entities/town/town-service.js";
+import { buildSpeciesClassService, type SpeciesClassService } from "./entities/species-class/species-class-service.js";
+import { buildSpeciesService, type SpeciesService } from "./entities/species/species-service.js";
+import { buildTownService, type TownService } from "./entities/town/town-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
@@ -55,18 +55,18 @@ export type Services = {
   slonik: DatabasePool;
   ageService: AgeService;
   behaviorService: BehaviorService;
-  classService: ClasseService;
-  departmentService: DepartementService;
-  distanceEstimateService: EstimationDistanceService;
+  classService: SpeciesClassService;
+  departmentService: DepartmentService;
+  distanceEstimateService: DistanceEstimateService;
   entryService: DonneeService;
-  environmentService: MilieuService;
+  environmentService: EnvironmentService;
   inventoryService: InventaireService;
-  localityService: LieuditService;
-  numberEstimateService: EstimationNombreService;
+  localityService: LocalityService;
+  numberEstimateService: NumberEstimateService;
   observerService: ObserverService;
   sexService: SexService;
-  speciesService: EspeceService;
-  townService: CommuneService;
+  speciesService: SpeciesService;
+  townService: TownService;
   weatherService: WeatherService;
   settingsService: SettingsService;
   userService: UserService;
@@ -107,13 +107,13 @@ export const buildServices = async (): Promise<Services> => {
     entryRepository,
   });
 
-  const classService = buildClasseService({
+  const classService = buildSpeciesClassService({
     classRepository,
     speciesRepository,
     entryRepository,
   });
 
-  const townService = buildCommuneService({
+  const townService = buildTownService({
     townRepository,
     localityRepository,
     entryRepository,
@@ -124,7 +124,7 @@ export const buildServices = async (): Promise<Services> => {
     entryRepository,
   });
 
-  const departmentService = buildDepartementService({
+  const departmentService = buildDepartmentService({
     departmentRepository,
     townRepository,
     localityRepository,
@@ -139,18 +139,18 @@ export const buildServices = async (): Promise<Services> => {
     entryEnvironmentRepository,
   });
 
-  const speciesService = buildEspeceService({
+  const speciesService = buildSpeciesService({
     classService,
     speciesRepository,
     entryRepository,
   });
 
-  const distanceEstimateService = buildEstimationDistanceService({
+  const distanceEstimateService = buildDistanceEstimateService({
     distanceEstimateRepository,
     entryRepository,
   });
 
-  const numberEstimateService = buildEstimationNombreService({
+  const numberEstimateService = buildNumberEstimateService({
     numberEstimateRepository,
     entryRepository,
   });
@@ -164,7 +164,7 @@ export const buildServices = async (): Promise<Services> => {
     localityRepository,
   });
 
-  const localityService = buildLieuditService({
+  const localityService = buildLocalityService({
     localityRepository,
     inventoryRepository,
     entryRepository,
@@ -175,7 +175,7 @@ export const buildServices = async (): Promise<Services> => {
     entryRepository,
   });
 
-  const environmentService = buildMilieuService({
+  const environmentService = buildEnvironmentService({
     environmentRepository,
     entryRepository,
   });

@@ -13,16 +13,20 @@ import {
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { reshapeSearchCriteria } from "../../../repositories/search-criteria.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
-import { type ClasseService } from "../species-class/species-class-service.js";
+import { type SpeciesClassService } from "../species-class/species-class-service.js";
 import { reshapeInputEspeceUpsertData } from "./species-service-reshape.js";
 
-type EspeceServiceDependencies = {
-  classService: ClasseService;
+type SpeciesServiceDependencies = {
+  classService: SpeciesClassService;
   speciesRepository: EspeceRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildEspeceService = ({ speciesRepository, entryRepository, classService }: EspeceServiceDependencies) => {
+export const buildSpeciesService = ({
+  speciesRepository,
+  entryRepository,
+  classService,
+}: SpeciesServiceDependencies) => {
   const enrichSpecies = async (species: Species, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     // TODO this can be called from import with loggedUser = null and will fail validation
     // Ideally, even import should have a user
@@ -217,4 +221,4 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
   };
 };
 
-export type EspeceService = ReturnType<typeof buildEspeceService>;
+export type SpeciesService = ReturnType<typeof buildSpeciesService>;

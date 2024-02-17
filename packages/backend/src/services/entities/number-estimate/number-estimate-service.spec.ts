@@ -10,12 +10,12 @@ import { type EstimationNombreCreateInput } from "../../../repositories/estimati
 import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { reshapeInputEstimationNombreUpsertData } from "./number-estimate-service-reshape.js";
-import { buildEstimationNombreService } from "./number-estimate-service.js";
+import { buildNumberEstimateService } from "./number-estimate-service.js";
 
 const numberEstimateRepository = mockVi<EstimationNombreRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const numberEstimateService = buildEstimationNombreService({
+const numberEstimateService = buildNumberEstimateService({
   numberEstimateRepository,
   entryRepository,
 });

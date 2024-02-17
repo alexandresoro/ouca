@@ -9,13 +9,13 @@ import { type ClasseRepository } from "../../../repositories/classe/classe-repos
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildClasseService } from "./species-class-service.js";
+import { buildSpeciesClassService } from "./species-class-service.js";
 
 const classRepository = mockVi<ClasseRepository>();
 const speciesRepository = mockVi<EspeceRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const speciesClassService = buildClasseService({
+const speciesClassService = buildSpeciesClassService({
   classRepository,
   speciesRepository,
   entryRepository,

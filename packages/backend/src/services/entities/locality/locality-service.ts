@@ -14,17 +14,17 @@ import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-re
 import { getSqlPagination } from "../entities-utils.js";
 import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 
-type LieuditServiceDependencies = {
+type LocalityServiceDependencies = {
   localityRepository: LieuditRepository;
   inventoryRepository: InventaireRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildLieuditService = ({
+export const buildLocalityService = ({
   localityRepository,
   inventoryRepository,
   entryRepository,
-}: LieuditServiceDependencies) => {
+}: LocalityServiceDependencies) => {
   const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
@@ -199,4 +199,4 @@ export const buildLieuditService = ({
   };
 };
 
-export type LieuditService = ReturnType<typeof buildLieuditService>;
+export type LocalityService = ReturnType<typeof buildLocalityService>;
