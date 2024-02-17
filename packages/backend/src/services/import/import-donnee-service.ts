@@ -57,7 +57,7 @@ export class ImportDonneeService extends ImportService {
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await this.services.numberEstimateService.findAllEstimationsNombre();
     this.estimationsDistance = await this.services.distanceEstimateService.findAllEstimationsDistance();
-    this.comportements = await this.services.behaviorService.findAllComportements();
+    this.comportements = await this.services.behaviorService.findAllBehaviors();
     this.milieux = await this.services.environmentService.findAllMilieux();
     this.inventaires = await this.services.inventoryService.findAllInventaires();
     this.existingDonnees = await this.services.entryService.findAllDonnees();
@@ -259,7 +259,7 @@ export class ImportDonneeService extends ImportService {
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
-          new Set(await this.services.behaviorService.findComportementsIdsOfDonneeId(donnee.id)),
+          new Set(await this.services.behaviorService.findBehaviorIdsOfEntryId(donnee.id)),
           comportementsIds
         ) &&
         areSetsContainingSameValues(

@@ -5,7 +5,7 @@ import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libel
 export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.behaviorService.findAllComportements();
+    this.entities = await this.services.behaviorService.findAllBehaviors();
   };
 
   protected getAnEntityName(): string {
@@ -16,6 +16,6 @@ export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeServ
     comportements: Omit<Behavior, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Behavior[]> => {
-    return this.services.behaviorService.createComportements(comportements, loggedUser);
+    return this.services.behaviorService.createBehaviors(comportements, loggedUser);
   };
 }

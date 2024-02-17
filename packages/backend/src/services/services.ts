@@ -30,7 +30,7 @@ import { buildLieuditRepository } from "../repositories/lieudit/lieudit-reposito
 import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
-import { buildComportementService, type ComportementService } from "./entities/behavior/behavior-service.js";
+import { buildBehaviorService, type BehaviorService } from "./entities/behavior/behavior-service.js";
 import { buildDepartementService, type DepartementService } from "./entities/department/department-service.js";
 import {
   buildEstimationDistanceService,
@@ -54,7 +54,7 @@ import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel
 export type Services = {
   slonik: DatabasePool;
   ageService: AgeService;
-  behaviorService: ComportementService;
+  behaviorService: BehaviorService;
   classService: ClasseService;
   departmentService: DepartementService;
   distanceEstimateService: EstimationDistanceService;
@@ -119,7 +119,7 @@ export const buildServices = async (): Promise<Services> => {
     entryRepository,
   });
 
-  const behaviorService = buildComportementService({
+  const behaviorService = buildBehaviorService({
     behaviorRepository,
     entryRepository,
   });

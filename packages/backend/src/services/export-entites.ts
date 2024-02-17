@@ -12,7 +12,7 @@ import { type ObserverService } from "../application/services/observer/observer-
 import { type SexService } from "../application/services/sex/sex-service.js";
 import { type WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
-import { type ComportementService } from "./entities/behavior/behavior-service.js";
+import { type BehaviorService } from "./entities/behavior/behavior-service.js";
 import { type DepartementService } from "./entities/department/department-service.js";
 import { type EstimationDistanceService } from "./entities/distance-estimate/distance-estimate-service.js";
 import { type DonneeService } from "./entities/donnee-service.js";
@@ -85,8 +85,8 @@ export const generateCommunesExport = async ({ townService }: { townService: Com
 
 export const generateComportementsExport = async ({
   behaviorService,
-}: { behaviorService: ComportementService }): Promise<string> => {
-  const comportementsDb = await behaviorService.findAllComportements();
+}: { behaviorService: BehaviorService }): Promise<string> => {
+  const comportementsDb = await behaviorService.findAllBehaviors();
 
   const comportementsToExport = comportementsDb.map((object) => {
     return {
@@ -143,7 +143,7 @@ export const generateDonneesExport = async (
     ageService: AgeService;
     classService: ClasseService;
     townService: CommuneService;
-    behaviorService: ComportementService;
+    behaviorService: BehaviorService;
     departmentService: DepartementService;
     entryService: DonneeService;
     speciesService: EspeceService;
@@ -191,7 +191,7 @@ export const generateDonneesExport = async (
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const estimationDistance = await distanceEstimateService.findEstimationDistanceOfDonneeId(donnee?.id, loggedUser);
       const estimationNombre = await numberEstimateService.findEstimationNombreOfDonneeId(donnee?.id, loggedUser);
-      const comportements = await behaviorService.findComportementsOfDonneeId(donnee?.id, loggedUser);
+      const comportements = await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser);
       const milieux = await environmentService.findMilieuxOfDonneeId(donnee.id, loggedUser);
 
       const nicheurStatus = getNicheurStatusToDisplay(comportements, "");

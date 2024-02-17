@@ -8,12 +8,12 @@ import { type ComportementCreateInput } from "../../../repositories/comportement
 import { type ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { buildComportementService } from "./behavior-service.js";
+import { buildBehaviorService } from "./behavior-service.js";
 
 const behaviorRepository = mockVi<ComportementRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const comportementService = buildComportementService({
+const behaviorService = buildBehaviorService({
   behaviorRepository,
   entryRepository,
 });
@@ -34,7 +34,7 @@ describe("Find behavior", () => {
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(behaviorData);
 
-    await comportementService.findComportement(12, loggedUser);
+    await behaviorService.findBehavior(12, loggedUser);
 
     expect(behaviorRepository.findComportementById).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.findComportementById).toHaveBeenLastCalledWith(12);
@@ -44,14 +44,14 @@ describe("Find behavior", () => {
     behaviorRepository.findComportementById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(comportementService.findComportement(10, loggedUser)).resolves.toBe(null);
+    await expect(behaviorService.findBehavior(10, loggedUser)).resolves.toBe(null);
 
     expect(behaviorRepository.findComportementById).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.findComportementById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(comportementService.findComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(behaviorService.findBehavior(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.findComportementById).not.toHaveBeenCalled();
   });
 });
@@ -60,16 +60,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await comportementService.getDonneesCountByComportement("12", loggedUser);
+    await behaviorService.getEntriesCountByBehavior("12", loggedUser);
 
     expect(entryRepository.getCountByComportementId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByComportementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.getDonneesCountByComportement("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    await expect(behaviorService.getEntriesCountByBehavior("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -80,7 +78,7 @@ describe("Find behaviors by inventary ID", () => {
 
     behaviorRepository.findComportementsOfDonneeId.mockResolvedValueOnce(behaviorsData);
 
-    const behaviors = await comportementService.findComportementsOfDonneeId("43", loggedUser);
+    const behaviors = await behaviorService.findBehaviorsOfEntryId("43", loggedUser);
 
     expect(behaviorRepository.findComportementsOfDonneeId).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.findComportementsOfDonneeId).toHaveBeenLastCalledWith(43);
@@ -88,9 +86,7 @@ describe("Find behaviors by inventary ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.findComportementsOfDonneeId("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    await expect(behaviorService.findBehaviorsOfEntryId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -99,7 +95,7 @@ test("Find all behaviors", async () => {
 
   behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
-  await comportementService.findAllComportements();
+  await behaviorService.findAllBehaviors();
 
   expect(behaviorRepository.findComportements).toHaveBeenCalledTimes(1);
   expect(behaviorRepository.findComportements).toHaveBeenLastCalledWith({
@@ -114,7 +110,7 @@ describe("Entities paginated find by search criteria", () => {
 
     behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
-    await comportementService.findPaginatedComportements(loggedUser, {});
+    await behaviorService.findPaginatedBehaviors(loggedUser, {});
 
     expect(behaviorRepository.findComportements).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.findComportements).toHaveBeenLastCalledWith({});
@@ -134,7 +130,7 @@ describe("Entities paginated find by search criteria", () => {
 
     behaviorRepository.findComportements.mockResolvedValueOnce([behaviorsData[0]]);
 
-    await comportementService.findPaginatedComportements(loggedUser, searchParams);
+    await behaviorService.findPaginatedBehaviors(loggedUser, searchParams);
 
     expect(behaviorRepository.findComportements).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.findComportements).toHaveBeenLastCalledWith({
@@ -147,7 +143,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.findPaginatedComportements(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(behaviorService.findPaginatedBehaviors(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -155,7 +151,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await comportementService.getComportementsCount(loggedUser);
+    await behaviorService.getBehaviorsCount(loggedUser);
 
     expect(behaviorRepository.getCount).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.getCount).toHaveBeenLastCalledWith(undefined);
@@ -164,14 +160,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await comportementService.getComportementsCount(loggedUser, "test");
+    await behaviorService.getBehaviorsCount(loggedUser, "test");
 
     expect(behaviorRepository.getCount).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.getComportementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(behaviorService.getBehaviorsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -181,7 +177,7 @@ describe("Update of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await comportementService.updateComportement(12, behaviorData, loggedUser);
+    await behaviorService.updateBehavior(12, behaviorData, loggedUser);
 
     expect(behaviorRepository.updateComportement).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
@@ -198,7 +194,7 @@ describe("Update of a behavior", () => {
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(existingData);
 
-    await comportementService.updateComportement(12, behaviorData, loggedUser);
+    await behaviorService.updateBehavior(12, behaviorData, loggedUser);
 
     expect(behaviorRepository.updateComportement).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
@@ -218,7 +214,7 @@ describe("Update of a behavior", () => {
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(existingData);
 
-    await expect(comportementService.updateComportement(12, behaviorData, user)).rejects.toThrowError(
+    await expect(behaviorService.updateBehavior(12, behaviorData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -232,7 +228,7 @@ describe("Update of a behavior", () => {
 
     behaviorRepository.updateComportement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => comportementService.updateComportement(12, behaviorData, loggedUser)).rejects.toThrowError(
+    await expect(() => behaviorService.updateBehavior(12, behaviorData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -243,9 +239,7 @@ describe("Update of a behavior", () => {
   test("should throw an error when the requester is not logged", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    await expect(comportementService.updateComportement(12, behaviorData, null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    await expect(behaviorService.updateBehavior(12, behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.updateComportement).not.toHaveBeenCalled();
   });
 });
@@ -256,7 +250,7 @@ describe("Creation of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await comportementService.createComportement(behaviorData, loggedUser);
+    await behaviorService.createBehavior(behaviorData, loggedUser);
 
     expect(behaviorRepository.createComportement).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.createComportement).toHaveBeenLastCalledWith({
@@ -272,7 +266,7 @@ describe("Creation of a behavior", () => {
 
     behaviorRepository.createComportement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => comportementService.createComportement(behaviorData, loggedUser)).rejects.toThrowError(
+    await expect(() => behaviorService.createBehavior(behaviorData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -286,7 +280,7 @@ describe("Creation of a behavior", () => {
   test("should throw an error when the requester is not logged", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    await expect(comportementService.createComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(behaviorService.createBehavior(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.createComportement).not.toHaveBeenCalled();
   });
 });
@@ -304,7 +298,7 @@ describe("Deletion of a behavior", () => {
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(behavior);
 
-    await comportementService.deleteComportement(11, loggedUser);
+    await behaviorService.deleteBehavior(11, loggedUser);
 
     expect(behaviorRepository.deleteComportementById).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.deleteComportementById).toHaveBeenLastCalledWith(11);
@@ -317,7 +311,7 @@ describe("Deletion of a behavior", () => {
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Behavior>());
 
-    await comportementService.deleteComportement(11, loggedUser);
+    await behaviorService.deleteBehavior(11, loggedUser);
 
     expect(behaviorRepository.deleteComportementById).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.deleteComportementById).toHaveBeenLastCalledWith(11);
@@ -330,13 +324,13 @@ describe("Deletion of a behavior", () => {
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Behavior>());
 
-    await expect(comportementService.deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(behaviorService.deleteBehavior(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(behaviorRepository.deleteComportementById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.deleteComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(behaviorService.deleteBehavior(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.deleteComportementById).not.toHaveBeenCalled();
   });
 });
@@ -352,7 +346,7 @@ test("Create multiple comportements", async () => {
 
   behaviorRepository.createComportements.mockResolvedValueOnce([]);
 
-  await comportementService.createComportements(comportementsData, loggedUser);
+  await behaviorService.createBehaviors(comportementsData, loggedUser);
 
   expect(behaviorRepository.createComportements).toHaveBeenCalledTimes(1);
   expect(behaviorRepository.createComportements).toHaveBeenLastCalledWith(

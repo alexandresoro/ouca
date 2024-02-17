@@ -9,63 +9,61 @@ import { type ComportementRepository } from "../../../repositories/comportement/
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
-type ComportementServiceDependencies = {
+type BehaviorServiceDependencies = {
   behaviorRepository: ComportementRepository;
   entryRepository: DonneeRepository;
 };
 
-export const buildComportementService = ({ behaviorRepository, entryRepository }: ComportementServiceDependencies) => {
-  const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior | null> => {
+export const buildBehaviorService = ({ behaviorRepository, entryRepository }: BehaviorServiceDependencies) => {
+  const findBehavior = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior | null> => {
     validateAuthorization(loggedUser);
 
     const behavior = await behaviorRepository.findComportementById(id);
     return enrichEntityWithEditableStatus(behavior, loggedUser);
   };
 
-  const findComportementsIdsOfDonneeId = async (donneeId: string): Promise<string[]> => {
-    const comportementsIds = await behaviorRepository
-      .findComportementsOfDonneeId(parseInt(donneeId))
-      .then((comportements) => comportements.map(({ id }) => id));
+  const findBehaviorIdsOfEntryId = async (entryId: string): Promise<string[]> => {
+    const behaviorIds = await behaviorRepository
+      .findComportementsOfDonneeId(parseInt(entryId))
+      .then((behaviors) => behaviors.map(({ id }) => id));
 
-    return [...comportementsIds];
+    return [...behaviorIds];
   };
 
-  const findComportementsOfDonneeId = async (
-    donneeId: string | undefined,
+  const findBehaviorsOfEntryId = async (
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
-    const comportements = await behaviorRepository.findComportementsOfDonneeId(
-      donneeId ? parseInt(donneeId) : undefined
-    );
+    const behaviors = await behaviorRepository.findComportementsOfDonneeId(entryId ? parseInt(entryId) : undefined);
 
-    const enrichedBehaviors = comportements.map((behavior) => {
+    const enrichedBehaviors = behaviors.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, loggedUser);
     });
 
     return [...enrichedBehaviors];
   };
 
-  const getDonneesCountByComportement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountByBehavior = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByComportementId(parseInt(id));
   };
 
-  const findAllComportements = async (): Promise<Behavior[]> => {
-    const comportements = await behaviorRepository.findComportements({
+  const findAllBehaviors = async (): Promise<Behavior[]> => {
+    const behaviors = await behaviorRepository.findComportements({
       orderBy: "code",
     });
 
-    const enrichedBehaviors = comportements.map((behavior) => {
+    const enrichedBehaviors = behaviors.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, null);
     });
 
     return [...enrichedBehaviors];
   };
 
-  const findPaginatedComportements = async (
+  const findPaginatedBehaviors = async (
     loggedUser: LoggedUser | null,
     options: BehaviorsSearchParams
   ): Promise<Behavior[]> => {
@@ -73,36 +71,36 @@ export const buildComportementService = ({ behaviorRepository, entryRepository }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const comportements = await behaviorRepository.findComportements({
+    const behaviors = await behaviorRepository.findComportements({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    const enrichedBehaviors = comportements.map((behavior) => {
+    const enrichedBehaviors = behaviors.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, loggedUser);
     });
 
     return [...enrichedBehaviors];
   };
 
-  const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getBehaviorsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return behaviorRepository.getCount(q);
   };
 
-  const createComportement = async (input: UpsertBehaviorInput, loggedUser: LoggedUser | null): Promise<Behavior> => {
+  const createBehavior = async (input: UpsertBehaviorInput, loggedUser: LoggedUser | null): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdComportement = await behaviorRepository.createComportement({
+      const createdBehavior = await behaviorRepository.createComportement({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdComportement, loggedUser);
+      return enrichEntityWithEditableStatus(createdBehavior, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -111,7 +109,7 @@ export const buildComportementService = ({ behaviorRepository, entryRepository }
     }
   };
 
-  const updateComportement = async (
+  const updateBehavior = async (
     id: number,
     input: UpsertBehaviorInput,
     loggedUser: LoggedUser | null
@@ -128,9 +126,9 @@ export const buildComportementService = ({ behaviorRepository, entryRepository }
     }
 
     try {
-      const updatedComportement = await behaviorRepository.updateComportement(id, input);
+      const updatedBehavior = await behaviorRepository.updateComportement(id, input);
 
-      return enrichEntityWithEditableStatus(updatedComportement, loggedUser);
+      return enrichEntityWithEditableStatus(updatedBehavior, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -139,7 +137,7 @@ export const buildComportementService = ({ behaviorRepository, entryRepository }
     }
   };
 
-  const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior> => {
+  const deleteBehavior = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -151,17 +149,17 @@ export const buildComportementService = ({ behaviorRepository, entryRepository }
       }
     }
 
-    const deletedComportement = await behaviorRepository.deleteComportementById(id);
-    return enrichEntityWithEditableStatus(deletedComportement, loggedUser);
+    const deletedBehavior = await behaviorRepository.deleteComportementById(id);
+    return enrichEntityWithEditableStatus(deletedBehavior, loggedUser);
   };
 
-  const createComportements = async (
-    comportements: Omit<ComportementCreateInput[], "owner_id">,
+  const createBehaviors = async (
+    behaviors: Omit<ComportementCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Behavior[]> => {
     const createdBehaviors = await behaviorRepository.createComportements(
-      comportements.map((comportement) => {
-        return { ...comportement, owner_id: loggedUser.id };
+      behaviors.map((behavior) => {
+        return { ...behavior, owner_id: loggedUser.id };
       })
     );
 
@@ -173,18 +171,18 @@ export const buildComportementService = ({ behaviorRepository, entryRepository }
   };
 
   return {
-    findComportement,
-    findComportementsIdsOfDonneeId,
-    findComportementsOfDonneeId,
-    getDonneesCountByComportement,
-    findAllComportements,
-    findPaginatedComportements,
-    getComportementsCount,
-    createComportement,
-    updateComportement,
-    deleteComportement,
-    createComportements,
+    findBehavior,
+    findBehaviorIdsOfEntryId,
+    findBehaviorsOfEntryId,
+    getEntriesCountByBehavior,
+    findAllBehaviors,
+    findPaginatedBehaviors,
+    getBehaviorsCount,
+    createBehavior,
+    updateBehavior,
+    deleteBehavior,
+    createBehaviors,
   };
 };
 
-export type ComportementService = ReturnType<typeof buildComportementService>;
+export type BehaviorService = ReturnType<typeof buildBehaviorService>;

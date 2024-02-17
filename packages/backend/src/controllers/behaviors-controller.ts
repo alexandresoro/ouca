@@ -23,7 +23,7 @@ const behaviorsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const behavior = await comportementService.findComportement(req.params.id, req.user);
+    const behavior = await comportementService.findBehavior(req.params.id, req.user);
     if (!behavior) {
       return await reply.status(404).send();
     }
@@ -44,15 +44,15 @@ const behaviorsController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [behaviorsData, count] = await Promise.all([
-      comportementService.findPaginatedComportements(req.user, queryParams),
-      comportementService.getComportementsCount(req.user, queryParams.q),
+      comportementService.findPaginatedBehaviors(req.user, queryParams),
+      comportementService.getBehaviorsCount(req.user, queryParams.q),
     ]);
 
     let data: Behavior[] | BehaviorExtended[] = behaviorsData;
     if (extended) {
       data = await Promise.all(
         behaviorsData.map(async (behaviorData) => {
-          const entriesCount = await comportementService.getDonneesCountByComportement(behaviorData.id, req.user);
+          const entriesCount = await comportementService.getEntriesCountByBehavior(behaviorData.id, req.user);
           return {
             ...behaviorData,
             entriesCount,
@@ -80,7 +80,7 @@ const behaviorsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const behavior = await comportementService.createComportement(input, req.user);
+      const behavior = await comportementService.createBehavior(input, req.user);
       const response = upsertBehaviorResponse.parse(behavior);
 
       return await reply.send(response);
@@ -106,7 +106,7 @@ const behaviorsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const behavior = await comportementService.updateComportement(req.params.id, input, req.user);
+      const behavior = await comportementService.updateBehavior(req.params.id, input, req.user);
       const response = upsertBehaviorResponse.parse(behavior);
 
       return await reply.send(response);
@@ -124,7 +124,7 @@ const behaviorsController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await comportementService.deleteComportement(req.params.id, req.user);
+      const { id: deletedId } = await comportementService.deleteBehavior(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
