@@ -1,5 +1,6 @@
 import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
+import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
@@ -12,7 +13,6 @@ import { buildSettingsService, type SettingsService } from "../application/servi
 import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildWeatherService, type WeatherService } from "../application/services/weather/weather-service.js";
-import { buildAgeRepository } from "../infrastructure/repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
 import { buildComportementRepository } from "../repositories/comportement/comportement-repository.js";
