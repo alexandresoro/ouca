@@ -17,7 +17,7 @@ const townRepository = mockVi<CommuneRepository>();
 const localityRepository = mockVi<LieuditRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const departementService = buildDepartementService({
+const departmentService = buildDepartementService({
   departmentRepository,
   townRepository,
   localityRepository,
@@ -40,7 +40,7 @@ describe("Find department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(departmentData);
 
-    await departementService.findDepartement(12, loggedUser);
+    await departmentService.findDepartement(12, loggedUser);
 
     expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(12);
@@ -50,14 +50,14 @@ describe("Find department", () => {
     departmentRepository.findDepartementById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(departementService.findDepartement(10, loggedUser)).resolves.toBe(null);
+    await expect(departmentService.findDepartement(10, loggedUser)).resolves.toBe(null);
 
     expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(departementService.findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departmentRepository.findDepartementById).not.toHaveBeenCalled();
   });
 });
@@ -66,14 +66,14 @@ describe("Cities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getCommunesCountByDepartement("12", loggedUser);
+    await departmentService.getCommunesCountByDepartement("12", loggedUser);
 
     expect(townRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
     expect(townRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getCommunesCountByDepartement("12", null)).rejects.toEqual(
+    await expect(departmentService.getCommunesCountByDepartement("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });
@@ -83,14 +83,14 @@ describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getLieuxDitsCountByDepartement("12", loggedUser);
+    await departmentService.getLieuxDitsCountByDepartement("12", loggedUser);
 
     expect(localityRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
     expect(localityRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getLieuxDitsCountByDepartement("12", null)).rejects.toEqual(
+    await expect(departmentService.getLieuxDitsCountByDepartement("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });
@@ -100,16 +100,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getDonneesCountByDepartement("12", loggedUser);
+    await departmentService.getDonneesCountByDepartement("12", loggedUser);
 
     expect(entryRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getDonneesCountByDepartement("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    await expect(departmentService.getDonneesCountByDepartement("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -122,7 +120,7 @@ describe("Find department by city ID", () => {
 
     departmentRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
 
-    const department = await departementService.findDepartementOfCommuneId("43", loggedUser);
+    const department = await departmentService.findDepartementOfCommuneId("43", loggedUser);
 
     expect(departmentRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
@@ -130,7 +128,7 @@ describe("Find department by city ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.findDepartementOfCommuneId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.findDepartementOfCommuneId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -139,7 +137,7 @@ test("Find all departments", async () => {
 
   departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
-  await departementService.findAllDepartements();
+  await departmentService.findAllDepartements();
 
   expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
   expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({
@@ -154,7 +152,7 @@ describe("Entities paginated find by search criteria", () => {
 
     departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
-    await departementService.findPaginatedDepartements(loggedUser, {});
+    await departmentService.findPaginatedDepartements(loggedUser, {});
 
     expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({});
@@ -174,7 +172,7 @@ describe("Entities paginated find by search criteria", () => {
 
     departmentRepository.findDepartements.mockResolvedValueOnce([departementsData[0]]);
 
-    await departementService.findPaginatedDepartements(loggedUser, searchParams);
+    await departmentService.findPaginatedDepartements(loggedUser, searchParams);
 
     expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({
@@ -187,7 +185,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.findPaginatedDepartements(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.findPaginatedDepartements(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -195,7 +193,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getDepartementsCount(loggedUser);
+    await departmentService.getDepartementsCount(loggedUser);
 
     expect(departmentRepository.getCount).toHaveBeenCalledTimes(1);
     expect(departmentRepository.getCount).toHaveBeenLastCalledWith(undefined);
@@ -204,14 +202,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getDepartementsCount(loggedUser, "test");
+    await departmentService.getDepartementsCount(loggedUser, "test");
 
     expect(departmentRepository.getCount).toHaveBeenCalledTimes(1);
     expect(departmentRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getDepartementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.getDepartementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -221,7 +219,7 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await departementService.updateDepartement(12, departmentData, loggedUser);
+    await departmentService.updateDepartement(12, departmentData, loggedUser);
 
     expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
     expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
@@ -238,7 +236,7 @@ describe("Update of a department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await departementService.updateDepartement(12, departmentData, loggedUser);
+    await departmentService.updateDepartement(12, departmentData, loggedUser);
 
     expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
     expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
@@ -258,7 +256,7 @@ describe("Update of a department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await expect(departementService.updateDepartement(12, departmentData, user)).rejects.toThrowError(
+    await expect(departmentService.updateDepartement(12, departmentData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -272,7 +270,7 @@ describe("Update of a department", () => {
 
     departmentRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => departementService.updateDepartement(12, departmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => departmentService.updateDepartement(12, departmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -283,7 +281,7 @@ describe("Update of a department", () => {
   test("should throw an error when the requester is not logged", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
-    await expect(departementService.updateDepartement(12, departmentData, null)).rejects.toEqual(
+    await expect(departmentService.updateDepartement(12, departmentData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
     expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
@@ -296,7 +294,7 @@ describe("Creation of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await departementService.createDepartement(departmentData, loggedUser);
+    await departmentService.createDepartement(departmentData, loggedUser);
 
     expect(departmentRepository.createDepartement).toHaveBeenCalledTimes(1);
     expect(departmentRepository.createDepartement).toHaveBeenLastCalledWith({
@@ -312,7 +310,7 @@ describe("Creation of a department", () => {
 
     departmentRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => departementService.createDepartement(departmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => departmentService.createDepartement(departmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -326,7 +324,7 @@ describe("Creation of a department", () => {
   test("should throw an error when the requester is not logged", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
-    await expect(departementService.createDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.createDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departmentRepository.createDepartement).not.toHaveBeenCalled();
   });
 });
@@ -344,7 +342,7 @@ describe("Deletion of a department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(department);
 
-    await departementService.deleteDepartement(11, loggedUser);
+    await departmentService.deleteDepartement(11, loggedUser);
 
     expect(departmentRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
     expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
@@ -357,7 +355,7 @@ describe("Deletion of a department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Department>());
 
-    await departementService.deleteDepartement(11, loggedUser);
+    await departmentService.deleteDepartement(11, loggedUser);
 
     expect(departmentRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
     expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
@@ -370,13 +368,13 @@ describe("Deletion of a department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Department>());
 
-    await expect(departementService.deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departmentService.deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 });
@@ -392,7 +390,7 @@ test("Create multiple departments", async () => {
 
   departmentRepository.createDepartements.mockResolvedValueOnce([]);
 
-  await departementService.createDepartements(departmentsData, loggedUser);
+  await departmentService.createDepartements(departmentsData, loggedUser);
 
   expect(departmentRepository.createDepartements).toHaveBeenCalledTimes(1);
   expect(departmentRepository.createDepartements).toHaveBeenLastCalledWith(

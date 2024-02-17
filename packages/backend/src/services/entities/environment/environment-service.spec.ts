@@ -13,7 +13,7 @@ import { buildMilieuService } from "./environment-service.js";
 const environmentRepository = mockVi<MilieuRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const milieuService = buildMilieuService({
+const environmentService = buildMilieuService({
   environmentRepository,
   entryRepository,
 });
@@ -34,7 +34,7 @@ describe("Find environment", () => {
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(environmentData);
 
-    await milieuService.findMilieu(12, loggedUser);
+    await environmentService.findMilieu(12, loggedUser);
 
     expect(environmentRepository.findMilieuById).toHaveBeenCalledTimes(1);
     expect(environmentRepository.findMilieuById).toHaveBeenLastCalledWith(12);
@@ -44,14 +44,14 @@ describe("Find environment", () => {
     environmentRepository.findMilieuById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(milieuService.findMilieu(10, loggedUser)).resolves.toBe(null);
+    await expect(environmentService.findMilieu(10, loggedUser)).resolves.toBe(null);
 
     expect(environmentRepository.findMilieuById).toHaveBeenCalledTimes(1);
     expect(environmentRepository.findMilieuById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(milieuService.findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(environmentRepository.findMilieuById).not.toHaveBeenCalled();
   });
 });
@@ -60,14 +60,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await milieuService.getDonneesCountByMilieu("12", loggedUser);
+    await environmentService.getDonneesCountByMilieu("12", loggedUser);
 
     expect(entryRepository.getCountByMilieuId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByMilieuId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.getDonneesCountByMilieu("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.getDonneesCountByMilieu("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -78,7 +78,7 @@ describe("Find environments by inventary ID", () => {
 
     environmentRepository.findMilieuxOfDonneeId.mockResolvedValueOnce(environmentsData);
 
-    const environments = await milieuService.findMilieuxOfDonneeId("43", loggedUser);
+    const environments = await environmentService.findMilieuxOfDonneeId("43", loggedUser);
 
     expect(environmentRepository.findMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
     expect(environmentRepository.findMilieuxOfDonneeId).toHaveBeenLastCalledWith(43);
@@ -86,7 +86,7 @@ describe("Find environments by inventary ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.findMilieuxOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.findMilieuxOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -95,7 +95,7 @@ test("Find all environments", async () => {
 
   environmentRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
-  await milieuService.findAllMilieux();
+  await environmentService.findAllMilieux();
 
   expect(environmentRepository.findMilieux).toHaveBeenCalledTimes(1);
   expect(environmentRepository.findMilieux).toHaveBeenLastCalledWith({
@@ -110,7 +110,7 @@ describe("Entities paginated find by search criteria", () => {
 
     environmentRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
-    await milieuService.findPaginatedMilieux(loggedUser, {});
+    await environmentService.findPaginatedMilieux(loggedUser, {});
 
     expect(environmentRepository.findMilieux).toHaveBeenCalledTimes(1);
     expect(environmentRepository.findMilieux).toHaveBeenLastCalledWith({});
@@ -130,7 +130,7 @@ describe("Entities paginated find by search criteria", () => {
 
     environmentRepository.findMilieux.mockResolvedValueOnce([environmentsData[0]]);
 
-    await milieuService.findPaginatedMilieux(loggedUser, searchParams);
+    await environmentService.findPaginatedMilieux(loggedUser, searchParams);
 
     expect(environmentRepository.findMilieux).toHaveBeenCalledTimes(1);
     expect(environmentRepository.findMilieux).toHaveBeenLastCalledWith({
@@ -143,7 +143,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.findPaginatedMilieux(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.findPaginatedMilieux(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -151,7 +151,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await milieuService.getMilieuxCount(loggedUser);
+    await environmentService.getMilieuxCount(loggedUser);
 
     expect(environmentRepository.getCount).toHaveBeenCalledTimes(1);
     expect(environmentRepository.getCount).toHaveBeenLastCalledWith(undefined);
@@ -160,14 +160,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await milieuService.getMilieuxCount(loggedUser, "test");
+    await environmentService.getMilieuxCount(loggedUser, "test");
 
     expect(environmentRepository.getCount).toHaveBeenCalledTimes(1);
     expect(environmentRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.getMilieuxCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.getMilieuxCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -177,7 +177,7 @@ describe("Update of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await milieuService.updateMilieu(12, environmentData, loggedUser);
+    await environmentService.updateMilieu(12, environmentData, loggedUser);
 
     expect(environmentRepository.updateMilieu).toHaveBeenCalledTimes(1);
     expect(environmentRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
@@ -194,7 +194,7 @@ describe("Update of an environment", () => {
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
-    await milieuService.updateMilieu(12, environmentData, loggedUser);
+    await environmentService.updateMilieu(12, environmentData, loggedUser);
 
     expect(environmentRepository.updateMilieu).toHaveBeenCalledTimes(1);
     expect(environmentRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
@@ -214,7 +214,9 @@ describe("Update of an environment", () => {
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
-    await expect(milieuService.updateMilieu(12, environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(environmentService.updateMilieu(12, environmentData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
     expect(environmentRepository.updateMilieu).not.toHaveBeenCalled();
   });
@@ -226,7 +228,7 @@ describe("Update of an environment", () => {
 
     environmentRepository.updateMilieu.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => milieuService.updateMilieu(12, environmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => environmentService.updateMilieu(12, environmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -237,7 +239,7 @@ describe("Update of an environment", () => {
   test("should throw an error when the requester is not logged", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    await expect(milieuService.updateMilieu(12, environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.updateMilieu(12, environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(environmentRepository.updateMilieu).not.toHaveBeenCalled();
   });
 });
@@ -248,7 +250,7 @@ describe("Creation of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await milieuService.createMilieu(environmentData, loggedUser);
+    await environmentService.createMilieu(environmentData, loggedUser);
 
     expect(environmentRepository.createMilieu).toHaveBeenCalledTimes(1);
     expect(environmentRepository.createMilieu).toHaveBeenLastCalledWith({
@@ -264,7 +266,7 @@ describe("Creation of an environment", () => {
 
     environmentRepository.createMilieu.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => milieuService.createMilieu(environmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => environmentService.createMilieu(environmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -278,7 +280,7 @@ describe("Creation of an environment", () => {
   test("should throw an error when the requester is not logged", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    await expect(milieuService.createMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.createMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(environmentRepository.createMilieu).not.toHaveBeenCalled();
   });
 });
@@ -296,7 +298,7 @@ describe("Deletion of an environment", () => {
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(environment);
 
-    await milieuService.deleteMilieu(11, loggedUser);
+    await environmentService.deleteMilieu(11, loggedUser);
 
     expect(environmentRepository.deleteMilieuById).toHaveBeenCalledTimes(1);
     expect(environmentRepository.deleteMilieuById).toHaveBeenLastCalledWith(11);
@@ -309,7 +311,7 @@ describe("Deletion of an environment", () => {
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(mock<Environment>());
 
-    await milieuService.deleteMilieu(11, loggedUser);
+    await environmentService.deleteMilieu(11, loggedUser);
 
     expect(environmentRepository.deleteMilieuById).toHaveBeenCalledTimes(1);
     expect(environmentRepository.deleteMilieuById).toHaveBeenLastCalledWith(11);
@@ -322,13 +324,13 @@ describe("Deletion of an environment", () => {
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(mock<Environment>());
 
-    await expect(milieuService.deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(environmentRepository.deleteMilieuById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(environmentService.deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(environmentRepository.deleteMilieuById).not.toHaveBeenCalled();
   });
 });
@@ -344,7 +346,7 @@ test("Create multiple environments", async () => {
 
   environmentRepository.createMilieux.mockResolvedValueOnce([]);
 
-  await milieuService.createMilieux(environmentsData, loggedUser);
+  await environmentService.createMilieux(environmentsData, loggedUser);
 
   expect(environmentRepository.createMilieux).toHaveBeenCalledTimes(1);
   expect(environmentRepository.createMilieux).toHaveBeenLastCalledWith(

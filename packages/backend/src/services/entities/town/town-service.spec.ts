@@ -16,7 +16,7 @@ const townRepository = mockVi<CommuneRepository>();
 const localityRepository = mockVi<LieuditRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const communeService = buildCommuneService({
+const townService = buildCommuneService({
   townRepository,
   localityRepository,
   entryRepository,
@@ -47,7 +47,7 @@ describe("Find city", () => {
 
     townRepository.findCommuneById.mockResolvedValueOnce(cityData);
 
-    await communeService.findCommune(12, loggedUser);
+    await townService.findCommune(12, loggedUser);
 
     expect(townRepository.findCommuneById).toHaveBeenCalledTimes(1);
     expect(townRepository.findCommuneById).toHaveBeenLastCalledWith(12);
@@ -57,14 +57,14 @@ describe("Find city", () => {
     townRepository.findCommuneById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(communeService.findCommune(10, loggedUser)).resolves.toBe(null);
+    await expect(townService.findCommune(10, loggedUser)).resolves.toBe(null);
 
     expect(townRepository.findCommuneById).toHaveBeenCalledTimes(1);
     expect(townRepository.findCommuneById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(communeService.findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.findCommuneById).not.toHaveBeenCalled();
   });
 });
@@ -73,14 +73,14 @@ describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getLieuxDitsCountByCommune("12", loggedUser);
+    await townService.getLieuxDitsCountByCommune("12", loggedUser);
 
     expect(localityRepository.getCountByCommuneId).toHaveBeenCalledTimes(1);
     expect(localityRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.getLieuxDitsCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.getLieuxDitsCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -88,14 +88,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getDonneesCountByCommune("12", loggedUser);
+    await townService.getDonneesCountByCommune("12", loggedUser);
 
     expect(entryRepository.getCountByCommuneId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.getDonneesCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.getDonneesCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -108,7 +108,7 @@ describe("Find city by locality ID", () => {
 
     townRepository.findCommuneByLieuDitId.mockResolvedValueOnce(cityData);
 
-    const city = await communeService.findCommuneOfLieuDitId("43", loggedUser);
+    const city = await townService.findCommuneOfLieuDitId("43", loggedUser);
 
     expect(townRepository.findCommuneByLieuDitId).toHaveBeenCalledTimes(1);
     expect(townRepository.findCommuneByLieuDitId).toHaveBeenLastCalledWith(43);
@@ -116,7 +116,7 @@ describe("Find city by locality ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.findCommuneOfLieuDitId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.findCommuneOfLieuDitId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -125,7 +125,7 @@ test("Find all cities", async () => {
 
   townRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
-  await communeService.findAllCommunes();
+  await townService.findAllCommunes();
 
   expect(townRepository.findCommunes).toHaveBeenCalledTimes(1);
   expect(townRepository.findCommunes).toHaveBeenLastCalledWith({
@@ -140,7 +140,7 @@ describe("Entities paginated find by search criteria", () => {
 
     townRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
-    await communeService.findPaginatedCommunes(loggedUser, {});
+    await townService.findPaginatedCommunes(loggedUser, {});
 
     expect(townRepository.findCommunes).toHaveBeenCalledTimes(1);
     expect(townRepository.findCommunes).toHaveBeenLastCalledWith({});
@@ -160,7 +160,7 @@ describe("Entities paginated find by search criteria", () => {
 
     townRepository.findCommunes.mockResolvedValueOnce([citiesData[0]]);
 
-    await communeService.findPaginatedCommunes(loggedUser, searchParams);
+    await townService.findPaginatedCommunes(loggedUser, searchParams);
 
     expect(townRepository.findCommunes).toHaveBeenCalledTimes(1);
     expect(townRepository.findCommunes).toHaveBeenLastCalledWith({
@@ -173,7 +173,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.findPaginatedCommunes(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.findPaginatedCommunes(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -181,7 +181,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getCommunesCount(loggedUser, {});
+    await townService.getCommunesCount(loggedUser, {});
 
     expect(townRepository.getCount).toHaveBeenCalledTimes(1);
     expect(townRepository.getCount).toHaveBeenLastCalledWith(undefined, undefined);
@@ -190,14 +190,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getCommunesCount(loggedUser, { q: "test", departmentId: "12" });
+    await townService.getCommunesCount(loggedUser, { q: "test", departmentId: "12" });
 
     expect(townRepository.getCount).toHaveBeenCalledTimes(1);
     expect(townRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.getCommunesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.getCommunesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -210,7 +210,7 @@ describe("Update of a city", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await communeService.updateCommune(12, cityData, loggedUser);
+    await townService.updateCommune(12, cityData, loggedUser);
 
     expect(townRepository.updateCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
@@ -231,7 +231,7 @@ describe("Update of a city", () => {
 
     townRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
-    await communeService.updateCommune(12, cityData, loggedUser);
+    await townService.updateCommune(12, cityData, loggedUser);
 
     expect(townRepository.updateCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
@@ -252,7 +252,7 @@ describe("Update of a city", () => {
 
     townRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
-    await expect(communeService.updateCommune(12, cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(townService.updateCommune(12, cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(townRepository.updateCommune).not.toHaveBeenCalled();
   });
@@ -267,7 +267,7 @@ describe("Update of a city", () => {
 
     townRepository.updateCommune.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => communeService.updateCommune(12, cityData, loggedUser)).rejects.toThrowError(
+    await expect(() => townService.updateCommune(12, cityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -279,7 +279,7 @@ describe("Update of a city", () => {
   test("should throw an error when the requester is not logged", async () => {
     const cityData = mock<UpsertTownInput>();
 
-    await expect(communeService.updateCommune(12, cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.updateCommune(12, cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.updateCommune).not.toHaveBeenCalled();
   });
 });
@@ -293,7 +293,7 @@ describe("Creation of a city", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await communeService.createCommune(cityData, loggedUser);
+    await townService.createCommune(cityData, loggedUser);
 
     expect(townRepository.createCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
@@ -313,7 +313,7 @@ describe("Creation of a city", () => {
 
     townRepository.createCommune.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => communeService.createCommune(cityData, loggedUser)).rejects.toThrowError(
+    await expect(() => townService.createCommune(cityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -328,7 +328,7 @@ describe("Creation of a city", () => {
   test("should throw an error when the requester is not logged", async () => {
     const cityData = mock<UpsertTownInput>();
 
-    await expect(communeService.createCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.createCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.createCommune).not.toHaveBeenCalled();
   });
 });
@@ -346,7 +346,7 @@ describe("Deletion of a city", () => {
 
     townRepository.findCommuneById.mockResolvedValueOnce(city);
 
-    await communeService.deleteCommune(11, loggedUser);
+    await townService.deleteCommune(11, loggedUser);
 
     expect(townRepository.deleteCommuneById).toHaveBeenCalledTimes(1);
     expect(townRepository.deleteCommuneById).toHaveBeenLastCalledWith(11);
@@ -359,7 +359,7 @@ describe("Deletion of a city", () => {
 
     townRepository.findCommuneById.mockResolvedValueOnce(mock<Commune>());
 
-    await communeService.deleteCommune(11, loggedUser);
+    await townService.deleteCommune(11, loggedUser);
 
     expect(townRepository.deleteCommuneById).toHaveBeenCalledTimes(1);
     expect(townRepository.deleteCommuneById).toHaveBeenLastCalledWith(11);
@@ -372,13 +372,13 @@ describe("Deletion of a city", () => {
 
     townRepository.findCommuneById.mockResolvedValueOnce(mock<Commune>());
 
-    await expect(communeService.deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(townRepository.deleteCommuneById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(townService.deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.deleteCommuneById).not.toHaveBeenCalled();
   });
 });
@@ -394,7 +394,7 @@ test("Create multiple cities", async () => {
 
   townRepository.createCommunes.mockResolvedValueOnce([]);
 
-  await communeService.createCommunes(communesData, loggedUser);
+  await townService.createCommunes(communesData, loggedUser);
 
   expect(townRepository.createCommunes).toHaveBeenCalledTimes(1);
   expect(townRepository.createCommunes).toHaveBeenLastCalledWith(

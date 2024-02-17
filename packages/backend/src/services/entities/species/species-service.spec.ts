@@ -17,7 +17,7 @@ const classService = mockVi<ClasseService>();
 const speciesRepository = mockVi<EspeceRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
-const especeService = buildEspeceService({
+const speciesService = buildEspeceService({
   classService,
   speciesRepository,
   entryRepository,
@@ -48,7 +48,7 @@ describe("Find species", () => {
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(speciesData);
 
-    await especeService.findEspece(12, loggedUser);
+    await speciesService.findEspece(12, loggedUser);
 
     expect(speciesRepository.findEspeceById).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeceById).toHaveBeenLastCalledWith(12);
@@ -58,14 +58,14 @@ describe("Find species", () => {
     speciesRepository.findEspeceById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(especeService.findEspece(10, loggedUser)).resolves.toBe(null);
+    await expect(speciesService.findEspece(10, loggedUser)).resolves.toBe(null);
 
     expect(speciesRepository.findEspeceById).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeceById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(especeService.findEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.findEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.findEspeceById).not.toHaveBeenCalled();
   });
 });
@@ -74,14 +74,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getDonneesCountByEspece("12", loggedUser);
+    await speciesService.getDonneesCountByEspece("12", loggedUser);
 
     expect(entryRepository.getCountByEspeceId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByEspeceId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.getDonneesCountByEspece("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.getDonneesCountByEspece("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -94,7 +94,7 @@ describe("Find species by data ID", () => {
 
     speciesRepository.findEspeceByDonneeId.mockResolvedValueOnce(speciesData);
 
-    const species = await especeService.findEspeceOfDonneeId("43", loggedUser);
+    const species = await speciesService.findEspeceOfDonneeId("43", loggedUser);
 
     expect(speciesRepository.findEspeceByDonneeId).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeceByDonneeId).toHaveBeenLastCalledWith(43);
@@ -102,7 +102,7 @@ describe("Find species by data ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.findEspeceOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.findEspeceOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -111,7 +111,7 @@ test("Find all species", async () => {
 
   speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
-  await especeService.findAllEspeces();
+  await speciesService.findAllEspeces();
 
   expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
   expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({
@@ -126,7 +126,7 @@ describe("Entities paginated find by search criteria", () => {
 
     speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
-    await especeService.findPaginatedEspeces(loggedUser, {});
+    await speciesService.findPaginatedEspeces(loggedUser, {});
 
     expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({});
@@ -146,7 +146,7 @@ describe("Entities paginated find by search criteria", () => {
 
     speciesRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
-    await especeService.findPaginatedEspeces(loggedUser, searchParams);
+    await speciesService.findPaginatedEspeces(loggedUser, searchParams);
 
     expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({
@@ -176,7 +176,7 @@ describe("Entities paginated find by search criteria", () => {
 
     speciesRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
-    await especeService.findPaginatedEspeces(loggedUser, searchParams);
+    await speciesService.findPaginatedEspeces(loggedUser, searchParams);
 
     expect(speciesRepository.findEspeces).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({
@@ -195,7 +195,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.findPaginatedEspeces(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.findPaginatedEspeces(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -203,7 +203,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getEspecesCount(loggedUser, {});
+    await speciesService.getEspecesCount(loggedUser, {});
 
     expect(speciesRepository.getCount).toHaveBeenCalledTimes(1);
     expect(speciesRepository.getCount).toHaveBeenLastCalledWith({});
@@ -212,7 +212,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getEspecesCount(loggedUser, { q: "test" });
+    await speciesService.getEspecesCount(loggedUser, { q: "test" });
 
     expect(speciesRepository.getCount).toHaveBeenCalledTimes(1);
     expect(speciesRepository.getCount).toHaveBeenLastCalledWith({
@@ -223,7 +223,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some donnee criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getEspecesCount(loggedUser, {
+    await speciesService.getEspecesCount(loggedUser, {
       ageIds: ["12", "23"],
       number: undefined,
       townIds: ["3", "6"],
@@ -244,7 +244,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with both espece and donnee criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getEspecesCount(loggedUser, {
+    await speciesService.getEspecesCount(loggedUser, {
       q: "test",
       ageIds: ["12", "23"],
       number: undefined,
@@ -265,7 +265,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.getEspecesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.getEspecesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -283,7 +283,7 @@ describe("Update of a species", () => {
     });
     speciesRepository.updateEspece.mockResolvedValueOnce(species);
 
-    await especeService.updateEspece(12, speciesData, loggedUser);
+    await speciesService.updateEspece(12, speciesData, loggedUser);
 
     expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
@@ -309,7 +309,7 @@ describe("Update of a species", () => {
     });
     speciesRepository.updateEspece.mockResolvedValueOnce(species);
 
-    await especeService.updateEspece(12, speciesData, loggedUser);
+    await speciesService.updateEspece(12, speciesData, loggedUser);
 
     expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
@@ -330,7 +330,7 @@ describe("Update of a species", () => {
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
-    await expect(especeService.updateEspece(12, speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(speciesService.updateEspece(12, speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(speciesRepository.updateEspece).not.toHaveBeenCalled();
   });
@@ -345,7 +345,7 @@ describe("Update of a species", () => {
 
     speciesRepository.updateEspece.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => especeService.updateEspece(12, speciesData, loggedUser)).rejects.toThrowError(
+    await expect(() => speciesService.updateEspece(12, speciesData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -357,7 +357,7 @@ describe("Update of a species", () => {
   test("should throw an error when the requester is not logged", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
-    await expect(especeService.updateEspece(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.updateEspece(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.updateEspece).not.toHaveBeenCalled();
   });
 });
@@ -376,7 +376,7 @@ describe("Creation of a species", () => {
     });
     speciesRepository.createEspece.mockResolvedValueOnce(species);
 
-    await especeService.createEspece(speciesData, loggedUser);
+    await speciesService.createEspece(speciesData, loggedUser);
 
     expect(speciesRepository.createEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
@@ -396,7 +396,7 @@ describe("Creation of a species", () => {
 
     speciesRepository.createEspece.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => especeService.createEspece(speciesData, loggedUser)).rejects.toThrowError(
+    await expect(() => speciesService.createEspece(speciesData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -411,7 +411,7 @@ describe("Creation of a species", () => {
   test("should throw an error when the requester is not logged", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
-    await expect(especeService.createEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.createEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.createEspece).not.toHaveBeenCalled();
   });
 });
@@ -429,7 +429,7 @@ describe("Deletion of a species", () => {
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(species);
 
-    await especeService.deleteEspece(11, loggedUser);
+    await speciesService.deleteEspece(11, loggedUser);
 
     expect(speciesRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
     expect(speciesRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
@@ -442,7 +442,7 @@ describe("Deletion of a species", () => {
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(mock<Species>());
 
-    await especeService.deleteEspece(11, loggedUser);
+    await speciesService.deleteEspece(11, loggedUser);
 
     expect(speciesRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
     expect(speciesRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
@@ -455,13 +455,13 @@ describe("Deletion of a species", () => {
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(mock<Species>());
 
-    await expect(especeService.deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(speciesRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesService.deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 });
@@ -477,7 +477,7 @@ test("Create multiple species", async () => {
 
   speciesRepository.createEspeces.mockResolvedValueOnce([]);
 
-  await especeService.createEspeces(speciesData, loggedUser);
+  await speciesService.createEspeces(speciesData, loggedUser);
 
   expect(speciesRepository.createEspeces).toHaveBeenCalledTimes(1);
   expect(speciesRepository.createEspeces).toHaveBeenLastCalledWith(
