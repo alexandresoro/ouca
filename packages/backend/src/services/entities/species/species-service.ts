@@ -4,17 +4,17 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type Species as SpeciesCommon } from "@ou-ca/common/api/entities/species";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import {
   type EspeceCreateInput,
   type EspeceWithClasseLibelle,
-} from "../../repositories/espece/espece-repository-types.js";
-import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { type ClasseService } from "./classe-service.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
-import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
+} from "../../../repositories/espece/espece-repository-types.js";
+import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
+import { reshapeSearchCriteria } from "../../../repositories/search-criteria.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { type ClasseService } from "../species-class/species-class-service.js";
+import { reshapeInputEspeceUpsertData } from "./species-service-reshape.js";
 
 type EspeceServiceDependencies = {
   classService: ClasseService;

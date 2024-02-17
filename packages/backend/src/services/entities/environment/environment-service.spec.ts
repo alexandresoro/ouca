@@ -4,11 +4,11 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
-import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildMilieuService } from "./milieu-service.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
+import { type MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { buildMilieuService } from "./environment-service.js";
 
 const environmentRepository = mockVi<MilieuRepository>();
 const entryRepository = mockVi<DonneeRepository>();

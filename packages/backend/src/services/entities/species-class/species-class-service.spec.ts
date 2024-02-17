@@ -4,12 +4,12 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
-import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildClasseService } from "./classe-service.js";
+import { type ClasseCreateInput } from "../../../repositories/classe/classe-repository-types.js";
+import { type ClasseRepository } from "../../../repositories/classe/classe-repository.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { buildClasseService } from "./species-class-service.js";
 
 const classRepository = mockVi<ClasseRepository>();
 const speciesRepository = mockVi<EspeceRepository>();

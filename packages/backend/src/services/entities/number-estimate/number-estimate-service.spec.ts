@@ -5,12 +5,12 @@ import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type EstimationNombreCreateInput } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
-import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
-import { buildEstimationNombreService } from "./estimation-nombre-service.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
+import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { reshapeInputEstimationNombreUpsertData } from "./number-estimate-service-reshape.js";
+import { buildEstimationNombreService } from "./number-estimate-service.js";
 
 const numberEstimateRepository = mockVi<EstimationNombreRepository>();
 const entryRepository = mockVi<DonneeRepository>();
@@ -29,7 +29,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./estimation-nombre-service-reshape.js", () => {
+vi.mock("./number-estimate-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputEstimationNombreUpsertData: vi.fn(),

@@ -30,20 +30,23 @@ import { buildLieuditRepository } from "../repositories/lieudit/lieudit-reposito
 import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
-import { buildClasseService, type ClasseService } from "./entities/classe-service.js";
-import { buildCommuneService, type CommuneService } from "./entities/commune-service.js";
-import { buildComportementService, type ComportementService } from "./entities/comportement-service.js";
-import { buildDepartementService, type DepartementService } from "./entities/departement-service.js";
-import { buildDonneeService, type DonneeService } from "./entities/donnee-service.js";
-import { buildEspeceService, type EspeceService } from "./entities/espece-service.js";
+import { buildComportementService, type ComportementService } from "./entities/behavior/behavior-service.js";
+import { buildDepartementService, type DepartementService } from "./entities/department/department-service.js";
 import {
   buildEstimationDistanceService,
   type EstimationDistanceService,
-} from "./entities/estimation-distance-service.js";
-import { buildEstimationNombreService, type EstimationNombreService } from "./entities/estimation-nombre-service.js";
+} from "./entities/distance-estimate/distance-estimate-service.js";
+import { buildDonneeService, type DonneeService } from "./entities/donnee-service.js";
+import { buildMilieuService, type MilieuService } from "./entities/environment/environment-service.js";
 import { buildInventaireService, type InventaireService } from "./entities/inventaire-service.js";
-import { buildLieuditService, type LieuditService } from "./entities/lieu-dit-service.js";
-import { buildMilieuService, type MilieuService } from "./entities/milieu-service.js";
+import { buildLieuditService, type LieuditService } from "./entities/locality/locality-service.js";
+import {
+  buildEstimationNombreService,
+  type EstimationNombreService,
+} from "./entities/number-estimate/number-estimate-service.js";
+import { buildClasseService, type ClasseService } from "./entities/species-class/species-class-service.js";
+import { buildEspeceService, type EspeceService } from "./entities/species/species-service.js";
+import { buildCommuneService, type CommuneService } from "./entities/town/town-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";

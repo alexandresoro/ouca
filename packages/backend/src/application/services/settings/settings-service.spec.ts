@@ -7,8 +7,8 @@ import { sexServiceFactory } from "@fixtures/services/sex/sex-service.fixtures.j
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { ok } from "neverthrow";
-import { type DepartementService } from "../../../services/entities/departement-service.js";
-import { type EstimationNombreService } from "../../../services/entities/estimation-nombre-service.js";
+import { type DepartementService } from "../../../services/entities/department/department-service.js";
+import { type EstimationNombreService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { mockVi } from "../../../utils/mock.js";
 import { type AgeService } from "../age/age-service.js";
 import { type ObserverService } from "../observer/observer-service.js";

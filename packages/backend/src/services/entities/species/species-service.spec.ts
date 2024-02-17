@@ -5,13 +5,13 @@ import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
-import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { type ClasseService } from "./classe-service.js";
-import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
-import { buildEspeceService } from "./espece-service.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type EspeceCreateInput } from "../../../repositories/espece/espece-repository-types.js";
+import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { type ClasseService } from "../species-class/species-class-service.js";
+import { reshapeInputEspeceUpsertData } from "./species-service-reshape.js";
+import { buildEspeceService } from "./species-service.js";
 
 const classService = mockVi<ClasseService>();
 const speciesRepository = mockVi<EspeceRepository>();
@@ -32,7 +32,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./espece-service-reshape.js", () => {
+vi.mock("./species-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputEspeceUpsertData: vi.fn(),

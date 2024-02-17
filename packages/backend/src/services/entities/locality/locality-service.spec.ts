@@ -6,13 +6,13 @@ import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/co
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock, mockDeep } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
-import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
-import { buildLieuditService } from "./lieu-dit-service.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
+import { type LieuditCreateInput } from "../../../repositories/lieudit/lieudit-repository-types.js";
+import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
+import { buildLieuditService } from "./locality-service.js";
 
 const localityRepository = mockVi<LieuditRepository>();
 const inventoryRepository = mockVi<InventaireRepository>();
@@ -33,7 +33,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./lieu-dit-service-reshape.js", () => {
+vi.mock("./locality-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputLieuditUpsertData: vi.fn(),

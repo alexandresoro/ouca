@@ -12,17 +12,17 @@ import { type ObserverService } from "../application/services/observer/observer-
 import { type SexService } from "../application/services/sex/sex-service.js";
 import { type WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
-import { type ClasseService } from "./entities/classe-service.js";
-import { type CommuneService } from "./entities/commune-service.js";
-import { type ComportementService } from "./entities/comportement-service.js";
-import { type DepartementService } from "./entities/departement-service.js";
+import { type ComportementService } from "./entities/behavior/behavior-service.js";
+import { type DepartementService } from "./entities/department/department-service.js";
+import { type EstimationDistanceService } from "./entities/distance-estimate/distance-estimate-service.js";
 import { type DonneeService } from "./entities/donnee-service.js";
-import { type EspeceService } from "./entities/espece-service.js";
-import { type EstimationDistanceService } from "./entities/estimation-distance-service.js";
-import { type EstimationNombreService } from "./entities/estimation-nombre-service.js";
+import { type MilieuService } from "./entities/environment/environment-service.js";
 import { type InventaireService } from "./entities/inventaire-service.js";
-import { type LieuditService } from "./entities/lieu-dit-service.js";
-import { type MilieuService } from "./entities/milieu-service.js";
+import { type LieuditService } from "./entities/locality/locality-service.js";
+import { type EstimationNombreService } from "./entities/number-estimate/number-estimate-service.js";
+import { type ClasseService } from "./entities/species-class/species-class-service.js";
+import { type EspeceService } from "./entities/species/species-service.js";
+import { type CommuneService } from "./entities/town/town-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 

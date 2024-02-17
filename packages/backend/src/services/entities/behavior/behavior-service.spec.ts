@@ -4,11 +4,11 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { type ComportementCreateInput } from "../../repositories/comportement/comportement-repository-types.js";
-import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildComportementService } from "./comportement-service.js";
+import { type ComportementCreateInput } from "../../../repositories/comportement/comportement-repository-types.js";
+import { type ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { buildComportementService } from "./behavior-service.js";
 
 const behaviorRepository = mockVi<ComportementRepository>();
 const entryRepository = mockVi<DonneeRepository>();

@@ -7,11 +7,11 @@ import {
 } from "@ou-ca/common/api/distance-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type EstimationDistanceCreateInput } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
-import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildEstimationDistanceService } from "./estimation-distance-service.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type EstimationDistanceCreateInput } from "../../../repositories/estimation-distance/estimation-distance-repository-types.js";
+import { type EstimationDistanceRepository } from "../../../repositories/estimation-distance/estimation-distance-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { buildEstimationDistanceService } from "./distance-estimate-service.js";
 
 const distanceEstimateRepository = mockVi<EstimationDistanceRepository>();
 const entryRepository = mockVi<DonneeRepository>();

@@ -4,13 +4,13 @@ import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
-import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
-import { buildCommuneService } from "./commune-service.js";
+import { type Commune, type CommuneCreateInput } from "../../../repositories/commune/commune-repository-types.js";
+import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
+import { mockVi } from "../../../utils/mock.js";
+import { reshapeInputCommuneUpsertData } from "./town-service-reshape.js";
+import { buildCommuneService } from "./town-service.js";
 
 const townRepository = mockVi<CommuneRepository>();
 const localityRepository = mockVi<LieuditRepository>();
@@ -31,7 +31,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./commune-service-reshape.js", () => {
+vi.mock("./town-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputCommuneUpsertData: vi.fn(),

@@ -3,12 +3,12 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type EstimationNombreCreateInput } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
-import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
-import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
+import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
+import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
+import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { reshapeInputEstimationNombreUpsertData } from "./number-estimate-service-reshape.js";
 
 type EstimationNombreServiceDependencies = {
   numberEstimateRepository: EstimationNombreRepository;
