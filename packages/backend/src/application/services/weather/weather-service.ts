@@ -1,16 +1,15 @@
 import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type WeatherFailureReason } from "@domain/weather/weather.js";
+import { type WeatherCreateInput, type WeatherFailureReason } from "@domain/weather/weather.js";
+import { type WeatherRepository } from "@interfaces/weather-repository-interface.js";
 import { type Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { err, ok, type Result } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type MeteoCreateInput } from "../../../repositories/meteo/meteo-repository-types.js";
-import { type MeteoRepository } from "../../../repositories/meteo/meteo-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type WeatherServiceDependencies = {
-  weatherRepository: MeteoRepository;
+  weatherRepository: WeatherRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -23,7 +22,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
       return err("notAllowed");
     }
 
-    const weather = await weatherRepository.findMeteoById(id);
+    const weather = await weatherRepository.findWeatherById(id);
     return ok(enrichEntityWithEditableStatus(weather, loggedUser));
   };
 
@@ -46,7 +45,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
       return err("notAllowed");
     }
 
-    const weathers = await weatherRepository.findMeteosOfInventaireId(inventaireId);
+    const weathers = await weatherRepository.findWeathersByInventoryId(inventaireId);
 
     const enrichedWeathers = weathers.map((weather) => {
       return enrichEntityWithEditableStatus(weather, loggedUser);
@@ -57,14 +56,14 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const findWeatherIdsOfInventoryId = async (inventaireId: number): Promise<string[]> => {
     const meteosIds = await weatherRepository
-      .findMeteosOfInventaireId(inventaireId)
+      .findWeathersByInventoryId(inventaireId)
       .then((weathers) => weathers.map(({ id }) => id));
 
     return [...meteosIds];
   };
 
   const findAllWeathers = async (): Promise<Weather[]> => {
-    const weathers = await weatherRepository.findMeteos({
+    const weathers = await weatherRepository.findWeathers({
       orderBy: "libelle",
     });
 
@@ -85,7 +84,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const weathers = await weatherRepository.findMeteos({
+    const weathers = await weatherRepository.findWeathers({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -119,16 +118,14 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
     }
 
     // Create a new weather
-    try {
-      const createdMeteo = await weatherRepository.createMeteo({
-        ...input,
-        owner_id: loggedUser?.id,
-      });
+    const createdWeatherResult = await weatherRepository.createWeather({
+      ...input,
+      ownerId: loggedUser?.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdMeteo, loggedUser));
-    } catch (e) {
-      return err("alreadyExists");
-    }
+    return createdWeatherResult.map((createdWeather) => {
+      return enrichEntityWithEditableStatus(createdWeather, loggedUser);
+    });
   };
 
   const updateWeather = async (
@@ -142,7 +139,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
-      const existingData = await weatherRepository.findMeteoById(id);
+      const existingData = await weatherRepository.findWeatherById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
         return err("notAllowed");
@@ -150,43 +147,41 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
     }
 
     // Update an existing weather
-    try {
-      const updatedMeteo = await weatherRepository.updateMeteo(id, input);
+    const updatedWeatherResult = await weatherRepository.updateWeather(id, input);
 
-      return ok(enrichEntityWithEditableStatus(updatedMeteo, loggedUser));
-    } catch (e) {
-      return err("alreadyExists");
-    }
+    return updatedWeatherResult.map((updatedWeather) => {
+      return enrichEntityWithEditableStatus(updatedWeather, loggedUser);
+    });
   };
 
   const deleteWeather = async (
     id: number,
     loggedUser: LoggedUser | null
-  ): Promise<Result<Weather, AccessFailureReason>> => {
+  ): Promise<Result<Weather | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
-      const existingData = await weatherRepository.findMeteoById(id);
+      const existingData = await weatherRepository.findWeatherById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedMeteo = await weatherRepository.deleteMeteoById(id);
-    return ok(enrichEntityWithEditableStatus(deletedMeteo, loggedUser));
+    const deletedWeather = await weatherRepository.deleteWeatherById(id);
+    return ok(deletedWeather ? enrichEntityWithEditableStatus(deletedWeather, loggedUser) : null);
   };
 
   const createWeathers = async (
-    weathers: Omit<MeteoCreateInput, "owner_id">[],
+    weathers: Omit<WeatherCreateInput, "ownerId">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Weather[]> => {
-    const createdWeathers = await weatherRepository.createMeteos(
+  ): Promise<Weather[]> => {
+    const createdWeathers = await weatherRepository.createWeathers(
       weathers.map((weather) => {
-        return { ...weather, owner_id: loggedUser.id };
+        return { ...weather, ownerId: loggedUser.id };
       })
     );
 

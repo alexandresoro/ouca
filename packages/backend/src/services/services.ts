@@ -4,6 +4,7 @@ import { buildObserverRepository } from "@infrastructure/repositories/observer/o
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
+import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
 import { buildObserverService, type ObserverService } from "../application/services/observer/observer-service.js";
@@ -26,7 +27,6 @@ import { buildInventaireAssocieRepository } from "../repositories/inventaire-ass
 import { buildInventaireMeteoRepository } from "../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { buildInventaireRepository } from "../repositories/inventaire/inventaire-repository.js";
 import { buildLieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
-import { buildMeteoRepository } from "../repositories/meteo/meteo-repository.js";
 import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
@@ -97,7 +97,7 @@ export const buildServices = async (): Promise<Services> => {
   const speciesRepository = buildEspeceRepository({ slonik });
   const townRepository = buildCommuneRepository({ slonik });
   const userRepository = buildUserRepository({ settingsRepository });
-  const weatherRepository = buildMeteoRepository({ slonik });
+  const weatherRepository = buildWeatherRepository();
 
   const ageService = buildAgeService({
     ageRepository,

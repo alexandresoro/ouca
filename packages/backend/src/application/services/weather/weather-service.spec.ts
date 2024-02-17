@@ -2,15 +2,14 @@ import { weatherCreateInputFactory } from "@fixtures/domain/species-class/specie
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { weatherFactory } from "@fixtures/domain/weather/weather.fixtures.js";
 import { upsertWeatherInputFactory } from "@fixtures/services/weather/weather-service.fixtures.js";
+import { type WeatherRepository } from "@interfaces/weather-repository-interface.js";
 import { type WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type MeteoRepository } from "../../../repositories/meteo/meteo-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildWeatherService } from "./weather-service.js";
 
-const weatherRepository = mockVi<MeteoRepository>();
+const weatherRepository = mockVi<WeatherRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
 const weatherService = buildWeatherService({
@@ -18,43 +17,34 @@ const weatherService = buildWeatherService({
   entryRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint"
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
-
 describe("Find weather", () => {
   test("should handle a matching weather", async () => {
     const weatherData = weatherFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(weatherData);
+    weatherRepository.findWeatherById.mockResolvedValueOnce(weatherData);
 
     await weatherService.findWeather(12, loggedUser);
 
-    expect(weatherRepository.findMeteoById).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.findMeteoById).toHaveBeenLastCalledWith(12);
+    expect(weatherRepository.findWeatherById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findWeatherById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle weather not found", async () => {
-    weatherRepository.findMeteoById.mockResolvedValueOnce(null);
+    weatherRepository.findWeatherById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
     await expect(weatherService.findWeather(10, loggedUser)).resolves.toEqual(ok(null));
 
-    expect(weatherRepository.findMeteoById).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.findMeteoById).toHaveBeenLastCalledWith(10);
+    expect(weatherRepository.findWeatherById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findWeatherById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await weatherService.findWeather(11, null);
 
     expect(findResult).toEqual(err("notAllowed"));
-    expect(weatherRepository.findMeteoById).not.toHaveBeenCalled();
+    expect(weatherRepository.findWeatherById).not.toHaveBeenCalled();
   });
 });
 
@@ -80,12 +70,12 @@ describe("Find weathers by inventary ID", () => {
     const weathersData = weatherFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    weatherRepository.findMeteosOfInventaireId.mockResolvedValueOnce(weathersData);
+    weatherRepository.findWeathersByInventoryId.mockResolvedValueOnce(weathersData);
 
     const weathersResult = await weatherService.findWeathersOfInventoryId(43, loggedUser);
 
-    expect(weatherRepository.findMeteosOfInventaireId).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.findMeteosOfInventaireId).toHaveBeenLastCalledWith(43);
+    expect(weatherRepository.findWeathersByInventoryId).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findWeathersByInventoryId).toHaveBeenLastCalledWith(43);
     expect(weathersResult.isOk()).toBeTruthy();
     expect(weathersResult._unsafeUnwrap().length).toEqual(weathersData.length);
   });
@@ -100,12 +90,12 @@ describe("Find weathers by inventary ID", () => {
 test("Find all weathers", async () => {
   const weathersData = weatherFactory.buildList(3);
 
-  weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
+  weatherRepository.findWeathers.mockResolvedValueOnce(weathersData);
 
   await weatherService.findAllWeathers();
 
-  expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
-  expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({
+  expect(weatherRepository.findWeathers).toHaveBeenCalledTimes(1);
+  expect(weatherRepository.findWeathers).toHaveBeenLastCalledWith({
     orderBy: "libelle",
   });
 });
@@ -115,12 +105,12 @@ describe("Entities paginated find by search criteria", () => {
     const weathersData = weatherFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
+    weatherRepository.findWeathers.mockResolvedValueOnce(weathersData);
 
     await weatherService.findPaginatedWeathers(loggedUser, {});
 
-    expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({});
+    expect(weatherRepository.findWeathers).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findWeathers).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated weathers ", async () => {
@@ -135,12 +125,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    weatherRepository.findMeteos.mockResolvedValueOnce([weathersData[0]]);
+    weatherRepository.findWeathers.mockResolvedValueOnce([weathersData[0]]);
 
     await weatherService.findPaginatedWeathers(loggedUser, searchParams);
 
-    expect(weatherRepository.findMeteos).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.findMeteos).toHaveBeenLastCalledWith({
+    expect(weatherRepository.findWeathers).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.findWeathers).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "libelle",
       sortOrder: "desc",
@@ -188,10 +178,12 @@ describe("Update of an weather", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    weatherRepository.updateWeather.mockResolvedValueOnce(ok(weatherFactory.build()));
+
     await weatherService.updateWeather(12, weatherData, loggedUser);
 
-    expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
+    expect(weatherRepository.updateWeather).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.updateWeather).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -203,12 +195,13 @@ describe("Update of an weather", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(existingData);
+    weatherRepository.findWeatherById.mockResolvedValueOnce(existingData);
+    weatherRepository.updateWeather.mockResolvedValueOnce(ok(weatherFactory.build()));
 
     await weatherService.updateWeather(12, weatherData, loggedUser);
 
-    expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
+    expect(weatherRepository.updateWeather).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.updateWeather).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should not be allowed when requested by an use that is nor owner nor admin", async () => {
@@ -223,12 +216,12 @@ describe("Update of an weather", () => {
       role: "contributor",
     } as const;
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(existingData);
+    weatherRepository.findWeatherById.mockResolvedValueOnce(existingData);
 
     const updateResult = await weatherService.updateWeather(12, weatherData, user);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(weatherRepository.updateMeteo).not.toHaveBeenCalled();
+    expect(weatherRepository.updateWeather).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when trying to update to an weather that exists", async () => {
@@ -236,13 +229,13 @@ describe("Update of an weather", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    weatherRepository.updateMeteo.mockImplementation(uniqueConstraintFailed);
+    weatherRepository.updateWeather.mockResolvedValueOnce(err("alreadyExists"));
 
     const updateResult = await weatherService.updateWeather(12, weatherData, loggedUser);
 
     expect(updateResult).toEqual(err("alreadyExists"));
-    expect(weatherRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
+    expect(weatherRepository.updateWeather).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.updateWeather).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -251,7 +244,7 @@ describe("Update of an weather", () => {
     const updateResult = await weatherService.updateWeather(12, weatherData, null);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(weatherRepository.updateMeteo).not.toHaveBeenCalled();
+    expect(weatherRepository.updateWeather).not.toHaveBeenCalled();
   });
 });
 
@@ -261,12 +254,14 @@ describe("Creation of an weather", () => {
 
     const loggedUser = loggedUserFactory.build();
 
+    weatherRepository.createWeather.mockResolvedValueOnce(ok(weatherFactory.build()));
+
     await weatherService.createWeather(weatherData, loggedUser);
 
-    expect(weatherRepository.createMeteo).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.createMeteo).toHaveBeenLastCalledWith({
+    expect(weatherRepository.createWeather).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.createWeather).toHaveBeenLastCalledWith({
       ...weatherData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -275,15 +270,15 @@ describe("Creation of an weather", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    weatherRepository.createMeteo.mockImplementation(uniqueConstraintFailed);
+    weatherRepository.createWeather.mockResolvedValueOnce(err("alreadyExists"));
 
     const createResult = await weatherService.createWeather(weatherData, loggedUser);
 
     expect(createResult).toEqual(err("alreadyExists"));
-    expect(weatherRepository.createMeteo).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.createMeteo).toHaveBeenLastCalledWith({
+    expect(weatherRepository.createWeather).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.createWeather).toHaveBeenLastCalledWith({
       ...weatherData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -293,7 +288,7 @@ describe("Creation of an weather", () => {
     const createResult = await weatherService.createWeather(weatherData, null);
 
     expect(createResult).toEqual(err("notAllowed"));
-    expect(weatherRepository.createMeteo).not.toHaveBeenCalled();
+    expect(weatherRepository.createWeather).not.toHaveBeenCalled();
   });
 });
 
@@ -308,12 +303,12 @@ describe("Deletion of an weather", () => {
       ownerId: loggedUser.id,
     });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(weather);
+    weatherRepository.findWeatherById.mockResolvedValueOnce(weather);
 
     await weatherService.deleteWeather(11, loggedUser);
 
-    expect(weatherRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
+    expect(weatherRepository.deleteWeatherById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.deleteWeatherById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any weather if admin", async () => {
@@ -321,12 +316,12 @@ describe("Deletion of an weather", () => {
       role: "admin",
     });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(weatherFactory.build());
+    weatherRepository.findWeatherById.mockResolvedValueOnce(weatherFactory.build());
 
     await weatherService.deleteWeather(11, loggedUser);
 
-    expect(weatherRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
-    expect(weatherRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
+    expect(weatherRepository.deleteWeatherById).toHaveBeenCalledTimes(1);
+    expect(weatherRepository.deleteWeatherById).toHaveBeenLastCalledWith(11);
   });
 
   test("should not be allowed when trying to delete a non-owned weather as non-admin", async () => {
@@ -337,14 +332,14 @@ describe("Deletion of an weather", () => {
     const deleteResult = await weatherService.deleteWeather(11, loggedUser);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(weatherRepository.deleteMeteoById).not.toHaveBeenCalled();
+    expect(weatherRepository.deleteWeatherById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await weatherService.deleteWeather(11, null);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(weatherRepository.deleteMeteoById).not.toHaveBeenCalled();
+    expect(weatherRepository.deleteWeatherById).not.toHaveBeenCalled();
   });
 });
 
@@ -353,16 +348,16 @@ test("Create multiple weathers", async () => {
 
   const loggedUser = loggedUserFactory.build();
 
-  weatherRepository.createMeteos.mockResolvedValueOnce([]);
+  weatherRepository.createWeathers.mockResolvedValueOnce([]);
 
   await weatherService.createWeathers(weathersData, loggedUser);
 
-  expect(weatherRepository.createMeteos).toHaveBeenCalledTimes(1);
-  expect(weatherRepository.createMeteos).toHaveBeenLastCalledWith(
+  expect(weatherRepository.createWeathers).toHaveBeenCalledTimes(1);
+  expect(weatherRepository.createWeathers).toHaveBeenLastCalledWith(
     weathersData.map((weather) => {
       return {
         ...weather,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     })
   );
