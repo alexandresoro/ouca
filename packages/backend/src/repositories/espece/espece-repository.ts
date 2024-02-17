@@ -1,3 +1,4 @@
+import { speciesSchema, type Species, type SpeciesFindManyInput } from "@domain/species/species.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
@@ -10,11 +11,8 @@ import {
 } from "../repository-helpers.js";
 import { buildOrderByIdentifier, buildSearchEspeceClause } from "./espece-repository-helper.js";
 import {
-  especeSchema,
   especeWithClasseLibelleSchema,
-  type Espece,
   type EspeceCreateInput,
-  type EspeceFindManyInput,
   type EspeceWithClasseLibelle,
 } from "./espece-repository-types.js";
 
@@ -23,8 +21,8 @@ export type EspeceRepositoryDependencies = {
 };
 
 export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) => {
-  const findEspeceById = async (id: number): Promise<Espece | null> => {
-    const query = sql.type(especeSchema)`
+  const findEspeceById = async (id: number): Promise<Species | null> => {
+    const query = sql.type(speciesSchema)`
       SELECT 
         espece.id::text,
         espece.code,
@@ -41,12 +39,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findEspeceByDonneeId = async (donneeId: number | undefined): Promise<Espece | null> => {
+  const findEspeceByDonneeId = async (donneeId: number | undefined): Promise<Species | null> => {
     if (!donneeId) {
       return null;
     }
 
-    const query = sql.type(especeSchema)`
+    const query = sql.type(speciesSchema)`
       SELECT 
         espece.id::text,
         espece.code,
@@ -89,7 +87,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     searchCriteria,
     offset,
     limit,
-  }: EspeceFindManyInput = {}): Promise<readonly Espece[]> => {
+  }: SpeciesFindManyInput = {}): Promise<readonly Species[]> => {
     const isSortByNomClasse = orderBy === "nomClasse";
     const isSortByNbDonnees = orderBy === "nbDonnees";
     // If no explicit order is requested and a query is provided, return the matches in the following order:
@@ -97,7 +95,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     // Then the ones which code contains the query
     // Finally the ones that don't match the code (i.e. nom francais or latin) sorted by code
     const matchStartCode = q ? `^${escapeStringRegexp(q)}` : null;
-    const query = sql.type(especeSchema)`
+    const query = sql.type(speciesSchema)`
       SELECT 
         espece.id::text,
         espece.code,
@@ -167,7 +165,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
   const getCount = async ({
     q,
     searchCriteria,
-  }: Pick<EspeceFindManyInput, "q" | "searchCriteria">): Promise<number> => {
+  }: Pick<SpeciesFindManyInput, "q" | "searchCriteria">): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
         COUNT(DISTINCT espece.id)
@@ -195,8 +193,8 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const createEspece = async (especeInput: EspeceCreateInput): Promise<Espece> => {
-    const query = sql.type(especeSchema)`
+  const createEspece = async (especeInput: EspeceCreateInput): Promise<Species> => {
+    const query = sql.type(speciesSchema)`
       INSERT INTO
         basenaturaliste.espece
         ${objectToKeyValueInsert(especeInput)}
@@ -212,8 +210,8 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const createEspeces = async (especeInputs: EspeceCreateInput[]): Promise<readonly Espece[]> => {
-    const query = sql.type(especeSchema)`
+  const createEspeces = async (especeInputs: EspeceCreateInput[]): Promise<readonly Species[]> => {
+    const query = sql.type(speciesSchema)`
       INSERT INTO
         basenaturaliste.espece
         ${objectsToKeyValueInsert(especeInputs)}
@@ -229,8 +227,8 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.many(query);
   };
 
-  const updateEspece = async (especeId: number, especeInput: EspeceCreateInput): Promise<Espece> => {
-    const query = sql.type(especeSchema)`
+  const updateEspece = async (especeId: number, especeInput: EspeceCreateInput): Promise<Species> => {
+    const query = sql.type(speciesSchema)`
       UPDATE
         basenaturaliste.espece
       SET
@@ -249,8 +247,8 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const deleteEspeceById = async (especeId: number): Promise<Espece> => {
-    const query = sql.type(especeSchema)`
+  const deleteEspeceById = async (especeId: number): Promise<Species> => {
+    const query = sql.type(speciesSchema)`
       DELETE
       FROM
         basenaturaliste.espece

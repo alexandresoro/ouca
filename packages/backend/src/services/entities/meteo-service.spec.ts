@@ -1,10 +1,11 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type Weather } from "@domain/weather/weather.js";
 import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
+import { type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildMeteoService } from "./meteo-service.js";
@@ -28,7 +29,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find weather", () => {
   test("should handle a matching weather", async () => {
-    const weatherData = mock<Meteo>();
+    const weatherData = mock<Weather>();
     const loggedUser = mock<LoggedUser>();
 
     weatherRepository.findMeteoById.mockResolvedValueOnce(weatherData);
@@ -72,7 +73,7 @@ describe("Data count per entity", () => {
 
 describe("Find weathers by inventary ID", () => {
   test("should handle observer found", async () => {
-    const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+    const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
     const loggedUser = mock<LoggedUser>();
 
     weatherRepository.findMeteosOfInventaireId.mockResolvedValueOnce(weathersData);
@@ -90,7 +91,7 @@ describe("Find weathers by inventary ID", () => {
 });
 
 test("Find all weathers", async () => {
-  const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+  const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
 
   weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
@@ -104,7 +105,7 @@ test("Find all weathers", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+    const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
     const loggedUser = mock<LoggedUser>();
 
     weatherRepository.findMeteos.mockResolvedValueOnce(weathersData);
@@ -116,7 +117,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated weathers ", async () => {
-    const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+    const weathersData = [mock<Weather>(), mock<Weather>(), mock<Weather>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: WeathersSearchParams = {
@@ -183,7 +184,7 @@ describe("Update of an weather", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Meteo>({
+    const existingData = mock<Weather>({
       ownerId: "notAdmin",
     });
 
@@ -200,7 +201,7 @@ describe("Update of an weather", () => {
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
-    const existingData = mock<Meteo>({
+    const existingData = mock<Weather>({
       ownerId: "notAdmin",
     });
 
@@ -289,7 +290,7 @@ describe("Deletion of an weather", () => {
       role: "contributor",
     };
 
-    const weather = mock<Meteo>({
+    const weather = mock<Weather>({
       ownerId: loggedUser.id,
     });
 
@@ -306,7 +307,7 @@ describe("Deletion of an weather", () => {
       role: "admin",
     });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
+    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Weather>());
 
     await meteoService.deleteMeteo(11, loggedUser);
 
@@ -319,7 +320,7 @@ describe("Deletion of an weather", () => {
       role: "contributor",
     });
 
-    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
+    weatherRepository.findMeteoById.mockResolvedValueOnce(mock<Weather>());
 
     await expect(meteoService.deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

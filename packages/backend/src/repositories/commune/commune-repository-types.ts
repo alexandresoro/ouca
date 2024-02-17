@@ -1,17 +1,10 @@
+import { townSchema } from "@domain/town/town.js";
 import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
-export const communeSchema = z.object({
-  id: z.string(),
-  departmentId: z.string(),
-  code: z.number(),
-  nom: z.string(),
-  ownerId: z.string().uuid().nullable(),
-});
+export type Commune = z.infer<typeof townSchema>;
 
-export type Commune = z.infer<typeof communeSchema>;
-
-export const communeWithDepartementCodeSchema = communeSchema.extend({
+export const communeWithDepartementCodeSchema = townSchema.extend({
   departementCode: z.string(),
 });
 

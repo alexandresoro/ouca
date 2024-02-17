@@ -1,3 +1,4 @@
+import { localitySchema, type Locality } from "@domain/locality/locality.js";
 import { geoJSONLocalitySchema, type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
@@ -10,9 +11,7 @@ import {
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
-  lieuditSchema,
   lieuditWithCommuneAndDepartementCodeSchema,
-  type Lieudit,
   type LieuditCreateInput,
   type LieuditFindManyInput,
   type LieuditWithCommuneAndDepartementCode,
@@ -23,8 +22,8 @@ export type LieuditRepositoryDependencies = {
 };
 
 export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies) => {
-  const findLieuditById = async (id: number, transaction?: DatabaseTransactionConnection): Promise<Lieudit | null> => {
-    const query = sql.type(lieuditSchema)`
+  const findLieuditById = async (id: number, transaction?: DatabaseTransactionConnection): Promise<Locality | null> => {
+    const query = sql.type(localitySchema)`
       SELECT 
         lieudit.id::text,
         lieudit.nom,
@@ -42,12 +41,12 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return (transaction ?? slonik).maybeOne(query);
   };
 
-  const findLieuditByInventaireId = async (inventaireId: number | undefined): Promise<Lieudit | null> => {
+  const findLieuditByInventaireId = async (inventaireId: number | undefined): Promise<Locality | null> => {
     if (!inventaireId) {
       return null;
     }
 
-    const query = sql.type(lieuditSchema)`
+    const query = sql.type(localitySchema)`
       SELECT 
         lieudit.id::text,
         lieudit.nom,
@@ -73,7 +72,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     townId,
     offset,
     limit,
-  }: LieuditFindManyInput = {}): Promise<readonly Lieudit[]> => {
+  }: LieuditFindManyInput = {}): Promise<readonly Locality[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const isSortByCodeCommune = orderBy === "codeCommune";
     const isSortByNomCommune = orderBy === "nomCommune";
@@ -84,7 +83,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     // Then the ones which nom contains the query
     // Then two groups are nom sorted alphabetically
     const matchStartNom = q ? `^${q}` : null;
-    const query = sql.type(lieuditSchema)`
+    const query = sql.type(localitySchema)`
     SELECT 
       lieudit.id::text,
       lieudit.nom,
@@ -251,8 +250,8 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.oneFirst(query);
   };
 
-  const createLieudit = async (lieuditInput: LieuditCreateInput): Promise<Lieudit> => {
-    const query = sql.type(lieuditSchema)`
+  const createLieudit = async (lieuditInput: LieuditCreateInput): Promise<Locality> => {
+    const query = sql.type(localitySchema)`
       INSERT INTO
         basenaturaliste.lieudit
         ${objectToKeyValueInsert(lieuditInput)}
@@ -269,8 +268,8 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.one(query);
   };
 
-  const createLieuxdits = async (lieuditInputs: LieuditCreateInput[]): Promise<readonly Lieudit[]> => {
-    const query = sql.type(lieuditSchema)`
+  const createLieuxdits = async (lieuditInputs: LieuditCreateInput[]): Promise<readonly Locality[]> => {
+    const query = sql.type(localitySchema)`
       INSERT INTO
         basenaturaliste.lieudit
         ${objectsToKeyValueInsert(lieuditInputs)}
@@ -287,8 +286,8 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.many(query);
   };
 
-  const updateLieudit = async (lieuditId: number, lieuditInput: LieuditCreateInput): Promise<Lieudit> => {
-    const query = sql.type(lieuditSchema)`
+  const updateLieudit = async (lieuditId: number, lieuditInput: LieuditCreateInput): Promise<Locality> => {
+    const query = sql.type(localitySchema)`
       UPDATE
         basenaturaliste.lieudit
       SET
@@ -308,8 +307,8 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.one(query);
   };
 
-  const deleteLieuditById = async (lieuditId: number): Promise<Lieudit> => {
-    const query = sql.type(lieuditSchema)`
+  const deleteLieuditById = async (lieuditId: number): Promise<Locality> => {
+    const query = sql.type(localitySchema)`
       DELETE
       FROM
         basenaturaliste.lieudit

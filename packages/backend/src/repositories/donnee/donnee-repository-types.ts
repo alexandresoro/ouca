@@ -1,7 +1,7 @@
+import { type SearchCriteria } from "@domain/search/search-criteria.js";
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { z } from "zod";
 import { type SortOrder } from "../common.js";
-import { type SearchCriteria } from "../search-criteria.js";
 
 export const donneeSchema = z.object({
   id: z.string(),

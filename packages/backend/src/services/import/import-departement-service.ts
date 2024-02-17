@@ -1,12 +1,12 @@
+import { type Department } from "@domain/department/department.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object.js";
-import { type Departement } from "../../repositories/departement/departement-repository-types.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportDepartementService extends ImportService {
-  private departements!: (Departement | Omit<Departement, "id" | "ownerId">)[];
+  private departements!: (Department | Omit<Department, "id" | "ownerId">)[];
 
-  private departementsToInsert!: Omit<Departement, "id" | "ownerId">[];
+  private departementsToInsert!: Omit<Department, "id" | "ownerId">[];
 
   protected getNumberOfColumns = (): number => {
     return 1;

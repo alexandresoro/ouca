@@ -1,6 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type Behavior } from "@ou-ca/common/api/entities/behavior";
-import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service.js";
 
 export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeService {
@@ -14,7 +13,7 @@ export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeServ
   }
 
   protected saveEntities = (
-    comportements: Omit<Comportement, "id" | "ownerId">[],
+    comportements: Omit<Behavior, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Behavior[]> => {
     return this.services.behaviorService.createComportements(comportements, loggedUser);

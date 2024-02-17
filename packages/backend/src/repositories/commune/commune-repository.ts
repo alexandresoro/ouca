@@ -1,3 +1,4 @@
+import { townSchema } from "@domain/town/town.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
@@ -9,7 +10,6 @@ import {
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
-  communeSchema,
   communeWithDepartementCodeSchema,
   type Commune,
   type CommuneCreateInput,
@@ -23,7 +23,7 @@ export type CommuneRepositoryDependencies = {
 
 export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies) => {
   const findCommuneById = async (id: number): Promise<Commune | null> => {
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
       SELECT 
         commune.id::text,
         commune.code,
@@ -44,7 +44,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       return null;
     }
 
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
       SELECT 
         commune.id::text,
         commune.code,
@@ -83,7 +83,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     // Then the ones which nom contains the query
     // Then two groups are finally sorted alphabetically
     const matchStartNom = q ? `^${escapeStringRegexp(q)}` : null;
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
     SELECT 
       commune.id::text,
       commune.code,
@@ -222,7 +222,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
   };
 
   const createCommune = async (communeInput: CommuneCreateInput): Promise<Commune> => {
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
       INSERT INTO
         basenaturaliste.commune
         ${objectToKeyValueInsert(communeInput)}
@@ -238,7 +238,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
   };
 
   const createCommunes = async (communeInputs: CommuneCreateInput[]): Promise<readonly Commune[]> => {
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
       INSERT INTO
         basenaturaliste.commune
         ${objectsToKeyValueInsert(communeInputs)}
@@ -254,7 +254,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
   };
 
   const updateCommune = async (communeId: number, communeInput: CommuneCreateInput): Promise<Commune> => {
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
       UPDATE
         basenaturaliste.commune
       SET
@@ -273,7 +273,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
   };
 
   const deleteCommuneById = async (communeId: number): Promise<Commune> => {
-    const query = sql.type(communeSchema)`
+    const query = sql.type(townSchema)`
       DELETE
       FROM
         basenaturaliste.commune

@@ -1,3 +1,8 @@
+import {
+  distanceEstimateSchema,
+  type DistanceEstimate,
+  type DistanceEstimateFindManyInput,
+} from "@domain/distance-estimate/distance-estimate.js";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -7,20 +12,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import {
-  estimationDistanceSchema,
-  type EstimationDistance,
-  type EstimationDistanceCreateInput,
-  type EstimationDistanceFindManyInput,
-} from "./estimation-distance-repository-types.js";
+import { type EstimationDistanceCreateInput } from "./estimation-distance-repository-types.js";
 
 export type EstimationDistanceRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistanceRepositoryDependencies) => {
-  const findEstimationDistanceById = async (id: number): Promise<EstimationDistance | null> => {
-    const query = sql.type(estimationDistanceSchema)`
+  const findEstimationDistanceById = async (id: number): Promise<DistanceEstimate | null> => {
+    const query = sql.type(distanceEstimateSchema)`
       SELECT 
         estimation_distance.id::text,
         estimation_distance.libelle,
@@ -34,12 +34,12 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
     return slonik.maybeOne(query);
   };
 
-  const findEstimationDistanceByDonneeId = async (donneeId: number | undefined): Promise<EstimationDistance | null> => {
+  const findEstimationDistanceByDonneeId = async (donneeId: number | undefined): Promise<DistanceEstimate | null> => {
     if (!donneeId) {
       return null;
     }
 
-    const query = sql.type(estimationDistanceSchema)`
+    const query = sql.type(distanceEstimateSchema)`
       SELECT 
         estimation_distance.id::text,
         estimation_distance.libelle,
@@ -60,10 +60,10 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
     q,
     offset,
     limit,
-  }: EstimationDistanceFindManyInput = {}): Promise<readonly EstimationDistance[]> => {
+  }: DistanceEstimateFindManyInput = {}): Promise<readonly DistanceEstimate[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(estimationDistanceSchema)`
+    const query = sql.type(distanceEstimateSchema)`
       SELECT 
         estimation_distance.id::text,
         estimation_distance.libelle,
@@ -119,8 +119,8 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
 
   const createEstimationDistance = async (
     estimationdistanceInput: EstimationDistanceCreateInput
-  ): Promise<EstimationDistance> => {
-    const query = sql.type(estimationDistanceSchema)`
+  ): Promise<DistanceEstimate> => {
+    const query = sql.type(distanceEstimateSchema)`
       INSERT INTO
         basenaturaliste.estimation_distance
         ${objectToKeyValueInsert(estimationdistanceInput)}
@@ -135,8 +135,8 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
 
   const createEstimationsDistance = async (
     estimationdistanceInputs: EstimationDistanceCreateInput[]
-  ): Promise<readonly EstimationDistance[]> => {
-    const query = sql.type(estimationDistanceSchema)`
+  ): Promise<readonly DistanceEstimate[]> => {
+    const query = sql.type(distanceEstimateSchema)`
       INSERT INTO
         basenaturaliste.estimation_distance
         ${objectsToKeyValueInsert(estimationdistanceInputs)}
@@ -152,8 +152,8 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
   const updateEstimationDistance = async (
     estimationdistanceId: number,
     estimationdistanceInput: EstimationDistanceCreateInput
-  ): Promise<EstimationDistance> => {
-    const query = sql.type(estimationDistanceSchema)`
+  ): Promise<DistanceEstimate> => {
+    const query = sql.type(distanceEstimateSchema)`
       UPDATE
         basenaturaliste.estimation_distance
       SET
@@ -169,8 +169,8 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
     return slonik.one(query);
   };
 
-  const deleteEstimationDistanceById = async (estimationdistanceId: number): Promise<EstimationDistance> => {
-    const query = sql.type(estimationDistanceSchema)`
+  const deleteEstimationDistanceById = async (estimationdistanceId: number): Promise<DistanceEstimate> => {
+    const query = sql.type(distanceEstimateSchema)`
       DELETE
       FROM
         basenaturaliste.estimation_distance

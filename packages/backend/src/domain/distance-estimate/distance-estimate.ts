@@ -1,0 +1,26 @@
+import { z } from "zod";
+import { type CommonFailureReason } from "../shared/failure-reason.js";
+import { type SortOrder } from "../shared/sort-order.js";
+
+export type DistanceEstimateFailureReason = CommonFailureReason;
+
+export const distanceEstimateSchema = z.object({
+  id: z.string(),
+  libelle: z.string(),
+  ownerId: z.string().uuid().nullable(),
+});
+
+export type DistanceEstimate = z.infer<typeof distanceEstimateSchema>;
+
+export type DistanceEstimateFindManyInput = Partial<{
+  q: string | null;
+  orderBy: "id" | "libelle" | "nbDonnees" | null;
+  sortOrder: SortOrder;
+  offset: number | null;
+  limit: number | null;
+}>;
+
+export type DistanceEstimateCreateInput = {
+  libelle: string;
+  ownerId?: string | null;
+};

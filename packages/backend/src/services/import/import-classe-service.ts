@@ -1,6 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
-import { type Classe } from "../../repositories/classe/classe-repository-types.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportClasseService extends ImportEntiteAvecLibelleService {
@@ -14,7 +13,7 @@ export class ImportClasseService extends ImportEntiteAvecLibelleService {
   }
 
   protected saveEntities = (
-    classes: Omit<Classe, "id" | "ownerId">[],
+    classes: Omit<SpeciesClass, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly SpeciesClass[]> => {
     return this.services.classService.createClasses(classes, loggedUser);

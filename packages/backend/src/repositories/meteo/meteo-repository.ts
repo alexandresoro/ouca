@@ -1,3 +1,4 @@
+import { weatherSchema, type Weather, type WeatherFindManyInput } from "@domain/weather/weather.js";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -7,15 +8,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import { meteoSchema, type Meteo, type MeteoCreateInput, type MeteoFindManyInput } from "./meteo-repository-types.js";
+import { type MeteoCreateInput } from "./meteo-repository-types.js";
 
 export type MeteoRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) => {
-  const findMeteoById = async (id: number): Promise<Meteo | null> => {
-    const query = sql.type(meteoSchema)`
+  const findMeteoById = async (id: number): Promise<Weather | null> => {
+    const query = sql.type(weatherSchema)`
       SELECT 
         meteo.id::text,
         meteo.libelle,
@@ -29,12 +30,12 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.maybeOne(query);
   };
 
-  const findMeteosOfInventaireId = async (inventaireId: number | undefined): Promise<readonly Meteo[]> => {
+  const findMeteosOfInventaireId = async (inventaireId: number | undefined): Promise<readonly Weather[]> => {
     if (!inventaireId) {
       return [];
     }
 
-    const query = sql.type(meteoSchema)`
+    const query = sql.type(weatherSchema)`
       SELECT 
         meteo.id::text,
         meteo.libelle,
@@ -55,10 +56,10 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     q,
     offset,
     limit,
-  }: MeteoFindManyInput = {}): Promise<readonly Meteo[]> => {
+  }: WeatherFindManyInput = {}): Promise<readonly Weather[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(meteoSchema)`
+    const query = sql.type(weatherSchema)`
     SELECT 
       meteo.id::text,
       meteo.libelle,
@@ -115,8 +116,8 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.oneFirst(query);
   };
 
-  const createMeteo = async (meteoInput: MeteoCreateInput): Promise<Meteo> => {
-    const query = sql.type(meteoSchema)`
+  const createMeteo = async (meteoInput: MeteoCreateInput): Promise<Weather> => {
+    const query = sql.type(weatherSchema)`
       INSERT INTO
         basenaturaliste.meteo
         ${objectToKeyValueInsert(meteoInput)}
@@ -129,8 +130,8 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.one(query);
   };
 
-  const createMeteos = async (meteoInputs: MeteoCreateInput[]): Promise<readonly Meteo[]> => {
-    const query = sql.type(meteoSchema)`
+  const createMeteos = async (meteoInputs: MeteoCreateInput[]): Promise<readonly Weather[]> => {
+    const query = sql.type(weatherSchema)`
       INSERT INTO
         basenaturaliste.meteo
         ${objectsToKeyValueInsert(meteoInputs)}
@@ -143,8 +144,8 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.many(query);
   };
 
-  const updateMeteo = async (meteoId: number, meteoInput: MeteoCreateInput): Promise<Meteo> => {
-    const query = sql.type(meteoSchema)`
+  const updateMeteo = async (meteoId: number, meteoInput: MeteoCreateInput): Promise<Weather> => {
+    const query = sql.type(weatherSchema)`
       UPDATE
         basenaturaliste.meteo
       SET
@@ -160,8 +161,8 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.one(query);
   };
 
-  const deleteMeteoById = async (meteoId: number): Promise<Meteo> => {
-    const query = sql.type(meteoSchema)`
+  const deleteMeteoById = async (meteoId: number): Promise<Weather> => {
+    const query = sql.type(weatherSchema)`
       DELETE
       FROM
         basenaturaliste.meteo

@@ -1,12 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Species } from "@domain/species/species.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Species } from "@ou-ca/common/api/entities/species";
+import { type Species as SpeciesCommon } from "@ou-ca/common/api/entities/species";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type Espece,
   type EspeceCreateInput,
   type EspeceWithClasseLibelle,
 } from "../../repositories/espece/espece-repository-types.js";
@@ -23,14 +23,14 @@ type EspeceServiceDependencies = {
 };
 
 export const buildEspeceService = ({ speciesRepository, entryRepository, classService }: EspeceServiceDependencies) => {
-  const enrichSpecies = async (species: Espece, loggedUser: LoggedUser | null): Promise<Species> => {
+  const enrichSpecies = async (species: Species, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     // TODO this can be called from import with loggedUser = null and will fail validation
     // Ideally, even import should have a user
     const speciesClass = await classService.findClasseOfEspeceId(species.id, loggedUser);
     return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
   };
 
-  const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Species | null> => {
+  const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
     const species = await speciesRepository.findEspeceById(id);
@@ -49,7 +49,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
   const findEspeceOfDonneeId = async (
     donneeId: string | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Species | null> => {
+  ): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
     const species = await speciesRepository.findEspeceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
@@ -59,7 +59,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
     return enrichSpecies(species, loggedUser);
   };
 
-  const findAllEspeces = async (): Promise<Species[]> => {
+  const findAllEspeces = async (): Promise<SpeciesCommon[]> => {
     const especes = await speciesRepository.findEspeces({
       orderBy: "code",
     });
@@ -81,7 +81,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
   const findPaginatedEspeces = async (
     loggedUser: LoggedUser | null,
     options: SpeciesSearchParams
-  ): Promise<Species[]> => {
+  ): Promise<SpeciesCommon[]> => {
     validateAuthorization(loggedUser);
 
     const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
@@ -119,7 +119,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
     });
   };
 
-  const createEspece = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<Species> => {
+  const createEspece = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -141,7 +141,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
     id: number,
     input: UpsertSpeciesInput,
     loggedUser: LoggedUser | null
-  ): Promise<Species> => {
+  ): Promise<SpeciesCommon> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -165,7 +165,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
     }
   };
 
-  const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Species> => {
+  const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -186,7 +186,7 @@ export const buildEspeceService = ({ speciesRepository, entryRepository, classSe
   const createEspeces = async (
     especes: Omit<EspeceCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Species[]> => {
+  ): Promise<readonly SpeciesCommon[]> => {
     const createdSpecies = await speciesRepository.createEspeces(
       especes.map((espece) => {
         return { ...espece, owner_id: loggedUser.id };

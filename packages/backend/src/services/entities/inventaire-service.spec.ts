@@ -1,4 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type Locality } from "@domain/locality/locality.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { createMockPool } from "slonik";
@@ -12,7 +13,6 @@ import {
   type InventaireCreateInput,
 } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
-import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildInventaireService } from "./inventaire-service.js";
@@ -161,7 +161,7 @@ describe("Update of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
@@ -184,7 +184,7 @@ describe("Update of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
@@ -219,7 +219,7 @@ describe("Update of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
       inventoryRepository.updateInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
@@ -272,7 +272,7 @@ describe("Creation of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
@@ -304,7 +304,7 @@ describe("Creation of an inventory", () => {
 
       const loggedUser = mock<LoggedUser>();
 
-      localityRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
+      localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
       inventoryRepository.createInventaire.mockResolvedValueOnce(
         mock<Inventaire>({

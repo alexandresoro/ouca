@@ -1,6 +1,6 @@
+import { type Locality } from "@domain/locality/locality.js";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { mock } from "vitest-mock-extended";
-import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.js";
 
 describe("Reshape input inventory", () => {
@@ -13,7 +13,7 @@ describe("Reshape input inventory", () => {
       },
       duration: null,
     });
-    const locality = mock<Lieudit>({
+    const locality = mock<Locality>({
       altitude: 12,
       latitude: 34,
       longitude: 56,
@@ -34,7 +34,7 @@ describe("Reshape input inventory", () => {
       },
       duration: null,
     });
-    const locality = mock<Lieudit>({
+    const locality = mock<Locality>({
       altitude: 12,
       latitude: 34,
       longitude: 56,
@@ -55,7 +55,7 @@ describe("Reshape input inventory", () => {
       },
       duration: null,
     });
-    const locality = mock<Lieudit>({
+    const locality = mock<Locality>({
       altitude: 12,
       latitude: 34,
       longitude: 56,
@@ -72,7 +72,7 @@ describe("Reshape input inventory", () => {
       coordinates: null,
       duration: null,
     });
-    const locality = mock<Lieudit>({
+    const locality = mock<Locality>({
       altitude: 12,
       latitude: 34,
       longitude: 56,

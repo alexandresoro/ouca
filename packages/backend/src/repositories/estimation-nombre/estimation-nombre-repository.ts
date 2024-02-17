@@ -1,3 +1,8 @@
+import {
+  numberEstimateSchema,
+  type NumberEstimate,
+  type NumberEstimateFindManyInput,
+} from "@domain/number-estimate/number-estimate.js";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -7,20 +12,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import {
-  estimationNombreSchema,
-  type EstimationNombre,
-  type EstimationNombreCreateInput,
-  type EstimationNombreFindManyInput,
-} from "./estimation-nombre-repository-types.js";
+import { type EstimationNombreCreateInput } from "./estimation-nombre-repository-types.js";
 
 export type EstimationNombreRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepositoryDependencies) => {
-  const findEstimationNombreById = async (id: number): Promise<EstimationNombre | null> => {
-    const query = sql.type(estimationNombreSchema)`
+  const findEstimationNombreById = async (id: number): Promise<NumberEstimate | null> => {
+    const query = sql.type(numberEstimateSchema)`
       SELECT 
         estimation_nombre.id::text,
         estimation_nombre.libelle,
@@ -35,12 +35,12 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     return slonik.maybeOne(query);
   };
 
-  const findEstimationNombreByDonneeId = async (donneeId: number | undefined): Promise<EstimationNombre | null> => {
+  const findEstimationNombreByDonneeId = async (donneeId: number | undefined): Promise<NumberEstimate | null> => {
     if (!donneeId) {
       return null;
     }
 
-    const query = sql.type(estimationNombreSchema)`
+    const query = sql.type(numberEstimateSchema)`
       SELECT 
         estimation_nombre.id::text,
         estimation_nombre.libelle,
@@ -62,10 +62,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     q,
     offset,
     limit,
-  }: EstimationNombreFindManyInput = {}): Promise<readonly EstimationNombre[]> => {
+  }: NumberEstimateFindManyInput = {}): Promise<readonly NumberEstimate[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(estimationNombreSchema)`
+    const query = sql.type(numberEstimateSchema)`
       SELECT 
         estimation_nombre.id::text,
         estimation_nombre.libelle,
@@ -122,8 +122,8 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
 
   const createEstimationNombre = async (
     estimationnombreInput: EstimationNombreCreateInput
-  ): Promise<EstimationNombre> => {
-    const query = sql.type(estimationNombreSchema)`
+  ): Promise<NumberEstimate> => {
+    const query = sql.type(numberEstimateSchema)`
       INSERT INTO
         basenaturaliste.estimation_nombre
         ${objectToKeyValueInsert(estimationnombreInput)}
@@ -139,8 +139,8 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
 
   const createEstimationsNombre = async (
     estimationnombreInputs: EstimationNombreCreateInput[]
-  ): Promise<readonly EstimationNombre[]> => {
-    const query = sql.type(estimationNombreSchema)`
+  ): Promise<readonly NumberEstimate[]> => {
+    const query = sql.type(numberEstimateSchema)`
       INSERT INTO
         basenaturaliste.estimation_nombre
         ${objectsToKeyValueInsert(estimationnombreInputs)}
@@ -157,8 +157,8 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
   const updateEstimationNombre = async (
     estimationnombreId: number,
     estimationnombreInput: EstimationNombreCreateInput
-  ): Promise<EstimationNombre> => {
-    const query = sql.type(estimationNombreSchema)`
+  ): Promise<NumberEstimate> => {
+    const query = sql.type(numberEstimateSchema)`
       UPDATE
         basenaturaliste.estimation_nombre
       SET
@@ -175,8 +175,8 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     return slonik.one(query);
   };
 
-  const deleteEstimationNombreById = async (estimationnombreId: number): Promise<EstimationNombre> => {
-    const query = sql.type(estimationNombreSchema)`
+  const deleteEstimationNombreById = async (estimationnombreId: number): Promise<NumberEstimate> => {
+    const query = sql.type(numberEstimateSchema)`
       DELETE
       FROM
         basenaturaliste.estimation_nombre

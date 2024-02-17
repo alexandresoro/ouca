@@ -1,3 +1,4 @@
+import { behaviorSchema, type Behavior, type BehaviorFindManyInput } from "@domain/behavior/behavior.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
@@ -8,20 +9,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import {
-  comportementSchema,
-  type Comportement,
-  type ComportementCreateInput,
-  type ComportementFindManyInput,
-} from "./comportement-repository-types.js";
+import { type ComportementCreateInput } from "./comportement-repository-types.js";
 
 export type ComportementRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildComportementRepository = ({ slonik }: ComportementRepositoryDependencies) => {
-  const findComportementById = async (id: number): Promise<Comportement | null> => {
-    const query = sql.type(comportementSchema)`
+  const findComportementById = async (id: number): Promise<Behavior | null> => {
+    const query = sql.type(behaviorSchema)`
       SELECT 
         comportement.id::text,
         comportement.code,
@@ -37,12 +33,12 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.maybeOne(query);
   };
 
-  const findComportementsOfDonneeId = async (donneeId: number | undefined): Promise<readonly Comportement[]> => {
+  const findComportementsOfDonneeId = async (donneeId: number | undefined): Promise<readonly Behavior[]> => {
     if (!donneeId) {
       return [];
     }
 
-    const query = sql.type(comportementSchema)`
+    const query = sql.type(behaviorSchema)`
       SELECT 
         comportement.id::text,
         comportement.code,
@@ -65,11 +61,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     q,
     offset,
     limit,
-  }: ComportementFindManyInput = {}): Promise<readonly Comportement[]> => {
+  }: BehaviorFindManyInput = {}): Promise<readonly Behavior[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const codeLike = q ? `^0*${escapeStringRegexp(q)}` : null;
     const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(comportementSchema)`
+    const query = sql.type(behaviorSchema)`
     SELECT 
       comportement.id::text,
       comportement.code,
@@ -135,8 +131,8 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.oneFirst(query);
   };
 
-  const createComportement = async (comportementInput: ComportementCreateInput): Promise<Comportement> => {
-    const query = sql.type(comportementSchema)`
+  const createComportement = async (comportementInput: ComportementCreateInput): Promise<Behavior> => {
+    const query = sql.type(behaviorSchema)`
       INSERT INTO
         basenaturaliste.comportement
         ${objectToKeyValueInsert(comportementInput)}
@@ -151,10 +147,8 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.one(query);
   };
 
-  const createComportements = async (
-    comportementInputs: ComportementCreateInput[]
-  ): Promise<readonly Comportement[]> => {
-    const query = sql.type(comportementSchema)`
+  const createComportements = async (comportementInputs: ComportementCreateInput[]): Promise<readonly Behavior[]> => {
+    const query = sql.type(behaviorSchema)`
       INSERT INTO
         basenaturaliste.comportement
         ${objectsToKeyValueInsert(comportementInputs)}
@@ -172,8 +166,8 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
   const updateComportement = async (
     comportementId: number,
     comportementInput: ComportementCreateInput
-  ): Promise<Comportement> => {
-    const query = sql.type(comportementSchema)`
+  ): Promise<Behavior> => {
+    const query = sql.type(behaviorSchema)`
       UPDATE
         basenaturaliste.comportement
       SET
@@ -191,8 +185,8 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.one(query);
   };
 
-  const deleteComportementById = async (comportementId: number): Promise<Comportement> => {
-    const query = sql.type(comportementSchema)`
+  const deleteComportementById = async (comportementId: number): Promise<Behavior> => {
+    const query = sql.type(behaviorSchema)`
       DELETE
       FROM
         basenaturaliste.comportement

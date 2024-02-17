@@ -1,7 +1,8 @@
+import { type Locality } from "@domain/locality/locality.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Locality } from "@ou-ca/common/api/entities/locality";
+import { type Locality as LocalityCommon } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
-import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
+import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { enrichEntityWithEditableStatus } from "./entities-utils.js";
 
 export const reshapeInputLieuditUpsertData = (data: UpsertLocalityInput): LieuditCreateInput => {
@@ -13,16 +14,16 @@ export const reshapeInputLieuditUpsertData = (data: UpsertLocalityInput): Lieudi
   };
 };
 
-export function reshapeLocalityRepositoryToApi(locality: Lieudit, user: LoggedUser | null): Locality;
+export function reshapeLocalityRepositoryToApi(locality: Locality, user: LoggedUser | null): LocalityCommon;
 export function reshapeLocalityRepositoryToApi(locality: null, user: LoggedUser | null): null;
 export function reshapeLocalityRepositoryToApi(
-  locality: Lieudit | null,
+  locality: Locality | null,
   loggedUser: LoggedUser | null
-): Locality | null;
+): LocalityCommon | null;
 export function reshapeLocalityRepositoryToApi(
-  locality: Lieudit | null,
+  locality: Locality | null,
   loggedUser: LoggedUser | null
-): Locality | null {
+): LocalityCommon | null {
   if (!locality) {
     return null;
   }

@@ -1,10 +1,11 @@
+import { type Environment } from "@domain/environment/environment.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
+import { type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildMilieuService } from "./milieu-service.js";
@@ -28,7 +29,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find environment", () => {
   test("should handle a matching environment", async () => {
-    const environmentData = mock<Milieu>();
+    const environmentData = mock<Environment>();
     const loggedUser = mock<LoggedUser>();
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(environmentData);
@@ -72,7 +73,7 @@ describe("Data count per entity", () => {
 
 describe("Find environments by inventary ID", () => {
   test("should handle environments found", async () => {
-    const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+    const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
     const loggedUser = mock<LoggedUser>();
 
     environmentRepository.findMilieuxOfDonneeId.mockResolvedValueOnce(environmentsData);
@@ -90,7 +91,7 @@ describe("Find environments by inventary ID", () => {
 });
 
 test("Find all environments", async () => {
-  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+  const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
 
   environmentRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
@@ -104,7 +105,7 @@ test("Find all environments", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+    const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
     const loggedUser = mock<LoggedUser>();
 
     environmentRepository.findMilieux.mockResolvedValueOnce(environmentsData);
@@ -116,7 +117,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated environments ", async () => {
-    const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+    const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: EnvironmentsSearchParams = {
@@ -183,7 +184,7 @@ describe("Update of an environment", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Milieu>({
+    const existingData = mock<Environment>({
       ownerId: "notAdmin",
     });
 
@@ -200,7 +201,7 @@ describe("Update of an environment", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Milieu>({
+    const existingData = mock<Environment>({
       ownerId: "notAdmin",
     });
 
@@ -289,7 +290,7 @@ describe("Deletion of an environment", () => {
       role: "contributor",
     };
 
-    const environment = mock<Milieu>({
+    const environment = mock<Environment>({
       ownerId: loggedUser.id,
     });
 
@@ -306,7 +307,7 @@ describe("Deletion of an environment", () => {
       role: "admin",
     });
 
-    environmentRepository.findMilieuById.mockResolvedValueOnce(mock<Milieu>());
+    environmentRepository.findMilieuById.mockResolvedValueOnce(mock<Environment>());
 
     await milieuService.deleteMilieu(11, loggedUser);
 
@@ -319,7 +320,7 @@ describe("Deletion of an environment", () => {
       role: "contributor",
     });
 
-    environmentRepository.findMilieuById.mockResolvedValueOnce(mock<Milieu>());
+    environmentRepository.findMilieuById.mockResolvedValueOnce(mock<Environment>());
 
     await expect(milieuService.deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

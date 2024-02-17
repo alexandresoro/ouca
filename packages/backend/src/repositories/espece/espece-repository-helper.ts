@@ -1,8 +1,8 @@
+import { type SpeciesFindManyInput } from "@domain/species/species.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type IdentifierSqlToken } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
 import { buildSearchCriteriaParameters } from "../search-criteria.js";
-import { type EspeceFindManyInput } from "./espece-repository-types.js";
 
 export const buildQClause = (q: string) => {
   return sql.fragment`
@@ -12,7 +12,7 @@ export const buildQClause = (q: string) => {
   `;
 };
 
-export const buildSearchEspeceClause = ({ q, searchCriteria }: Pick<EspeceFindManyInput, "q" | "searchCriteria">) => {
+export const buildSearchEspeceClause = ({ q, searchCriteria }: Pick<SpeciesFindManyInput, "q" | "searchCriteria">) => {
   const searchCriteriaAndParameters = searchCriteria ? buildSearchCriteriaParameters(searchCriteria) : [];
   const builtSearchCriteriaAndParameters = buildAndClause(searchCriteriaAndParameters);
 
@@ -26,7 +26,7 @@ export const buildSearchEspeceClause = ({ q, searchCriteria }: Pick<EspeceFindMa
 };
 
 export const buildOrderByIdentifier = (
-  orderBy: Omit<NonNullable<EspeceFindManyInput["orderBy"]>, "nbDonnees">
+  orderBy: Omit<NonNullable<SpeciesFindManyInput["orderBy"]>, "nbDonnees">
 ): IdentifierSqlToken => {
   switch (orderBy) {
     case "id":

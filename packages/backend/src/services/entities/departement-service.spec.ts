@@ -1,13 +1,11 @@
+import { type Department } from "@domain/department/department.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
-import {
-  type Departement,
-  type DepartementCreateInput,
-} from "../../repositories/departement/departement-repository-types.js";
+import { type DepartementCreateInput } from "../../repositories/departement/departement-repository-types.js";
 import { type DepartementRepository } from "../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
@@ -37,7 +35,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find department", () => {
   test("should handle a matching department", async () => {
-    const departmentData = mock<Departement>();
+    const departmentData = mock<Department>();
     const loggedUser = mock<LoggedUser>();
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(departmentData);
@@ -117,7 +115,7 @@ describe("Data count per entity", () => {
 
 describe("Find department by city ID", () => {
   test("should handle a found department", async () => {
-    const departmentData = mock<Departement>({
+    const departmentData = mock<Department>({
       id: "256",
     });
     const loggedUser = mock<LoggedUser>();
@@ -137,7 +135,7 @@ describe("Find department by city ID", () => {
 });
 
 test("Find all departments", async () => {
-  const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+  const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
 
   departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
@@ -151,7 +149,7 @@ test("Find all departments", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+    const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
     const loggedUser = mock<LoggedUser>();
 
     departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
@@ -163,7 +161,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated departments ", async () => {
-    const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+    const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: DepartmentsSearchParams = {
@@ -230,7 +228,7 @@ describe("Update of a department", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Departement>({
+    const existingData = mock<Department>({
       ownerId: "notAdmin",
     });
 
@@ -247,7 +245,7 @@ describe("Update of a department", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Departement>({
+    const existingData = mock<Department>({
       ownerId: "notAdmin",
     });
 
@@ -340,7 +338,7 @@ describe("Deletion of a department", () => {
       role: "contributor",
     };
 
-    const department = mock<Departement>({
+    const department = mock<Department>({
       ownerId: loggedUser.id,
     });
 
@@ -357,7 +355,7 @@ describe("Deletion of a department", () => {
       role: "admin",
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
+    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Department>());
 
     await departementService.deleteDepartement(11, loggedUser);
 
@@ -370,7 +368,7 @@ describe("Deletion of a department", () => {
       role: "contributor",
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
+    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Department>());
 
     await expect(departementService.deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

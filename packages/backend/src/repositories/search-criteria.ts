@@ -1,35 +1,6 @@
+import { type SearchCriteria } from "@domain/search/search-criteria.js";
 import { type SpeciesSearchParams } from "@ou-ca/common/api/species";
-import { type NicheurCode } from "@ou-ca/common/types/nicheur.model";
 import { sql, type IdentifierSqlToken } from "slonik";
-
-export type SearchCriteria = {
-  entryId?: number;
-  inventoryId?: number;
-  observerIds?: number[];
-  temperature?: number | null;
-  weatherIds?: number[];
-  associateIds?: number[];
-  time?: string;
-  duration?: string;
-  classIds?: number[];
-  speciesIds?: number[];
-  departmentIds?: number[];
-  townIds?: number[];
-  localityIds?: number[];
-  number?: number;
-  numberEstimateIds?: number[];
-  sexIds?: number[];
-  ageIds?: number[];
-  distance?: number | null;
-  distanceEstimateIds?: number[];
-  regroupment?: number;
-  fromDate?: string | null;
-  toDate?: string | null;
-  comment?: string;
-  breeders?: NicheurCode[];
-  behaviorIds?: number[];
-  environmentIds?: number[];
-};
 
 export const reshapeSearchCriteria = (
   params: Omit<SpeciesSearchParams, "q" | "pageNumber" | "pageSize" | "orderBy" | "sortOrder">

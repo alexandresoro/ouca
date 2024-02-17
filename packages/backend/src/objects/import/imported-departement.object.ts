@@ -1,4 +1,4 @@
-import { type Departement } from "../../repositories/departement/departement-repository-types.js";
+import { type Department } from "@domain/department/department.js";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;
@@ -10,7 +10,7 @@ export class ImportedDepartement {
     this.code = departementTab[CODE_INDEX].trim();
   }
 
-  buildDepartement = (): Pick<Departement, "code"> => {
+  buildDepartement = (): Pick<Department, "code"> => {
     return {
       code: this.code,
     };

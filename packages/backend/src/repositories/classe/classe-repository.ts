@@ -1,3 +1,8 @@
+import {
+  speciesClassSchema,
+  type SpeciesClass,
+  type SpeciesClassFindManyInput,
+} from "@domain/species-class/species-class.js";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -7,20 +12,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import {
-  classeSchema,
-  type Classe,
-  type ClasseCreateInput,
-  type ClasseFindManyInput,
-} from "./classe-repository-types.js";
+import { type ClasseCreateInput } from "./classe-repository-types.js";
 
 export type ClasseRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) => {
-  const findClasseById = async (id: number): Promise<Classe | null> => {
-    const query = sql.type(classeSchema)`
+  const findClasseById = async (id: number): Promise<SpeciesClass | null> => {
+    const query = sql.type(speciesClassSchema)`
       SELECT 
         classe.id::text,
         classe.libelle,
@@ -34,12 +34,12 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findClasseByEspeceId = async (especeId: number | undefined): Promise<Classe | null> => {
+  const findClasseByEspeceId = async (especeId: number | undefined): Promise<SpeciesClass | null> => {
     if (!especeId) {
       return null;
     }
 
-    const query = sql.type(classeSchema)`
+    const query = sql.type(speciesClassSchema)`
       SELECT 
         classe.id::text,
         classe.libelle,
@@ -60,11 +60,11 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     q,
     offset,
     limit,
-  }: ClasseFindManyInput = {}): Promise<readonly Classe[]> => {
+  }: SpeciesClassFindManyInput = {}): Promise<readonly SpeciesClass[]> => {
     const isSortByNbEspeces = orderBy === "nbEspeces";
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(classeSchema)`
+    const query = sql.type(speciesClassSchema)`
     SELECT 
       classe.id::text,
       classe.libelle,
@@ -128,8 +128,8 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const createClasse = async (classeInput: ClasseCreateInput): Promise<Classe> => {
-    const query = sql.type(classeSchema)`
+  const createClasse = async (classeInput: ClasseCreateInput): Promise<SpeciesClass> => {
+    const query = sql.type(speciesClassSchema)`
       INSERT INTO
         basenaturaliste.classe
         ${objectToKeyValueInsert(classeInput)}
@@ -142,8 +142,8 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const createClasses = async (classeInputs: ClasseCreateInput[]): Promise<readonly Classe[]> => {
-    const query = sql.type(classeSchema)`
+  const createClasses = async (classeInputs: ClasseCreateInput[]): Promise<readonly SpeciesClass[]> => {
+    const query = sql.type(speciesClassSchema)`
       INSERT INTO
         basenaturaliste.classe
         ${objectsToKeyValueInsert(classeInputs)}
@@ -156,8 +156,8 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.many(query);
   };
 
-  const updateClasse = async (classeId: number, classeInput: ClasseCreateInput): Promise<Classe> => {
-    const query = sql.type(classeSchema)`
+  const updateClasse = async (classeId: number, classeInput: ClasseCreateInput): Promise<SpeciesClass> => {
+    const query = sql.type(speciesClassSchema)`
       UPDATE
         basenaturaliste.classe
       SET
@@ -173,8 +173,8 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const deleteClasseById = async (classeId: number): Promise<Classe> => {
-    const query = sql.type(classeSchema)`
+  const deleteClasseById = async (classeId: number): Promise<SpeciesClass> => {
+    const query = sql.type(speciesClassSchema)`
       DELETE
       FROM
         basenaturaliste.classe

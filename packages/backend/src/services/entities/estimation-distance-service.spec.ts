@@ -1,3 +1,4 @@
+import { type DistanceEstimate } from "@domain/distance-estimate/distance-estimate.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import {
@@ -7,10 +8,7 @@ import {
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import {
-  type EstimationDistance,
-  type EstimationDistanceCreateInput,
-} from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
+import { type EstimationDistanceCreateInput } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildEstimationDistanceService } from "./estimation-distance-service.js";
@@ -34,7 +32,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find distance estimate", () => {
   test("should handle a matching distance estimate", async () => {
-    const distanceEstimateData = mock<EstimationDistance>();
+    const distanceEstimateData = mock<DistanceEstimate>();
     const loggedUser = mock<LoggedUser>();
 
     distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimateData);
@@ -80,7 +78,7 @@ describe("Data count per entity", () => {
 
 describe("Find distance estimate by data ID", () => {
   test("should handle distance estimate found", async () => {
-    const distanceEstimateData = mock<EstimationDistance>({
+    const distanceEstimateData = mock<DistanceEstimate>({
       id: "256",
     });
     const loggedUser = mock<LoggedUser>();
@@ -102,7 +100,7 @@ describe("Find distance estimate by data ID", () => {
 });
 
 test("Find all estimationsDistance", async () => {
-  const estimationsDistanceData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+  const estimationsDistanceData = [mock<DistanceEstimate>(), mock<DistanceEstimate>(), mock<DistanceEstimate>()];
 
   distanceEstimateRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
 
@@ -116,11 +114,7 @@ test("Find all estimationsDistance", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const estimationsDistanceData = [
-      mock<EstimationDistance>(),
-      mock<EstimationDistance>(),
-      mock<EstimationDistance>(),
-    ];
+    const estimationsDistanceData = [mock<DistanceEstimate>(), mock<DistanceEstimate>(), mock<DistanceEstimate>()];
     const loggedUser = mock<LoggedUser>();
 
     distanceEstimateRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
@@ -132,11 +126,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated estimationsDistance ", async () => {
-    const estimationsDistanceData = [
-      mock<EstimationDistance>(),
-      mock<EstimationDistance>(),
-      mock<EstimationDistance>(),
-    ];
+    const estimationsDistanceData = [mock<DistanceEstimate>(), mock<DistanceEstimate>(), mock<DistanceEstimate>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: DistanceEstimatesSearchParams = {
@@ -207,7 +197,7 @@ describe("Update of a distance estimate", () => {
   });
 
   test("should be allowed when requested by the owner ", async () => {
-    const existingData = mock<EstimationDistance>({
+    const existingData = mock<DistanceEstimate>({
       ownerId: "notAdmin",
     });
 
@@ -224,7 +214,7 @@ describe("Update of a distance estimate", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<EstimationDistance>({
+    const existingData = mock<DistanceEstimate>({
       ownerId: "notAdmin",
     });
 
@@ -319,7 +309,7 @@ describe("Deletion of a distance estimate", () => {
       role: "contributor",
     };
 
-    const distanceEstimate = mock<EstimationDistance>({
+    const distanceEstimate = mock<DistanceEstimate>({
       ownerId: loggedUser.id,
     });
 
@@ -336,7 +326,7 @@ describe("Deletion of a distance estimate", () => {
       role: "admin",
     });
 
-    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<DistanceEstimate>());
 
     await estimationDistanceService.deleteEstimationDistance(11, loggedUser);
 
@@ -349,7 +339,7 @@ describe("Deletion of a distance estimate", () => {
       role: "contributor",
     });
 
-    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
+    distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<DistanceEstimate>());
 
     await expect(estimationDistanceService.deleteEstimationDistance(11, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0001")

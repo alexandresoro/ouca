@@ -1,3 +1,4 @@
+import { environmentSchema, type Environment, type EnvironmentFindManyInput } from "@domain/environment/environment.js";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -7,20 +8,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import {
-  milieuSchema,
-  type Milieu,
-  type MilieuCreateInput,
-  type MilieuFindManyInput,
-} from "./milieu-repository-types.js";
+import { type MilieuCreateInput } from "./milieu-repository-types.js";
 
 export type MilieuRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) => {
-  const findMilieuById = async (id: number): Promise<Milieu | null> => {
-    const query = sql.type(milieuSchema)`
+  const findMilieuById = async (id: number): Promise<Environment | null> => {
+    const query = sql.type(environmentSchema)`
       SELECT 
         milieu.id::text,
         milieu.code,
@@ -35,12 +31,12 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findMilieuxOfDonneeId = async (donneeId: number | undefined): Promise<readonly Milieu[]> => {
+  const findMilieuxOfDonneeId = async (donneeId: number | undefined): Promise<readonly Environment[]> => {
     if (!donneeId) {
       return [];
     }
 
-    const query = sql.type(milieuSchema)`
+    const query = sql.type(environmentSchema)`
       SELECT 
         milieu.id::text,
         milieu.code,
@@ -62,11 +58,11 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     q,
     offset,
     limit,
-  }: MilieuFindManyInput = {}): Promise<readonly Milieu[]> => {
+  }: EnvironmentFindManyInput = {}): Promise<readonly Environment[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const codeStarts = q ? `${q}%` : null;
     const libelleLike = q ? `%${q}%` : null;
-    const query = sql.type(milieuSchema)`
+    const query = sql.type(environmentSchema)`
     SELECT 
       milieu.id::text,
       milieu.code,
@@ -131,8 +127,8 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const createMilieu = async (milieuInput: MilieuCreateInput): Promise<Milieu> => {
-    const query = sql.type(milieuSchema)`
+  const createMilieu = async (milieuInput: MilieuCreateInput): Promise<Environment> => {
+    const query = sql.type(environmentSchema)`
       INSERT INTO
         basenaturaliste.milieu
         ${objectToKeyValueInsert(milieuInput)}
@@ -146,8 +142,8 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const createMilieux = async (milieuInputs: MilieuCreateInput[]): Promise<readonly Milieu[]> => {
-    const query = sql.type(milieuSchema)`
+  const createMilieux = async (milieuInputs: MilieuCreateInput[]): Promise<readonly Environment[]> => {
+    const query = sql.type(environmentSchema)`
       INSERT INTO
         basenaturaliste.milieu
         ${objectsToKeyValueInsert(milieuInputs)}
@@ -161,8 +157,8 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.many(query);
   };
 
-  const updateMilieu = async (milieuId: number, milieuInput: MilieuCreateInput): Promise<Milieu> => {
-    const query = sql.type(milieuSchema)`
+  const updateMilieu = async (milieuId: number, milieuInput: MilieuCreateInput): Promise<Environment> => {
+    const query = sql.type(environmentSchema)`
       UPDATE
         basenaturaliste.milieu
       SET
@@ -179,8 +175,8 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const deleteMilieuById = async (milieuId: number): Promise<Milieu> => {
-    const query = sql.type(milieuSchema)`
+  const deleteMilieuById = async (milieuId: number): Promise<Environment> => {
+    const query = sql.type(environmentSchema)`
       DELETE
       FROM
         basenaturaliste.milieu

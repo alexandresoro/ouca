@@ -1,9 +1,10 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
+import { type SpeciesClass } from "@domain/species-class/species-class.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
+import { type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
@@ -31,7 +32,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find class", () => {
   test("should handle a matching class", async () => {
-    const classData: Classe = mock<Classe>();
+    const classData: SpeciesClass = mock<SpeciesClass>();
     const loggedUser = mock<LoggedUser>();
 
     classRepository.findClasseById.mockResolvedValueOnce(classData);
@@ -90,7 +91,7 @@ describe("Data count per entity", () => {
 
 describe("Find class by species ID", () => {
   test("should handle a found class", async () => {
-    const classData = mock<Classe>({
+    const classData = mock<SpeciesClass>({
       id: "256",
     });
     const loggedUser = mock<LoggedUser>();
@@ -110,7 +111,7 @@ describe("Find class by species ID", () => {
 });
 
 test("Find all classes", async () => {
-  const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+  const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
 
   classRepository.findClasses.mockResolvedValueOnce(classesData);
 
@@ -124,7 +125,7 @@ test("Find all classes", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+    const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
     const loggedUser = mock<LoggedUser>();
 
     classRepository.findClasses.mockResolvedValueOnce(classesData);
@@ -136,7 +137,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated classes ", async () => {
-    const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+    const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams = mock<ClassesSearchParams>({
@@ -203,7 +204,7 @@ describe("Update of a class", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Classe>({
+    const existingData = mock<SpeciesClass>({
       ownerId: "notAdmin",
     });
 
@@ -220,7 +221,7 @@ describe("Update of a class", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Classe>({
+    const existingData = mock<SpeciesClass>({
       ownerId: "notAdmin",
     });
 
@@ -309,7 +310,7 @@ describe("Deletion of a class", () => {
       role: "contributor",
     };
 
-    const classe = mock<Classe>({
+    const classe = mock<SpeciesClass>({
       ownerId: loggedUser.id,
     });
 
@@ -326,7 +327,7 @@ describe("Deletion of a class", () => {
       role: "admin",
     });
 
-    classRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
+    classRepository.findClasseById.mockResolvedValueOnce(mock<SpeciesClass>());
 
     await classeService.deleteClasse(11, loggedUser);
 
@@ -339,7 +340,7 @@ describe("Deletion of a class", () => {
       role: "contributor",
     });
 
-    classRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
+    classRepository.findClasseById.mockResolvedValueOnce(mock<SpeciesClass>());
 
     await expect(classeService.deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

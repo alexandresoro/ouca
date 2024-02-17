@@ -1,0 +1,28 @@
+import { z } from "zod";
+import { type CommonFailureReason } from "../shared/failure-reason.js";
+import { type SortOrder } from "../shared/sort-order.js";
+
+export type EnvironmentFailureReason = CommonFailureReason;
+
+export const environmentSchema = z.object({
+  id: z.string(),
+  code: z.string(),
+  libelle: z.string(),
+  ownerId: z.string().uuid().nullable(),
+});
+
+export type Environment = z.infer<typeof environmentSchema>;
+
+export type EnvironmentFindManyInput = Partial<{
+  q: string | null;
+  orderBy: "id" | "code" | "libelle" | "nbDonnees" | null;
+  sortOrder: SortOrder;
+  offset: number | null;
+  limit: number | null;
+}>;
+
+export type EnvironmentCreateInput = {
+  code: string;
+  libelle: string;
+  ownerId?: string | null;
+};

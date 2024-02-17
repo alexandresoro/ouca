@@ -1,3 +1,4 @@
+import { departmentSchema, type Department, type DepartmentFindManyInput } from "@domain/department/department.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
@@ -8,20 +9,15 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import {
-  departementSchema,
-  type Departement,
-  type DepartementCreateInput,
-  type DepartementFindManyInput,
-} from "./departement-repository-types.js";
+import { type DepartementCreateInput } from "./departement-repository-types.js";
 
 export type DepartementRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDependencies) => {
-  const findDepartementById = async (id: number): Promise<Departement | null> => {
-    const query = sql.type(departementSchema)`
+  const findDepartementById = async (id: number): Promise<Department | null> => {
+    const query = sql.type(departmentSchema)`
       SELECT 
         departement.id::text,
         departement.code,
@@ -35,12 +31,12 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     return slonik.maybeOne(query);
   };
 
-  const findDepartementByCommuneId = async (communeId: number | undefined): Promise<Departement | null> => {
+  const findDepartementByCommuneId = async (communeId: number | undefined): Promise<Department | null> => {
     if (!communeId) {
       return null;
     }
 
-    const query = sql.type(departementSchema)`
+    const query = sql.type(departmentSchema)`
       SELECT 
         departement.id::text,
         departement.code,
@@ -61,7 +57,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     q,
     offset,
     limit,
-  }: DepartementFindManyInput = {}): Promise<readonly Departement[]> => {
+  }: DepartmentFindManyInput = {}): Promise<readonly Department[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByNbCommunes = orderBy === "nbCommunes";
@@ -71,7 +67,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     // Then the ones which code contains the query
     // Then two groups are finally sorted alphabetically
     const matchStartCode = q ? `^${escapeStringRegexp(q)}` : null;
-    const query = sql.type(departementSchema)`
+    const query = sql.type(departmentSchema)`
     SELECT 
       departement.id::text,
       departement.code,
@@ -151,8 +147,8 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     return slonik.oneFirst(query);
   };
 
-  const createDepartement = async (departementInput: DepartementCreateInput): Promise<Departement> => {
-    const query = sql.type(departementSchema)`
+  const createDepartement = async (departementInput: DepartementCreateInput): Promise<Department> => {
+    const query = sql.type(departmentSchema)`
       INSERT INTO
         basenaturaliste.departement
         ${objectToKeyValueInsert(departementInput)}
@@ -165,8 +161,8 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     return slonik.one(query);
   };
 
-  const createDepartements = async (departementInputs: DepartementCreateInput[]): Promise<readonly Departement[]> => {
-    const query = sql.type(departementSchema)`
+  const createDepartements = async (departementInputs: DepartementCreateInput[]): Promise<readonly Department[]> => {
+    const query = sql.type(departmentSchema)`
       INSERT INTO
         basenaturaliste.departement
         ${objectsToKeyValueInsert(departementInputs)}
@@ -182,8 +178,8 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
   const updateDepartement = async (
     departementId: number,
     departementInput: DepartementCreateInput
-  ): Promise<Departement> => {
-    const query = sql.type(departementSchema)`
+  ): Promise<Department> => {
+    const query = sql.type(departmentSchema)`
       UPDATE
         basenaturaliste.departement
       SET
@@ -199,8 +195,8 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     return slonik.one(query);
   };
 
-  const deleteDepartementById = async (departementId: number): Promise<Departement> => {
-    const query = sql.type(departementSchema)`
+  const deleteDepartementById = async (departementId: number): Promise<Department> => {
+    const query = sql.type(departmentSchema)`
       DELETE
       FROM
         basenaturaliste.departement

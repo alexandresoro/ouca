@@ -1,6 +1,5 @@
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
-import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {
@@ -14,7 +13,7 @@ export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleServ
   }
 
   protected saveEntities = (
-    estimationsDistance: Omit<EstimationDistance, "ownerId">[],
+    estimationsDistance: Omit<DistanceEstimate, "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly DistanceEstimate[]> => {
     return this.services.distanceEstimateService.createEstimationsDistance(estimationsDistance, loggedUser);

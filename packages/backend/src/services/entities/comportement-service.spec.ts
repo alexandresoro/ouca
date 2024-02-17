@@ -1,12 +1,10 @@
+import { type Behavior } from "@domain/behavior/behavior.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  type Comportement,
-  type ComportementCreateInput,
-} from "../../repositories/comportement/comportement-repository-types.js";
+import { type ComportementCreateInput } from "../../repositories/comportement/comportement-repository-types.js";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../utils/mock.js";
@@ -31,7 +29,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find behavior", () => {
   test("should handle a matching behavior ", async () => {
-    const behaviorData = mock<Comportement>();
+    const behaviorData = mock<Behavior>();
     const loggedUser = mock<LoggedUser>();
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(behaviorData);
@@ -77,7 +75,7 @@ describe("Data count per entity", () => {
 
 describe("Find behaviors by inventary ID", () => {
   test("should handle behaviors found", async () => {
-    const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+    const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
     const loggedUser = mock<LoggedUser>();
 
     behaviorRepository.findComportementsOfDonneeId.mockResolvedValueOnce(behaviorsData);
@@ -97,7 +95,7 @@ describe("Find behaviors by inventary ID", () => {
 });
 
 test("Find all behaviors", async () => {
-  const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+  const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
 
   behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
@@ -111,7 +109,7 @@ test("Find all behaviors", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+    const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
     const loggedUser = mock<LoggedUser>();
 
     behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
@@ -123,7 +121,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated behaviors ", async () => {
-    const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+    const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: BehaviorsSearchParams = {
@@ -190,7 +188,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Comportement>({
+    const existingData = mock<Behavior>({
       ownerId: "notAdmin",
     });
 
@@ -207,7 +205,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Comportement>({
+    const existingData = mock<Behavior>({
       ownerId: "notAdmin",
     });
 
@@ -300,7 +298,7 @@ describe("Deletion of a behavior", () => {
       role: "contributor",
     };
 
-    const behavior = mock<Comportement>({
+    const behavior = mock<Behavior>({
       ownerId: loggedUser.id,
     });
 
@@ -317,7 +315,7 @@ describe("Deletion of a behavior", () => {
       role: "admin",
     });
 
-    behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Comportement>());
+    behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Behavior>());
 
     await comportementService.deleteComportement(11, loggedUser);
 
@@ -330,7 +328,7 @@ describe("Deletion of a behavior", () => {
       role: "contributor",
     });
 
-    behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Comportement>());
+    behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Behavior>());
 
     await expect(comportementService.deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
