@@ -64,7 +64,7 @@ describe("Find inventary", () => {
     inventoryRepository.findInventaireById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toBe(null);
+    await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toEqual(null);
 
     expect(inventoryRepository.findInventaireById).toHaveBeenCalledTimes(1);
     expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(10);

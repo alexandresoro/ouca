@@ -59,7 +59,7 @@ describe("Find species", () => {
     speciesRepository.findEspeceById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(speciesService.findEspece(10, loggedUser)).resolves.toBe(null);
+    await expect(speciesService.findEspece(10, loggedUser)).resolves.toEqual(null);
 
     expect(speciesRepository.findEspeceById).toHaveBeenCalledTimes(1);
     expect(speciesRepository.findEspeceById).toHaveBeenLastCalledWith(10);

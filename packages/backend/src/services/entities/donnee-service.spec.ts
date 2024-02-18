@@ -59,7 +59,7 @@ describe("Find data", () => {
     entryRepository.findDonneeById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(donneeService.findDonnee(10, loggedUser)).resolves.toBe(null);
+    await expect(donneeService.findDonnee(10, loggedUser)).resolves.toEqual(null);
 
     expect(entryRepository.findDonneeById).toHaveBeenCalledTimes(1);
     expect(entryRepository.findDonneeById).toHaveBeenLastCalledWith(10);

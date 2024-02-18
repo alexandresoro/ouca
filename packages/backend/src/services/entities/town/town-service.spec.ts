@@ -59,7 +59,7 @@ describe("Find city", () => {
     townRepository.findCommuneById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(townService.findCommune(10, loggedUser)).resolves.toBe(null);
+    await expect(townService.findCommune(10, loggedUser)).resolves.toEqual(null);
 
     expect(townRepository.findCommuneById).toHaveBeenCalledTimes(1);
     expect(townRepository.findCommuneById).toHaveBeenLastCalledWith(10);

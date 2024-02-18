@@ -56,7 +56,7 @@ describe("Find number estimate", () => {
     numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(numberEstimateService.findEstimationNombre(10, loggedUser)).resolves.toBe(null);
+    await expect(numberEstimateService.findEstimationNombre(10, loggedUser)).resolves.toEqual(null);
 
     expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenCalledTimes(1);
     expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenLastCalledWith(10);

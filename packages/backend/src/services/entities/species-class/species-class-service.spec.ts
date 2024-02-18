@@ -48,7 +48,7 @@ describe("Find class", () => {
     classRepository.findClasseById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(speciesClassService.findClasse(10, loggedUser)).resolves.toBe(null);
+    await expect(speciesClassService.findClasse(10, loggedUser)).resolves.toEqual(null);
 
     expect(classRepository.findClasseById).toHaveBeenCalledTimes(1);
     expect(classRepository.findClasseById).toHaveBeenLastCalledWith(10);

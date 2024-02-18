@@ -45,7 +45,7 @@ describe("Find behavior", () => {
     behaviorRepository.findComportementById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(behaviorService.findBehavior(10, loggedUser)).resolves.toBe(null);
+    await expect(behaviorService.findBehavior(10, loggedUser)).resolves.toEqual(null);
 
     expect(behaviorRepository.findComportementById).toHaveBeenCalledTimes(1);
     expect(behaviorRepository.findComportementById).toHaveBeenLastCalledWith(10);

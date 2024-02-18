@@ -48,7 +48,7 @@ describe("Find distance estimate", () => {
     distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(distanceEstimateService.findEstimationDistance(10, loggedUser)).resolves.toBe(null);
+    await expect(distanceEstimateService.findEstimationDistance(10, loggedUser)).resolves.toEqual(null);
 
     expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
     expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(10);

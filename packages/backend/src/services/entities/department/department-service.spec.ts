@@ -51,7 +51,7 @@ describe("Find department", () => {
     departmentRepository.findDepartementById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(departmentService.findDepartement(10, loggedUser)).resolves.toBe(null);
+    await expect(departmentService.findDepartement(10, loggedUser)).resolves.toEqual(null);
 
     expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(10);

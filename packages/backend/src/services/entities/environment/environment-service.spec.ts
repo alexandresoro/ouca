@@ -45,7 +45,7 @@ describe("Find environment", () => {
     environmentRepository.findMilieuById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(environmentService.findMilieu(10, loggedUser)).resolves.toBe(null);
+    await expect(environmentService.findMilieu(10, loggedUser)).resolves.toEqual(null);
 
     expect(environmentRepository.findMilieuById).toHaveBeenCalledTimes(1);
     expect(environmentRepository.findMilieuById).toHaveBeenLastCalledWith(10);

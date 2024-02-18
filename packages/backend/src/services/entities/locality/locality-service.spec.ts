@@ -64,7 +64,7 @@ describe("Find locality", () => {
 
     mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(null);
 
-    await expect(localityService.findLieuDit(10, loggedUser)).resolves.toBe(null);
+    await expect(localityService.findLieuDit(10, loggedUser)).resolves.toEqual(null);
 
     expect(localityRepository.findLieuditById).toHaveBeenCalledTimes(1);
     expect(localityRepository.findLieuditById).toHaveBeenLastCalledWith(10);
