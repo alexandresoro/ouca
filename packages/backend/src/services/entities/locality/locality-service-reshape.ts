@@ -5,7 +5,7 @@ import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type LieuditCreateInput } from "../../../repositories/lieudit/lieudit-repository-types.js";
 import { enrichEntityWithEditableStatus } from "../entities-utils.js";
 
-export const reshapeInputLieuditUpsertData = (data: UpsertLocalityInput): LieuditCreateInput => {
+export const reshapeInputLocalityUpsertData = (data: UpsertLocalityInput): LieuditCreateInput => {
   const { townId, ...rest } = data;
   return {
     ...rest,

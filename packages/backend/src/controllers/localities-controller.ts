@@ -44,7 +44,7 @@ const localitiesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const locality = await localityService.findLieuDit(req.params.id, req.user);
+    const locality = await localityService.findLocality(req.params.id, req.user);
     if (!locality) {
       return await reply.status(404).send();
     }
@@ -65,8 +65,8 @@ const localitiesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [localitiesData, count] = await Promise.all([
-      localityService.findPaginatedLieuxDits(req.user, queryParams),
-      localityService.getLieuxDitsCount(req.user, queryParams),
+      localityService.findPaginatedLocalities(req.user, queryParams),
+      localityService.getLocalitiesCount(req.user, queryParams),
     ]);
 
     let data: Locality[] | LocalityExtended[] = localitiesData;
@@ -77,7 +77,7 @@ const localitiesController: FastifyPluginCallback<{
           const town = await townService.findCommuneOfLieuDitId(localityData.id, req.user);
           const department = town ? await departmentService.findDepartmentOfTownId(town.id, req.user) : null;
           const inventoriesCount = await localityService.getInventoriesCountByLocality(localityData.id, req.user);
-          const entriesCount = await localityService.getDonneesCountByLieuDit(localityData.id, req.user);
+          const entriesCount = await localityService.getEntriesCountByLocality(localityData.id, req.user);
           return {
             ...localityData,
             townCode: town?.code,
@@ -109,7 +109,7 @@ const localitiesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const locality = await localityService.createLieuDit(input, req.user);
+      const locality = await localityService.createLocality(input, req.user);
       const response = upsertLocalityResponse.parse(locality);
 
       return await reply.send(response);
@@ -135,7 +135,7 @@ const localitiesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const locality = await localityService.updateLieuDit(req.params.id, input, req.user);
+      const locality = await localityService.updateLocality(req.params.id, input, req.user);
       const response = upsertLocalityResponse.parse(locality);
 
       return await reply.send(response);
@@ -153,7 +153,7 @@ const localitiesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await localityService.deleteLieuDit(req.params.id, req.user);
+      const { id: deletedId } = await localityService.deleteLocality(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

@@ -30,7 +30,7 @@ export class ImportLieuxditService extends ImportService {
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
       this.services.departmentService.findAllDepartments(),
       this.services.townService.findAllCommunes(),
-      this.services.localityService.findAllLieuxDits(),
+      this.services.localityService.findAllLocalities(),
       "gps",
     ]);
 
@@ -93,7 +93,7 @@ export class ImportLieuxditService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.lieuxDitsToInsert.length) {
-      await this.services.localityService.createLieuxDits(this.lieuxDitsToInsert, loggedUser);
+      await this.services.localityService.createLocalities(this.lieuxDitsToInsert, loggedUser);
     }
   };
 }

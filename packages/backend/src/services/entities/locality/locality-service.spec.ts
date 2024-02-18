@@ -12,7 +12,7 @@ import { type InventaireRepository } from "../../../repositories/inventaire/inve
 import { type LieuditCreateInput } from "../../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
+import { reshapeInputLocalityUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 import { buildLocalityService } from "./locality-service.js";
 
 const localityRepository = mockVi<LieuditRepository>();
@@ -37,12 +37,12 @@ const uniqueConstraintFailed = () => {
 vi.mock("./locality-service-reshape.js", () => {
   return {
     __esModule: true,
-    reshapeInputLieuditUpsertData: vi.fn(),
+    reshapeInputLocalityUpsertData: vi.fn(),
     reshapeLocalityRepositoryToApi: vi.fn(),
   };
 });
 
-const mockedReshapeInputLieuditUpsertData = vi.mocked(reshapeInputLieuditUpsertData);
+const mockedReshapeInputLocalityUpsertData = vi.mocked(reshapeInputLocalityUpsertData);
 const mockedReshapeLocalityRepositoryToApi = vi.mocked(reshapeLocalityRepositoryToApi);
 
 describe("Find locality", () => {
@@ -52,7 +52,7 @@ describe("Find locality", () => {
 
     localityRepository.findLieuditById.mockResolvedValueOnce(localityData);
 
-    await localityService.findLieuDit(12, loggedUser);
+    await localityService.findLocality(12, loggedUser);
 
     expect(localityRepository.findLieuditById).toHaveBeenCalledTimes(1);
     expect(localityRepository.findLieuditById).toHaveBeenLastCalledWith(12);
@@ -64,14 +64,14 @@ describe("Find locality", () => {
 
     mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(null);
 
-    await expect(localityService.findLieuDit(10, loggedUser)).resolves.toEqual(null);
+    await expect(localityService.findLocality(10, loggedUser)).resolves.toEqual(null);
 
     expect(localityRepository.findLieuditById).toHaveBeenCalledTimes(1);
     expect(localityRepository.findLieuditById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(localityService.findLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.findLocality(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.findLieuditById).not.toHaveBeenCalled();
   });
 });
@@ -95,14 +95,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await localityService.getDonneesCountByLieuDit("12", loggedUser);
+    await localityService.getEntriesCountByLocality("12", loggedUser);
 
     expect(entryRepository.getCountByLieuditId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByLieuditId).toHaveBeenLastCalledWith(12);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(localityService.getDonneesCountByLieuDit("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.getEntriesCountByLocality("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -120,7 +120,7 @@ describe("Find locality by inventary ID", () => {
       })
     );
 
-    const locality = await localityService.findLieuDitOfInventaireId(43, loggedUser);
+    const locality = await localityService.findLocalityOfInventoryId(43, loggedUser);
 
     expect(localityRepository.findLieuditByInventaireId).toHaveBeenCalledTimes(1);
     expect(localityRepository.findLieuditByInventaireId).toHaveBeenLastCalledWith(43);
@@ -128,7 +128,7 @@ describe("Find locality by inventary ID", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(localityService.findLieuDitOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.findLocalityOfInventoryId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -137,7 +137,7 @@ test("Find all localities", async () => {
 
   localityRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
-  await localityService.findAllLieuxDits();
+  await localityService.findAllLocalities();
 
   expect(localityRepository.findLieuxdits).toHaveBeenCalledTimes(1);
   expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({
@@ -152,7 +152,7 @@ describe("Entities paginated find by search criteria", () => {
 
     localityRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
-    await localityService.findPaginatedLieuxDits(loggedUser, {});
+    await localityService.findPaginatedLocalities(loggedUser, {});
 
     expect(localityRepository.findLieuxdits).toHaveBeenCalledTimes(1);
     expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({});
@@ -172,7 +172,7 @@ describe("Entities paginated find by search criteria", () => {
 
     localityRepository.findLieuxdits.mockResolvedValueOnce([localitiesData[0]]);
 
-    await localityService.findPaginatedLieuxDits(loggedUser, searchParams);
+    await localityService.findPaginatedLocalities(loggedUser, searchParams);
 
     expect(localityRepository.findLieuxdits).toHaveBeenCalledTimes(1);
     expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({
@@ -185,7 +185,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(localityService.findPaginatedLieuxDits(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.findPaginatedLocalities(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -193,7 +193,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await localityService.getLieuxDitsCount(loggedUser, {});
+    await localityService.getLocalitiesCount(loggedUser, {});
 
     expect(localityRepository.getCount).toHaveBeenCalledTimes(1);
     expect(localityRepository.getCount).toHaveBeenLastCalledWith(undefined, undefined);
@@ -202,14 +202,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await localityService.getLieuxDitsCount(loggedUser, { q: "test", townId: "12" });
+    await localityService.getLocalitiesCount(loggedUser, { q: "test", townId: "12" });
 
     expect(localityRepository.getCount).toHaveBeenCalledTimes(1);
     expect(localityRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(localityService.getLieuxDitsCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.getLocalitiesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -218,15 +218,15 @@ describe("Update of a locality", () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
-    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
     localityRepository.updateLieudit.mockResolvedValueOnce(localityFactory.build());
 
-    await localityService.updateLieuDit(12, localityData, loggedUser);
+    await localityService.updateLocality(12, localityData, loggedUser);
 
     expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLocalityUpsertData).toHaveBeenCalledTimes(1);
     expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -238,16 +238,16 @@ describe("Update of a locality", () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
-    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     localityRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
-    await localityService.updateLieuDit(12, localityData, loggedUser);
+    await localityService.updateLocality(12, localityData, loggedUser);
 
     expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLocalityUpsertData).toHaveBeenCalledTimes(1);
     expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -265,7 +265,9 @@ describe("Update of a locality", () => {
 
     localityRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
-    await expect(localityService.updateLieuDit(12, localityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(localityService.updateLocality(12, localityData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
     expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
   });
@@ -274,25 +276,25 @@ describe("Update of a locality", () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
-    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     localityRepository.updateLieudit.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => localityService.updateLieuDit(12, localityData, loggedUser)).rejects.toThrowError(
+    await expect(() => localityService.updateLocality(12, localityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLocalityUpsertData).toHaveBeenCalledTimes(1);
     expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
-    await expect(localityService.updateLieuDit(12, localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.updateLocality(12, localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
   });
 });
@@ -302,16 +304,16 @@ describe("Creation of a locality", () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
-    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
     localityRepository.createLieudit.mockResolvedValueOnce(localityFactory.build());
 
-    await localityService.createLieuDit(localityData, loggedUser);
+    await localityService.createLocality(localityData, loggedUser);
 
     expect(localityRepository.createLieudit).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLocalityUpsertData).toHaveBeenCalledTimes(1);
     expect(localityRepository.createLieudit).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
@@ -322,18 +324,18 @@ describe("Creation of a locality", () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
-    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
     localityRepository.createLieudit.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => localityService.createLieuDit(localityData, loggedUser)).rejects.toThrowError(
+    await expect(() => localityService.createLocality(localityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(localityRepository.createLieudit).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLocalityUpsertData).toHaveBeenCalledTimes(1);
     expect(localityRepository.createLieudit).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
@@ -343,7 +345,7 @@ describe("Creation of a locality", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
-    await expect(localityService.createLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.createLocality(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.createLieudit).not.toHaveBeenCalled();
   });
 });
@@ -362,7 +364,7 @@ describe("Deletion of a locality", () => {
     localityRepository.findLieuditById.mockResolvedValueOnce(locality);
     localityRepository.deleteLieuditById.mockResolvedValueOnce(localityFactory.build());
 
-    await localityService.deleteLieuDit(11, loggedUser);
+    await localityService.deleteLocality(11, loggedUser);
 
     expect(localityRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
     expect(localityRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
@@ -376,7 +378,7 @@ describe("Deletion of a locality", () => {
     localityRepository.findLieuditById.mockResolvedValueOnce(localityFactory.build());
     localityRepository.deleteLieuditById.mockResolvedValueOnce(localityFactory.build());
 
-    await localityService.deleteLieuDit(11, loggedUser);
+    await localityService.deleteLocality(11, loggedUser);
 
     expect(localityRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
     expect(localityRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
@@ -389,19 +391,19 @@ describe("Deletion of a locality", () => {
 
     localityRepository.findLieuditById.mockResolvedValueOnce(localityFactory.build());
 
-    await expect(localityService.deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.deleteLocality(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(localityRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(localityService.deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(localityService.deleteLocality(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple localities", async () => {
-  const lieuDitsData = [
+  const localitiesData = [
     mock<Omit<LieuditCreateInput, "owner_id">>(),
     mock<Omit<LieuditCreateInput, "owner_id">>(),
     mock<Omit<LieuditCreateInput, "owner_id">>(),
@@ -411,13 +413,13 @@ test("Create multiple localities", async () => {
 
   localityRepository.createLieuxdits.mockResolvedValueOnce([]);
 
-  await localityService.createLieuxDits(lieuDitsData, loggedUser);
+  await localityService.createLocalities(localitiesData, loggedUser);
 
   expect(localityRepository.createLieuxdits).toHaveBeenCalledTimes(1);
   expect(localityRepository.createLieuxdits).toHaveBeenLastCalledWith(
-    lieuDitsData.map((lieuDit) => {
+    localitiesData.map((locality) => {
       return {
-        ...lieuDit,
+        ...locality,
         owner_id: loggedUser.id,
       };
     })

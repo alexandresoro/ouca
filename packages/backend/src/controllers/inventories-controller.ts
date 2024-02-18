@@ -25,7 +25,7 @@ export const enrichedInventory = async (
   const [observer, associates, locality, weathers] = await Promise.all([
     (await services.observerService.findObserverOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
     (await services.observerService.findAssociatesOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
-    services.localityService.findLieuDitOfInventaireId(parseInt(inventory.id), user),
+    services.localityService.findLocalityOfInventoryId(parseInt(inventory.id), user),
     (await services.weatherService.findWeathersOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
   ]);
 

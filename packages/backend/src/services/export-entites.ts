@@ -178,7 +178,7 @@ export const generateDonneesExport = async (
       const observateur = (
         await observerService.findObserverOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const lieudit = await localityService.findLieuDitOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const lieudit = await localityService.findLocalityOfInventoryId(parseInt(inventaire.id), loggedUser);
       const commune = await townService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
       const departement = await departmentService.findDepartmentOfTownId(commune?.id, loggedUser);
       const associes = (
@@ -299,7 +299,7 @@ export const generateEstimationsNombreExport = async ({
 export const generateLieuxDitsExport = async ({
   localityService,
 }: { localityService: LocalityService }): Promise<string> => {
-  const lieuxDits = await localityService.findAllLieuxDitsWithCommuneAndDepartement();
+  const lieuxDits = await localityService.findAllLocalitiesWithTownAndDepartment();
 
   const objectsToExport = lieuxDits.map((lieudit) => {
     return {

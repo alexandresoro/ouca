@@ -12,7 +12,7 @@ import {
 } from "../../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { getSqlPagination } from "../entities-utils.js";
-import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
+import { reshapeInputLocalityUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 
 type LocalityServiceDependencies = {
   localityRepository: LieuditRepository;
@@ -25,7 +25,7 @@ export const buildLocalityService = ({
   inventoryRepository,
   entryRepository,
 }: LocalityServiceDependencies) => {
-  const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
+  const findLocality = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
     const locality = await localityRepository.findLieuditById(id);
@@ -38,13 +38,13 @@ export const buildLocalityService = ({
     return inventoryRepository.getCountByLocality(parseInt(id));
   };
 
-  const getDonneesCountByLieuDit = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByLieuditId(parseInt(id));
   };
 
-  const findLieuDitOfInventaireId = async (
+  const findLocalityOfInventoryId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Locality | null> => {
@@ -54,19 +54,19 @@ export const buildLocalityService = ({
     return reshapeLocalityRepositoryToApi(locality, loggedUser);
   };
 
-  const findAllLieuxDits = async (): Promise<Locality[]> => {
-    const lieuxDits = await localityRepository.findLieuxdits({
+  const findAllLocalities = async (): Promise<Locality[]> => {
+    const localities = await localityRepository.findLieuxdits({
       orderBy: "nom",
     });
 
-    const enrichedLocalities = lieuxDits.map((locality) => {
+    const enrichedLocalities = localities.map((locality) => {
       return reshapeLocalityRepositoryToApi(locality, null);
     });
 
     return [...enrichedLocalities];
   };
 
-  const findPaginatedLieuxDits = async (
+  const findPaginatedLocalities = async (
     loggedUser: LoggedUser | null,
     options: LocalitiesSearchParams
   ): Promise<Locality[]> => {
@@ -74,7 +74,7 @@ export const buildLocalityService = ({
 
     const { q, townId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const lieuxDits = await localityRepository.findLieuxdits({
+    const localities = await localityRepository.findLieuxdits({
       q,
       ...getSqlPagination(pagination),
       townId: townId ? parseInt(townId) : undefined,
@@ -82,20 +82,20 @@ export const buildLocalityService = ({
       sortOrder,
     });
 
-    const enrichedLocalities = lieuxDits.map((locality) => {
+    const enrichedLocalities = localities.map((locality) => {
       return reshapeLocalityRepositoryToApi(locality, loggedUser);
     });
 
     return [...enrichedLocalities];
   };
 
-  const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
-    const lieuxditsWithCommuneAndDepartementCode =
+  const findAllLocalitiesWithTownAndDepartment = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
+    const localitiesWithTownAndDepartmentCode =
       await localityRepository.findAllLieuxDitsWithCommuneAndDepartementCode();
-    return [...lieuxditsWithCommuneAndDepartementCode];
+    return [...localitiesWithTownAndDepartmentCode];
   };
 
-  const getLieuxDitsCount = async (
+  const getLocalitiesCount = async (
     loggedUser: LoggedUser | null,
     { q, townId }: Pick<LocalitiesSearchParams, "q" | "townId">
   ): Promise<number> => {
@@ -104,12 +104,12 @@ export const buildLocalityService = ({
     return localityRepository.getCount(q, townId ? parseInt(townId) : undefined);
   };
 
-  const createLieuDit = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Locality> => {
+  const createLocality = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
     try {
       const createdLocality = await localityRepository.createLieudit({
-        ...reshapeInputLieuditUpsertData(input),
+        ...reshapeInputLocalityUpsertData(input),
         owner_id: loggedUser.id,
       });
 
@@ -122,7 +122,7 @@ export const buildLocalityService = ({
     }
   };
 
-  const updateLieuDit = async (
+  const updateLocality = async (
     id: number,
     input: UpsertLocalityInput,
     loggedUser: LoggedUser | null
@@ -139,7 +139,7 @@ export const buildLocalityService = ({
     }
 
     try {
-      const updatedLocality = await localityRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
+      const updatedLocality = await localityRepository.updateLieudit(id, reshapeInputLocalityUpsertData(input));
 
       return reshapeLocalityRepositoryToApi(updatedLocality, loggedUser);
     } catch (e) {
@@ -150,7 +150,7 @@ export const buildLocalityService = ({
     }
   };
 
-  const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality> => {
+  const deleteLocality = async (id: number, loggedUser: LoggedUser | null): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -166,13 +166,13 @@ export const buildLocalityService = ({
     return reshapeLocalityRepositoryToApi(deletedLocality, loggedUser);
   };
 
-  const createLieuxDits = async (
-    lieuxdits: Omit<LieuditCreateInput, "owner_id">[],
+  const createLocalities = async (
+    localities: Omit<LieuditCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Locality[]> => {
     const createdLocalities = await localityRepository.createLieuxdits(
-      lieuxdits.map((lieudit) => {
-        return { ...lieudit, owner_id: loggedUser.id };
+      localities.map((locality) => {
+        return { ...locality, owner_id: loggedUser.id };
       })
     );
 
@@ -184,18 +184,18 @@ export const buildLocalityService = ({
   };
 
   return {
-    findLieuDit,
+    findLocality,
     getInventoriesCountByLocality,
-    getDonneesCountByLieuDit,
-    findLieuDitOfInventaireId,
-    findAllLieuxDits,
-    findAllLieuxDitsWithCommuneAndDepartement,
-    findPaginatedLieuxDits,
-    getLieuxDitsCount,
-    createLieuDit,
-    updateLieuDit,
-    deleteLieuDit,
-    createLieuxDits,
+    getEntriesCountByLocality,
+    findLocalityOfInventoryId,
+    findAllLocalities,
+    findAllLocalitiesWithTownAndDepartment,
+    findPaginatedLocalities,
+    getLocalitiesCount,
+    createLocality,
+    updateLocality,
+    deleteLocality,
+    createLocalities,
   };
 };
 
