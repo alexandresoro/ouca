@@ -1,6 +1,7 @@
 import { type Environment } from "@domain/environment/environment.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
@@ -30,7 +31,7 @@ const uniqueConstraintFailed = () => {
 describe("Find environment", () => {
   test("should handle a matching environment", async () => {
     const environmentData = mock<Environment>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(environmentData);
 
@@ -42,7 +43,7 @@ describe("Find environment", () => {
 
   test("should handle environment not found", async () => {
     environmentRepository.findMilieuById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(environmentService.findMilieu(10, loggedUser)).resolves.toBe(null);
 
@@ -58,7 +59,7 @@ describe("Find environment", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await environmentService.getDonneesCountByMilieu("12", loggedUser);
 
@@ -74,7 +75,7 @@ describe("Data count per entity", () => {
 describe("Find environments by inventary ID", () => {
   test("should handle environments found", async () => {
     const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     environmentRepository.findMilieuxOfDonneeId.mockResolvedValueOnce(environmentsData);
 
@@ -106,7 +107,7 @@ test("Find all environments", async () => {
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     environmentRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
@@ -118,7 +119,7 @@ describe("Entities paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated environments ", async () => {
     const environmentsData = [mock<Environment>(), mock<Environment>(), mock<Environment>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: EnvironmentsSearchParams = {
       orderBy: "libelle",
@@ -149,7 +150,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await environmentService.getMilieuxCount(loggedUser);
 
@@ -158,7 +159,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await environmentService.getMilieuxCount(loggedUser, "test");
 
@@ -175,7 +176,7 @@ describe("Update of an environment", () => {
   test("should be allowed when requested by an admin", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await environmentService.updateMilieu(12, environmentData, loggedUser);
 
@@ -190,7 +191,7 @@ describe("Update of an environment", () => {
 
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     environmentRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
@@ -224,7 +225,7 @@ describe("Update of an environment", () => {
   test("should throw an error when trying to update to an environment that exists", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     environmentRepository.updateMilieu.mockImplementation(uniqueConstraintFailed);
 
@@ -248,7 +249,7 @@ describe("Creation of an environment", () => {
   test("should create new environment", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await environmentService.createMilieu(environmentData, loggedUser);
 
@@ -262,7 +263,7 @@ describe("Creation of an environment", () => {
   test("should throw an error when trying to create an environment that already exists", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     environmentRepository.createMilieu.mockImplementation(uniqueConstraintFailed);
 
@@ -305,7 +306,7 @@ describe("Deletion of an environment", () => {
   });
 
   test("hould handle the deletion of any environment if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -318,7 +319,7 @@ describe("Deletion of an environment", () => {
   });
 
   test("should return an error when deleting a non-owned environment as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -342,7 +343,7 @@ test("Create multiple environments", async () => {
     mock<Omit<MilieuCreateInput, "owner_id">>(),
   ];
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   environmentRepository.createMilieux.mockResolvedValueOnce([]);
 

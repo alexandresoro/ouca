@@ -1,6 +1,7 @@
 import { type DistanceEstimate } from "@domain/distance-estimate/distance-estimate.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import {
   type DistanceEstimatesSearchParams,
   type UpsertDistanceEstimateInput,
@@ -33,7 +34,7 @@ const uniqueConstraintFailed = () => {
 describe("Find distance estimate", () => {
   test("should handle a matching distance estimate", async () => {
     const distanceEstimateData = mock<DistanceEstimate>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimateData);
 
@@ -45,7 +46,7 @@ describe("Find distance estimate", () => {
 
   test("should handle distance estimate not found", async () => {
     distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(distanceEstimateService.findEstimationDistance(10, loggedUser)).resolves.toBe(null);
 
@@ -61,7 +62,7 @@ describe("Find distance estimate", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await distanceEstimateService.getDonneesCountByEstimationDistance("12", loggedUser);
 
@@ -81,7 +82,7 @@ describe("Find distance estimate by data ID", () => {
     const distanceEstimateData = mock<DistanceEstimate>({
       id: "256",
     });
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     distanceEstimateRepository.findEstimationDistanceByDonneeId.mockResolvedValueOnce(distanceEstimateData);
 
@@ -115,7 +116,7 @@ test("Find all estimationsDistance", async () => {
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const estimationsDistanceData = [mock<DistanceEstimate>(), mock<DistanceEstimate>(), mock<DistanceEstimate>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     distanceEstimateRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
 
@@ -127,7 +128,7 @@ describe("Entities paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated estimationsDistance ", async () => {
     const estimationsDistanceData = [mock<DistanceEstimate>(), mock<DistanceEstimate>(), mock<DistanceEstimate>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: DistanceEstimatesSearchParams = {
       orderBy: "libelle",
@@ -160,7 +161,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await distanceEstimateService.getEstimationsDistanceCount(loggedUser);
 
@@ -169,7 +170,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await distanceEstimateService.getEstimationsDistanceCount(loggedUser, "test");
 
@@ -186,7 +187,7 @@ describe("Update of a distance estimate", () => {
   test("should be allowed when requested by an admin ", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await distanceEstimateService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
@@ -201,7 +202,7 @@ describe("Update of a distance estimate", () => {
 
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     distanceEstimateRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
@@ -235,7 +236,7 @@ describe("Update of a distance estimate", () => {
   test("should throw an error when trying to update to a distance estimate that exists", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     distanceEstimateRepository.updateEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
@@ -261,7 +262,7 @@ describe("Creation of a distance estimate", () => {
   test("should create new distance estimate", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await distanceEstimateService.createEstimationDistance(distanceEstimateData, loggedUser);
 
@@ -275,7 +276,7 @@ describe("Creation of a distance estimate", () => {
   test("should throw an error when trying to create a distance estimate that already exists", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     distanceEstimateRepository.createEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
@@ -320,7 +321,7 @@ describe("Deletion of a distance estimate", () => {
   });
 
   test("should handle the deletion of any distance estimate if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -333,7 +334,7 @@ describe("Deletion of a distance estimate", () => {
   });
 
   test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -359,7 +360,7 @@ test("Create multiple estimationsDistance", async () => {
     mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
   ];
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   distanceEstimateRepository.createEstimationsDistance.mockResolvedValueOnce([]);
 

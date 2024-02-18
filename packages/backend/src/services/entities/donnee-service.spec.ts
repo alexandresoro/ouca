@@ -1,5 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { createMockPool } from "slonik";
@@ -45,7 +45,7 @@ beforeEach(() => {
 describe("Find data", () => {
   test("should handle a matching data", async () => {
     const dataData = mock<Donnee>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findDonneeById.mockResolvedValueOnce(dataData);
 
@@ -57,7 +57,7 @@ describe("Find data", () => {
 
   test("should handle data not found", async () => {
     entryRepository.findDonneeById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(donneeService.findDonnee(10, loggedUser)).resolves.toBe(null);
 
@@ -84,7 +84,7 @@ test("Find all datas", async () => {
 describe("Data paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findDonnees.mockResolvedValueOnce(dataData);
 
@@ -102,7 +102,7 @@ describe("Data paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated data", async () => {
     const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: EntriesSearchParams = {
       number: 12,
@@ -142,7 +142,7 @@ describe("Data paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await donneeService.getDonneesCount(loggedUser, {
       pageNumber: 1,
@@ -154,7 +154,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchCriteria: EntriesSearchParams = {
       pageNumber: 1,
@@ -184,7 +184,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Data navigation", () => {
   test("should call the correct info", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findPreviousDonneeId.mockResolvedValueOnce(3);
     entryRepository.findNextDonneeId.mockResolvedValueOnce(17);
@@ -209,7 +209,7 @@ describe("Data navigation", () => {
 
 describe("Get latest data id", () => {
   test("should handle existing data", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findLatestDonneeId.mockResolvedValueOnce("18");
 
@@ -220,7 +220,7 @@ describe("Get latest data id", () => {
   });
 
   test("should handle no existing data", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findLatestDonneeId.mockResolvedValueOnce(null);
 
@@ -237,7 +237,7 @@ describe("Get latest data id", () => {
 
 describe("Get next group", () => {
   test("should handle existing groups", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findLatestRegroupement.mockResolvedValueOnce(18);
 
@@ -248,7 +248,7 @@ describe("Get next group", () => {
   });
 
   test("should handle no existing group", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findLatestRegroupement.mockResolvedValueOnce(null);
 
@@ -265,7 +265,7 @@ describe("Get next group", () => {
 
 describe("Deletion of a data", () => {
   test("should handle the deletion of any data if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -288,7 +288,7 @@ describe("Deletion of a data", () => {
 
   describe("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
     test("when the inventory exists", async () => {
-      const loggedUser = mock<LoggedUser>({
+      const loggedUser = loggedUserFactory.build({
         id: "12",
         role: "contributor",
       });
@@ -313,7 +313,7 @@ describe("Deletion of a data", () => {
     });
 
     test("unless no matching inventory has been found", async () => {
-      const loggedUser = mock<LoggedUser>({
+      const loggedUser = loggedUserFactory.build({
         id: "12",
         role: "contributor",
       });
@@ -332,7 +332,7 @@ describe("Deletion of a data", () => {
   });
 
   test("should throw an error when trying to deletre a data belonging to a non-owned inventory", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -355,7 +355,7 @@ describe("Update of a data", () => {
       environmentIds: ["4", "5"],
     });
 
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findExistingDonnee.mockResolvedValueOnce(null);
     entryRepository.createDonnee.mockResolvedValueOnce(
@@ -392,7 +392,7 @@ describe("Update of a data", () => {
   test("should throw an error when trying to update to a different data that already exists", async () => {
     const dataData = mock<UpsertEntryInput>();
 
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     entryRepository.findExistingDonnee.mockResolvedValueOnce(
       mock<Donnee>({
@@ -424,7 +424,7 @@ describe("Creation of a data", () => {
       environmentIds: [],
     });
 
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -443,7 +443,7 @@ describe("Creation of a data", () => {
       environmentIds: [],
     });
 
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -468,7 +468,7 @@ describe("Creation of a data", () => {
       environmentIds: ["2", "3"],
     });
 
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);

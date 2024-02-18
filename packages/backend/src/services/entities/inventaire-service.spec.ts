@@ -1,6 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type Locality } from "@domain/locality/locality.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
@@ -50,7 +50,7 @@ beforeEach(() => {
 describe("Find inventary", () => {
   test("should handle a matching inventary", async () => {
     const inventaryData = mock<Inventaire>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     inventoryRepository.findInventaireById.mockResolvedValueOnce(inventaryData);
 
@@ -62,7 +62,7 @@ describe("Find inventary", () => {
 
   test("should handle inventary not found", async () => {
     inventoryRepository.findInventaireById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toBe(null);
 
@@ -79,7 +79,7 @@ describe("Find inventary", () => {
 describe("Find inventary by data ID", () => {
   test("should handle inventary found", async () => {
     const inventaryData = mock<Inventaire>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(inventaryData);
 
@@ -108,7 +108,7 @@ test("Find all inventaries", async () => {
 describe("Inventories paginated find by search criteria", () => {
   test("should handle params when retrieving paginated inventories", async () => {
     const inventoriesData = [mock<Inventaire>(), mock<Inventaire>(), mock<Inventaire>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: InventoriesSearchParams = {
       orderBy: "creationDate",
@@ -139,7 +139,7 @@ describe("Inventories paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await inventaireService.getInventairesCount(loggedUser);
 
@@ -159,7 +159,7 @@ describe("Update of an inventory", () => {
         migrateDonneesIfMatchesExistingInventaire: undefined,
       });
 
-      const loggedUser = mock<LoggedUser>();
+      const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
@@ -182,7 +182,7 @@ describe("Update of an inventory", () => {
         migrateDonneesIfMatchesExistingInventaire: true,
       });
 
-      const loggedUser = mock<LoggedUser>();
+      const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
@@ -217,7 +217,7 @@ describe("Update of an inventory", () => {
         weatherIds: ["4", "5"],
       });
 
-      const loggedUser = mock<LoggedUser>();
+      const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
@@ -270,7 +270,7 @@ describe("Creation of an inventory", () => {
         duration: null,
       });
 
-      const loggedUser = mock<LoggedUser>();
+      const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
@@ -302,7 +302,7 @@ describe("Creation of an inventory", () => {
         duration: null,
       });
 
-      const loggedUser = mock<LoggedUser>();
+      const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLieuditById.mockResolvedValue(mock<Locality>());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
@@ -337,7 +337,7 @@ describe("Creation of an inventory", () => {
 
 describe("Deletion of an inventory", () => {
   test("when deletion of inventory is done by an admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -356,7 +356,7 @@ describe("Deletion of an inventory", () => {
   });
 
   test("when deletion of inventory is done by a non-admin owner", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
     });
@@ -376,7 +376,7 @@ describe("Deletion of an inventory", () => {
   });
 
   test("should throw an error when trying to delete an inventory still used", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
     });
@@ -394,7 +394,7 @@ describe("Deletion of an inventory", () => {
   });
 
   test("should throw an error when trying to delete an inventory belonging to a non-owned inventory", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 

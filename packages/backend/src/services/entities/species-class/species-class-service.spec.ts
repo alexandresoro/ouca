@@ -1,6 +1,7 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type SpeciesClass } from "@domain/species-class/species-class.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
@@ -33,7 +34,7 @@ const uniqueConstraintFailed = () => {
 describe("Find class", () => {
   test("should handle a matching class", async () => {
     const classData: SpeciesClass = mock<SpeciesClass>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     classRepository.findClasseById.mockResolvedValueOnce(classData);
 
@@ -45,7 +46,7 @@ describe("Find class", () => {
 
   test("should handle class not found", async () => {
     classRepository.findClasseById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(speciesClassService.findClasse(10, loggedUser)).resolves.toBe(null);
 
@@ -61,7 +62,7 @@ describe("Find class", () => {
 
 describe("Species count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await speciesClassService.getEspecesCountByClasse("12", loggedUser);
 
@@ -76,7 +77,7 @@ describe("Species count per entity", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await speciesClassService.getDonneesCountByClasse("12", loggedUser);
 
@@ -94,7 +95,7 @@ describe("Find class by species ID", () => {
     const classData = mock<SpeciesClass>({
       id: "256",
     });
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     classRepository.findClasseByEspeceId.mockResolvedValueOnce(classData);
 
@@ -126,7 +127,7 @@ test("Find all classes", async () => {
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     classRepository.findClasses.mockResolvedValueOnce(classesData);
 
@@ -138,7 +139,7 @@ describe("Entities paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated classes ", async () => {
     const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams = mock<ClassesSearchParams>({
       orderBy: "libelle",
@@ -169,7 +170,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await speciesClassService.getClassesCount(loggedUser);
 
@@ -178,7 +179,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await speciesClassService.getClassesCount(loggedUser, "test");
 
@@ -195,7 +196,7 @@ describe("Update of a class", () => {
   test("should be allowed when requested by an admin", async () => {
     const classData = mock<UpsertClassInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await speciesClassService.updateClasse(12, classData, loggedUser);
 
@@ -210,7 +211,7 @@ describe("Update of a class", () => {
 
     const classData = mock<UpsertClassInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     classRepository.findClasseById.mockResolvedValueOnce(existingData);
 
@@ -244,7 +245,7 @@ describe("Update of a class", () => {
   test("should throw an error when trying to update to a class that exists", async () => {
     const classData = mock<UpsertClassInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     classRepository.updateClasse.mockImplementation(uniqueConstraintFailed);
 
@@ -268,7 +269,7 @@ describe("Creation of a class", () => {
   test("should create new class", async () => {
     const classData = mock<UpsertClassInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await speciesClassService.createClasse(classData, loggedUser);
 
@@ -282,7 +283,7 @@ describe("Creation of a class", () => {
   test("should throw an error when trying to create a class that already exists", async () => {
     const classData = mock<UpsertClassInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     classRepository.createClasse.mockImplementation(uniqueConstraintFailed);
 
@@ -325,7 +326,7 @@ describe("Deletion of a class", () => {
   });
 
   test("should handle the deletion of any class if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -338,7 +339,7 @@ describe("Deletion of a class", () => {
   });
 
   test("should return an error when deleting a non-owned class as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -362,7 +363,7 @@ test("Create multiple classes", async () => {
     mock<Omit<ClasseCreateInput, "owner_id">>(),
   ];
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   classRepository.createClasses.mockResolvedValueOnce([]);
 

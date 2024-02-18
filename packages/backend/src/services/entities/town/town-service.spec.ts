@@ -1,5 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
@@ -43,7 +44,7 @@ const mockedReshapeInputCommuneUpsertData = vi.mocked(reshapeInputCommuneUpsertD
 describe("Find city", () => {
   test("should handle a matching city", async () => {
     const cityData = mock<Commune>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     townRepository.findCommuneById.mockResolvedValueOnce(cityData);
 
@@ -55,7 +56,7 @@ describe("Find city", () => {
 
   test("should handle city not found", async () => {
     townRepository.findCommuneById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(townService.findCommune(10, loggedUser)).resolves.toBe(null);
 
@@ -71,7 +72,7 @@ describe("Find city", () => {
 
 describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await townService.getLieuxDitsCountByCommune("12", loggedUser);
 
@@ -86,7 +87,7 @@ describe("Localities count per entity", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await townService.getDonneesCountByCommune("12", loggedUser);
 
@@ -104,7 +105,7 @@ describe("Find city by locality ID", () => {
     const cityData = mock<Commune>({
       id: "256",
     });
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     townRepository.findCommuneByLieuDitId.mockResolvedValueOnce(cityData);
 
@@ -136,7 +137,7 @@ test("Find all cities", async () => {
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     townRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
@@ -148,7 +149,7 @@ describe("Entities paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated cities ", async () => {
     const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: TownsSearchParams = {
       orderBy: "nom",
@@ -179,7 +180,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await townService.getCommunesCount(loggedUser, {});
 
@@ -188,7 +189,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await townService.getCommunesCount(loggedUser, { q: "test", departmentId: "12" });
 
@@ -208,7 +209,7 @@ describe("Update of a city", () => {
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await townService.updateCommune(12, cityData, loggedUser);
 
@@ -227,7 +228,7 @@ describe("Update of a city", () => {
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     townRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
@@ -263,7 +264,7 @@ describe("Update of a city", () => {
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     townRepository.updateCommune.mockImplementation(uniqueConstraintFailed);
 
@@ -291,7 +292,7 @@ describe("Creation of a city", () => {
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await townService.createCommune(cityData, loggedUser);
 
@@ -309,7 +310,7 @@ describe("Creation of a city", () => {
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     townRepository.createCommune.mockImplementation(uniqueConstraintFailed);
 
@@ -353,7 +354,7 @@ describe("Deletion of a city", () => {
   });
 
   test("should handle the deletion of any city if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -366,7 +367,7 @@ describe("Deletion of a city", () => {
   });
 
   test("should return an error when deleting a non-owned city as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -390,7 +391,7 @@ test("Create multiple cities", async () => {
     mock<Omit<CommuneCreateInput, "owner_id">>(),
   ];
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   townRepository.createCommunes.mockResolvedValueOnce([]);
 

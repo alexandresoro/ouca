@@ -1,6 +1,7 @@
 import { type Department } from "@domain/department/department.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
@@ -36,7 +37,7 @@ const uniqueConstraintFailed = () => {
 describe("Find department", () => {
   test("should handle a matching department", async () => {
     const departmentData = mock<Department>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(departmentData);
 
@@ -48,7 +49,7 @@ describe("Find department", () => {
 
   test("should handle department not found", async () => {
     departmentRepository.findDepartementById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(departmentService.findDepartement(10, loggedUser)).resolves.toBe(null);
 
@@ -64,7 +65,7 @@ describe("Find department", () => {
 
 describe("Cities count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await departmentService.getCommunesCountByDepartement("12", loggedUser);
 
@@ -81,7 +82,7 @@ describe("Cities count per entity", () => {
 
 describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await departmentService.getLieuxDitsCountByDepartement("12", loggedUser);
 
@@ -98,7 +99,7 @@ describe("Localities count per entity", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await departmentService.getDonneesCountByDepartement("12", loggedUser);
 
@@ -116,7 +117,7 @@ describe("Find department by city ID", () => {
     const departmentData = mock<Department>({
       id: "256",
     });
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     departmentRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
 
@@ -148,7 +149,7 @@ test("Find all departments", async () => {
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
@@ -160,7 +161,7 @@ describe("Entities paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated departments ", async () => {
     const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: DepartmentsSearchParams = {
       orderBy: "code",
@@ -191,7 +192,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await departmentService.getDepartementsCount(loggedUser);
 
@@ -200,7 +201,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await departmentService.getDepartementsCount(loggedUser, "test");
 
@@ -217,7 +218,7 @@ describe("Update of a department", () => {
   test("should be allowed when requested by an admin", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await departmentService.updateDepartement(12, departmentData, loggedUser);
 
@@ -232,7 +233,7 @@ describe("Update of a department", () => {
 
     const departmentData = mock<UpsertDepartmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
@@ -266,7 +267,7 @@ describe("Update of a department", () => {
   test("should throw an error when trying to update to a department that exists", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     departmentRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
 
@@ -292,7 +293,7 @@ describe("Creation of a department", () => {
   test("should create new department", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await departmentService.createDepartement(departmentData, loggedUser);
 
@@ -306,7 +307,7 @@ describe("Creation of a department", () => {
   test("should throw an error when trying to create a department that already exists", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     departmentRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
 
@@ -349,7 +350,7 @@ describe("Deletion of a department", () => {
   });
 
   test("should handle the deletion of any department if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -362,7 +363,7 @@ describe("Deletion of a department", () => {
   });
 
   test("should return an error when deleting a non-owned department as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -386,7 +387,7 @@ test("Create multiple departments", async () => {
     mock<Omit<DepartementCreateInput, "owner_id">>(),
   ];
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   departmentRepository.createDepartements.mockResolvedValueOnce([]);
 

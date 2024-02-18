@@ -1,6 +1,7 @@
 import { type Behavior } from "@domain/behavior/behavior.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
@@ -30,7 +31,7 @@ const uniqueConstraintFailed = () => {
 describe("Find behavior", () => {
   test("should handle a matching behavior ", async () => {
     const behaviorData = mock<Behavior>();
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(behaviorData);
 
@@ -42,7 +43,7 @@ describe("Find behavior", () => {
 
   test("should handle behavior not found", async () => {
     behaviorRepository.findComportementById.mockResolvedValueOnce(null);
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await expect(behaviorService.findBehavior(10, loggedUser)).resolves.toBe(null);
 
@@ -58,7 +59,7 @@ describe("Find behavior", () => {
 
 describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await behaviorService.getEntriesCountByBehavior("12", loggedUser);
 
@@ -74,7 +75,7 @@ describe("Data count per entity", () => {
 describe("Find behaviors by inventary ID", () => {
   test("should handle behaviors found", async () => {
     const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     behaviorRepository.findComportementsOfDonneeId.mockResolvedValueOnce(behaviorsData);
 
@@ -106,7 +107,7 @@ test("Find all behaviors", async () => {
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
@@ -118,7 +119,7 @@ describe("Entities paginated find by search criteria", () => {
 
   test("should handle params when retrieving paginated behaviors ", async () => {
     const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     const searchParams: BehaviorsSearchParams = {
       orderBy: "libelle",
@@ -149,7 +150,7 @@ describe("Entities paginated find by search criteria", () => {
 
 describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await behaviorService.getBehaviorsCount(loggedUser);
 
@@ -158,7 +159,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should handle to be called with some criteria provided", async () => {
-    const loggedUser = mock<LoggedUser>();
+    const loggedUser = loggedUserFactory.build();
 
     await behaviorService.getBehaviorsCount(loggedUser, "test");
 
@@ -175,7 +176,7 @@ describe("Update of a behavior", () => {
   test("should be allowed when requested by an admin", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await behaviorService.updateBehavior(12, behaviorData, loggedUser);
 
@@ -190,7 +191,7 @@ describe("Update of a behavior", () => {
 
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(existingData);
 
@@ -224,7 +225,7 @@ describe("Update of a behavior", () => {
   test("should throw an error when trying to update to a behavior that exists", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    const loggedUser = mock<LoggedUser>({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     behaviorRepository.updateComportement.mockImplementation(uniqueConstraintFailed);
 
@@ -248,7 +249,7 @@ describe("Creation of a behavior", () => {
   test("should create new behavior", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await behaviorService.createBehavior(behaviorData, loggedUser);
 
@@ -262,7 +263,7 @@ describe("Creation of a behavior", () => {
   test("should throw an error when trying to create a behavior that already exists", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
-    const loggedUser = mock<LoggedUser>({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ id: "a" });
 
     behaviorRepository.createComportement.mockImplementation(uniqueConstraintFailed);
 
@@ -305,7 +306,7 @@ describe("Deletion of a behavior", () => {
   });
 
   test("should handle the deletion of any behavior if admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
 
@@ -318,7 +319,7 @@ describe("Deletion of a behavior", () => {
   });
 
   test("should return an error when deleting a non-owned behavior as non-admin", async () => {
-    const loggedUser = mock<LoggedUser>({
+    const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
 
@@ -342,7 +343,7 @@ test("Create multiple comportements", async () => {
     mock<Omit<ComportementCreateInput, "owner_id">>(),
   ];
 
-  const loggedUser = mock<LoggedUser>();
+  const loggedUser = loggedUserFactory.build();
 
   behaviorRepository.createComportements.mockResolvedValueOnce([]);
 
