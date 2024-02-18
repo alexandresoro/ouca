@@ -19,14 +19,14 @@ export const buildNumberEstimateService = ({
   numberEstimateRepository,
   entryRepository,
 }: NumberEstimateServiceDependencies) => {
-  const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
+  const findNumberEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
     const numberEstimate = await numberEstimateRepository.findEstimationNombreById(id);
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 
-  const findEstimationNombreOfDonneeId = async (
+  const findNumberEstimateOfEntryId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<NumberEstimate | null> => {
@@ -38,25 +38,25 @@ export const buildNumberEstimateService = ({
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 
-  const getDonneesCountByEstimationNombre = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountByNumberEstimate = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByEstimationNombreId(parseInt(id));
   };
 
-  const findAllEstimationsNombre = async (): Promise<NumberEstimate[]> => {
-    const estimationNombres = await numberEstimateRepository.findEstimationsNombre({
+  const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {
+    const numberEstimates = await numberEstimateRepository.findEstimationsNombre({
       orderBy: "libelle",
     });
 
-    const enrichedNumberEstimates = estimationNombres.map((numberEstimate) => {
+    const enrichedNumberEstimates = numberEstimates.map((numberEstimate) => {
       return enrichEntityWithEditableStatus(numberEstimate, null);
     });
 
     return [...enrichedNumberEstimates];
   };
 
-  const findPaginatedEstimationsNombre = async (
+  const findPaginatesNumberEstimates = async (
     loggedUser: LoggedUser | null,
     options: NumberEstimatesSearchParams
   ): Promise<NumberEstimate[]> => {
@@ -64,39 +64,39 @@ export const buildNumberEstimateService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const estimationNombres = await numberEstimateRepository.findEstimationsNombre({
+    const numberEstimates = await numberEstimateRepository.findEstimationsNombre({
       q: q,
       ...getSqlPagination(pagination),
       orderBy: orderByField === "nonCompte" ? "non_compte" : orderByField,
       sortOrder,
     });
 
-    const enrichedNumberEstimates = estimationNombres.map((numberEstimate) => {
+    const enrichedNumberEstimates = numberEstimates.map((numberEstimate) => {
       return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
     });
 
     return [...enrichedNumberEstimates];
   };
 
-  const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getNumberEstimatesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return numberEstimateRepository.getCount(q);
   };
 
-  const createEstimationNombre = async (
+  const createNumberEstimate = async (
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
   ): Promise<NumberEstimate> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdEstimationNombre = await numberEstimateRepository.createEstimationNombre({
+      const createdNumberEstimate = await numberEstimateRepository.createEstimationNombre({
         ...reshapeInputNumberEstimateUpsertData(input),
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdEstimationNombre, loggedUser);
+      return enrichEntityWithEditableStatus(createdNumberEstimate, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -105,7 +105,7 @@ export const buildNumberEstimateService = ({
     }
   };
 
-  const updateEstimationNombre = async (
+  const updateNumberEstimate = async (
     id: number,
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
@@ -122,12 +122,12 @@ export const buildNumberEstimateService = ({
     }
 
     try {
-      const updatedEstimationNombre = await numberEstimateRepository.updateEstimationNombre(
+      const updatedNumberEstimate = await numberEstimateRepository.updateEstimationNombre(
         id,
         reshapeInputNumberEstimateUpsertData(input)
       );
 
-      return enrichEntityWithEditableStatus(updatedEstimationNombre, loggedUser);
+      return enrichEntityWithEditableStatus(updatedNumberEstimate, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -136,7 +136,7 @@ export const buildNumberEstimateService = ({
     }
   };
 
-  const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate> => {
+  const deleteNumberEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -152,13 +152,13 @@ export const buildNumberEstimateService = ({
     return enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser);
   };
 
-  const createEstimationsNombre = async (
-    estimationsNombre: Omit<EstimationNombreCreateInput[], "owner_id">,
+  const createNumberEstimates = async (
+    numberEstimates: Omit<EstimationNombreCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly NumberEstimate[]> => {
     const createdNumberEstimates = await numberEstimateRepository.createEstimationsNombre(
-      estimationsNombre.map((estimationNombre) => {
-        return { ...estimationNombre, owner_id: loggedUser.id };
+      numberEstimates.map((numberEstimate) => {
+        return { ...numberEstimate, owner_id: loggedUser.id };
       })
     );
 
@@ -170,16 +170,16 @@ export const buildNumberEstimateService = ({
   };
 
   return {
-    findEstimationNombre,
-    findEstimationNombreOfDonneeId,
-    getDonneesCountByEstimationNombre,
-    findAllEstimationsNombre,
-    findPaginatedEstimationsNombre,
-    getEstimationsNombreCount,
-    createEstimationNombre,
-    updateEstimationNombre,
-    deleteEstimationNombre,
-    createEstimationsNombre,
+    findNumberEstimate,
+    findNumberEstimateOfEntryId,
+    getEntriesCountByNumberEstimate,
+    findAllNumberEstimates,
+    findPaginatesNumberEstimates,
+    getNumberEstimatesCount,
+    createNumberEstimate,
+    updateNumberEstimate,
+    deleteNumberEstimate,
+    createNumberEstimates,
   };
 };
 

@@ -55,7 +55,7 @@ export class ImportDonneeService extends ImportService {
     this.especes = await this.services.speciesService.findAllEspeces();
     this.sexes = await this.services.sexService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
-    this.estimationsNombre = await this.services.numberEstimateService.findAllEstimationsNombre();
+    this.estimationsNombre = await this.services.numberEstimateService.findAllNumberEstimates();
     this.estimationsDistance = await this.services.distanceEstimateService.findAllDistanceEstimates();
     this.comportements = await this.services.behaviorService.findAllBehaviors();
     this.milieux = await this.services.environmentService.findAllEnvironments();

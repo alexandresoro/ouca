@@ -23,7 +23,7 @@ const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser
     services.behaviorService.findBehaviorsOfEntryId(entry.id, user),
     services.speciesService.findEspeceOfDonneeId(entry.id, user),
     services.distanceEstimateService.findDistanceEstimateOfEntryId(entry.id, user),
-    services.numberEstimateService.findEstimationNombreOfDonneeId(entry.id, user),
+    services.numberEstimateService.findNumberEstimateOfEntryId(entry.id, user),
     services.environmentService.findEnvironmentsOfEntryId(entry.id, user),
     (await services.sexService.findSexOfEntryId(entry.id, user))._unsafeUnwrap(),
   ]);

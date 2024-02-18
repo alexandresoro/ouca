@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.numberEstimateService.findAllEstimationsNombre();
+    this.entities = await this.services.numberEstimateService.findAllNumberEstimates();
   };
 
   protected getThisEntityName(): string {
@@ -21,7 +21,7 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
     estimationsNombre: Omit<NumberEstimate, "id" | "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly NumberEstimate[]> => {
-    return this.services.numberEstimateService.createEstimationsNombre(
+    return this.services.numberEstimateService.createNumberEstimates(
       estimationsNombre.map((estimationNombre) => {
         return {
           ...estimationNombre,

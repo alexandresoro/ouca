@@ -58,7 +58,7 @@ export const buildSettingsService = ({
         ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultEstimationNombreId != null
-        ? numberEstimateService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
+        ? numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -113,7 +113,7 @@ export const buildSettingsService = ({
         ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
         : Promise.resolve(null),
       defaultEstimationNombreId != null
-        ? numberEstimateService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
+        ? numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
     ]);
 
