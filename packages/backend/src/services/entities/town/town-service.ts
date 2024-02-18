@@ -21,26 +21,26 @@ type TownServiceDependencies = {
 };
 
 export const buildTownService = ({ townRepository, localityRepository, entryRepository }: TownServiceDependencies) => {
-  const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Town | null> => {
+  const findTown = async (id: number, loggedUser: LoggedUser | null): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
     const town = await townRepository.findCommuneById(id);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
-  const getDonneesCountByCommune = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountByTown = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByCommuneId(parseInt(id));
   };
 
-  const getLieuxDitsCountByCommune = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getLocalitiesCountByTown = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return localityRepository.getCountByCommuneId(parseInt(id));
   };
 
-  const findCommuneOfLieuDitId = async (
+  const findTownOfLocalityId = async (
     lieuditId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Town | null> => {
@@ -50,24 +50,24 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
-  const findAllCommunes = async (): Promise<Town[]> => {
-    const communes = await townRepository.findCommunes({
+  const findAllTowns = async (): Promise<Town[]> => {
+    const towns = await townRepository.findCommunes({
       orderBy: "nom",
     });
 
-    const enrichedTowns = communes.map((town) => {
+    const enrichedTowns = towns.map((town) => {
       return enrichEntityWithEditableStatus(town, null);
     });
 
     return [...enrichedTowns];
   };
 
-  const findPaginatedCommunes = async (loggedUser: LoggedUser | null, options: TownsSearchParams): Promise<Town[]> => {
+  const findPaginatedTowns = async (loggedUser: LoggedUser | null, options: TownsSearchParams): Promise<Town[]> => {
     validateAuthorization(loggedUser);
 
     const { q, departmentId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const communes = await townRepository.findCommunes({
+    const towns = await townRepository.findCommunes({
       q,
       ...getSqlPagination(pagination),
       departmentId: departmentId ? parseInt(departmentId) : undefined,
@@ -75,19 +75,19 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
       sortOrder,
     });
 
-    const enrichedTowns = communes.map((town) => {
+    const enrichedTowns = towns.map((town) => {
       return enrichEntityWithEditableStatus(town, loggedUser);
     });
 
     return [...enrichedTowns];
   };
 
-  const findAllCommunesWithDepartements = async (): Promise<CommuneWithDepartementCode[]> => {
-    const communesWithDepartements = await townRepository.findAllCommunesWithDepartementCode();
-    return [...communesWithDepartements];
+  const findAllTownsWithDepartments = async (): Promise<CommuneWithDepartementCode[]> => {
+    const townsWithDepartments = await townRepository.findAllCommunesWithDepartementCode();
+    return [...townsWithDepartments];
   };
 
-  const getCommunesCount = async (
+  const getTownsCount = async (
     loggedUser: LoggedUser | null,
     { q, departmentId }: Pick<TownsSearchParams, "q" | "departmentId">
   ): Promise<number> => {
@@ -96,16 +96,16 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     return townRepository.getCount(q, departmentId ? parseInt(departmentId) : undefined);
   };
 
-  const createCommune = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
+  const createTown = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdCommune = await townRepository.createCommune({
+      const createdTown = await townRepository.createCommune({
         ...reshapeInputTownUpsertData(input),
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdCommune, loggedUser);
+      return enrichEntityWithEditableStatus(createdTown, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -114,7 +114,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     }
   };
 
-  const updateCommune = async (id: number, input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
+  const updateTown = async (id: number, input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -127,9 +127,9 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     }
 
     try {
-      const updatedCommune = await townRepository.updateCommune(id, reshapeInputTownUpsertData(input));
+      const updatedTown = await townRepository.updateCommune(id, reshapeInputTownUpsertData(input));
 
-      return enrichEntityWithEditableStatus(updatedCommune, loggedUser);
+      return enrichEntityWithEditableStatus(updatedTown, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -138,7 +138,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     }
   };
 
-  const deleteCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Town> => {
+  const deleteTown = async (id: number, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -150,17 +150,17 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
       }
     }
 
-    const deletedCommune = await townRepository.deleteCommuneById(id);
-    return enrichEntityWithEditableStatus(deletedCommune, loggedUser);
+    const deletedTown = await townRepository.deleteCommuneById(id);
+    return enrichEntityWithEditableStatus(deletedTown, loggedUser);
   };
 
-  const createCommunes = async (
-    communes: Omit<CommuneCreateInput, "owner_id">[],
+  const createTowns = async (
+    towns: Omit<CommuneCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Town[]> => {
     const createdTowns = await townRepository.createCommunes(
-      communes.map((commune) => {
-        return { ...commune, owner_id: loggedUser.id };
+      towns.map((town) => {
+        return { ...town, owner_id: loggedUser.id };
       })
     );
 
@@ -172,18 +172,18 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
   };
 
   return {
-    findCommune,
-    getDonneesCountByCommune,
-    getLieuxDitsCountByCommune,
-    findCommuneOfLieuDitId,
-    findAllCommunes,
-    findAllCommunesWithDepartements,
-    findPaginatedCommunes,
-    getCommunesCount,
-    createCommune,
-    updateCommune,
-    deleteCommune,
-    createCommunes,
+    findTown,
+    getEntriesCountByTown,
+    getLocalitiesCountByTown,
+    findTownOfLocalityId,
+    findAllTowns,
+    findAllTownsWithDepartments,
+    findPaginatedTowns,
+    getTownsCount,
+    createTown,
+    updateTown,
+    deleteTown,
+    createTowns,
   };
 };
 

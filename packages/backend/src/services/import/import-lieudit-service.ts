@@ -29,7 +29,7 @@ export class ImportLieuxditService extends ImportService {
 
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
       this.services.departmentService.findAllDepartments(),
-      this.services.townService.findAllCommunes(),
+      this.services.townService.findAllTowns(),
       this.services.localityService.findAllLocalities(),
       "gps",
     ]);

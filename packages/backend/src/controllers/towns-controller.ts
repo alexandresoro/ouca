@@ -23,7 +23,7 @@ const townsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const town = await townService.findCommune(req.params.id, req.user);
+    const town = await townService.findTown(req.params.id, req.user);
     if (!town) {
       return await reply.status(404).send();
     }
@@ -44,8 +44,8 @@ const townsController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [townsData, count] = await Promise.all([
-      townService.findPaginatedCommunes(req.user, queryParams),
-      townService.getCommunesCount(req.user, queryParams),
+      townService.findPaginatedTowns(req.user, queryParams),
+      townService.getTownsCount(req.user, queryParams),
     ]);
 
     let data: Town[] | TownExtended[] = townsData;
@@ -54,8 +54,8 @@ const townsController: FastifyPluginCallback<{
         townsData.map(async (townData) => {
           // TODO look to optimize this request
           const department = await departmentService.findDepartmentOfTownId(townData.id, req.user);
-          const localitiesCount = await townService.getLieuxDitsCountByCommune(townData.id, req.user);
-          const entriesCount = await townService.getDonneesCountByCommune(townData.id, req.user);
+          const localitiesCount = await townService.getLocalitiesCountByTown(townData.id, req.user);
+          const entriesCount = await townService.getEntriesCountByTown(townData.id, req.user);
           return {
             ...townData,
             departmentCode: department?.code,
@@ -85,7 +85,7 @@ const townsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const town = await townService.createCommune(input, req.user);
+      const town = await townService.createTown(input, req.user);
       const response = upsertTownResponse.parse(town);
 
       return await reply.send(response);
@@ -111,7 +111,7 @@ const townsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const town = await townService.updateCommune(req.params.id, input, req.user);
+      const town = await townService.updateTown(req.params.id, input, req.user);
       const response = upsertTownResponse.parse(town);
 
       return await reply.send(response);
@@ -129,7 +129,7 @@ const townsController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await townService.deleteCommune(req.params.id, req.user);
+      const { id: deletedId } = await townService.deleteTown(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

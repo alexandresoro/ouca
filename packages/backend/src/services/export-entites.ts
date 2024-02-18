@@ -71,7 +71,7 @@ export const generateClassesExport = async ({
 };
 
 export const generateCommunesExport = async ({ townService }: { townService: TownService }): Promise<string> => {
-  const communesDb = await townService.findAllCommunesWithDepartements();
+  const communesDb = await townService.findAllTownsWithDepartments();
 
   const objectsToExport = communesDb.map((communeDb) => {
     return {
@@ -179,7 +179,7 @@ export const generateDonneesExport = async (
         await observerService.findObserverOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
       const lieudit = await localityService.findLocalityOfInventoryId(parseInt(inventaire.id), loggedUser);
-      const commune = await townService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
+      const commune = await townService.findTownOfLocalityId(lieudit?.id, loggedUser);
       const departement = await departmentService.findDepartmentOfTownId(commune?.id, loggedUser);
       const associes = (
         await observerService.findAssociatesOfInventoryId(parseInt(inventaire.id), loggedUser)
