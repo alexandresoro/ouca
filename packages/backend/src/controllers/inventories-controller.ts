@@ -47,14 +47,14 @@ export const enrichedInventory = async (
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { inventoryService: inventaireService } = services;
+  const { inventoryService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const inventory = await inventaireService.findInventaire(req.params.id, req.user);
+    const inventory = await inventoryService.findInventaire(req.params.id, req.user);
     if (!inventory) {
       return await reply.status(404).send();
     }
@@ -79,7 +79,7 @@ const inventoriesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const inventoryIndex = await inventaireService.findInventoryIndex(
+    const inventoryIndex = await inventoryService.findInventoryIndex(
       req.params.id,
       parsedQueryParamsResult.data,
       req.user
@@ -101,8 +101,8 @@ const inventoriesController: FastifyPluginCallback<{
     const { data: queryParams } = parsedQueryParamsResult;
 
     const [inventoriesData, count] = await Promise.all([
-      inventaireService.findPaginatedInventaires(req.user, queryParams),
-      inventaireService.getInventairesCount(req.user),
+      inventoryService.findPaginatedInventaires(req.user, queryParams),
+      inventoryService.getInventairesCount(req.user),
     ]);
 
     // TODO look to optimize this request
@@ -131,7 +131,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     // eslint-disable-next-line no-useless-catch
     try {
-      const inventory = await inventaireService.createInventaire(input, req.user);
+      const inventory = await inventoryService.createInventaire(input, req.user);
       const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
       const response = upsertInventoryResponse.parse(inventoryEnriched);
 
@@ -158,7 +158,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     // eslint-disable-next-line no-useless-catch
     try {
-      const inventory = await inventaireService.updateInventaire(req.params.id, input, req.user);
+      const inventory = await inventoryService.updateInventaire(req.params.id, input, req.user);
       const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
       const response = upsertInventoryResponse.parse(inventoryEnriched);
 
@@ -176,7 +176,7 @@ const inventoriesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await inventaireService.deleteInventory(req.params.id, req.user);
+      const { id: deletedId } = await inventoryService.deleteInventory(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

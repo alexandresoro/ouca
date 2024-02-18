@@ -37,18 +37,14 @@ export const enrichedLocality = async (
 const localitiesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const {
-    localityService: lieuditService,
-    townService: communeService,
-    departmentService: departementService,
-  } = services;
+  const { localityService, townService, departmentService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const locality = await lieuditService.findLieuDit(req.params.id, req.user);
+    const locality = await localityService.findLieuDit(req.params.id, req.user);
     if (!locality) {
       return await reply.status(404).send();
     }
@@ -69,8 +65,8 @@ const localitiesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [localitiesData, count] = await Promise.all([
-      lieuditService.findPaginatedLieuxDits(req.user, queryParams),
-      lieuditService.getLieuxDitsCount(req.user, queryParams),
+      localityService.findPaginatedLieuxDits(req.user, queryParams),
+      localityService.getLieuxDitsCount(req.user, queryParams),
     ]);
 
     let data: Locality[] | LocalityExtended[] = localitiesData;
@@ -78,10 +74,10 @@ const localitiesController: FastifyPluginCallback<{
       data = await Promise.all(
         localitiesData.map(async (localityData) => {
           // TODO look to optimize this request
-          const town = await communeService.findCommuneOfLieuDitId(localityData.id, req.user);
-          const department = town ? await departementService.findDepartementOfCommuneId(town.id, req.user) : null;
-          const inventoriesCount = await lieuditService.getInventoriesCountByLocality(localityData.id, req.user);
-          const entriesCount = await lieuditService.getDonneesCountByLieuDit(localityData.id, req.user);
+          const town = await townService.findCommuneOfLieuDitId(localityData.id, req.user);
+          const department = town ? await departmentService.findDepartementOfCommuneId(town.id, req.user) : null;
+          const inventoriesCount = await localityService.getInventoriesCountByLocality(localityData.id, req.user);
+          const entriesCount = await localityService.getDonneesCountByLieuDit(localityData.id, req.user);
           return {
             ...localityData,
             townCode: town?.code,
@@ -113,7 +109,7 @@ const localitiesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const locality = await lieuditService.createLieuDit(input, req.user);
+      const locality = await localityService.createLieuDit(input, req.user);
       const response = upsertLocalityResponse.parse(locality);
 
       return await reply.send(response);
@@ -139,7 +135,7 @@ const localitiesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const locality = await lieuditService.updateLieuDit(req.params.id, input, req.user);
+      const locality = await localityService.updateLieuDit(req.params.id, input, req.user);
       const response = upsertLocalityResponse.parse(locality);
 
       return await reply.send(response);
@@ -157,7 +153,7 @@ const localitiesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await lieuditService.deleteLieuDit(req.params.id, req.user);
+      const { id: deletedId } = await localityService.deleteLieuDit(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

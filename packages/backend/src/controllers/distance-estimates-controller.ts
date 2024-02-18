@@ -16,14 +16,14 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const distanceEstimatesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { distanceEstimateService: estimationDistanceService } = services;
+  const { distanceEstimateService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const distanceEstimate = await estimationDistanceService.findEstimationDistance(req.params.id, req.user);
+    const distanceEstimate = await distanceEstimateService.findEstimationDistance(req.params.id, req.user);
     if (!distanceEstimate) {
       return await reply.status(404).send();
     }
@@ -44,15 +44,15 @@ const distanceEstimatesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [distanceEstimatesData, count] = await Promise.all([
-      estimationDistanceService.findPaginatedEstimationsDistance(req.user, queryParams),
-      estimationDistanceService.getEstimationsDistanceCount(req.user, queryParams.q),
+      distanceEstimateService.findPaginatedEstimationsDistance(req.user, queryParams),
+      distanceEstimateService.getEstimationsDistanceCount(req.user, queryParams.q),
     ]);
 
     let data: DistanceEstimate[] | DistanceEstimateExtended[] = distanceEstimatesData;
     if (extended) {
       data = await Promise.all(
         distanceEstimatesData.map(async (distanceEstimateData) => {
-          const entriesCount = await estimationDistanceService.getDonneesCountByEstimationDistance(
+          const entriesCount = await distanceEstimateService.getDonneesCountByEstimationDistance(
             distanceEstimateData.id,
             req.user
           );
@@ -83,7 +83,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const distanceEstimate = await estimationDistanceService.createEstimationDistance(input, req.user);
+      const distanceEstimate = await distanceEstimateService.createEstimationDistance(input, req.user);
       const response = upsertDistanceEstimateResponse.parse(distanceEstimate);
 
       return await reply.send(response);
@@ -109,7 +109,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const distanceEstimate = await estimationDistanceService.updateEstimationDistance(req.params.id, input, req.user);
+      const distanceEstimate = await distanceEstimateService.updateEstimationDistance(req.params.id, input, req.user);
       const response = upsertDistanceEstimateResponse.parse(distanceEstimate);
 
       return await reply.send(response);
@@ -127,7 +127,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await estimationDistanceService.deleteEstimationDistance(req.params.id, req.user);
+      const { id: deletedId } = await distanceEstimateService.deleteEstimationDistance(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

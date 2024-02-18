@@ -52,14 +52,14 @@ const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser
 const entriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { entryService: donneeService, inventoryService: inventaireService } = services;
+  const { entryService, inventoryService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const entry = await donneeService.findDonnee(req.params.id, req.user);
+    const entry = await entryService.findDonnee(req.params.id, req.user);
     if (!entry) {
       return await reply.status(404).send();
     }
@@ -85,8 +85,8 @@ const entriesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [entriesData, count] = await Promise.all([
-      donneeService.findPaginatedDonnees(req.user, queryParams),
-      donneeService.getDonneesCount(req.user, queryParams),
+      entryService.findPaginatedDonnees(req.user, queryParams),
+      entryService.getDonneesCount(req.user, queryParams),
     ]);
 
     // TODO look to optimize this request
@@ -101,7 +101,7 @@ const entriesController: FastifyPluginCallback<{
       data = await Promise.all(
         enrichedEntries.map(async (enrichedEntryData) => {
           // TODO look to optimize this request
-          const inventory = await inventaireService.findInventaireOfDonneeId(enrichedEntryData.id, req.user);
+          const inventory = await inventoryService.findInventaireOfDonneeId(enrichedEntryData.id, req.user);
           if (!inventory) {
             return Promise.reject("No matching inventory found");
           }
@@ -134,7 +134,7 @@ const entriesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const entry = await donneeService.createDonnee(input, req.user);
+      const entry = await entryService.createDonnee(input, req.user);
       const entryEnriched = await enrichedEntry(services, entry, req.user);
       const response = upsertEntryResponse.parse(entryEnriched);
 
@@ -161,7 +161,7 @@ const entriesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const entry = await donneeService.updateDonnee(req.params.id, input, req.user);
+      const entry = await entryService.updateDonnee(req.params.id, input, req.user);
       const entryEnriched = await enrichedEntry(services, entry, req.user);
       const response = upsertEntryResponse.parse(entryEnriched);
 
@@ -175,7 +175,7 @@ const entriesController: FastifyPluginCallback<{
   });
 
   fastify.get("/last", async (req, reply) => {
-    const id = await donneeService.findLastDonneeId(req.user);
+    const id = await entryService.findLastDonneeId(req.user);
     await reply.send({ id });
   });
 
@@ -184,7 +184,7 @@ const entriesController: FastifyPluginCallback<{
       id: string;
     };
   }>("/:id/navigation", async (req, reply) => {
-    const navigation = await donneeService.findDonneeNavigationData(req.user, req.params.id);
+    const navigation = await entryService.findDonneeNavigationData(req.user, req.params.id);
     const response = entryNavigationSchema.parse(navigation);
 
     return await reply.send(response);
@@ -196,7 +196,7 @@ const entriesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await donneeService.deleteDonnee(req.params.id, req.user);
+      const { id: deletedId } = await entryService.deleteDonnee(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -207,7 +207,7 @@ const entriesController: FastifyPluginCallback<{
   });
 
   fastify.get("/next-regroupment", async (req, reply) => {
-    const id = await donneeService.findNextRegroupement(req.user);
+    const id = await entryService.findNextRegroupement(req.user);
     await reply.send({ id });
   });
 

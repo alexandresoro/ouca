@@ -16,14 +16,14 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const numberEstimatesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { numberEstimateService: estimationNombreService } = services;
+  const { numberEstimateService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const numberEstimate = await estimationNombreService.findEstimationNombre(req.params.id, req.user);
+    const numberEstimate = await numberEstimateService.findEstimationNombre(req.params.id, req.user);
     if (!numberEstimate) {
       return await reply.status(404).send();
     }
@@ -44,15 +44,15 @@ const numberEstimatesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [numberEstimatesData, count] = await Promise.all([
-      estimationNombreService.findPaginatedEstimationsNombre(req.user, queryParams),
-      estimationNombreService.getEstimationsNombreCount(req.user, queryParams.q),
+      numberEstimateService.findPaginatedEstimationsNombre(req.user, queryParams),
+      numberEstimateService.getEstimationsNombreCount(req.user, queryParams.q),
     ]);
 
     let data: NumberEstimate[] | NumberEstimateExtended[] = numberEstimatesData;
     if (extended) {
       data = await Promise.all(
         numberEstimatesData.map(async (numberEstimateData) => {
-          const entriesCount = await estimationNombreService.getDonneesCountByEstimationNombre(
+          const entriesCount = await numberEstimateService.getDonneesCountByEstimationNombre(
             numberEstimateData.id,
             req.user
           );
@@ -83,7 +83,7 @@ const numberEstimatesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const numberEstimate = await estimationNombreService.createEstimationNombre(input, req.user);
+      const numberEstimate = await numberEstimateService.createEstimationNombre(input, req.user);
       const response = upsertNumberEstimateResponse.parse(numberEstimate);
 
       return await reply.send(response);
@@ -109,7 +109,7 @@ const numberEstimatesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const numberEstimate = await estimationNombreService.updateEstimationNombre(req.params.id, input, req.user);
+      const numberEstimate = await numberEstimateService.updateEstimationNombre(req.params.id, input, req.user);
       const response = upsertNumberEstimateResponse.parse(numberEstimate);
 
       return await reply.send(response);
@@ -127,7 +127,7 @@ const numberEstimatesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await estimationNombreService.deleteEstimationNombre(req.params.id, req.user);
+      const { id: deletedId } = await numberEstimateService.deleteEstimationNombre(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

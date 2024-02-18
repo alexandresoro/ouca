@@ -16,14 +16,14 @@ import { getPaginationMetadata } from "./controller-utils.js";
 const townsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { townService: communeService, departmentService: departementService } = services;
+  const { townService, departmentService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const town = await communeService.findCommune(req.params.id, req.user);
+    const town = await townService.findCommune(req.params.id, req.user);
     if (!town) {
       return await reply.status(404).send();
     }
@@ -44,8 +44,8 @@ const townsController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [townsData, count] = await Promise.all([
-      communeService.findPaginatedCommunes(req.user, queryParams),
-      communeService.getCommunesCount(req.user, queryParams),
+      townService.findPaginatedCommunes(req.user, queryParams),
+      townService.getCommunesCount(req.user, queryParams),
     ]);
 
     let data: Town[] | TownExtended[] = townsData;
@@ -53,9 +53,9 @@ const townsController: FastifyPluginCallback<{
       data = await Promise.all(
         townsData.map(async (townData) => {
           // TODO look to optimize this request
-          const department = await departementService.findDepartementOfCommuneId(townData.id, req.user);
-          const localitiesCount = await communeService.getLieuxDitsCountByCommune(townData.id, req.user);
-          const entriesCount = await communeService.getDonneesCountByCommune(townData.id, req.user);
+          const department = await departmentService.findDepartementOfCommuneId(townData.id, req.user);
+          const localitiesCount = await townService.getLieuxDitsCountByCommune(townData.id, req.user);
+          const entriesCount = await townService.getDonneesCountByCommune(townData.id, req.user);
           return {
             ...townData,
             departmentCode: department?.code,
@@ -85,7 +85,7 @@ const townsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const town = await communeService.createCommune(input, req.user);
+      const town = await townService.createCommune(input, req.user);
       const response = upsertTownResponse.parse(town);
 
       return await reply.send(response);
@@ -111,7 +111,7 @@ const townsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const town = await communeService.updateCommune(req.params.id, input, req.user);
+      const town = await townService.updateCommune(req.params.id, input, req.user);
       const response = upsertTownResponse.parse(town);
 
       return await reply.send(response);
@@ -129,7 +129,7 @@ const townsController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await communeService.deleteCommune(req.params.id, req.user);
+      const { id: deletedId } = await townService.deleteCommune(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
