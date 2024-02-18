@@ -11,7 +11,7 @@ import { type CommuneRepository } from "../../../repositories/commune/commune-re
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { reshapeInputCommuneUpsertData } from "./town-service-reshape.js";
+import { reshapeInputTownUpsertData } from "./town-service-reshape.js";
 import { buildTownService } from "./town-service.js";
 
 const townRepository = mockVi<CommuneRepository>();
@@ -36,11 +36,11 @@ const uniqueConstraintFailed = () => {
 vi.mock("./town-service-reshape.js", () => {
   return {
     __esModule: true,
-    reshapeInputCommuneUpsertData: vi.fn(),
+    reshapeInputTownUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputCommuneUpsertData = vi.mocked(reshapeInputCommuneUpsertData);
+const mockedReshapeInputTownUpsertData = vi.mocked(reshapeInputTownUpsertData);
 
 describe("Find city", () => {
   test("should handle a matching city", async () => {
@@ -208,14 +208,14 @@ describe("Update of a city", () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
-    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await townService.updateCommune(12, cityData, loggedUser);
 
     expect(townRepository.updateCommune).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputTownUpsertData).toHaveBeenCalledTimes(1);
     expect(townRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -227,7 +227,7 @@ describe("Update of a city", () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
-    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -236,7 +236,7 @@ describe("Update of a city", () => {
     await townService.updateCommune(12, cityData, loggedUser);
 
     expect(townRepository.updateCommune).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputTownUpsertData).toHaveBeenCalledTimes(1);
     expect(townRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -263,7 +263,7 @@ describe("Update of a city", () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
-    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -274,7 +274,7 @@ describe("Update of a city", () => {
     );
 
     expect(townRepository.updateCommune).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputTownUpsertData).toHaveBeenCalledTimes(1);
     expect(townRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -291,14 +291,14 @@ describe("Creation of a city", () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
-    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await townService.createCommune(cityData, loggedUser);
 
     expect(townRepository.createCommune).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputTownUpsertData).toHaveBeenCalledTimes(1);
     expect(townRepository.createCommune).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
@@ -309,7 +309,7 @@ describe("Creation of a city", () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
-    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -320,7 +320,7 @@ describe("Creation of a city", () => {
     );
 
     expect(townRepository.createCommune).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputTownUpsertData).toHaveBeenCalledTimes(1);
     expect(townRepository.createCommune).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,

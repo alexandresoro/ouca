@@ -1,7 +1,7 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 
-export const reshapeInputDonneeUpsertData = (data: UpsertEntryInput): DonneeCreateInput => {
+export const reshapeInputEntryUpsertData = (data: UpsertEntryInput): DonneeCreateInput => {
   const {
     ageId,
     speciesId,

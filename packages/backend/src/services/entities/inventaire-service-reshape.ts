@@ -4,7 +4,7 @@ import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coo
 import { getHumanFriendlyTimeFromMinutes } from "@ou-ca/common/utils/time-format-convert";
 import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 
-export const reshapeInputInventaireUpsertData = (
+export const reshapeInputInventoryUpsertData = (
   inventory: UpsertInventoryInput,
   locality: Locality,
   ownerId?: string | null

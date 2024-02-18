@@ -12,7 +12,7 @@ import { type CommuneRepository } from "../../../repositories/commune/commune-re
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
-import { reshapeInputCommuneUpsertData } from "./town-service-reshape.js";
+import { reshapeInputTownUpsertData } from "./town-service-reshape.js";
 
 type TownServiceDependencies = {
   townRepository: CommuneRepository;
@@ -101,7 +101,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
 
     try {
       const createdCommune = await townRepository.createCommune({
-        ...reshapeInputCommuneUpsertData(input),
+        ...reshapeInputTownUpsertData(input),
         owner_id: loggedUser.id,
       });
 
@@ -127,7 +127,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     }
 
     try {
-      const updatedCommune = await townRepository.updateCommune(id, reshapeInputCommuneUpsertData(input));
+      const updatedCommune = await townRepository.updateCommune(id, reshapeInputTownUpsertData(input));
 
       return enrichEntityWithEditableStatus(updatedCommune, loggedUser);
     } catch (e) {

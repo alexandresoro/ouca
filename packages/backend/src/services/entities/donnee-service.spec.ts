@@ -30,11 +30,11 @@ const donneeService = buildDonneeService({
   entryEnvironmentRepository,
 });
 
-const reshapeInputDonneeUpsertData = vi.fn<unknown[], DonneeCreateInput>();
+const reshapeInputEntryUpsertData = vi.fn<unknown[], DonneeCreateInput>();
 vi.doMock("./donnee-service-reshape.js", () => {
   return {
     __esModule: true,
-    reshapeInputDonneeUpsertData,
+    reshapeInputEntryUpsertData,
   };
 });
 
@@ -365,7 +365,7 @@ describe("Update of a data", () => {
     );
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.updateDonnee("12", dataData, loggedUser);
 
@@ -427,7 +427,7 @@ describe("Creation of a data", () => {
     const loggedUser = loggedUserFactory.build();
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.createDonnee(dataData, loggedUser);
 
@@ -446,7 +446,7 @@ describe("Creation of a data", () => {
     const loggedUser = loggedUserFactory.build();
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
     entryRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: "12",
@@ -471,7 +471,7 @@ describe("Creation of a data", () => {
     const loggedUser = loggedUserFactory.build();
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
     entryRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: "12",

@@ -10,7 +10,7 @@ import { type Donnee } from "../../repositories/donnee/donnee-repository-types.j
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape.js";
+import { reshapeInputEntryUpsertData } from "./donnee-service-reshape.js";
 import { getSqlPagination } from "./entities-utils.js";
 
 type DonneeServiceDependencies = {
@@ -110,7 +110,7 @@ export const buildDonneeService = ({
 
     // Check if an exact same donnee already exists or not
     const existingDonnee = await entryRepository.findExistingDonnee({
-      ...reshapeInputDonneeUpsertData(input),
+      ...reshapeInputEntryUpsertData(input),
       behaviorIds,
       environmentIds,
     });
@@ -125,7 +125,7 @@ export const buildDonneeService = ({
 
     const createdDonnee = await slonik.transaction(async (transactionConnection) => {
       const createdDonnee = await entryRepository.createDonnee(
-        reshapeInputDonneeUpsertData(input),
+        reshapeInputEntryUpsertData(input),
         transactionConnection
       );
 
@@ -158,7 +158,7 @@ export const buildDonneeService = ({
 
     // Check if an exact same donnee already exists or not
     const existingDonnee = await entryRepository.findExistingDonnee({
-      ...reshapeInputDonneeUpsertData(input),
+      ...reshapeInputEntryUpsertData(input),
       behaviorIds,
       environmentIds,
     });
@@ -174,7 +174,7 @@ export const buildDonneeService = ({
       const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
         const updatedDonnee = await entryRepository.updateDonnee(
           parseInt(id),
-          reshapeInputDonneeUpsertData(input),
+          reshapeInputEntryUpsertData(input),
           transactionConnection
         );
 

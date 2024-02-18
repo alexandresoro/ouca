@@ -8,7 +8,7 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
-import { reshapeInputEstimationNombreUpsertData } from "./number-estimate-service-reshape.js";
+import { reshapeInputNumberEstimateUpsertData } from "./number-estimate-service-reshape.js";
 
 type NumberEstimateServiceDependencies = {
   numberEstimateRepository: EstimationNombreRepository;
@@ -92,7 +92,7 @@ export const buildNumberEstimateService = ({
 
     try {
       const createdEstimationNombre = await numberEstimateRepository.createEstimationNombre({
-        ...reshapeInputEstimationNombreUpsertData(input),
+        ...reshapeInputNumberEstimateUpsertData(input),
         owner_id: loggedUser.id,
       });
 
@@ -124,7 +124,7 @@ export const buildNumberEstimateService = ({
     try {
       const updatedEstimationNombre = await numberEstimateRepository.updateEstimationNombre(
         id,
-        reshapeInputEstimationNombreUpsertData(input)
+        reshapeInputNumberEstimateUpsertData(input)
       );
 
       return enrichEntityWithEditableStatus(updatedEstimationNombre, loggedUser);

@@ -14,7 +14,7 @@ import { type InventaireRepository } from "../../repositories/inventaire/inventa
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { logger } from "../../utils/logger.js";
 import { getSqlPagination } from "./entities-utils.js";
-import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.js";
+import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
 
 type InventaireServiceDependencies = {
   slonik: DatabasePool;
@@ -112,7 +112,7 @@ export const buildInventaireService = ({
 
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventoryRepository.findExistingInventaire({
-      ...reshapeInputInventaireUpsertData(input, locality),
+      ...reshapeInputInventoryUpsertData(input, locality),
       associateIds,
       weatherIds,
     });
@@ -129,7 +129,7 @@ export const buildInventaireService = ({
       // Create a new inventaire
       const createdInventaire = await slonik.transaction(async (transactionConnection) => {
         const createdInventaire = await inventoryRepository.createInventaire(
-          reshapeInputInventaireUpsertData(input, locality, loggedUser.id),
+          reshapeInputInventoryUpsertData(input, locality, loggedUser.id),
           transactionConnection
         );
 
@@ -179,7 +179,7 @@ export const buildInventaireService = ({
 
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventoryRepository.findExistingInventaire({
-      ...reshapeInputInventaireUpsertData(inputData, locality),
+      ...reshapeInputInventoryUpsertData(inputData, locality),
       associateIds,
       weatherIds,
     });
@@ -225,7 +225,7 @@ export const buildInventaireService = ({
       const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
         const updatedInventaire = await inventoryRepository.updateInventaire(
           id,
-          reshapeInputInventaireUpsertData(inputData, locality, loggedUser.id),
+          reshapeInputInventoryUpsertData(inputData, locality, loggedUser.id),
           transactionConnection
         );
 

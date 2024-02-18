@@ -1,7 +1,7 @@
 import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type EspeceCreateInput } from "../../../repositories/espece/espece-repository-types.js";
 
-export const reshapeInputEspeceUpsertData = (data: UpsertSpeciesInput): EspeceCreateInput => {
+export const reshapeInputSpeciesUpsertData = (data: UpsertSpeciesInput): EspeceCreateInput => {
   const { classId, nomFrancais, nomLatin, ...rest } = data;
   return {
     ...rest,

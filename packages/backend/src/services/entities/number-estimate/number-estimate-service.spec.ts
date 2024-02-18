@@ -10,7 +10,7 @@ import { type DonneeRepository } from "../../../repositories/donnee/donnee-repos
 import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { reshapeInputEstimationNombreUpsertData } from "./number-estimate-service-reshape.js";
+import { reshapeInputNumberEstimateUpsertData } from "./number-estimate-service-reshape.js";
 import { buildNumberEstimateService } from "./number-estimate-service.js";
 
 const numberEstimateRepository = mockVi<EstimationNombreRepository>();
@@ -33,11 +33,11 @@ const uniqueConstraintFailed = () => {
 vi.mock("./number-estimate-service-reshape.js", () => {
   return {
     __esModule: true,
-    reshapeInputEstimationNombreUpsertData: vi.fn(),
+    reshapeInputNumberEstimateUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputEstimationNombreUpsertData = vi.mocked(reshapeInputEstimationNombreUpsertData);
+const mockedReshapeInputNumberEstimateUpsertData = vi.mocked(reshapeInputNumberEstimateUpsertData);
 
 describe("Find number estimate", () => {
   test("should handle a matching number estimate", async () => {
@@ -196,14 +196,14 @@ describe("Update of a number estimate", () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
     await numberEstimateService.updateEstimationNombre(12, numberEstimateData, loggedUser);
 
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -215,7 +215,7 @@ describe("Update of a number estimate", () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -224,7 +224,7 @@ describe("Update of a number estimate", () => {
     await numberEstimateService.updateEstimationNombre(12, numberEstimateData, loggedUser);
 
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -253,7 +253,7 @@ describe("Update of a number estimate", () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -264,7 +264,7 @@ describe("Update of a number estimate", () => {
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -283,14 +283,14 @@ describe("Creation of a number estimate", () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
     await numberEstimateService.createEstimationNombre(numberEstimateData, loggedUser);
 
     expect(numberEstimateRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
     expect(numberEstimateRepository.createEstimationNombre).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
@@ -301,7 +301,7 @@ describe("Creation of a number estimate", () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -312,7 +312,7 @@ describe("Creation of a number estimate", () => {
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(numberEstimateRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
     expect(numberEstimateRepository.createEstimationNombre).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,

@@ -35,11 +35,11 @@ const inventaireService = buildInventaireService({
   localityRepository,
 });
 
-const reshapeInputInventaireUpsertData = vi.fn();
+const reshapeInputInventoryUpsertData = vi.fn();
 vi.doMock("./inventaire-service-reshape.js", () => {
   return {
     __esModule: true,
-    reshapeInputInventaireUpsertData,
+    reshapeInputInventoryUpsertData,
   };
 });
 
@@ -228,7 +228,7 @@ describe("Update of an inventory", () => {
       );
 
       const reshapedInputData = mock<InventaireCreateInput>();
-      reshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
+      reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.updateInventaire(12, inventoryData, loggedUser);
 
@@ -313,7 +313,7 @@ describe("Creation of an inventory", () => {
       );
 
       const reshapedInputData = mock<InventaireCreateInput>();
-      reshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
+      reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.createInventaire(inventoryData, loggedUser);
 

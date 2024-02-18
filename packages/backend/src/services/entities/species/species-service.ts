@@ -14,7 +14,7 @@ import { type EspeceRepository } from "../../../repositories/espece/espece-repos
 import { reshapeSearchCriteria } from "../../../repositories/search-criteria.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 import { type SpeciesClassService } from "../species-class/species-class-service.js";
-import { reshapeInputEspeceUpsertData } from "./species-service-reshape.js";
+import { reshapeInputSpeciesUpsertData } from "./species-service-reshape.js";
 
 type SpeciesServiceDependencies = {
   classService: SpeciesClassService;
@@ -128,7 +128,7 @@ export const buildSpeciesService = ({
 
     try {
       const createdEspece = await speciesRepository.createEspece({
-        ...reshapeInputEspeceUpsertData(input),
+        ...reshapeInputSpeciesUpsertData(input),
         owner_id: loggedUser?.id,
       });
 
@@ -158,7 +158,7 @@ export const buildSpeciesService = ({
     }
 
     try {
-      const updatedEspece = await speciesRepository.updateEspece(id, reshapeInputEspeceUpsertData(input));
+      const updatedEspece = await speciesRepository.updateEspece(id, reshapeInputSpeciesUpsertData(input));
 
       return enrichSpecies(updatedEspece, loggedUser);
     } catch (e) {

@@ -11,7 +11,7 @@ import { type EspeceCreateInput } from "../../../repositories/espece/espece-repo
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { type SpeciesClassService } from "../species-class/species-class-service.js";
-import { reshapeInputEspeceUpsertData } from "./species-service-reshape.js";
+import { reshapeInputSpeciesUpsertData } from "./species-service-reshape.js";
 import { buildSpeciesService } from "./species-service.js";
 
 const classService = mockVi<SpeciesClassService>();
@@ -36,11 +36,11 @@ const uniqueConstraintFailed = () => {
 vi.mock("./species-service-reshape.js", () => {
   return {
     __esModule: true,
-    reshapeInputEspeceUpsertData: vi.fn(),
+    reshapeInputSpeciesUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputEspeceUpsertData = vi.mocked(reshapeInputEspeceUpsertData);
+const mockedReshapeInputSpeciesUpsertData = vi.mocked(reshapeInputSpeciesUpsertData);
 
 describe("Find species", () => {
   test("should handle a matching species", async () => {
@@ -275,7 +275,7 @@ describe("Update of a species", () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
-    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -287,7 +287,7 @@ describe("Update of a species", () => {
     await speciesService.updateEspece(12, speciesData, loggedUser);
 
     expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputSpeciesUpsertData).toHaveBeenCalledTimes(1);
     expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -299,7 +299,7 @@ describe("Update of a species", () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
-    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -313,7 +313,7 @@ describe("Update of a species", () => {
     await speciesService.updateEspece(12, speciesData, loggedUser);
 
     expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputSpeciesUpsertData).toHaveBeenCalledTimes(1);
     expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -340,7 +340,7 @@ describe("Update of a species", () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
-    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -351,7 +351,7 @@ describe("Update of a species", () => {
     );
 
     expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputSpeciesUpsertData).toHaveBeenCalledTimes(1);
     expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
@@ -368,7 +368,7 @@ describe("Creation of a species", () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
-    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -380,7 +380,7 @@ describe("Creation of a species", () => {
     await speciesService.createEspece(speciesData, loggedUser);
 
     expect(speciesRepository.createEspece).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputSpeciesUpsertData).toHaveBeenCalledTimes(1);
     expect(speciesRepository.createEspece).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
@@ -391,7 +391,7 @@ describe("Creation of a species", () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
-    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+    mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -402,7 +402,7 @@ describe("Creation of a species", () => {
     );
 
     expect(speciesRepository.createEspece).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputSpeciesUpsertData).toHaveBeenCalledTimes(1);
     expect(speciesRepository.createEspece).toHaveBeenLastCalledWith({
       ...reshapedInputData,
       owner_id: loggedUser.id,
