@@ -194,7 +194,7 @@ export const generateDonneesExport = async (
       const estimationDistance = await distanceEstimateService.findDistanceEstimateOfEntryId(donnee?.id, loggedUser);
       const estimationNombre = await numberEstimateService.findEstimationNombreOfDonneeId(donnee?.id, loggedUser);
       const comportements = await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser);
-      const milieux = await environmentService.findMilieuxOfDonneeId(donnee.id, loggedUser);
+      const milieux = await environmentService.findEnvironmentsOfEntryId(donnee.id, loggedUser);
 
       const nicheurStatus = getNicheurStatusToDisplay(comportements, "");
 
@@ -333,7 +333,7 @@ export const generateMeteosExport = async ({ weatherService }: { weatherService:
 export const generateMilieuxExport = async ({
   environmentService,
 }: { environmentService: EnvironmentService }): Promise<string> => {
-  const milieuxDb = await environmentService.findAllMilieux();
+  const milieuxDb = await environmentService.findAllEnvironments();
 
   const milieuxToExport = milieuxDb.map((object) => {
     return {

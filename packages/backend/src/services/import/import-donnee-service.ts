@@ -58,7 +58,7 @@ export class ImportDonneeService extends ImportService {
     this.estimationsNombre = await this.services.numberEstimateService.findAllEstimationsNombre();
     this.estimationsDistance = await this.services.distanceEstimateService.findAllDistanceEstimates();
     this.comportements = await this.services.behaviorService.findAllBehaviors();
-    this.milieux = await this.services.environmentService.findAllMilieux();
+    this.milieux = await this.services.environmentService.findAllEnvironments();
     this.inventaires = await this.services.inventoryService.findAllInventaires();
     this.existingDonnees = await this.services.entryService.findAllDonnees();
   };
@@ -263,7 +263,7 @@ export class ImportDonneeService extends ImportService {
           comportementsIds
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.environmentService.findMilieuxIdsOfDonneeId(donnee.id)),
+          new Set(await this.services.environmentService.findEnvironmentIdsOfEntryId(donnee.id)),
           milieuxIds
         )
       );

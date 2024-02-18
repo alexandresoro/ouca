@@ -23,7 +23,7 @@ const environmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const environment = await environmentService.findMilieu(req.params.id, req.user);
+    const environment = await environmentService.findEnvironment(req.params.id, req.user);
     if (!environment) {
       return await reply.status(404).send();
     }
@@ -44,15 +44,15 @@ const environmentsController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [environmentsData, count] = await Promise.all([
-      environmentService.findPaginatedMilieux(req.user, queryParams),
-      environmentService.getMilieuxCount(req.user, queryParams.q),
+      environmentService.findPaginatedEnvironments(req.user, queryParams),
+      environmentService.getEnvironmentsCount(req.user, queryParams.q),
     ]);
 
     let data: Environment[] | EnvironmentExtended[] = environmentsData;
     if (extended) {
       data = await Promise.all(
         environmentsData.map(async (environmentData) => {
-          const entriesCount = await environmentService.getDonneesCountByMilieu(environmentData.id, req.user);
+          const entriesCount = await environmentService.getEntriesCountByEnvironment(environmentData.id, req.user);
           return {
             ...environmentData,
             entriesCount,
@@ -80,7 +80,7 @@ const environmentsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const environment = await environmentService.createMilieu(input, req.user);
+      const environment = await environmentService.createEnvironment(input, req.user);
       const response = upsertEnvironmentResponse.parse(environment);
 
       return await reply.send(response);
@@ -106,7 +106,7 @@ const environmentsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const environment = await environmentService.updateMilieu(req.params.id, input, req.user);
+      const environment = await environmentService.updateEnvironment(req.params.id, input, req.user);
       const response = upsertEnvironmentResponse.parse(environment);
 
       return await reply.send(response);
@@ -124,7 +124,7 @@ const environmentsController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await environmentService.deleteMilieu(req.params.id, req.user);
+      const { id: deletedId } = await environmentService.deleteEnvironment(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

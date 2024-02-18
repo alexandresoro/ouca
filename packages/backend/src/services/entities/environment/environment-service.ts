@@ -15,55 +15,55 @@ type EnvironmentServiceDependencies = {
 };
 
 export const buildEnvironmentService = ({ environmentRepository, entryRepository }: EnvironmentServiceDependencies) => {
-  const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
+  const findEnvironment = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
     validateAuthorization(loggedUser);
 
     const environment = await environmentRepository.findMilieuById(id);
     return enrichEntityWithEditableStatus(environment, loggedUser);
   };
 
-  const findMilieuxIdsOfDonneeId = async (donneeId: string): Promise<string[]> => {
-    const milieuxIds = await environmentRepository
+  const findEnvironmentIdsOfEntryId = async (donneeId: string): Promise<string[]> => {
+    const environmentIds = await environmentRepository
       .findMilieuxOfDonneeId(parseInt(donneeId))
-      .then((milieux) => milieux.map(({ id }) => id));
+      .then((environments) => environments.map(({ id }) => id));
 
-    return [...milieuxIds];
+    return [...environmentIds];
   };
 
-  const findMilieuxOfDonneeId = async (
+  const findEnvironmentsOfEntryId = async (
     donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Environment[]> => {
     validateAuthorization(loggedUser);
 
-    const milieux = await environmentRepository.findMilieuxOfDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const environments = await environmentRepository.findMilieuxOfDonneeId(donneeId ? parseInt(donneeId) : undefined);
 
-    const enrichedEnvironments = milieux.map((environment) => {
+    const enrichedEnvironments = environments.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);
     });
 
     return [...enrichedEnvironments];
   };
 
-  const getDonneesCountByMilieu = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountByEnvironment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByMilieuId(parseInt(id));
   };
 
-  const findAllMilieux = async (): Promise<Environment[]> => {
-    const milieux = await environmentRepository.findMilieux({
+  const findAllEnvironments = async (): Promise<Environment[]> => {
+    const environments = await environmentRepository.findMilieux({
       orderBy: "libelle",
     });
 
-    const enrichedEnvironments = milieux.map((environment) => {
+    const enrichedEnvironments = environments.map((environment) => {
       return enrichEntityWithEditableStatus(environment, null);
     });
 
     return [...enrichedEnvironments];
   };
 
-  const findPaginatedMilieux = async (
+  const findPaginatedEnvironments = async (
     loggedUser: LoggedUser | null,
     options: EnvironmentsSearchParams
   ): Promise<Environment[]> => {
@@ -71,36 +71,39 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const milieux = await environmentRepository.findMilieux({
+    const environments = await environmentRepository.findMilieux({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    const enrichedEnvironments = milieux.map((environment) => {
+    const enrichedEnvironments = environments.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);
     });
 
     return [...enrichedEnvironments];
   };
 
-  const getMilieuxCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getEnvironmentsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return environmentRepository.getCount(q);
   };
 
-  const createMilieu = async (input: UpsertEnvironmentInput, loggedUser: LoggedUser | null): Promise<Environment> => {
+  const createEnvironment = async (
+    input: UpsertEnvironmentInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Environment> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdMilieu = await environmentRepository.createMilieu({
+      const createdEnvironment = await environmentRepository.createMilieu({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdMilieu, loggedUser);
+      return enrichEntityWithEditableStatus(createdEnvironment, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -109,7 +112,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
     }
   };
 
-  const updateMilieu = async (
+  const updateEnvironment = async (
     id: number,
     input: UpsertEnvironmentInput,
     loggedUser: LoggedUser | null
@@ -126,9 +129,9 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
     }
 
     try {
-      const updatedMilieu = await environmentRepository.updateMilieu(id, input);
+      const updatedEnvironment = await environmentRepository.updateMilieu(id, input);
 
-      return enrichEntityWithEditableStatus(updatedMilieu, loggedUser);
+      return enrichEntityWithEditableStatus(updatedEnvironment, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -137,7 +140,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
     }
   };
 
-  const deleteMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Environment> => {
+  const deleteEnvironment = async (id: number, loggedUser: LoggedUser | null): Promise<Environment> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -153,13 +156,13 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
     return enrichEntityWithEditableStatus(deletedEnvironment, loggedUser);
   };
 
-  const createMilieux = async (
-    milieux: Omit<MilieuCreateInput[], "owner_id">,
+  const createEnvironments = async (
+    environments: Omit<MilieuCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Environment[]> => {
     const createdEnvironments = await environmentRepository.createMilieux(
-      milieux.map((milieu) => {
-        return { ...milieu, owner_id: loggedUser.id };
+      environments.map((environment) => {
+        return { ...environment, owner_id: loggedUser.id };
       })
     );
 
@@ -171,17 +174,17 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   };
 
   return {
-    findMilieu,
-    findMilieuxIdsOfDonneeId,
-    findMilieuxOfDonneeId,
-    getDonneesCountByMilieu,
-    findAllMilieux,
-    findPaginatedMilieux,
-    getMilieuxCount,
-    createMilieu,
-    updateMilieu,
-    deleteMilieu,
-    createMilieux,
+    findEnvironment,
+    findEnvironmentIdsOfEntryId,
+    findEnvironmentsOfEntryId,
+    getEntriesCountByEnvironment,
+    findAllEnvironments,
+    findPaginatedEnvironments,
+    getEnvironmentsCount,
+    createEnvironment,
+    updateEnvironment,
+    deleteEnvironment,
+    createEnvironments,
   };
 };
 
