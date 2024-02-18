@@ -60,7 +60,7 @@ export const generateAgesExport = async ({ ageService }: { ageService: AgeServic
 export const generateClassesExport = async ({
   classService,
 }: { classService: SpeciesClassService }): Promise<string> => {
-  const classes = await classService.findAllClasses();
+  const classes = await classService.findAllSpeciesClasses();
 
   const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };
@@ -188,7 +188,7 @@ export const generateDonneesExport = async (
         await weatherService.findWeathersOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
       const espece = await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser);
-      const classe = await classService.findClasseOfEspeceId(espece?.id, loggedUser);
+      const classe = await classService.findSpeciesClassOfSpecies(espece?.id, loggedUser);
       const age = (await ageService.findAgeOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const estimationDistance = await distanceEstimateService.findDistanceEstimateOfEntryId(donnee?.id, loggedUser);

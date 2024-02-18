@@ -21,26 +21,26 @@ export const buildSpeciesClassService = ({
   speciesRepository,
   entryRepository,
 }: SpeciesClassServiceDependencies) => {
-  const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
+  const findSpeciesClass = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
     validateAuthorization(loggedUser);
 
     const speciesClass = await classRepository.findClasseById(id);
     return enrichEntityWithEditableStatus(speciesClass, loggedUser);
   };
 
-  const getEspecesCountByClasse = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getSpeciesCountBySpeciesClass = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return speciesRepository.getCountByClasseId(parseInt(id));
   };
 
-  const getDonneesCountByClasse = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountBySpeciesClass = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByClasseId(parseInt(id));
   };
 
-  const findClasseOfEspeceId = async (
+  const findSpeciesClassOfSpecies = async (
     especeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<SpeciesClass | null> => {
@@ -50,7 +50,7 @@ export const buildSpeciesClassService = ({
     return enrichEntityWithEditableStatus(speciesClass, loggedUser);
   };
 
-  const findAllClasses = async (): Promise<SpeciesClass[]> => {
+  const findAllSpeciesClasses = async (): Promise<SpeciesClass[]> => {
     const classes = await classRepository.findClasses({
       orderBy: "libelle",
     });
@@ -62,7 +62,7 @@ export const buildSpeciesClassService = ({
     return [...enrichedClasses];
   };
 
-  const findPaginatedClasses = async (
+  const findPaginatedSpeciesClasses = async (
     loggedUser: LoggedUser | null,
     options: ClassesSearchParams
   ): Promise<SpeciesClass[]> => {
@@ -84,13 +84,13 @@ export const buildSpeciesClassService = ({
     return [...enrichedClasses];
   };
 
-  const getClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getSpeciesClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return classRepository.getCount(q);
   };
 
-  const createClasse = async (input: UpsertClassInput, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
+  const createSpeciesClass = async (input: UpsertClassInput, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
     validateAuthorization(loggedUser);
 
     // Create a new class
@@ -109,7 +109,7 @@ export const buildSpeciesClassService = ({
     }
   };
 
-  const updateClasse = async (
+  const updateSpeciesClass = async (
     id: number,
     input: UpsertClassInput,
     loggedUser: LoggedUser | null
@@ -138,7 +138,7 @@ export const buildSpeciesClassService = ({
     }
   };
 
-  const deleteClasse = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
+  const deleteSpeciesClass = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -154,13 +154,13 @@ export const buildSpeciesClassService = ({
     return enrichEntityWithEditableStatus(deletedClass, loggedUser);
   };
 
-  const createClasses = async (
+  const createMultipleSpeciesClasses = async (
     classes: Omit<ClasseCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly SpeciesClass[]> => {
     const createdClasses = await classRepository.createClasses(
-      classes.map((classe) => {
-        return { ...classe, owner_id: loggedUser.id };
+      classes.map((speciesClass) => {
+        return { ...speciesClass, owner_id: loggedUser.id };
       })
     );
 
@@ -172,17 +172,17 @@ export const buildSpeciesClassService = ({
   };
 
   return {
-    findClasse,
-    getEspecesCountByClasse,
-    getDonneesCountByClasse,
-    findClasseOfEspeceId,
-    findAllClasses,
-    findPaginatedClasses,
-    getClassesCount,
-    createClasse,
-    updateClasse,
-    deleteClasse,
-    createClasses,
+    findSpeciesClass,
+    getSpeciesCountBySpeciesClass,
+    getEntriesCountBySpeciesClass,
+    findSpeciesClassOfSpecies,
+    findAllSpeciesClasses,
+    findPaginatedSpeciesClasses,
+    getSpeciesClassesCount,
+    createSpeciesClass,
+    updateSpeciesClass,
+    deleteSpeciesClass,
+    createMultipleSpeciesClasses,
   };
 };
 

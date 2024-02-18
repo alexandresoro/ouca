@@ -38,7 +38,7 @@ describe("Find class", () => {
 
     classRepository.findClasseById.mockResolvedValueOnce(classData);
 
-    await speciesClassService.findClasse(12, loggedUser);
+    await speciesClassService.findSpeciesClass(12, loggedUser);
 
     expect(classRepository.findClasseById).toHaveBeenCalledTimes(1);
     expect(classRepository.findClasseById).toHaveBeenLastCalledWith(12);
@@ -48,14 +48,14 @@ describe("Find class", () => {
     classRepository.findClasseById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(speciesClassService.findClasse(10, loggedUser)).resolves.toEqual(null);
+    await expect(speciesClassService.findSpeciesClass(10, loggedUser)).resolves.toEqual(null);
 
     expect(classRepository.findClasseById).toHaveBeenCalledTimes(1);
     expect(classRepository.findClasseById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(speciesClassService.findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.findSpeciesClass(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classRepository.findClasseById).not.toHaveBeenCalled();
   });
 });
@@ -64,14 +64,16 @@ describe("Species count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await speciesClassService.getEspecesCountByClasse("12", loggedUser);
+    await speciesClassService.getSpeciesCountBySpeciesClass("12", loggedUser);
 
     expect(speciesRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
     expect(speciesRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(speciesClassService.getEspecesCountByClasse("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.getSpeciesCountBySpeciesClass("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
@@ -79,14 +81,16 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await speciesClassService.getDonneesCountByClasse("12", loggedUser);
+    await speciesClassService.getEntriesCountBySpeciesClass("12", loggedUser);
 
     expect(entryRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
     expect(entryRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(speciesClassService.getDonneesCountByClasse("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.getEntriesCountBySpeciesClass("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
@@ -99,15 +103,15 @@ describe("Find class by species ID", () => {
 
     classRepository.findClasseByEspeceId.mockResolvedValueOnce(classData);
 
-    const classe = await speciesClassService.findClasseOfEspeceId("43", loggedUser);
+    const speciesClass = await speciesClassService.findSpeciesClassOfSpecies("43", loggedUser);
 
     expect(classRepository.findClasseByEspeceId).toHaveBeenCalledTimes(1);
     expect(classRepository.findClasseByEspeceId).toHaveBeenLastCalledWith(43);
-    expect(classe?.id).toEqual("256");
+    expect(speciesClass?.id).toEqual("256");
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(speciesClassService.findClasseOfEspeceId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.findSpeciesClassOfSpecies("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -116,7 +120,7 @@ test("Find all classes", async () => {
 
   classRepository.findClasses.mockResolvedValueOnce(classesData);
 
-  await speciesClassService.findAllClasses();
+  await speciesClassService.findAllSpeciesClasses();
 
   expect(classRepository.findClasses).toHaveBeenCalledTimes(1);
   expect(classRepository.findClasses).toHaveBeenLastCalledWith({
@@ -131,7 +135,7 @@ describe("Entities paginated find by search criteria", () => {
 
     classRepository.findClasses.mockResolvedValueOnce(classesData);
 
-    await speciesClassService.findPaginatedClasses(loggedUser, {});
+    await speciesClassService.findPaginatedSpeciesClasses(loggedUser, {});
 
     expect(classRepository.findClasses).toHaveBeenCalledTimes(1);
     expect(classRepository.findClasses).toHaveBeenLastCalledWith({});
@@ -151,7 +155,7 @@ describe("Entities paginated find by search criteria", () => {
 
     classRepository.findClasses.mockResolvedValueOnce(classesData);
 
-    await speciesClassService.findPaginatedClasses(loggedUser, searchParams);
+    await speciesClassService.findPaginatedSpeciesClasses(loggedUser, searchParams);
 
     expect(classRepository.findClasses).toHaveBeenCalledTimes(1);
     expect(classRepository.findClasses).toHaveBeenLastCalledWith({
@@ -164,7 +168,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(speciesClassService.findPaginatedClasses(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.findPaginatedSpeciesClasses(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -172,7 +176,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await speciesClassService.getClassesCount(loggedUser);
+    await speciesClassService.getSpeciesClassesCount(loggedUser);
 
     expect(classRepository.getCount).toHaveBeenCalledTimes(1);
     expect(classRepository.getCount).toHaveBeenLastCalledWith(undefined);
@@ -181,14 +185,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await speciesClassService.getClassesCount(loggedUser, "test");
+    await speciesClassService.getSpeciesClassesCount(loggedUser, "test");
 
     expect(classRepository.getCount).toHaveBeenCalledTimes(1);
     expect(classRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(speciesClassService.getClassesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.getSpeciesClassesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -198,7 +202,7 @@ describe("Update of a class", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    await speciesClassService.updateClasse(12, classData, loggedUser);
+    await speciesClassService.updateSpeciesClass(12, classData, loggedUser);
 
     expect(classRepository.updateClasse).toHaveBeenCalledTimes(1);
     expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
@@ -215,7 +219,7 @@ describe("Update of a class", () => {
 
     classRepository.findClasseById.mockResolvedValueOnce(existingData);
 
-    await speciesClassService.updateClasse(12, classData, loggedUser);
+    await speciesClassService.updateSpeciesClass(12, classData, loggedUser);
 
     expect(classRepository.updateClasse).toHaveBeenCalledTimes(1);
     expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
@@ -235,7 +239,7 @@ describe("Update of a class", () => {
 
     classRepository.findClasseById.mockResolvedValueOnce(existingData);
 
-    await expect(speciesClassService.updateClasse(12, classData, loggedUser)).rejects.toThrowError(
+    await expect(speciesClassService.updateSpeciesClass(12, classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -249,7 +253,7 @@ describe("Update of a class", () => {
 
     classRepository.updateClasse.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => speciesClassService.updateClasse(12, classData, loggedUser)).rejects.toThrowError(
+    await expect(() => speciesClassService.updateSpeciesClass(12, classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -260,7 +264,9 @@ describe("Update of a class", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const classData = mock<UpsertClassInput>();
 
-    await expect(speciesClassService.updateClasse(12, classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.updateSpeciesClass(12, classData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
     expect(classRepository.updateClasse).not.toHaveBeenCalled();
   });
 });
@@ -271,7 +277,7 @@ describe("Creation of a class", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    await speciesClassService.createClasse(classData, loggedUser);
+    await speciesClassService.createSpeciesClass(classData, loggedUser);
 
     expect(classRepository.createClasse).toHaveBeenCalledTimes(1);
     expect(classRepository.createClasse).toHaveBeenLastCalledWith({
@@ -287,7 +293,7 @@ describe("Creation of a class", () => {
 
     classRepository.createClasse.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => speciesClassService.createClasse(classData, loggedUser)).rejects.toThrowError(
+    await expect(() => speciesClassService.createSpeciesClass(classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -301,7 +307,7 @@ describe("Creation of a class", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const classData = mock<UpsertClassInput>();
 
-    await expect(speciesClassService.createClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.createSpeciesClass(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classRepository.createClasse).not.toHaveBeenCalled();
   });
 });
@@ -313,13 +319,13 @@ describe("Deletion of a class", () => {
       role: "contributor",
     };
 
-    const classe = speciesClassFactory.build({
+    const speciesClass = speciesClassFactory.build({
       ownerId: loggedUser.id,
     });
 
-    classRepository.findClasseById.mockResolvedValueOnce(classe);
+    classRepository.findClasseById.mockResolvedValueOnce(speciesClass);
 
-    await speciesClassService.deleteClasse(11, loggedUser);
+    await speciesClassService.deleteSpeciesClass(11, loggedUser);
 
     expect(classRepository.deleteClasseById).toHaveBeenCalledTimes(1);
     expect(classRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
@@ -332,7 +338,7 @@ describe("Deletion of a class", () => {
 
     classRepository.findClasseById.mockResolvedValueOnce(speciesClassFactory.build());
 
-    await speciesClassService.deleteClasse(11, loggedUser);
+    await speciesClassService.deleteSpeciesClass(11, loggedUser);
 
     expect(classRepository.deleteClasseById).toHaveBeenCalledTimes(1);
     expect(classRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
@@ -345,13 +351,13 @@ describe("Deletion of a class", () => {
 
     classRepository.findClasseById.mockResolvedValueOnce(speciesClassFactory.build());
 
-    await expect(speciesClassService.deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.deleteSpeciesClass(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(classRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(speciesClassService.deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(speciesClassService.deleteSpeciesClass(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 });
@@ -367,13 +373,13 @@ test("Create multiple classes", async () => {
 
   classRepository.createClasses.mockResolvedValueOnce([]);
 
-  await speciesClassService.createClasses(classesData, loggedUser);
+  await speciesClassService.createMultipleSpeciesClasses(classesData, loggedUser);
 
   expect(classRepository.createClasses).toHaveBeenCalledTimes(1);
   expect(classRepository.createClasses).toHaveBeenLastCalledWith(
-    classesData.map((classe) => {
+    classesData.map((speciesClass) => {
       return {
-        ...classe,
+        ...speciesClass,
         owner_id: loggedUser.id,
       };
     })

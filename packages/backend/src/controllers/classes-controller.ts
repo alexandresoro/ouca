@@ -23,7 +23,7 @@ const classesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const speciesClass = await classService.findClasse(req.params.id, req.user);
+    const speciesClass = await classService.findSpeciesClass(req.params.id, req.user);
     if (!speciesClass) {
       return await reply.status(404).send();
     }
@@ -44,16 +44,16 @@ const classesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [classesData, count] = await Promise.all([
-      classService.findPaginatedClasses(req.user, queryParams),
-      classService.getClassesCount(req.user, queryParams.q),
+      classService.findPaginatedSpeciesClasses(req.user, queryParams),
+      classService.getSpeciesClassesCount(req.user, queryParams.q),
     ]);
 
     let data: SpeciesClass[] | SpeciesClassExtended[] = classesData;
     if (extended) {
       data = await Promise.all(
         classesData.map(async (classData) => {
-          const speciesCount = await classService.getEspecesCountByClasse(classData.id, req.user);
-          const entriesCount = await classService.getDonneesCountByClasse(classData.id, req.user);
+          const speciesCount = await classService.getSpeciesCountBySpeciesClass(classData.id, req.user);
+          const entriesCount = await classService.getEntriesCountBySpeciesClass(classData.id, req.user);
           return {
             ...classData,
             speciesCount,
@@ -82,7 +82,7 @@ const classesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const speciesClass = await classService.createClasse(input, req.user);
+      const speciesClass = await classService.createSpeciesClass(input, req.user);
       const response = upsertClassResponse.parse(speciesClass);
 
       return await reply.send(response);
@@ -108,7 +108,7 @@ const classesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const speciesClass = await classService.updateClasse(req.params.id, input, req.user);
+      const speciesClass = await classService.updateSpeciesClass(req.params.id, input, req.user);
       const response = upsertClassResponse.parse(speciesClass);
 
       return await reply.send(response);
@@ -126,7 +126,7 @@ const classesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await classService.deleteClasse(req.params.id, req.user);
+      const { id: deletedId } = await classService.deleteSpeciesClass(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

@@ -30,7 +30,7 @@ export const buildSpeciesService = ({
   const enrichSpecies = async (species: Species, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     // TODO this can be called from import with loggedUser = null and will fail validation
     // Ideally, even import should have a user
-    const speciesClass = await classService.findClasseOfEspeceId(species.id, loggedUser);
+    const speciesClass = await classService.findSpeciesClassOfSpecies(species.id, loggedUser);
     return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
   };
 
@@ -181,7 +181,7 @@ export const buildSpeciesService = ({
       }
     }
 
-    const speciesClass = await classService.findClasseOfEspeceId(`${id}`, loggedUser);
+    const speciesClass = await classService.findSpeciesClassOfSpecies(`${id}`, loggedUser);
 
     const deletedSpecies = await speciesRepository.deleteEspeceById(id);
     return enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser);
