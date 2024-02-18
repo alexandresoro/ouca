@@ -5,7 +5,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.distanceEstimateService.findAllEstimationsDistance();
+    this.entities = await this.services.distanceEstimateService.findAllDistanceEstimates();
   };
 
   protected getThisEntityName(): string {
@@ -16,6 +16,6 @@ export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleServ
     estimationsDistance: Omit<DistanceEstimate, "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly DistanceEstimate[]> => {
-    return this.services.distanceEstimateService.createEstimationsDistance(estimationsDistance, loggedUser);
+    return this.services.distanceEstimateService.createDistanceEstimates(estimationsDistance, loggedUser);
   };
 }

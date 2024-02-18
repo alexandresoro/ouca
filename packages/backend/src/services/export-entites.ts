@@ -191,7 +191,7 @@ export const generateDonneesExport = async (
       const classe = await classService.findClasseOfEspeceId(espece?.id, loggedUser);
       const age = (await ageService.findAgeOfDonneeId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
-      const estimationDistance = await distanceEstimateService.findEstimationDistanceOfDonneeId(donnee?.id, loggedUser);
+      const estimationDistance = await distanceEstimateService.findDistanceEstimateOfEntryId(donnee?.id, loggedUser);
       const estimationNombre = await numberEstimateService.findEstimationNombreOfDonneeId(donnee?.id, loggedUser);
       const comportements = await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser);
       const milieux = await environmentService.findMilieuxOfDonneeId(donnee.id, loggedUser);
@@ -269,7 +269,7 @@ export const generateEspecesExport = async ({
 export const generateEstimationsDistanceExport = async ({
   distanceEstimateService,
 }: { distanceEstimateService: DistanceEstimateService }): Promise<string> => {
-  const estimations = await distanceEstimateService.findAllEstimationsDistance();
+  const estimations = await distanceEstimateService.findAllDistanceEstimates();
 
   const objectsToExport = estimations.map((object) => {
     return {
