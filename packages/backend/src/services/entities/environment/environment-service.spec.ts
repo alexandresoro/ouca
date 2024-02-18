@@ -2,11 +2,10 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { environmentFactory } from "@fixtures/domain/environment/environment.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
+import { upsertEnvironmentInputFactory } from "@fixtures/services/environment/environment-service.fixtures.js";
+import { type EnvironmentsSearchParams } from "@ou-ca/common/api/environment";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildEnvironmentService } from "./environment-service.js";
@@ -176,7 +175,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of an environment", () => {
   test("should be allowed when requested by an admin", async () => {
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -191,7 +190,7 @@ describe("Update of an environment", () => {
       ownerId: "notAdmin",
     });
 
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -208,7 +207,7 @@ describe("Update of an environment", () => {
       ownerId: "notAdmin",
     });
 
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -225,7 +224,7 @@ describe("Update of an environment", () => {
   });
 
   test("should not be allowed when trying to update to an environment that exists", async () => {
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -240,7 +239,7 @@ describe("Update of an environment", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     await expect(environmentService.updateEnvironment(12, environmentData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -251,7 +250,7 @@ describe("Update of an environment", () => {
 
 describe("Creation of an environment", () => {
   test("should create new environment", async () => {
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -265,7 +264,7 @@ describe("Creation of an environment", () => {
   });
 
   test("should not be allowed when trying to create an environment that already exists", async () => {
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -283,7 +282,7 @@ describe("Creation of an environment", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const environmentData = mock<UpsertEnvironmentInput>();
+    const environmentData = upsertEnvironmentInputFactory.build();
 
     await expect(environmentService.createEnvironment(environmentData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -343,11 +342,7 @@ describe("Deletion of an environment", () => {
 });
 
 test("Create multiple environments", async () => {
-  const environmentsData = [
-    mock<Omit<MilieuCreateInput, "owner_id">>(),
-    mock<Omit<MilieuCreateInput, "owner_id">>(),
-    mock<Omit<MilieuCreateInput, "owner_id">>(),
-  ];
+  const environmentsData = upsertEnvironmentInputFactory.buildList(3);
 
   const loggedUser = loggedUserFactory.build();
 

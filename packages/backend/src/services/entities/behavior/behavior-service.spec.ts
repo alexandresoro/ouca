@@ -2,10 +2,9 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { behaviorFactory } from "@fixtures/domain/behavior/behavior.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import { upsertBehaviorInputFactory } from "@fixtures/services/behavior/behavior-service.fixtures.js";
+import { type BehaviorsSearchParams } from "@ou-ca/common/api/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { mock } from "vitest-mock-extended";
-import { type ComportementCreateInput } from "../../../repositories/comportement/comportement-repository-types.js";
 import { type ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
@@ -174,7 +173,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a behavior", () => {
   test("should be allowed when requested by an admin", async () => {
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -189,7 +188,7 @@ describe("Update of a behavior", () => {
       ownerId: "notAdmin",
     });
 
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -206,7 +205,7 @@ describe("Update of a behavior", () => {
       ownerId: "notAdmin",
     });
 
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -223,7 +222,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should not be allowed when trying to update to a behavior that exists", async () => {
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -238,7 +237,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     await expect(behaviorService.updateBehavior(12, behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.updateComportement).not.toHaveBeenCalled();
@@ -247,7 +246,7 @@ describe("Update of a behavior", () => {
 
 describe("Creation of a behavior", () => {
   test("should create new behavior", async () => {
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -261,7 +260,7 @@ describe("Creation of a behavior", () => {
   });
 
   test("should not be allowed when trying to create a behavior that already exists", async () => {
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -279,7 +278,7 @@ describe("Creation of a behavior", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const behaviorData = mock<UpsertBehaviorInput>();
+    const behaviorData = upsertBehaviorInputFactory.build();
 
     await expect(behaviorService.createBehavior(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.createComportement).not.toHaveBeenCalled();
@@ -337,11 +336,7 @@ describe("Deletion of a behavior", () => {
 });
 
 test("Create multiple comportements", async () => {
-  const comportementsData = [
-    mock<Omit<ComportementCreateInput, "owner_id">>(),
-    mock<Omit<ComportementCreateInput, "owner_id">>(),
-    mock<Omit<ComportementCreateInput, "owner_id">>(),
-  ];
+  const comportementsData = upsertBehaviorInputFactory.buildList(3);
 
   const loggedUser = loggedUserFactory.build();
 

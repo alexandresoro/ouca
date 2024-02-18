@@ -2,11 +2,10 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { departmentFactory } from "@fixtures/domain/department/department.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
+import { upsertDepartmentInputFactory } from "@fixtures/services/department/department-service.fixtures.js";
+import { type DepartmentsSearchParams } from "@ou-ca/common/api/department";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { mock } from "vitest-mock-extended";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
-import { type DepartementCreateInput } from "../../../repositories/departement/departement-repository-types.js";
 import { type DepartementRepository } from "../../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
@@ -214,7 +213,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a department", () => {
   test("should be allowed when requested by an admin", async () => {
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -229,7 +228,7 @@ describe("Update of a department", () => {
       ownerId: "notAdmin",
     });
 
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -246,7 +245,7 @@ describe("Update of a department", () => {
       ownerId: "notAdmin",
     });
 
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -263,7 +262,7 @@ describe("Update of a department", () => {
   });
 
   test("should not be allowed when trying to update to a department that exists", async () => {
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -278,7 +277,7 @@ describe("Update of a department", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     await expect(departmentService.updateDepartment(12, departmentData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -289,7 +288,7 @@ describe("Update of a department", () => {
 
 describe("Creation of a department", () => {
   test("should create new department", async () => {
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -303,7 +302,7 @@ describe("Creation of a department", () => {
   });
 
   test("should not be allowed when trying to create a department that already exists", async () => {
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -321,7 +320,7 @@ describe("Creation of a department", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const departmentData = mock<UpsertDepartmentInput>();
+    const departmentData = upsertDepartmentInputFactory.build();
 
     await expect(departmentService.createDepartment(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departmentRepository.createDepartement).not.toHaveBeenCalled();
@@ -379,11 +378,7 @@ describe("Deletion of a department", () => {
 });
 
 test("Create multiple departments", async () => {
-  const departmentsData = [
-    mock<Omit<DepartementCreateInput, "owner_id">>(),
-    mock<Omit<DepartementCreateInput, "owner_id">>(),
-    mock<Omit<DepartementCreateInput, "owner_id">>(),
-  ];
+  const departmentsData = upsertDepartmentInputFactory.buildList(3);
 
   const loggedUser = loggedUserFactory.build();
 

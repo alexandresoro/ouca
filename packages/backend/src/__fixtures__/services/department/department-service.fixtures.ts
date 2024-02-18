@@ -1,0 +1,21 @@
+import { faker } from "@faker-js/faker";
+import { type UpsertDepartmentInput } from "@ou-ca/common/api/department";
+import { type Department } from "@ou-ca/common/api/entities/department";
+import { Factory } from "fishery";
+
+export const departmentServiceFactory = Factory.define<Department>(() => {
+  return {
+    id: faker.string.sample(),
+    code: faker.string.alpha(),
+    editable: faker.datatype.boolean(),
+    localitiesCount: faker.number.int(),
+    townsCount: faker.number.int(),
+    entriesCount: faker.number.int(),
+  };
+});
+
+export const upsertDepartmentInputFactory = Factory.define<UpsertDepartmentInput>(() => {
+  return {
+    code: faker.string.alpha(),
+  };
+});

@@ -2,14 +2,10 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { distanceEstimateFactory } from "@fixtures/domain/distance-estimate/distance-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import {
-  type DistanceEstimatesSearchParams,
-  type UpsertDistanceEstimateInput,
-} from "@ou-ca/common/api/distance-estimate";
+import { upsertDistanceEstimateInputFactory } from "@fixtures/services/distance-estimate/distance-estimate-service.fixtures.js";
+import { type DistanceEstimatesSearchParams } from "@ou-ca/common/api/distance-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type EstimationDistanceCreateInput } from "../../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../../repositories/estimation-distance/estimation-distance-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildDistanceEstimateService } from "./distance-estimate-service.js";
@@ -185,7 +181,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a distance estimate", () => {
   test("should be allowed when requested by an admin", async () => {
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -200,7 +196,7 @@ describe("Update of a distance estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -217,7 +213,7 @@ describe("Update of a distance estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -234,7 +230,7 @@ describe("Update of a distance estimate", () => {
   });
 
   test("should not be allowed when trying to update to a distance estimate that exists", async () => {
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -249,7 +245,7 @@ describe("Update of a distance estimate", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     await expect(distanceEstimateService.updateDistanceEstimate(12, distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -260,7 +256,7 @@ describe("Update of a distance estimate", () => {
 
 describe("Creation of a distance estimate", () => {
   test("should create new distance estimate", async () => {
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -274,7 +270,7 @@ describe("Creation of a distance estimate", () => {
   });
 
   test("should not be allowed when trying to create a distance estimate that already exists", async () => {
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -292,7 +288,7 @@ describe("Creation of a distance estimate", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
     await expect(distanceEstimateService.createDistanceEstimate(distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -354,11 +350,7 @@ describe("Deletion of a distance estimate", () => {
 });
 
 test("Create multiple distance estimates", async () => {
-  const distanceEstimatesData = [
-    mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
-    mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
-    mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
-  ];
+  const distanceEstimatesData = upsertDistanceEstimateInputFactory.buildList(3);
 
   const loggedUser = loggedUserFactory.build();
 
