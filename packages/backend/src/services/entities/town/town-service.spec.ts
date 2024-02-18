@@ -65,7 +65,7 @@ describe("Find city", () => {
     expect(townRepository.findCommuneById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(townService.findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.findCommuneById).not.toHaveBeenCalled();
   });
@@ -81,7 +81,7 @@ describe("Localities count per entity", () => {
     expect(localityRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(townService.getLieuxDitsCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -96,7 +96,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(townService.getDonneesCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -117,7 +117,7 @@ describe("Find city by locality ID", () => {
     expect(city?.id).toEqual("256");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(townService.findCommuneOfLieuDitId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -148,7 +148,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(townRepository.findCommunes).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated cities ", async () => {
+  test("should handle params when retrieving paginated cities", async () => {
     const citiesData = townFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -174,7 +174,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(townService.findPaginatedCommunes(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -198,7 +198,7 @@ describe("Entities count by search criteria", () => {
     expect(townRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(townService.getCommunesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -240,7 +240,7 @@ describe("Update of a city", () => {
     expect(townRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = townFactory.build({
       ownerId: "notAdmin",
     });
@@ -259,7 +259,7 @@ describe("Update of a city", () => {
     expect(townRepository.updateCommune).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a city that exists", async () => {
+  test("should not be allowed when trying to update to a city that exists", async () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
@@ -278,7 +278,7 @@ describe("Update of a city", () => {
     expect(townRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const cityData = mock<UpsertTownInput>();
 
     await expect(townService.updateCommune(12, cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -305,7 +305,7 @@ describe("Creation of a city", () => {
     });
   });
 
-  test("should throw an error when trying to create a city that already exists", async () => {
+  test("should not be allowed when trying to create a city that already exists", async () => {
     const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
@@ -327,7 +327,7 @@ describe("Creation of a city", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const cityData = mock<UpsertTownInput>();
 
     await expect(townService.createCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -379,7 +379,7 @@ describe("Deletion of a city", () => {
     expect(townRepository.deleteCommuneById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(townService.deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.deleteCommuneById).not.toHaveBeenCalled();
   });

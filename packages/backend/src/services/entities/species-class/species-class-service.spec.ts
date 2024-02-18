@@ -54,7 +54,7 @@ describe("Find class", () => {
     expect(classRepository.findClasseById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(speciesClassService.findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classRepository.findClasseById).not.toHaveBeenCalled();
   });
@@ -70,7 +70,7 @@ describe("Species count per entity", () => {
     expect(speciesRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesClassService.getEspecesCountByClasse("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -85,7 +85,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesClassService.getDonneesCountByClasse("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -106,7 +106,7 @@ describe("Find class by species ID", () => {
     expect(classe?.id).toEqual("256");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesClassService.findClasseOfEspeceId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -137,7 +137,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(classRepository.findClasses).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated classes ", async () => {
+  test("should handle params when retrieving paginated classes", async () => {
     const classesData = speciesClassFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -163,7 +163,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesClassService.findPaginatedClasses(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -187,7 +187,7 @@ describe("Entities count by search criteria", () => {
     expect(classRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesClassService.getClassesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -221,7 +221,7 @@ describe("Update of a class", () => {
     expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = speciesClassFactory.build({
       ownerId: "notAdmin",
     });
@@ -242,7 +242,7 @@ describe("Update of a class", () => {
     expect(classRepository.updateClasse).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a class that exists", async () => {
+  test("should not be allowed when trying to update to a class that exists", async () => {
     const classData = mock<UpsertClassInput>();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -257,7 +257,7 @@ describe("Update of a class", () => {
     expect(classRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const classData = mock<UpsertClassInput>();
 
     await expect(speciesClassService.updateClasse(12, classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -280,7 +280,7 @@ describe("Creation of a class", () => {
     });
   });
 
-  test("should throw an error when trying to create a class that already exists", async () => {
+  test("should not be allowed when trying to create a class that already exists", async () => {
     const classData = mock<UpsertClassInput>();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
@@ -298,7 +298,7 @@ describe("Creation of a class", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const classData = mock<UpsertClassInput>();
 
     await expect(speciesClassService.createClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -350,7 +350,7 @@ describe("Deletion of a class", () => {
     expect(classRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesClassService.deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classRepository.deleteClasseById).not.toHaveBeenCalled();
   });

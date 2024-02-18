@@ -57,7 +57,7 @@ describe("Find department", () => {
     expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(departmentService.findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departmentRepository.findDepartementById).not.toHaveBeenCalled();
   });
@@ -73,7 +73,7 @@ describe("Cities count per entity", () => {
     expect(townRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.getCommunesCountByDepartement("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -90,7 +90,7 @@ describe("Localities count per entity", () => {
     expect(localityRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.getLieuxDitsCountByDepartement("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -107,7 +107,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.getDonneesCountByDepartement("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -128,7 +128,7 @@ describe("Find department by city ID", () => {
     expect(department?.id).toEqual("256");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.findDepartementOfCommuneId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -159,7 +159,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated departments ", async () => {
+  test("should handle params when retrieving paginated departments", async () => {
     const departementsData = departmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -185,7 +185,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.findPaginatedDepartements(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -209,7 +209,7 @@ describe("Entities count by search criteria", () => {
     expect(departmentRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.getDepartementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -243,7 +243,7 @@ describe("Update of a department", () => {
     expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = departmentFactory.build({
       ownerId: "notAdmin",
     });
@@ -264,7 +264,7 @@ describe("Update of a department", () => {
     expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a department that exists", async () => {
+  test("should not be allowed when trying to update to a department that exists", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -279,7 +279,7 @@ describe("Update of a department", () => {
     expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
     await expect(departmentService.updateDepartement(12, departmentData, null)).rejects.toEqual(
@@ -304,7 +304,7 @@ describe("Creation of a department", () => {
     });
   });
 
-  test("should throw an error when trying to create a department that already exists", async () => {
+  test("should not be allowed when trying to create a department that already exists", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
@@ -322,7 +322,7 @@ describe("Creation of a department", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const departmentData = mock<UpsertDepartmentInput>();
 
     await expect(departmentService.createDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -374,7 +374,7 @@ describe("Deletion of a department", () => {
     expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(departmentService.deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });

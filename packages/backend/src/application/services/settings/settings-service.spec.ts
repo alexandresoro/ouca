@@ -73,7 +73,7 @@ describe("Fetch app configuration for user", () => {
     expect(observerService.findObserver).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when no logged user provided", async () => {
+  test("should not be allowed when no logged user provided", async () => {
     await expect(settingsService.getSettings(null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(settingsRepository.getUserSettings).not.toHaveBeenCalled();
   });

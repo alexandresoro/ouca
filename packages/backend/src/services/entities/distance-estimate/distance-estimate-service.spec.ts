@@ -54,7 +54,7 @@ describe("Find distance estimate", () => {
     expect(distanceEstimateRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(distanceEstimateService.findEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(distanceEstimateRepository.findEstimationDistanceById).not.toHaveBeenCalled();
   });
@@ -70,7 +70,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByEstimationDistanceId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(distanceEstimateService.getDonneesCountByEstimationDistance("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -93,7 +93,7 @@ describe("Find distance estimate by data ID", () => {
     expect(distanceEstimate?.id).toEqual("256");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(distanceEstimateService.findEstimationDistanceOfDonneeId("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -126,7 +126,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(distanceEstimateRepository.findEstimationsDistance).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated estimationsDistance ", async () => {
+  test("should handle params when retrieving paginated estimationsDistance", async () => {
     const estimationsDistanceData = distanceEstimateFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -152,7 +152,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(distanceEstimateService.findPaginatedEstimationsDistance(null, {})).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -178,13 +178,13 @@ describe("Entities count by search criteria", () => {
     expect(distanceEstimateRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(distanceEstimateService.getEstimationsDistanceCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Update of a distance estimate", () => {
-  test("should be allowed when requested by an admin ", async () => {
+  test("should be allowed when requested by an admin", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -195,7 +195,7 @@ describe("Update of a distance estimate", () => {
     expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
-  test("should be allowed when requested by the owner ", async () => {
+  test("should be allowed when requested by the owner", async () => {
     const existingData = distanceEstimateFactory.build({
       ownerId: "notAdmin",
     });
@@ -212,7 +212,7 @@ describe("Update of a distance estimate", () => {
     expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = distanceEstimateFactory.build({
       ownerId: "notAdmin",
     });
@@ -233,7 +233,7 @@ describe("Update of a distance estimate", () => {
     expect(distanceEstimateRepository.updateEstimationDistance).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a distance estimate that exists", async () => {
+  test("should not be allowed when trying to update to a distance estimate that exists", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -248,7 +248,7 @@ describe("Update of a distance estimate", () => {
     expect(distanceEstimateRepository.updateEstimationDistance).toHaveBeenLastCalledWith(12, distanceEstimateData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     await expect(distanceEstimateService.updateEstimationDistance(12, distanceEstimateData, null)).rejects.toEqual(
@@ -273,7 +273,7 @@ describe("Creation of a distance estimate", () => {
     });
   });
 
-  test("should throw an error when trying to create a distance estimate that already exists", async () => {
+  test("should not be allowed when trying to create a distance estimate that already exists", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
@@ -291,7 +291,7 @@ describe("Creation of a distance estimate", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     await expect(distanceEstimateService.createEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
@@ -347,7 +347,7 @@ describe("Deletion of a distance estimate", () => {
     expect(distanceEstimateRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(distanceEstimateService.deleteEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(distanceEstimateRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
   });

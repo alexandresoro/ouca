@@ -65,7 +65,7 @@ describe("Find species", () => {
     expect(speciesRepository.findEspeceById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(speciesService.findEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.findEspeceById).not.toHaveBeenCalled();
   });
@@ -81,7 +81,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByEspeceId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesService.getDonneesCountByEspece("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -102,7 +102,7 @@ describe("Find species by data ID", () => {
     expect(species?.id).toEqual("256");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesService.findEspeceOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -133,7 +133,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(speciesRepository.findEspeces).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated species ", async () => {
+  test("should handle params when retrieving paginated species", async () => {
     const speciesData = speciesFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -159,7 +159,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should handle params and search criteria when retrieving paginated species ", async () => {
+  test("should handle params and search criteria when retrieving paginated species", async () => {
     const speciesData = speciesFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -195,7 +195,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesService.findPaginatedEspeces(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -265,7 +265,7 @@ describe("Entities count by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesService.getEspecesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -317,7 +317,7 @@ describe("Update of a species", () => {
     expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = speciesFactory.build({
       ownerId: "notAdmin",
     });
@@ -336,7 +336,7 @@ describe("Update of a species", () => {
     expect(speciesRepository.updateEspece).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a species that exists", async () => {
+  test("should not be allowed when trying to update to a species that exists", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
@@ -355,7 +355,7 @@ describe("Update of a species", () => {
     expect(speciesRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     await expect(speciesService.updateEspece(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -387,7 +387,7 @@ describe("Creation of a species", () => {
     });
   });
 
-  test("should throw an error when trying to create a species that already exists", async () => {
+  test("should not be allowed when trying to create a species that already exists", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
@@ -409,7 +409,7 @@ describe("Creation of a species", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const speciesData = mock<UpsertSpeciesInput>();
 
     await expect(speciesService.createEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -461,7 +461,7 @@ describe("Deletion of a species", () => {
     expect(speciesRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(speciesService.deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.deleteEspeceById).not.toHaveBeenCalled();
   });

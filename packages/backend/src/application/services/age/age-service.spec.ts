@@ -112,7 +112,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(ageRepository.findAges).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated ages ", async () => {
+  test("should handle params when retrieving paginated ages", async () => {
     const agesData = ageFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 

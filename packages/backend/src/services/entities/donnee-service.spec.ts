@@ -65,7 +65,7 @@ describe("Find data", () => {
     expect(entryRepository.findDonneeById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(donneeService.findDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(entryRepository.findDonneeById).not.toHaveBeenCalled();
   });
@@ -130,7 +130,7 @@ describe("Data paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(
       donneeService.findPaginatedDonnees(null, {
         pageNumber: 1,
@@ -172,7 +172,7 @@ describe("Entities count by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(
       donneeService.getDonneesCount(null, {
         pageNumber: 1,
@@ -202,7 +202,7 @@ describe("Data navigation", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(donneeService.findDonneeNavigationData(null, "12")).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -229,7 +229,7 @@ describe("Get latest data id", () => {
     expect(entryRepository.findLatestDonneeId).toHaveBeenCalledTimes(1);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(donneeService.findLastDonneeId(null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(entryRepository.findLatestDonneeId).not.toHaveBeenCalled();
   });
@@ -257,7 +257,7 @@ describe("Get next group", () => {
     expect(entryRepository.findLatestRegroupement).toHaveBeenCalledTimes(1);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(donneeService.findNextRegroupement(null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(entryRepository.findLatestRegroupement).not.toHaveBeenCalled();
   });
@@ -331,7 +331,7 @@ describe("Deletion of a data", () => {
     });
   });
 
-  test("should throw an error when trying to deletre a data belonging to a non-owned inventory", async () => {
+  test("should not be allowed when trying to deletre a data belonging to a non-owned inventory", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
@@ -342,7 +342,7 @@ describe("Deletion of a data", () => {
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(donneeService.deleteDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
@@ -389,7 +389,7 @@ describe("Update of a data", () => {
     );
   });
 
-  test("should throw an error when trying to update to a different data that already exists", async () => {
+  test("should not be allowed when trying to update to a different data that already exists", async () => {
     const dataData = mock<UpsertEntryInput>();
 
     const loggedUser = loggedUserFactory.build();
@@ -409,7 +409,7 @@ describe("Update of a data", () => {
     expect(entryRepository.updateDonnee).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const dataData = mock<UpsertEntryInput>();
 
     await expect(donneeService.updateDonnee("12", dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));

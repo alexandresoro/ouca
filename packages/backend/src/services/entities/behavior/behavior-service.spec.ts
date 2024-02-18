@@ -29,7 +29,7 @@ const uniqueConstraintFailed = () => {
 };
 
 describe("Find behavior", () => {
-  test("should handle a matching behavior ", async () => {
+  test("should handle a matching behavior", async () => {
     const behaviorData = behaviorFactory.build();
     const loggedUser = loggedUserFactory.build();
 
@@ -51,7 +51,7 @@ describe("Find behavior", () => {
     expect(behaviorRepository.findComportementById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(behaviorService.findBehavior(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.findComportementById).not.toHaveBeenCalled();
   });
@@ -67,7 +67,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByComportementId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(behaviorService.getEntriesCountByBehavior("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -86,7 +86,7 @@ describe("Find behaviors by inventary ID", () => {
     expect(behaviors.length).toEqual(behaviorsData.length);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(behaviorService.findBehaviorsOfEntryId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -117,7 +117,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(behaviorRepository.findComportements).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated behaviors ", async () => {
+  test("should handle params when retrieving paginated behaviors", async () => {
     const behaviorsData = behaviorFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -143,7 +143,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(behaviorService.findPaginatedBehaviors(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -167,7 +167,7 @@ describe("Entities count by search criteria", () => {
     expect(behaviorRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(behaviorService.getBehaviorsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -201,7 +201,7 @@ describe("Update of a behavior", () => {
     expect(behaviorRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = behaviorFactory.build({
       ownerId: "notAdmin",
     });
@@ -222,7 +222,7 @@ describe("Update of a behavior", () => {
     expect(behaviorRepository.updateComportement).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a behavior that exists", async () => {
+  test("should not be allowed when trying to update to a behavior that exists", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -237,7 +237,7 @@ describe("Update of a behavior", () => {
     expect(behaviorRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
     await expect(behaviorService.updateBehavior(12, behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -260,7 +260,7 @@ describe("Creation of a behavior", () => {
     });
   });
 
-  test("should throw an error when trying to create a behavior that already exists", async () => {
+  test("should not be allowed when trying to create a behavior that already exists", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
@@ -278,7 +278,7 @@ describe("Creation of a behavior", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const behaviorData = mock<UpsertBehaviorInput>();
 
     await expect(behaviorService.createBehavior(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -330,7 +330,7 @@ describe("Deletion of a behavior", () => {
     expect(behaviorRepository.deleteComportementById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(behaviorService.deleteBehavior(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(behaviorRepository.deleteComportementById).not.toHaveBeenCalled();
   });

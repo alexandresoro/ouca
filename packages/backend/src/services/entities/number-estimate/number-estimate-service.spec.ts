@@ -62,7 +62,7 @@ describe("Find number estimate", () => {
     expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(numberEstimateService.findEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(numberEstimateRepository.findEstimationNombreById).not.toHaveBeenCalled();
   });
@@ -78,7 +78,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByEstimationNombreId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(numberEstimateService.getDonneesCountByEstimationNombre("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -101,7 +101,7 @@ describe("Find number estimate by data ID", () => {
     expect(numberEstimate?.id).toEqual("256");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(numberEstimateService.findEstimationNombreOfDonneeId("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -134,7 +134,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated estimationsNombre ", async () => {
+  test("should handle params when retrieving paginated estimationsNombre", async () => {
     const estimationsNombreData = numberEstimateFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -160,7 +160,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(numberEstimateService.findPaginatedEstimationsNombre(null, {})).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -186,13 +186,13 @@ describe("Entities count by search criteria", () => {
     expect(numberEstimateRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(numberEstimateService.getEstimationsNombreCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Update of a number estimate", () => {
-  test("should be allowed when requested by an admin ", async () => {
+  test("should be allowed when requested by an admin", async () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
@@ -207,7 +207,7 @@ describe("Update of a number estimate", () => {
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should be allowed when requested by the owner ", async () => {
+  test("should be allowed when requested by the owner", async () => {
     const existingData = numberEstimateFactory.build({
       ownerId: "notAdmin",
     });
@@ -228,7 +228,7 @@ describe("Update of a number estimate", () => {
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = numberEstimateFactory.build({
       ownerId: "notAdmin",
     });
@@ -249,7 +249,7 @@ describe("Update of a number estimate", () => {
     expect(numberEstimateRepository.updateEstimationNombre).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a number estimate that exists", async () => {
+  test("should not be allowed when trying to update to a number estimate that exists", async () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
@@ -268,7 +268,7 @@ describe("Update of a number estimate", () => {
     expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     await expect(numberEstimateService.updateEstimationNombre(12, numberEstimateData, null)).rejects.toEqual(
@@ -297,7 +297,7 @@ describe("Creation of a number estimate", () => {
     });
   });
 
-  test("should throw an error when trying to create a number estimate that already exists", async () => {
+  test("should not be allowed when trying to create a number estimate that already exists", async () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
@@ -319,7 +319,7 @@ describe("Creation of a number estimate", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     await expect(numberEstimateService.createEstimationNombre(numberEstimateData, null)).rejects.toEqual(
@@ -375,7 +375,7 @@ describe("Deletion of a number estimate", () => {
     expect(numberEstimateRepository.deleteEstimationNombreById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(numberEstimateService.deleteEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(numberEstimateRepository.deleteEstimationNombreById).not.toHaveBeenCalled();
   });

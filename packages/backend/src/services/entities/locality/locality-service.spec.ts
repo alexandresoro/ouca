@@ -70,7 +70,7 @@ describe("Find locality", () => {
     expect(localityRepository.findLieuditById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(localityService.findLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.findLieuditById).not.toHaveBeenCalled();
   });
@@ -86,7 +86,7 @@ describe("Inventory count per entity", () => {
     expect(inventoryRepository.getCountByLocality).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(localityService.getInventoriesCountByLocality("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -101,7 +101,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByLieuditId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(localityService.getDonneesCountByLieuDit("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -127,7 +127,7 @@ describe("Find locality by inventary ID", () => {
     expect(locality?.id).toEqual("258");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(localityService.findLieuDitOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -158,7 +158,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(localityRepository.findLieuxdits).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated localities ", async () => {
+  test("should handle params when retrieving paginated localities", async () => {
     const localitiesData = localityFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -184,7 +184,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(localityService.findPaginatedLieuxDits(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -208,7 +208,7 @@ describe("Entities count by search criteria", () => {
     expect(localityRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(localityService.getLieuxDitsCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -251,7 +251,7 @@ describe("Update of a locality", () => {
     expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = localityFactory.build({
       ownerId: "notAdmin",
     });
@@ -270,7 +270,7 @@ describe("Update of a locality", () => {
     expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a locality that exists", async () => {
+  test("should not be allowed when trying to update to a locality that exists", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
@@ -289,7 +289,7 @@ describe("Update of a locality", () => {
     expect(localityRepository.updateLieudit).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
     await expect(localityService.updateLieuDit(12, localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -318,7 +318,7 @@ describe("Creation of a locality", () => {
     });
   });
 
-  test("should throw an error when trying to create a locality that already exists", async () => {
+  test("should not be allowed when trying to create a locality that already exists", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
@@ -340,7 +340,7 @@ describe("Creation of a locality", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const localityData = mock<UpsertLocalityInput>();
 
     await expect(localityService.createLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -394,7 +394,7 @@ describe("Deletion of a locality", () => {
     expect(localityRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(localityService.deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.deleteLieuditById).not.toHaveBeenCalled();
   });

@@ -70,7 +70,7 @@ describe("Find inventary", () => {
     expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(inventaireService.findInventaire(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(inventoryRepository.findInventaireById).not.toHaveBeenCalled();
   });
@@ -90,7 +90,7 @@ describe("Find inventary by data ID", () => {
     expect(inventary).toEqual(inventaryData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(inventaireService.findInventaireOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -130,7 +130,7 @@ describe("Inventories paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(inventaireService.findPaginatedInventaires(null, mock<InventoriesSearchParams>())).rejects.toEqual(
       new OucaError("OUCA0001")
     );
@@ -147,7 +147,7 @@ describe("Entities count by search criteria", () => {
     expect(inventoryRepository.getCount).toHaveBeenLastCalledWith();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(inventaireService.getInventairesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -200,7 +200,7 @@ describe("Update of an inventory", () => {
       expect(result.id).toEqual("345");
     });
 
-    test("should throw an error when the requester is not logged", async () => {
+    test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
@@ -252,7 +252,7 @@ describe("Update of an inventory", () => {
       );
     });
 
-    test("should throw an error when the requester is not logged", async () => {
+    test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
@@ -286,7 +286,7 @@ describe("Creation of an inventory", () => {
       expect(result.id).toEqual("345");
     });
 
-    test("should throw an error when the requester is not logged", async () => {
+    test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -326,7 +326,7 @@ describe("Creation of an inventory", () => {
       // expect(nventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(322, [4, 5], any());
     });
 
-    test("should throw an error when the requester is not logged", async () => {
+    test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -375,7 +375,7 @@ describe("Deletion of an inventory", () => {
     expect(result).toEqual(inventory);
   });
 
-  test("should throw an error when trying to delete an inventory still used", async () => {
+  test("should not be allowed when trying to delete an inventory still used", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
@@ -393,7 +393,7 @@ describe("Deletion of an inventory", () => {
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to delete an inventory belonging to a non-owned inventory", async () => {
+  test("should not be allowed when trying to delete an inventory belonging to a non-owned inventory", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
@@ -404,7 +404,7 @@ describe("Deletion of an inventory", () => {
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(inventaireService.deleteInventory("11", null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });

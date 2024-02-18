@@ -3,12 +3,12 @@ import test from "node:test";
 import { NICHEUR_CERTAIN, NICHEUR_PROBABLE, type NicheurCode } from "../types/nicheur.model.js";
 import { getHighestNicheurStatus, getNicheurStatusToDisplay } from "./nicheur-helper.js";
 
-test("should return correct value when no nicheur code provided ", () => {
+test("should return correct value when no nicheur code provided", () => {
   const comportementsEmpty: { nicheur?: NicheurCode | null }[] = [];
   assert.strictEqual(getHighestNicheurStatus(comportementsEmpty), null);
 });
 
-test("should return correct value with one code provided ", () => {
+test("should return correct value with one code provided", () => {
   const comportementsSingle: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "certain",
@@ -17,7 +17,7 @@ test("should return correct value with one code provided ", () => {
   assert.strictEqual(getHighestNicheurStatus(comportementsSingle), "certain");
 });
 
-test("should return correct value with similar codes provided ", () => {
+test("should return correct value with similar codes provided", () => {
   const comportementsSimilar: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "probable",
@@ -29,7 +29,7 @@ test("should return correct value with similar codes provided ", () => {
   assert.strictEqual(getHighestNicheurStatus(comportementsSimilar), "probable");
 });
 
-test("should return correct value with different codes provided ", () => {
+test("should return correct value with different codes provided", () => {
   const comportementsDifferent: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "possible",
@@ -41,7 +41,7 @@ test("should return correct value with different codes provided ", () => {
   assert.strictEqual(getHighestNicheurStatus(comportementsDifferent), "certain");
 });
 
-test("should return correct value with a complex case ", () => {
+test("should return correct value with a complex case", () => {
   const comportementsComplex: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "possible",
@@ -70,7 +70,7 @@ test("should return the default text when no code supplied", () => {
   assert.strictEqual(getNicheurStatusToDisplay(comportementMultiplesEmpty, "defaultText"), "defaultText");
 });
 
-test("should return correct value with one code provided ", () => {
+test("should return correct value with one code provided", () => {
   const comportementsSingle: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "certain",
@@ -79,7 +79,7 @@ test("should return correct value with one code provided ", () => {
   assert.strictEqual(getNicheurStatusToDisplay(comportementsSingle, "defaultText"), NICHEUR_CERTAIN.name);
 });
 
-test("should return correct value with similar codes provided ", () => {
+test("should return correct value with similar codes provided", () => {
   const comportementsSimilar: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "probable",
@@ -91,7 +91,7 @@ test("should return correct value with similar codes provided ", () => {
   assert.strictEqual(getNicheurStatusToDisplay(comportementsSimilar, "defaultText"), NICHEUR_PROBABLE.name);
 });
 
-test("should return correct value with different codes provided ", () => {
+test("should return correct value with different codes provided", () => {
   const comportementsDifferent: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "possible",
@@ -103,7 +103,7 @@ test("should return correct value with different codes provided ", () => {
   assert.strictEqual(getNicheurStatusToDisplay(comportementsDifferent, "defaultText"), NICHEUR_CERTAIN.name);
 });
 
-test("should return correct value with a complex case ", () => {
+test("should return correct value with a complex case", () => {
   const comportementsComplex: { nicheur?: NicheurCode | null }[] = [
     {
       nicheur: "possible",

@@ -51,7 +51,7 @@ describe("Find environment", () => {
     expect(environmentRepository.findMilieuById).toHaveBeenLastCalledWith(10);
   });
 
-  test("should throw an error when the no login details are provided", async () => {
+  test("should not be allowed when the no login details are provided", async () => {
     await expect(environmentService.findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(environmentRepository.findMilieuById).not.toHaveBeenCalled();
   });
@@ -67,7 +67,7 @@ describe("Data count per entity", () => {
     expect(entryRepository.getCountByMilieuId).toHaveBeenLastCalledWith(12);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(environmentService.getDonneesCountByMilieu("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -86,7 +86,7 @@ describe("Find environments by inventary ID", () => {
     expect(environments.length).toEqual(environmentsData.length);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(environmentService.findMilieuxOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -117,7 +117,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(environmentRepository.findMilieux).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated environments ", async () => {
+  test("should handle params when retrieving paginated environments", async () => {
     const environmentsData = environmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -143,7 +143,7 @@ describe("Entities paginated find by search criteria", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(environmentService.findPaginatedMilieux(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -167,7 +167,7 @@ describe("Entities count by search criteria", () => {
     expect(environmentRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(environmentService.getMilieuxCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -201,7 +201,7 @@ describe("Update of an environment", () => {
     expect(environmentRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
     const existingData = environmentFactory.build({
       ownerId: "notAdmin",
     });
@@ -222,7 +222,7 @@ describe("Update of an environment", () => {
     expect(environmentRepository.updateMilieu).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to an environment that exists", async () => {
+  test("should not be allowed when trying to update to an environment that exists", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -237,7 +237,7 @@ describe("Update of an environment", () => {
     expect(environmentRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
     await expect(environmentService.updateMilieu(12, environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -260,7 +260,7 @@ describe("Creation of an environment", () => {
     });
   });
 
-  test("should throw an error when trying to create an environment that already exists", async () => {
+  test("should not be allowed when trying to create an environment that already exists", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
@@ -278,7 +278,7 @@ describe("Creation of an environment", () => {
     });
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     const environmentData = mock<UpsertEnvironmentInput>();
 
     await expect(environmentService.createMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
@@ -330,7 +330,7 @@ describe("Deletion of an environment", () => {
     expect(environmentRepository.deleteMilieuById).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when the requester is not logged", async () => {
+  test("should not be allowed when the requester is not logged", async () => {
     await expect(environmentService.deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(environmentRepository.deleteMilieuById).not.toHaveBeenCalled();
   });

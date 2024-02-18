@@ -114,7 +114,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(observerRepository.findObservers).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated observers ", async () => {
+  test("should handle params when retrieving paginated observers", async () => {
     const observersData = observerFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 

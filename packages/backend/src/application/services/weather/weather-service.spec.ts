@@ -113,7 +113,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(weatherRepository.findWeathers).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated weathers ", async () => {
+  test("should handle params when retrieving paginated weathers", async () => {
     const weathersData = weatherFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 

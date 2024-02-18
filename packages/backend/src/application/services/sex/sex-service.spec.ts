@@ -112,7 +112,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(sexRepository.findSexes).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated sexes ", async () => {
+  test("should handle params when retrieving paginated sexes", async () => {
     const sexesData = sexFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
@@ -172,7 +172,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a sex", () => {
-  test("should be allowed when requested by an admin ", async () => {
+  test("should be allowed when requested by an admin", async () => {
     const sexData = upsertSexInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -185,7 +185,7 @@ describe("Update of a sex", () => {
     expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
   });
 
-  test("should be allowed when requested by the owner ", async () => {
+  test("should be allowed when requested by the owner", async () => {
     const existingData = sexFactory.build({
       ownerId: "notAdmin",
     });
