@@ -18,7 +18,7 @@ export class ImportEspeceService extends ImportService {
   protected init = async (): Promise<void> => {
     this.especesToInsert = [];
     this.classes = await this.services.classService.findAllClasses();
-    this.especes = await this.services.speciesService.findAllEspeces();
+    this.especes = await this.services.speciesService.findAllSpecies();
   };
 
   protected validateAndPrepareEntity = (especeTab: string[]): string | null => {
@@ -71,7 +71,7 @@ export class ImportEspeceService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.especesToInsert.length) {
-      await this.services.speciesService.createEspeces(this.especesToInsert, loggedUser);
+      await this.services.speciesService.createMultipleSpecies(this.especesToInsert, loggedUser);
     }
   };
 }

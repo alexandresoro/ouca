@@ -187,7 +187,7 @@ export const generateDonneesExport = async (
       const meteos = (
         await weatherService.findWeathersOfInventoryId(parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const espece = await speciesService.findEspeceOfDonneeId(donnee?.id, loggedUser);
+      const espece = await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser);
       const classe = await classService.findClasseOfEspeceId(espece?.id, loggedUser);
       const age = (await ageService.findAgeOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
@@ -251,7 +251,7 @@ export const generateDonneesExport = async (
 export const generateEspecesExport = async ({
   speciesService,
 }: { speciesService: SpeciesService }): Promise<string> => {
-  const especes = await speciesService.findAllEspecesWithClasses();
+  const especes = await speciesService.findAllSpeciesWithClasses();
 
   const objectsToExport = especes.map((espece) => {
     return {

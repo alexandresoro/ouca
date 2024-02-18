@@ -23,7 +23,7 @@ const speciesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const species = await speciesService.findEspece(req.params.id, req.user);
+    const species = await speciesService.findSpecies(req.params.id, req.user);
     if (!species) {
       return await reply.status(404).send();
     }
@@ -44,8 +44,8 @@ const speciesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [speciesData, count] = await Promise.all([
-      speciesService.findPaginatedEspeces(req.user, queryParams),
-      speciesService.getEspecesCount(req.user, queryParams),
+      speciesService.findPaginatedSpecies(req.user, queryParams),
+      speciesService.getSpeciesCount(req.user, queryParams),
     ]);
 
     let data: Species[] | SpeciesExtended[] = speciesData;
@@ -54,7 +54,7 @@ const speciesController: FastifyPluginCallback<{
         speciesData.map(async (singleSpeciesData) => {
           // TODO look to optimize this request
           const speciesClass = await classService.findClasseOfEspeceId(singleSpeciesData.id, req.user);
-          const entriesCount = await speciesService.getDonneesCountByEspece(singleSpeciesData.id, req.user);
+          const entriesCount = await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, req.user);
           return {
             ...singleSpeciesData,
             speciesClassName: speciesClass?.libelle,
@@ -83,7 +83,7 @@ const speciesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const species = await speciesService.createEspece(input, req.user);
+      const species = await speciesService.createSpecies(input, req.user);
       const response = upsertSpeciesResponse.parse(species);
 
       return await reply.send(response);
@@ -109,7 +109,7 @@ const speciesController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const species = await speciesService.updateEspece(req.params.id, input, req.user);
+      const species = await speciesService.updateSpecies(req.params.id, input, req.user);
       const response = upsertSpeciesResponse.parse(species);
 
       return await reply.send(response);
@@ -127,7 +127,7 @@ const speciesController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await speciesService.deleteEspece(req.params.id, req.user);
+      const { id: deletedId } = await speciesService.deleteSpecies(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

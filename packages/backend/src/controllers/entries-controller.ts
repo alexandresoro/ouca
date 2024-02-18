@@ -21,7 +21,7 @@ const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser
   const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
     (await services.ageService.findAgeOfEntryId(entry.id, user))._unsafeUnwrap(),
     services.behaviorService.findBehaviorsOfEntryId(entry.id, user),
-    services.speciesService.findEspeceOfDonneeId(entry.id, user),
+    services.speciesService.findSpeciesOfEntryId(entry.id, user),
     services.distanceEstimateService.findDistanceEstimateOfEntryId(entry.id, user),
     services.numberEstimateService.findNumberEstimateOfEntryId(entry.id, user),
     services.environmentService.findEnvironmentsOfEntryId(entry.id, user),

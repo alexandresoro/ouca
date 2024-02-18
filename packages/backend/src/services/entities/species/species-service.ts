@@ -34,7 +34,7 @@ export const buildSpeciesService = ({
     return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
   };
 
-  const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon | null> => {
+  const findSpecies = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
     const species = await speciesRepository.findEspeceById(id);
@@ -44,13 +44,13 @@ export const buildSpeciesService = ({
     return enrichSpecies(species, loggedUser);
   };
 
-  const getDonneesCountByEspece = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountBySpecies = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByEspeceId(parseInt(id));
   };
 
-  const findEspeceOfDonneeId = async (
+  const findSpeciesOfEntryId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<SpeciesCommon | null> => {
@@ -63,13 +63,13 @@ export const buildSpeciesService = ({
     return enrichSpecies(species, loggedUser);
   };
 
-  const findAllEspeces = async (): Promise<SpeciesCommon[]> => {
-    const especes = await speciesRepository.findEspeces({
+  const findAllSpecies = async (): Promise<SpeciesCommon[]> => {
+    const species = await speciesRepository.findEspeces({
       orderBy: "code",
     });
 
     const enrichedSpecies = await Promise.all(
-      especes.map((species) => {
+      species.map((species) => {
         return enrichSpecies(species, null);
       })
     );
@@ -77,12 +77,12 @@ export const buildSpeciesService = ({
     return [...enrichedSpecies];
   };
 
-  const findAllEspecesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
-    const especesWithClasses = await speciesRepository.findAllEspecesWithClasseLibelle();
-    return [...especesWithClasses];
+  const findAllSpeciesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
+    const speciesWithClasses = await speciesRepository.findAllEspecesWithClasseLibelle();
+    return [...speciesWithClasses];
   };
 
-  const findPaginatedEspeces = async (
+  const findPaginatedSpecies = async (
     loggedUser: LoggedUser | null,
     options: SpeciesSearchParams
   ): Promise<SpeciesCommon[]> => {
@@ -92,7 +92,7 @@ export const buildSpeciesService = ({
 
     const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
-    const especes = await speciesRepository.findEspeces({
+    const species = await speciesRepository.findEspeces({
       q,
       searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
@@ -104,7 +104,7 @@ export const buildSpeciesService = ({
     });
 
     const enrichedSpecies = await Promise.all(
-      especes.map((species) => {
+      species.map((species) => {
         return enrichSpecies(species, loggedUser);
       })
     );
@@ -112,7 +112,7 @@ export const buildSpeciesService = ({
     return [...enrichedSpecies];
   };
 
-  const getEspecesCount = async (loggedUser: LoggedUser | null, options: SpeciesSearchParams): Promise<number> => {
+  const getSpeciesCount = async (loggedUser: LoggedUser | null, options: SpeciesSearchParams): Promise<number> => {
     validateAuthorization(loggedUser);
 
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
@@ -123,16 +123,16 @@ export const buildSpeciesService = ({
     });
   };
 
-  const createEspece = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
+  const createSpecies = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdEspece = await speciesRepository.createEspece({
+      const createdSpecies = await speciesRepository.createEspece({
         ...reshapeInputSpeciesUpsertData(input),
         owner_id: loggedUser?.id,
       });
 
-      return enrichSpecies(createdEspece, loggedUser);
+      return enrichSpecies(createdSpecies, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -141,7 +141,7 @@ export const buildSpeciesService = ({
     }
   };
 
-  const updateEspece = async (
+  const updateSpecies = async (
     id: number,
     input: UpsertSpeciesInput,
     loggedUser: LoggedUser | null
@@ -158,9 +158,9 @@ export const buildSpeciesService = ({
     }
 
     try {
-      const updatedEspece = await speciesRepository.updateEspece(id, reshapeInputSpeciesUpsertData(input));
+      const updatedSpecies = await speciesRepository.updateEspece(id, reshapeInputSpeciesUpsertData(input));
 
-      return enrichSpecies(updatedEspece, loggedUser);
+      return enrichSpecies(updatedSpecies, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -169,7 +169,7 @@ export const buildSpeciesService = ({
     }
   };
 
-  const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
+  const deleteSpecies = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -187,13 +187,13 @@ export const buildSpeciesService = ({
     return enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser);
   };
 
-  const createEspeces = async (
-    especes: Omit<EspeceCreateInput, "owner_id">[],
+  const createMultipleSpecies = async (
+    species: Omit<EspeceCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly SpeciesCommon[]> => {
     const createdSpecies = await speciesRepository.createEspeces(
-      especes.map((espece) => {
-        return { ...espece, owner_id: loggedUser.id };
+      species.map((species) => {
+        return { ...species, owner_id: loggedUser.id };
       })
     );
 
@@ -207,17 +207,17 @@ export const buildSpeciesService = ({
   };
 
   return {
-    findEspece,
-    getDonneesCountByEspece,
-    findEspeceOfDonneeId,
-    findAllEspeces,
-    findAllEspecesWithClasses,
-    findPaginatedEspeces,
-    getEspecesCount,
-    createEspece,
-    updateEspece,
-    deleteEspece,
-    createEspeces,
+    findSpecies,
+    getEntriesCountBySpecies,
+    findSpeciesOfEntryId,
+    findAllSpecies,
+    findAllSpeciesWithClasses,
+    findPaginatedSpecies,
+    getSpeciesCount,
+    createSpecies,
+    updateSpecies,
+    deleteSpecies,
+    createMultipleSpecies,
   };
 };
 
