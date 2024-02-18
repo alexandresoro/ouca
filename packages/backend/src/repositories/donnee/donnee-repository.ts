@@ -490,7 +490,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   const getCountByInventaireId = async (
-    inventaireId: number,
+    inventoryId: number,
     transaction?: DatabaseTransactionConnection
   ): Promise<number> => {
     const query = sql.type(countSchema)`
@@ -499,7 +499,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       FROM
         basenaturaliste.donnee
       WHERE
-        donnee.inventaire_id = ${inventaireId}
+        donnee.inventaire_id = ${inventoryId}
     `;
 
     return (transaction ?? slonik).oneFirst(query);
@@ -608,7 +608,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   const updateDonnee = async (
-    donneeId: number,
+    entryId: number,
     donneeInput: DonneeCreateInput,
     transaction?: DatabaseTransactionConnection
   ): Promise<Donnee> => {
@@ -618,7 +618,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       SET
         ${objectToKeyValueSet(donneeInput)}
       WHERE
-        id = ${donneeId}
+        id = ${entryId}
       RETURNING
         donnee.id::text,
         donnee.inventaire_id::text,
@@ -637,13 +637,13 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return (transaction ?? slonik).one(query);
   };
 
-  const deleteDonneeById = async (donneeId: number, transaction?: DatabaseTransactionConnection): Promise<Donnee> => {
+  const deleteDonneeById = async (entryId: number, transaction?: DatabaseTransactionConnection): Promise<Donnee> => {
     const query = sql.type(donneeSchema)`
       DELETE
       FROM
         basenaturaliste.donnee
       WHERE
-        id = ${donneeId}
+        id = ${entryId}
       RETURNING
         donnee.id::text,
         donnee.inventaire_id::text,

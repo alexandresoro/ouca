@@ -51,12 +51,12 @@ export const buildSpeciesService = ({
   };
 
   const findEspeceOfDonneeId = async (
-    donneeId: string | undefined,
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
-    const species = await speciesRepository.findEspeceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const species = await speciesRepository.findEspeceByDonneeId(entryId ? parseInt(entryId) : undefined);
     if (!species) {
       return null;
     }

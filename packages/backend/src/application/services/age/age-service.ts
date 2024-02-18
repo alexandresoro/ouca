@@ -26,15 +26,15 @@ export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDe
     return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
-  const findAgeOfDonneeId = async (
-    donneeId: string | undefined,
+  const findAgeOfEntryId = async (
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const age = await ageRepository.findAgeByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    const age = await ageRepository.findAgeByEntryId(entryId ? parseInt(entryId) : undefined);
     return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
@@ -179,7 +179,7 @@ export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDe
 
   return {
     findAge,
-    findAgeOfDonneeId,
+    findAgeOfEntryId,
     getEntriesCountByAge,
     findAllAges,
     findPaginatedAges,

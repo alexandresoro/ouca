@@ -31,8 +31,8 @@ export const buildObserverRepository = () => {
     return observerResult ? observerSchema.parse(observerResult) : null;
   };
 
-  const findObserverByInventoryId = async (inventaireId: number | undefined): Promise<ObserverSimple | null> => {
-    if (!inventaireId) {
+  const findObserverByInventoryId = async (inventoryId: number | undefined): Promise<ObserverSimple | null> => {
+    if (!inventoryId) {
       return null;
     }
 
@@ -40,14 +40,14 @@ export const buildObserverRepository = () => {
       .selectFrom("observateur")
       .leftJoin("inventaire", "inventaire.observateurId", "observateur.id")
       .select([sql<string>`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"])
-      .where("inventaire.id", "=", inventaireId)
+      .where("inventaire.id", "=", inventoryId)
       .executeTakeFirst();
 
     return observerResult ? observerSimpleSchema.parse(observerResult) : null;
   };
 
-  const findAssociatesOfInventoryId = async (inventaireId: number | undefined): Promise<ObserverSimple[]> => {
-    if (!inventaireId) {
+  const findAssociatesOfInventoryId = async (inventoryId: number | undefined): Promise<ObserverSimple[]> => {
+    if (!inventoryId) {
       return [];
     }
 
@@ -55,7 +55,7 @@ export const buildObserverRepository = () => {
       .selectFrom("observateur")
       .leftJoin("inventaire_associe", "inventaire_associe.observateurId", "observateur.id")
       .select([sql<string>`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"])
-      .where("inventaire_associe.inventaireId", "=", inventaireId)
+      .where("inventaire_associe.inventaireId", "=", inventoryId)
       .execute();
 
     return z.array(observerSimpleSchema).parse(associatesResult);

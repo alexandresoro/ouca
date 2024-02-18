@@ -54,12 +54,12 @@ export const buildInventaireService = ({
   };
 
   const findInventaireOfDonneeId = async (
-    donneeId: string | undefined,
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
-    return inventoryRepository.findInventaireByDonneeId(donneeId ? parseInt(donneeId) : undefined);
+    return inventoryRepository.findInventaireByDonneeId(entryId ? parseInt(entryId) : undefined);
   };
 
   const findAllInventaires = async (): Promise<Inventaire[]> => {

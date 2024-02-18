@@ -45,12 +45,12 @@ export const buildLocalityService = ({
   };
 
   const findLocalityOfInventoryId = async (
-    inventaireId: number | undefined,
+    inventoryId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
-    const locality = await localityRepository.findLieuditByInventaireId(inventaireId);
+    const locality = await localityRepository.findLieuditByInventaireId(inventoryId);
     return reshapeLocalityRepositoryToApi(locality, loggedUser);
   };
 

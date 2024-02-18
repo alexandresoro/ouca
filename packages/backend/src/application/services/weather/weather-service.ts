@@ -38,14 +38,14 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
   };
 
   const findWeathersOfInventoryId = async (
-    inventaireId: number | undefined,
+    inventoryId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<Weather[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const weathers = await weatherRepository.findWeathersByInventoryId(inventaireId);
+    const weathers = await weatherRepository.findWeathersByInventoryId(inventoryId);
 
     const enrichedWeathers = weathers.map((weather) => {
       return enrichEntityWithEditableStatus(weather, loggedUser);
@@ -54,9 +54,9 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
     return ok([...enrichedWeathers]);
   };
 
-  const findWeatherIdsOfInventoryId = async (inventaireId: number): Promise<string[]> => {
+  const findWeatherIdsOfInventoryId = async (inventoryId: number): Promise<string[]> => {
     const meteosIds = await weatherRepository
-      .findWeathersByInventoryId(inventaireId)
+      .findWeathersByInventoryId(inventoryId)
       .then((weathers) => weathers.map(({ id }) => id));
 
     return [...meteosIds];

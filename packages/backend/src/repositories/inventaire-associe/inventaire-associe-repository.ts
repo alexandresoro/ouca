@@ -8,7 +8,7 @@ export type SexeRepositoryDependencies = {
 
 export const buildInventaireAssocieRepository = ({ slonik }: SexeRepositoryDependencies) => {
   const deleteAssociesOfInventaireId = async (
-    inventaireId: number,
+    inventoryId: number,
     transaction?: DatabaseTransactionConnection
   ): Promise<QueryResult<void>> => {
     const query = sql.type(z.void())`
@@ -16,14 +16,14 @@ export const buildInventaireAssocieRepository = ({ slonik }: SexeRepositoryDepen
       FROM
         basenaturaliste.inventaire_associe
       WHERE
-        inventaire_associe.inventaire_id = ${inventaireId}
+        inventaire_associe.inventaire_id = ${inventoryId}
     `;
 
     return (transaction ?? slonik).query(query);
   };
 
   const insertInventaireWithAssocies = async (
-    inventaireId: number,
+    inventoryId: number,
     associeIds: number[],
     transaction?: DatabaseTransactionConnection
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
@@ -35,7 +35,7 @@ export const buildInventaireAssocieRepository = ({ slonik }: SexeRepositoryDepen
     const dataToInsert = associeIds.map((associeId) => {
       return {
         observateur_id: associeId,
-        inventaire_id: inventaireId,
+        inventaire_id: inventoryId,
       };
     });
 

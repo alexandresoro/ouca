@@ -33,8 +33,8 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.maybeOne(query);
   };
 
-  const findComportementsOfDonneeId = async (donneeId: number | undefined): Promise<readonly Behavior[]> => {
-    if (!donneeId) {
+  const findComportementsOfDonneeId = async (entryId: number | undefined): Promise<readonly Behavior[]> => {
+    if (!entryId) {
       return [];
     }
 
@@ -49,7 +49,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
         basenaturaliste.comportement
       LEFT JOIN basenaturaliste.donnee_comportement ON comportement.id = donnee_comportement.comportement_id
       WHERE
-        donnee_comportement.donnee_id = ${donneeId}
+        donnee_comportement.donnee_id = ${entryId}
     `;
 
     return slonik.any(query);

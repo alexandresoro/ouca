@@ -114,7 +114,7 @@ export class ImportedDonnee {
   }
 
   buildInputDonnee = (
-    inventaireId: string,
+    inventoryId: string,
     especeId: string,
     sexeId: string,
     ageId: string,
@@ -124,7 +124,7 @@ export class ImportedDonnee {
     milieuxIds: Set<string>
   ): UpsertEntryInput => {
     return {
-      inventoryId: inventaireId,
+      inventoryId: inventoryId,
       speciesId: especeId,
       sexId: sexeId,
       ageId: ageId,

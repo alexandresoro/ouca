@@ -163,10 +163,10 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   };
 
   const findInventaireByDonneeId = async (
-    donneeId: number | undefined,
+    entryId: number | undefined,
     transaction?: DatabaseTransactionConnection
   ): Promise<Inventaire | null> => {
-    if (!donneeId) {
+    if (!entryId) {
       return null;
     }
 
@@ -188,7 +188,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
         basenaturaliste.inventaire
       LEFT JOIN basenaturaliste.donnee ON inventaire.id = donnee.inventaire_id
       WHERE
-        donnee.id = ${donneeId}
+        donnee.id = ${entryId}
     `;
 
     const rawInventaire = await (transaction ?? slonik).maybeOne(query);
@@ -263,7 +263,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   };
 
   const updateInventaire = async (
-    inventaireId: number,
+    inventoryId: number,
     inventaireInput: InventaireCreateInput,
     transaction?: DatabaseTransactionConnection
   ): Promise<Inventaire> => {
@@ -273,7 +273,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
       SET
         ${objectToKeyValueSet(inventaireInput)}
       WHERE
-        id = ${inventaireId}
+        id = ${inventoryId}
       RETURNING
         inventaire.id::text,
         inventaire.observateur_id,
@@ -295,7 +295,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   };
 
   const deleteInventaireById = async (
-    inventaireId: number,
+    inventoryId: number,
     transaction?: DatabaseTransactionConnection
   ): Promise<Inventaire> => {
     const query = sql.type(inventaireSchema)`
@@ -303,7 +303,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
       FROM
         basenaturaliste.inventaire
       WHERE
-        id = ${inventaireId}
+        id = ${inventoryId}
       RETURNING
         inventaire.id::text,
         inventaire.observateur_id,

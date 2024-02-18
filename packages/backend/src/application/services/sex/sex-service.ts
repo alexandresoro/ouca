@@ -27,14 +27,14 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
   };
 
   const findSexOfEntryId = async (
-    donneeId: string | undefined,
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<Sex | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const sex = await sexRepository.findSexByEntryId(donneeId ? parseInt(donneeId) : undefined);
+    const sex = await sexRepository.findSexByEntryId(entryId ? parseInt(entryId) : undefined);
     return ok(enrichEntityWithEditableStatus(sex, loggedUser));
   };
 

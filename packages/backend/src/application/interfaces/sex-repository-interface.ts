@@ -4,7 +4,7 @@ import { type Result } from "neverthrow";
 
 export type SexRepository = {
   findSexById: (id: number) => Promise<Sex | null>;
-  findSexByEntryId: (donneeId: number | undefined) => Promise<Sex | null>;
+  findSexByEntryId: (entryId: number | undefined) => Promise<Sex | null>;
   findSexes: ({ orderBy, sortOrder, q, offset, limit }: SexFindManyInput) => Promise<readonly Sex[]>;
   getCount: (q?: string | null) => Promise<number>;
   createSex: (sexInput: SexCreateInput) => Promise<Result<Sex, EntityFailureReason>>;

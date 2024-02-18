@@ -26,34 +26,34 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
   };
 
   const findObserverOfInventoryId = async (
-    inventaireId: number | undefined,
+    inventoryId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const observer = await observerRepository.findObserverByInventoryId(inventaireId);
+    const observer = await observerRepository.findObserverByInventoryId(inventoryId);
     return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
-  const findAssociateIdsOfInventoryId = async (inventaireId: number): Promise<string[]> => {
+  const findAssociateIdsOfInventoryId = async (inventoryId: number): Promise<string[]> => {
     const associesIds = await observerRepository
-      .findAssociatesOfInventoryId(inventaireId)
+      .findAssociatesOfInventoryId(inventoryId)
       .then((associes) => associes.map(({ id }) => id));
 
     return [...associesIds];
   };
 
   const findAssociatesOfInventoryId = async (
-    inventaireId: number | undefined,
+    inventoryId: number | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const associes = await observerRepository.findAssociatesOfInventoryId(inventaireId);
+    const associes = await observerRepository.findAssociatesOfInventoryId(inventoryId);
 
     const enrichedAssociates = associes.map((associate) => {
       return enrichEntityWithEditableStatus(associate, loggedUser);

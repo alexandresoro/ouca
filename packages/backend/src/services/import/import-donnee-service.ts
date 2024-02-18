@@ -296,22 +296,22 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Now we know that we need to add this donnee
-    let inventaireId: string;
+    let inventoryId: string;
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
       const inventaire = await this.services.inventoryService.createInventaire(inputInventaire, loggedUser);
-      inventaireId = `${inventaire.id}`;
+      inventoryId = `${inventaire.id}`;
 
       // Add the inventaire to the list
       this.inventaires.push(inventaire);
     } else {
-      inventaireId = `${existingInventaire.id}`;
+      inventoryId = `${existingInventaire.id}`;
     }
 
     // Build the donnee
     const newDonnee = importedDonnee.buildInputDonnee(
-      inventaireId,
+      inventoryId,
       espece.id,
       sexe.id,
       age.id,

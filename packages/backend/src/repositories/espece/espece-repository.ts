@@ -39,8 +39,8 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findEspeceByDonneeId = async (donneeId: number | undefined): Promise<Species | null> => {
-    if (!donneeId) {
+  const findEspeceByDonneeId = async (entryId: number | undefined): Promise<Species | null> => {
+    if (!entryId) {
       return null;
     }
 
@@ -56,7 +56,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
         basenaturaliste.espece
       LEFT JOIN basenaturaliste.donnee ON espece.id = donnee.espece_id
       WHERE
-      donnee.id = ${donneeId}
+      donnee.id = ${entryId}
     `;
 
     return slonik.maybeOne(query);

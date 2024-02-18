@@ -8,7 +8,7 @@ export type SexeRepositoryDependencies = {
 
 export const buildInventaireMeteoRepository = ({ slonik }: SexeRepositoryDependencies) => {
   const deleteMeteosOfInventaireId = async (
-    inventaireId: number,
+    inventoryId: number,
     transaction?: DatabaseTransactionConnection
   ): Promise<QueryResult<void>> => {
     const query = sql.type(z.void())`
@@ -16,14 +16,14 @@ export const buildInventaireMeteoRepository = ({ slonik }: SexeRepositoryDepende
       FROM
         basenaturaliste.inventaire_meteo
       WHERE
-        inventaire_meteo.inventaire_id = ${inventaireId}
+        inventaire_meteo.inventaire_id = ${inventoryId}
     `;
 
     return (transaction ?? slonik).query(query);
   };
 
   const insertInventaireWithMeteos = async (
-    inventaireId: number,
+    inventoryId: number,
     meteoIds: number[],
     transaction?: DatabaseTransactionConnection
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
@@ -35,7 +35,7 @@ export const buildInventaireMeteoRepository = ({ slonik }: SexeRepositoryDepende
     const dataToInsert = meteoIds.map((meteoId) => {
       return {
         meteo_id: meteoId,
-        inventaire_id: inventaireId,
+        inventaire_id: inventoryId,
       };
     });
 

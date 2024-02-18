@@ -18,8 +18,8 @@ export const buildAgeRepository = () => {
     return ageResult ? ageSchema.parse(ageResult) : null;
   };
 
-  const findAgeByDonneeId = async (donneeId: number | undefined): Promise<Age | null> => {
-    if (!donneeId) {
+  const findAgeByEntryId = async (entryId: number | undefined): Promise<Age | null> => {
+    if (!entryId) {
       return null;
     }
 
@@ -27,7 +27,7 @@ export const buildAgeRepository = () => {
       .selectFrom("age")
       .leftJoin("donnee", "donnee.ageId", "age.id")
       .select([sql<string>`basenaturaliste.age.id::text`.as("id"), "libelle", "ownerId"])
-      .where("donnee.id", "=", donneeId)
+      .where("donnee.id", "=", entryId)
       .executeTakeFirst();
 
     return ageResult ? ageSchema.parse(ageResult) : null;
@@ -149,7 +149,7 @@ export const buildAgeRepository = () => {
 
   return {
     findAgeById,
-    findAgeByDonneeId,
+    findAgeByEntryId,
     findAges,
     getCount,
     createAge,

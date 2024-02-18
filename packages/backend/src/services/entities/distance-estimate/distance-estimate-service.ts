@@ -29,13 +29,13 @@ export const buildDistanceEstimateService = ({
   };
 
   const findDistanceEstimateOfEntryId = async (
-    donneeId: string | undefined,
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<DistanceEstimate | null> => {
     validateAuthorization(loggedUser);
 
     const distanceEstimate = await distanceEstimateRepository.findEstimationDistanceByDonneeId(
-      donneeId ? parseInt(donneeId) : undefined
+      entryId ? parseInt(entryId) : undefined
     );
     return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
   };

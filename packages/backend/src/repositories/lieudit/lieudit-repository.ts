@@ -41,8 +41,8 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return (transaction ?? slonik).maybeOne(query);
   };
 
-  const findLieuditByInventaireId = async (inventaireId: number | undefined): Promise<Locality | null> => {
-    if (!inventaireId) {
+  const findLieuditByInventaireId = async (inventoryId: number | undefined): Promise<Locality | null> => {
+    if (!inventoryId) {
       return null;
     }
 
@@ -59,7 +59,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         basenaturaliste.lieudit
       LEFT JOIN basenaturaliste.inventaire ON lieudit.id = inventaire.lieudit_id
       WHERE
-        inventaire.id = ${inventaireId}
+        inventaire.id = ${inventoryId}
     `;
 
     return slonik.maybeOne(query);

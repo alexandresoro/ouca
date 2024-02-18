@@ -35,8 +35,8 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     return slonik.maybeOne(query);
   };
 
-  const findEstimationNombreByDonneeId = async (donneeId: number | undefined): Promise<NumberEstimate | null> => {
-    if (!donneeId) {
+  const findEstimationNombreByDonneeId = async (entryId: number | undefined): Promise<NumberEstimate | null> => {
+    if (!entryId) {
       return null;
     }
 
@@ -50,7 +50,7 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
         basenaturaliste.estimation_nombre
       LEFT JOIN basenaturaliste.donnee ON estimation_nombre.id = donnee.estimation_nombre_id
       WHERE
-        donnee.id = ${donneeId}
+        donnee.id = ${entryId}
     `;
 
     return slonik.maybeOne(query);

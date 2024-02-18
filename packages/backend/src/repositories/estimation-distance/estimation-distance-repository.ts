@@ -34,8 +34,8 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
     return slonik.maybeOne(query);
   };
 
-  const findEstimationDistanceByDonneeId = async (donneeId: number | undefined): Promise<DistanceEstimate | null> => {
-    if (!donneeId) {
+  const findEstimationDistanceByDonneeId = async (entryId: number | undefined): Promise<DistanceEstimate | null> => {
+    if (!entryId) {
       return null;
     }
 
@@ -48,7 +48,7 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
         basenaturaliste.estimation_distance
       LEFT JOIN basenaturaliste.donnee ON estimation_distance.id = donnee.estimation_distance_id
       WHERE
-        donnee.id = ${donneeId}
+        donnee.id = ${entryId}
     `;
 
     return slonik.maybeOne(query);

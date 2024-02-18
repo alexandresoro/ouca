@@ -27,13 +27,13 @@ export const buildNumberEstimateService = ({
   };
 
   const findEstimationNombreOfDonneeId = async (
-    donneeId: string | undefined,
+    entryId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
     const numberEstimate = await numberEstimateRepository.findEstimationNombreByDonneeId(
-      donneeId ? parseInt(donneeId) : undefined
+      entryId ? parseInt(entryId) : undefined
     );
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };

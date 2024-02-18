@@ -69,18 +69,18 @@ describe("Find age by data ID", () => {
     const ageData = ageFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.findAgeByDonneeId.mockResolvedValueOnce(ageData);
+    ageRepository.findAgeByEntryId.mockResolvedValueOnce(ageData);
 
-    const ageResult = await ageService.findAgeOfDonneeId("43", loggedUser);
+    const ageResult = await ageService.findAgeOfEntryId("43", loggedUser);
 
-    expect(ageRepository.findAgeByDonneeId).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAgeByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(ageRepository.findAgeByEntryId).toHaveBeenCalledTimes(1);
+    expect(ageRepository.findAgeByEntryId).toHaveBeenLastCalledWith(43);
     expect(ageResult.isOk()).toBeTruthy();
     expect(ageResult._unsafeUnwrap()?.id).toEqual(ageData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await ageService.findAgeOfDonneeId("12", null);
+    const findResult = await ageService.findAgeOfEntryId("12", null);
 
     expect(findResult).toEqual(err("notAllowed"));
   });

@@ -31,8 +31,8 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findMilieuxOfDonneeId = async (donneeId: number | undefined): Promise<readonly Environment[]> => {
-    if (!donneeId) {
+  const findMilieuxOfDonneeId = async (entryId: number | undefined): Promise<readonly Environment[]> => {
+    if (!entryId) {
       return [];
     }
 
@@ -46,7 +46,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
         basenaturaliste.milieu
       LEFT JOIN basenaturaliste.donnee_milieu ON milieu.id = donnee_milieu.milieu_id
       WHERE
-        donnee_milieu.donnee_id = ${donneeId}
+        donnee_milieu.donnee_id = ${entryId}
     `;
 
     return slonik.any(query);
