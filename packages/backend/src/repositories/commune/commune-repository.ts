@@ -1,4 +1,4 @@
-import { townSchema } from "@domain/town/town.js";
+import { townSchema, type Town } from "@domain/town/town.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
@@ -11,7 +11,6 @@ import {
 } from "../repository-helpers.js";
 import {
   communeWithDepartementCodeSchema,
-  type Commune,
   type CommuneCreateInput,
   type CommuneFindManyInput,
   type CommuneWithDepartementCode,
@@ -22,7 +21,7 @@ export type CommuneRepositoryDependencies = {
 };
 
 export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies) => {
-  const findCommuneById = async (id: number): Promise<Commune | null> => {
+  const findCommuneById = async (id: number): Promise<Town | null> => {
     const query = sql.type(townSchema)`
       SELECT 
         commune.id::text,
@@ -39,7 +38,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.maybeOne(query);
   };
 
-  const findCommuneByLieuDitId = async (lieuditId: number | undefined): Promise<Commune | null> => {
+  const findCommuneByLieuDitId = async (lieuditId: number | undefined): Promise<Town | null> => {
     if (!lieuditId) {
       return null;
     }
@@ -70,7 +69,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     departmentId,
     offset,
     limit,
-  }: CommuneFindManyInput = {}): Promise<readonly Commune[]> => {
+  }: CommuneFindManyInput = {}): Promise<readonly Town[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByDepartement = orderBy === "departement";
@@ -221,7 +220,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.any(query);
   };
 
-  const createCommune = async (communeInput: CommuneCreateInput): Promise<Commune> => {
+  const createCommune = async (communeInput: CommuneCreateInput): Promise<Town> => {
     const query = sql.type(townSchema)`
       INSERT INTO
         basenaturaliste.commune
@@ -237,7 +236,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.one(query);
   };
 
-  const createCommunes = async (communeInputs: CommuneCreateInput[]): Promise<readonly Commune[]> => {
+  const createCommunes = async (communeInputs: CommuneCreateInput[]): Promise<readonly Town[]> => {
     const query = sql.type(townSchema)`
       INSERT INTO
         basenaturaliste.commune
@@ -253,7 +252,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.many(query);
   };
 
-  const updateCommune = async (communeId: number, communeInput: CommuneCreateInput): Promise<Commune> => {
+  const updateCommune = async (communeId: number, communeInput: CommuneCreateInput): Promise<Town> => {
     const query = sql.type(townSchema)`
       UPDATE
         basenaturaliste.commune
@@ -272,7 +271,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.one(query);
   };
 
-  const deleteCommuneById = async (communeId: number): Promise<Commune> => {
+  const deleteCommuneById = async (communeId: number): Promise<Town> => {
     const query = sql.type(townSchema)`
       DELETE
       FROM

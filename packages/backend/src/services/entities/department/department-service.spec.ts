@@ -1,6 +1,6 @@
-import { type Department } from "@domain/department/department.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { departmentFactory } from "@fixtures/domain/department/department.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -36,7 +36,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find department", () => {
   test("should handle a matching department", async () => {
-    const departmentData = mock<Department>();
+    const departmentData = departmentFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(departmentData);
@@ -114,7 +114,7 @@ describe("Data count per entity", () => {
 
 describe("Find department by city ID", () => {
   test("should handle a found department", async () => {
-    const departmentData = mock<Department>({
+    const departmentData = departmentFactory.build({
       id: "256",
     });
     const loggedUser = loggedUserFactory.build();
@@ -134,7 +134,7 @@ describe("Find department by city ID", () => {
 });
 
 test("Find all departments", async () => {
-  const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
+  const departementsData = departmentFactory.buildList(3);
 
   departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
@@ -148,7 +148,7 @@ test("Find all departments", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
+    const departementsData = departmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     departmentRepository.findDepartements.mockResolvedValueOnce(departementsData);
@@ -160,7 +160,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated departments ", async () => {
-    const departementsData = [mock<Department>(), mock<Department>(), mock<Department>()];
+    const departementsData = departmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: DepartmentsSearchParams = {
@@ -227,7 +227,7 @@ describe("Update of a department", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Department>({
+    const existingData = departmentFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -244,7 +244,7 @@ describe("Update of a department", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Department>({
+    const existingData = departmentFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -337,7 +337,7 @@ describe("Deletion of a department", () => {
       role: "contributor",
     };
 
-    const department = mock<Department>({
+    const department = departmentFactory.build({
       ownerId: loggedUser.id,
     });
 
@@ -354,7 +354,7 @@ describe("Deletion of a department", () => {
       role: "admin",
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Department>());
+    departmentRepository.findDepartementById.mockResolvedValueOnce(departmentFactory.build());
 
     await departmentService.deleteDepartement(11, loggedUser);
 
@@ -367,7 +367,7 @@ describe("Deletion of a department", () => {
       role: "contributor",
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(mock<Department>());
+    departmentRepository.findDepartementById.mockResolvedValueOnce(departmentFactory.build());
 
     await expect(departmentService.deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

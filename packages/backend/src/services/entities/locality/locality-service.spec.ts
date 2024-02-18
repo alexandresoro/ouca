@@ -1,12 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Locality } from "@domain/locality/locality.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type Locality as LocalityCommon } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
-import { mock, mockDeep } from "vitest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
 import { type LieuditCreateInput } from "../../../repositories/lieudit/lieudit-repository-types.js";
@@ -47,7 +47,7 @@ const mockedReshapeLocalityRepositoryToApi = vi.mocked(reshapeLocalityRepository
 
 describe("Find locality", () => {
   test("should handle a matching locality", async () => {
-    const localityData = mockDeep<Locality>();
+    const localityData = localityFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     localityRepository.findLieuditById.mockResolvedValueOnce(localityData);
@@ -108,7 +108,7 @@ describe("Data count per entity", () => {
 
 describe("Find locality by inventary ID", () => {
   test("should handle locality found", async () => {
-    const localityData = mock<Locality>({
+    const localityData = localityFactory.build({
       id: "256",
     });
     const loggedUser = loggedUserFactory.build();
@@ -133,7 +133,7 @@ describe("Find locality by inventary ID", () => {
 });
 
 test("Find all localities", async () => {
-  const localitiesData = [mockDeep<Locality>(), mockDeep<Locality>(), mockDeep<Locality>()];
+  const localitiesData = localityFactory.buildList(3);
 
   localityRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
@@ -147,7 +147,7 @@ test("Find all localities", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const localitiesData = [mockDeep<Locality>(), mockDeep<Locality>(), mockDeep<Locality>()];
+    const localitiesData = localityFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     localityRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
@@ -159,7 +159,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated localities ", async () => {
-    const localitiesData = [mockDeep<Locality>(), mockDeep<Locality>(), mockDeep<Locality>()];
+    const localitiesData = localityFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: LocalitiesSearchParams = {
@@ -221,7 +221,7 @@ describe("Update of a locality", () => {
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
-    localityRepository.updateLieudit.mockResolvedValueOnce(mockDeep<Locality>());
+    localityRepository.updateLieudit.mockResolvedValueOnce(localityFactory.build());
 
     await localityService.updateLieuDit(12, localityData, loggedUser);
 
@@ -231,7 +231,7 @@ describe("Update of a locality", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Locality>({
+    const existingData = localityFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -252,7 +252,7 @@ describe("Update of a locality", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Locality>({
+    const existingData = localityFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -306,7 +306,7 @@ describe("Creation of a locality", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    localityRepository.createLieudit.mockResolvedValueOnce(mockDeep<Locality>());
+    localityRepository.createLieudit.mockResolvedValueOnce(localityFactory.build());
 
     await localityService.createLieuDit(localityData, loggedUser);
 
@@ -355,12 +355,12 @@ describe("Deletion of a locality", () => {
       role: "contributor",
     };
 
-    const locality = mock<Locality>({
+    const locality = localityFactory.build({
       ownerId: loggedUser.id,
     });
 
     localityRepository.findLieuditById.mockResolvedValueOnce(locality);
-    localityRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Locality>());
+    localityRepository.deleteLieuditById.mockResolvedValueOnce(localityFactory.build());
 
     await localityService.deleteLieuDit(11, loggedUser);
 
@@ -373,8 +373,8 @@ describe("Deletion of a locality", () => {
       role: "admin",
     });
 
-    localityRepository.findLieuditById.mockResolvedValueOnce(mock<Locality>());
-    localityRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Locality>());
+    localityRepository.findLieuditById.mockResolvedValueOnce(localityFactory.build());
+    localityRepository.deleteLieuditById.mockResolvedValueOnce(localityFactory.build());
 
     await localityService.deleteLieuDit(11, loggedUser);
 
@@ -387,7 +387,7 @@ describe("Deletion of a locality", () => {
       role: "contributor",
     });
 
-    localityRepository.findLieuditById.mockResolvedValueOnce(mock<Locality>());
+    localityRepository.findLieuditById.mockResolvedValueOnce(localityFactory.build());
 
     await expect(localityService.deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

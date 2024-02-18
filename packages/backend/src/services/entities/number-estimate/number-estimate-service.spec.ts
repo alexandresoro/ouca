@@ -1,6 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type NumberEstimate } from "@domain/number-estimate/number-estimate.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { numberEstimateFactory } from "@fixtures/domain/number-estimate/number-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -41,7 +41,7 @@ const mockedReshapeInputEstimationNombreUpsertData = vi.mocked(reshapeInputEstim
 
 describe("Find number estimate", () => {
   test("should handle a matching number estimate", async () => {
-    const numberEstimateData = mock<NumberEstimate>();
+    const numberEstimateData = numberEstimateFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateData);
@@ -87,7 +87,7 @@ describe("Data count per entity", () => {
 
 describe("Find number estimate by data ID", () => {
   test("should handle number estimate found", async () => {
-    const numberEstimateData = mock<NumberEstimate>({
+    const numberEstimateData = numberEstimateFactory.build({
       id: "256",
     });
     const loggedUser = loggedUserFactory.build();
@@ -109,7 +109,7 @@ describe("Find number estimate by data ID", () => {
 });
 
 test("Find all estimationsNombre", async () => {
-  const estimationsNombreData = [mock<NumberEstimate>(), mock<NumberEstimate>(), mock<NumberEstimate>()];
+  const estimationsNombreData = numberEstimateFactory.buildList(3);
 
   numberEstimateRepository.findEstimationsNombre.mockResolvedValueOnce(estimationsNombreData);
 
@@ -123,7 +123,7 @@ test("Find all estimationsNombre", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const estimationsNombreData = [mock<NumberEstimate>(), mock<NumberEstimate>(), mock<NumberEstimate>()];
+    const estimationsNombreData = numberEstimateFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     numberEstimateRepository.findEstimationsNombre.mockResolvedValueOnce(estimationsNombreData);
@@ -135,7 +135,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated estimationsNombre ", async () => {
-    const estimationsNombreData = [mock<NumberEstimate>(), mock<NumberEstimate>(), mock<NumberEstimate>()];
+    const estimationsNombreData = numberEstimateFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: NumberEstimatesSearchParams = {
@@ -208,7 +208,7 @@ describe("Update of a number estimate", () => {
   });
 
   test("should be allowed when requested by the owner ", async () => {
-    const existingData = mock<NumberEstimate>({
+    const existingData = numberEstimateFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -229,7 +229,7 @@ describe("Update of a number estimate", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<NumberEstimate>({
+    const existingData = numberEstimateFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -336,7 +336,7 @@ describe("Deletion of a number estimate", () => {
       role: "contributor",
     };
 
-    const numberEstimate = mock<NumberEstimate>({
+    const numberEstimate = numberEstimateFactory.build({
       ownerId: loggedUser.id,
     });
 
@@ -353,7 +353,7 @@ describe("Deletion of a number estimate", () => {
       role: "admin",
     });
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(mock<NumberEstimate>());
+    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateFactory.build());
 
     await numberEstimateService.deleteEstimationNombre(11, loggedUser);
 
@@ -366,7 +366,7 @@ describe("Deletion of a number estimate", () => {
       role: "contributor",
     });
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(mock<NumberEstimate>());
+    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateFactory.build());
 
     await expect(numberEstimateService.deleteEstimationNombre(11, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0001")

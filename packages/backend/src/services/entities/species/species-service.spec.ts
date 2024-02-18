@@ -1,6 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Species } from "@domain/species/species.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -44,7 +44,7 @@ const mockedReshapeInputEspeceUpsertData = vi.mocked(reshapeInputEspeceUpsertDat
 
 describe("Find species", () => {
   test("should handle a matching species", async () => {
-    const speciesData = mock<Species>();
+    const speciesData = speciesFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(speciesData);
@@ -88,7 +88,7 @@ describe("Data count per entity", () => {
 
 describe("Find species by data ID", () => {
   test("should handle species found", async () => {
-    const speciesData = mock<Species>({
+    const speciesData = speciesFactory.build({
       id: "256",
     });
     const loggedUser = loggedUserFactory.build();
@@ -108,7 +108,7 @@ describe("Find species by data ID", () => {
 });
 
 test("Find all species", async () => {
-  const speciesData = [mock<Species>(), mock<Species>(), mock<Species>()];
+  const speciesData = speciesFactory.buildList(3);
 
   speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
@@ -122,7 +122,7 @@ test("Find all species", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const speciesData = [mock<Species>(), mock<Species>(), mock<Species>()];
+    const speciesData = speciesFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
@@ -134,7 +134,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated species ", async () => {
-    const speciesData = [mock<Species>(), mock<Species>(), mock<Species>()];
+    const speciesData = speciesFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: SpeciesSearchParams = {
@@ -160,7 +160,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params and search criteria when retrieving paginated species ", async () => {
-    const speciesData = [mock<Species>(), mock<Species>(), mock<Species>()];
+    const speciesData = speciesFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: SpeciesSearchParams = {
@@ -279,7 +279,7 @@ describe("Update of a species", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    const species = mock<Species>({
+    const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
     speciesRepository.updateEspece.mockResolvedValueOnce(species);
@@ -292,7 +292,7 @@ describe("Update of a species", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Species>({
+    const existingData = speciesFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -305,7 +305,7 @@ describe("Update of a species", () => {
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
-    const species = mock<Species>({
+    const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
     speciesRepository.updateEspece.mockResolvedValueOnce(species);
@@ -318,7 +318,7 @@ describe("Update of a species", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Species>({
+    const existingData = speciesFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -372,7 +372,7 @@ describe("Creation of a species", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    const species = mock<Species>({
+    const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
     speciesRepository.createEspece.mockResolvedValueOnce(species);
@@ -424,7 +424,7 @@ describe("Deletion of a species", () => {
       role: "contributor",
     };
 
-    const species = mock<Species>({
+    const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
 
@@ -441,7 +441,7 @@ describe("Deletion of a species", () => {
       role: "admin",
     });
 
-    speciesRepository.findEspeceById.mockResolvedValueOnce(mock<Species>());
+    speciesRepository.findEspeceById.mockResolvedValueOnce(speciesFactory.build());
 
     await speciesService.deleteEspece(11, loggedUser);
 
@@ -454,7 +454,7 @@ describe("Deletion of a species", () => {
       role: "contributor",
     });
 
-    speciesRepository.findEspeceById.mockResolvedValueOnce(mock<Species>());
+    speciesRepository.findEspeceById.mockResolvedValueOnce(speciesFactory.build());
 
     await expect(speciesService.deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

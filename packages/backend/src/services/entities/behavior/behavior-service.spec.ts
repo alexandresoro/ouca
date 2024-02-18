@@ -1,6 +1,6 @@
-import { type Behavior } from "@domain/behavior/behavior.js";
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { behaviorFactory } from "@fixtures/domain/behavior/behavior.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -30,7 +30,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find behavior", () => {
   test("should handle a matching behavior ", async () => {
-    const behaviorData = mock<Behavior>();
+    const behaviorData = behaviorFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     behaviorRepository.findComportementById.mockResolvedValueOnce(behaviorData);
@@ -74,7 +74,7 @@ describe("Data count per entity", () => {
 
 describe("Find behaviors by inventary ID", () => {
   test("should handle behaviors found", async () => {
-    const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
+    const behaviorsData = behaviorFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     behaviorRepository.findComportementsOfDonneeId.mockResolvedValueOnce(behaviorsData);
@@ -92,7 +92,7 @@ describe("Find behaviors by inventary ID", () => {
 });
 
 test("Find all behaviors", async () => {
-  const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
+  const behaviorsData = behaviorFactory.buildList(3);
 
   behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
@@ -106,7 +106,7 @@ test("Find all behaviors", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
+    const behaviorsData = behaviorFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     behaviorRepository.findComportements.mockResolvedValueOnce(behaviorsData);
@@ -118,7 +118,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated behaviors ", async () => {
-    const behaviorsData = [mock<Behavior>(), mock<Behavior>(), mock<Behavior>()];
+    const behaviorsData = behaviorFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: BehaviorsSearchParams = {
@@ -185,7 +185,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Behavior>({
+    const existingData = behaviorFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -202,7 +202,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Behavior>({
+    const existingData = behaviorFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -293,7 +293,7 @@ describe("Deletion of a behavior", () => {
       role: "contributor",
     };
 
-    const behavior = mock<Behavior>({
+    const behavior = behaviorFactory.build({
       ownerId: loggedUser.id,
     });
 
@@ -310,7 +310,7 @@ describe("Deletion of a behavior", () => {
       role: "admin",
     });
 
-    behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Behavior>());
+    behaviorRepository.findComportementById.mockResolvedValueOnce(behaviorFactory.build());
 
     await behaviorService.deleteBehavior(11, loggedUser);
 
@@ -323,7 +323,7 @@ describe("Deletion of a behavior", () => {
       role: "contributor",
     });
 
-    behaviorRepository.findComportementById.mockResolvedValueOnce(mock<Behavior>());
+    behaviorRepository.findComportementById.mockResolvedValueOnce(behaviorFactory.build());
 
     await expect(behaviorService.deleteBehavior(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

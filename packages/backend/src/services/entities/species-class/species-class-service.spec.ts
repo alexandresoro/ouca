@@ -1,6 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type SpeciesClass } from "@domain/species-class/species-class.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -33,7 +33,7 @@ const uniqueConstraintFailed = () => {
 
 describe("Find class", () => {
   test("should handle a matching class", async () => {
-    const classData: SpeciesClass = mock<SpeciesClass>();
+    const classData = speciesClassFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     classRepository.findClasseById.mockResolvedValueOnce(classData);
@@ -92,7 +92,7 @@ describe("Data count per entity", () => {
 
 describe("Find class by species ID", () => {
   test("should handle a found class", async () => {
-    const classData = mock<SpeciesClass>({
+    const classData = speciesClassFactory.build({
       id: "256",
     });
     const loggedUser = loggedUserFactory.build();
@@ -112,7 +112,7 @@ describe("Find class by species ID", () => {
 });
 
 test("Find all classes", async () => {
-  const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
+  const classesData = speciesClassFactory.buildList(3);
 
   classRepository.findClasses.mockResolvedValueOnce(classesData);
 
@@ -126,7 +126,7 @@ test("Find all classes", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
+    const classesData = speciesClassFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     classRepository.findClasses.mockResolvedValueOnce(classesData);
@@ -138,7 +138,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated classes ", async () => {
-    const classesData = [mock<SpeciesClass>(), mock<SpeciesClass>(), mock<SpeciesClass>()];
+    const classesData = speciesClassFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams = mock<ClassesSearchParams>({
@@ -205,7 +205,7 @@ describe("Update of a class", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<SpeciesClass>({
+    const existingData = speciesClassFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -222,7 +222,7 @@ describe("Update of a class", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<SpeciesClass>({
+    const existingData = speciesClassFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -313,7 +313,7 @@ describe("Deletion of a class", () => {
       role: "contributor",
     };
 
-    const classe = mock<SpeciesClass>({
+    const classe = speciesClassFactory.build({
       ownerId: loggedUser.id,
     });
 
@@ -330,7 +330,7 @@ describe("Deletion of a class", () => {
       role: "admin",
     });
 
-    classRepository.findClasseById.mockResolvedValueOnce(mock<SpeciesClass>());
+    classRepository.findClasseById.mockResolvedValueOnce(speciesClassFactory.build());
 
     await speciesClassService.deleteClasse(11, loggedUser);
 
@@ -343,7 +343,7 @@ describe("Deletion of a class", () => {
       role: "contributor",
     });
 
-    classRepository.findClasseById.mockResolvedValueOnce(mock<SpeciesClass>());
+    classRepository.findClasseById.mockResolvedValueOnce(speciesClassFactory.build());
 
     await expect(speciesClassService.deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

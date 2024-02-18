@@ -2,8 +2,6 @@ import { townSchema } from "@domain/town/town.js";
 import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
-export type Commune = z.infer<typeof townSchema>;
-
 export const communeWithDepartementCodeSchema = townSchema.extend({
   departementCode: z.string(),
 });

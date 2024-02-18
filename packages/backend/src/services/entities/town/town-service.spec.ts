@@ -1,11 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { townFactory } from "@fixtures/domain/town/town.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type Commune, type CommuneCreateInput } from "../../../repositories/commune/commune-repository-types.js";
+import { type CommuneCreateInput } from "../../../repositories/commune/commune-repository-types.js";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
@@ -43,7 +44,7 @@ const mockedReshapeInputCommuneUpsertData = vi.mocked(reshapeInputCommuneUpsertD
 
 describe("Find city", () => {
   test("should handle a matching city", async () => {
-    const cityData = mock<Commune>();
+    const cityData = townFactory.build();
     const loggedUser = loggedUserFactory.build();
 
     townRepository.findCommuneById.mockResolvedValueOnce(cityData);
@@ -102,7 +103,7 @@ describe("Data count per entity", () => {
 
 describe("Find city by locality ID", () => {
   test("should handle a found city", async () => {
-    const cityData = mock<Commune>({
+    const cityData = townFactory.build({
       id: "256",
     });
     const loggedUser = loggedUserFactory.build();
@@ -122,7 +123,7 @@ describe("Find city by locality ID", () => {
 });
 
 test("Find all cities", async () => {
-  const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+  const citiesData = townFactory.buildList(3);
 
   townRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
@@ -136,7 +137,7 @@ test("Find all cities", async () => {
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+    const citiesData = townFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     townRepository.findCommunes.mockResolvedValueOnce(citiesData);
@@ -148,7 +149,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated cities ", async () => {
-    const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+    const citiesData = townFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: TownsSearchParams = {
@@ -219,7 +220,7 @@ describe("Update of a city", () => {
   });
 
   test("should be allowed when requested by the owner", async () => {
-    const existingData = mock<Commune>({
+    const existingData = townFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -240,7 +241,7 @@ describe("Update of a city", () => {
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
-    const existingData = mock<Commune>({
+    const existingData = townFactory.build({
       ownerId: "notAdmin",
     });
 
@@ -341,7 +342,7 @@ describe("Deletion of a city", () => {
       role: "contributor",
     };
 
-    const city = mock<Commune>({
+    const city = townFactory.build({
       ownerId: loggedUser.id,
     });
 
@@ -358,7 +359,7 @@ describe("Deletion of a city", () => {
       role: "admin",
     });
 
-    townRepository.findCommuneById.mockResolvedValueOnce(mock<Commune>());
+    townRepository.findCommuneById.mockResolvedValueOnce(townFactory.build());
 
     await townService.deleteCommune(11, loggedUser);
 
@@ -371,7 +372,7 @@ describe("Deletion of a city", () => {
       role: "contributor",
     });
 
-    townRepository.findCommuneById.mockResolvedValueOnce(mock<Commune>());
+    townRepository.findCommuneById.mockResolvedValueOnce(townFactory.build());
 
     await expect(townService.deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
