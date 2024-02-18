@@ -48,7 +48,7 @@ export class ImportDonneeService extends ImportService {
     this.newDonnees = [];
 
     this.observateurs = await this.services.observerService.findAllObservers();
-    this.departements = await this.services.departmentService.findAllDepartements();
+    this.departements = await this.services.departmentService.findAllDepartments();
     this.communes = await this.services.townService.findAllCommunes();
     this.lieuxDits = await this.services.localityService.findAllLieuxDits();
     this.meteos = await this.services.weatherService.findAllWeathers();

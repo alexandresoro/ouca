@@ -20,7 +20,7 @@ export const enrichedLocality = async (
   user: LoggedUser | null
 ): Promise<Omit<LocalityExtended, "inventoriesCount" | "entriesCount">> => {
   const town = await services.townService.findCommuneOfLieuDitId(locality.id, user);
-  const department = town ? await services.departmentService.findDepartementOfCommuneId(town.id, user) : null;
+  const department = town ? await services.departmentService.findDepartmentOfTownId(town.id, user) : null;
 
   if (!town || !department) {
     return Promise.reject("Missing data for enriched locality");
@@ -75,7 +75,7 @@ const localitiesController: FastifyPluginCallback<{
         localitiesData.map(async (localityData) => {
           // TODO look to optimize this request
           const town = await townService.findCommuneOfLieuDitId(localityData.id, req.user);
-          const department = town ? await departmentService.findDepartementOfCommuneId(town.id, req.user) : null;
+          const department = town ? await departmentService.findDepartmentOfTownId(town.id, req.user) : null;
           const inventoriesCount = await localityService.getInventoriesCountByLocality(localityData.id, req.user);
           const entriesCount = await localityService.getDonneesCountByLieuDit(localityData.id, req.user);
           return {

@@ -24,32 +24,32 @@ export const buildDepartmentService = ({
   localityRepository,
   entryRepository,
 }: DepartmentServiceDependencies) => {
-  const findDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Department | null> => {
+  const findDepartment = async (id: number, loggedUser: LoggedUser | null): Promise<Department | null> => {
     validateAuthorization(loggedUser);
 
     const department = await departmentRepository.findDepartementById(id);
     return enrichEntityWithEditableStatus(department, loggedUser);
   };
 
-  const getDonneesCountByDepartement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getEntriesCountByDepartment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return entryRepository.getCountByDepartementId(parseInt(id));
   };
 
-  const getLieuxDitsCountByDepartement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getLocalitiesCountByDepartment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return localityRepository.getCountByDepartementId(parseInt(id));
   };
 
-  const getCommunesCountByDepartement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
+  const getTownsCountByDepartment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return townRepository.getCountByDepartementId(parseInt(id));
   };
 
-  const findDepartementOfCommuneId = async (
+  const findDepartmentOfTownId = async (
     communeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Department | null> => {
@@ -61,19 +61,19 @@ export const buildDepartmentService = ({
     return enrichEntityWithEditableStatus(department, loggedUser);
   };
 
-  const findAllDepartements = async (): Promise<Department[]> => {
-    const departements = await departmentRepository.findDepartements({
+  const findAllDepartments = async (): Promise<Department[]> => {
+    const departments = await departmentRepository.findDepartements({
       orderBy: "code",
     });
 
-    const enrichedDepartments = departements.map((department) => {
+    const enrichedDepartments = departments.map((department) => {
       return enrichEntityWithEditableStatus(department, null);
     });
 
     return [...enrichedDepartments];
   };
 
-  const findPaginatedDepartements = async (
+  const findPaginatedDepartments = async (
     loggedUser: LoggedUser | null,
     options: DepartmentsSearchParams
   ): Promise<Department[]> => {
@@ -81,39 +81,36 @@ export const buildDepartmentService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const departements = await departmentRepository.findDepartements({
+    const departments = await departmentRepository.findDepartements({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    const enrichedDepartments = departements.map((department) => {
+    const enrichedDepartments = departments.map((department) => {
       return enrichEntityWithEditableStatus(department, loggedUser);
     });
 
     return [...enrichedDepartments];
   };
 
-  const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getDepartmentsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
     return departmentRepository.getCount(q);
   };
 
-  const createDepartement = async (
-    input: UpsertDepartmentInput,
-    loggedUser: LoggedUser | null
-  ): Promise<Department> => {
+  const createDepartment = async (input: UpsertDepartmentInput, loggedUser: LoggedUser | null): Promise<Department> => {
     validateAuthorization(loggedUser);
 
     try {
-      const createdDepartement = await departmentRepository.createDepartement({
+      const createdDepartment = await departmentRepository.createDepartement({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdDepartement, loggedUser);
+      return enrichEntityWithEditableStatus(createdDepartment, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -122,7 +119,7 @@ export const buildDepartmentService = ({
     }
   };
 
-  const updateDepartement = async (
+  const updateDepartment = async (
     id: number,
     input: UpsertDepartmentInput,
     loggedUser: LoggedUser | null
@@ -139,9 +136,9 @@ export const buildDepartmentService = ({
     }
 
     try {
-      const updatedDepartement = await departmentRepository.updateDepartement(id, input);
+      const updatedDepartment = await departmentRepository.updateDepartement(id, input);
 
-      return enrichEntityWithEditableStatus(updatedDepartement, loggedUser);
+      return enrichEntityWithEditableStatus(updatedDepartment, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -150,7 +147,7 @@ export const buildDepartmentService = ({
     }
   };
 
-  const deleteDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Department> => {
+  const deleteDepartment = async (id: number, loggedUser: LoggedUser | null): Promise<Department> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -166,13 +163,13 @@ export const buildDepartmentService = ({
     return enrichEntityWithEditableStatus(deletedDepartment, loggedUser);
   };
 
-  const createDepartements = async (
-    departements: Omit<DepartementCreateInput, "owner_id">[],
+  const createDepartments = async (
+    departments: Omit<DepartementCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Department[]> => {
     const createdDepartments = await departmentRepository.createDepartements(
-      departements.map((departement) => {
-        return { ...departement, owner_id: loggedUser.id };
+      departments.map((department) => {
+        return { ...department, owner_id: loggedUser.id };
       })
     );
 
@@ -184,18 +181,18 @@ export const buildDepartmentService = ({
   };
 
   return {
-    findDepartement,
-    getDonneesCountByDepartement,
-    getLieuxDitsCountByDepartement,
-    getCommunesCountByDepartement,
-    findDepartementOfCommuneId,
-    findAllDepartements,
-    findPaginatedDepartements,
-    getDepartementsCount,
-    createDepartement,
-    updateDepartement,
-    deleteDepartement,
-    createDepartements,
+    findDepartment,
+    getEntriesCountByDepartment,
+    getLocalitiesCountByDepartment,
+    getTownsCountByDepartment,
+    findDepartmentOfTownId,
+    findAllDepartments,
+    findPaginatedDepartments,
+    getDepartmentsCount,
+    createDepartment,
+    updateDepartment,
+    deleteDepartment,
+    createDepartments,
   };
 };
 

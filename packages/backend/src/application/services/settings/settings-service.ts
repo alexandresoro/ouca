@@ -46,7 +46,7 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
       defaultDepartementId != null
-        ? departmentService.findDepartement(parseInt(defaultDepartementId), loggedUser)
+        ? departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
         ? (await observerService.findObserver(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
@@ -101,7 +101,7 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
       defaultDepartementId != null
-        ? departmentService.findDepartement(parseInt(defaultDepartementId), loggedUser)
+        ? departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
         ? (await observerService.findObserver(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()

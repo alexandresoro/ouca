@@ -48,8 +48,8 @@ describe("Fetch app configuration for user", () => {
 
     expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
     expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
-    expect(departmentService.findDepartement).toHaveBeenCalledTimes(1);
-    expect(departmentService.findDepartement).toHaveBeenCalledWith(7, loggedUser);
+    expect(departmentService.findDepartment).toHaveBeenCalledTimes(1);
+    expect(departmentService.findDepartment).toHaveBeenCalledWith(7, loggedUser);
     expect(observerService.findObserver).toHaveBeenCalledTimes(1);
     expect(observerService.findObserver).toHaveBeenCalledWith(13, loggedUser);
   });
@@ -69,7 +69,7 @@ describe("Fetch app configuration for user", () => {
 
     expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
     expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
-    expect(departmentService.findDepartement).not.toHaveBeenCalled();
+    expect(departmentService.findDepartment).not.toHaveBeenCalled();
     expect(observerService.findObserver).not.toHaveBeenCalled();
   });
 
@@ -119,8 +119,8 @@ test("should update settings with parameters for user", async () => {
     isMeteoDisplayed: true,
     isRegroupementDisplayed: true,
   });
-  expect(departmentService.findDepartement).toHaveBeenCalledTimes(1);
-  expect(departmentService.findDepartement).toHaveBeenCalledWith(2, loggedUser);
+  expect(departmentService.findDepartment).toHaveBeenCalledTimes(1);
+  expect(departmentService.findDepartment).toHaveBeenCalledWith(2, loggedUser);
   expect(observerService.findObserver).toHaveBeenCalledTimes(1);
   expect(observerService.findObserver).toHaveBeenCalledWith(5, loggedUser);
 });

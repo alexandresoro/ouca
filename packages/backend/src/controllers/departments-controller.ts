@@ -23,7 +23,7 @@ const departmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const department = await departmentService.findDepartement(req.params.id, req.user);
+    const department = await departmentService.findDepartment(req.params.id, req.user);
     if (!department) {
       return await reply.status(404).send();
     }
@@ -44,17 +44,17 @@ const departmentsController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const [departmentsData, count] = await Promise.all([
-      departmentService.findPaginatedDepartements(req.user, queryParams),
-      departmentService.getDepartementsCount(req.user, queryParams.q),
+      departmentService.findPaginatedDepartments(req.user, queryParams),
+      departmentService.getDepartmentsCount(req.user, queryParams.q),
     ]);
 
     let data: Department[] | DepartmentExtended[] = departmentsData;
     if (extended) {
       data = await Promise.all(
         departmentsData.map(async (departmentData) => {
-          const localitiesCount = await departmentService.getLieuxDitsCountByDepartement(departmentData.id, req.user);
-          const townsCount = await departmentService.getCommunesCountByDepartement(departmentData.id, req.user);
-          const entriesCount = await departmentService.getDonneesCountByDepartement(departmentData.id, req.user);
+          const localitiesCount = await departmentService.getLocalitiesCountByDepartment(departmentData.id, req.user);
+          const townsCount = await departmentService.getTownsCountByDepartment(departmentData.id, req.user);
+          const entriesCount = await departmentService.getEntriesCountByDepartment(departmentData.id, req.user);
           return {
             ...departmentData,
             localitiesCount,
@@ -84,7 +84,7 @@ const departmentsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const department = await departmentService.createDepartement(input, req.user);
+      const department = await departmentService.createDepartment(input, req.user);
       const response = upsertDepartmentResponse.parse(department);
 
       return await reply.send(response);
@@ -110,7 +110,7 @@ const departmentsController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const department = await departmentService.updateDepartement(req.params.id, input, req.user);
+      const department = await departmentService.updateDepartment(req.params.id, input, req.user);
       const response = upsertDepartmentResponse.parse(department);
 
       return await reply.send(response);
@@ -128,7 +128,7 @@ const departmentsController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await departmentService.deleteDepartement(req.params.id, req.user);
+      const { id: deletedId } = await departmentService.deleteDepartment(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {

@@ -14,7 +14,7 @@ export class ImportDepartementService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.departementsToInsert = [];
-    this.departements = await this.services.departmentService.findAllDepartements();
+    this.departements = await this.services.departmentService.findAllDepartments();
   };
 
   protected validateAndPrepareEntity = (departementTab: string[]): string | null => {
@@ -43,7 +43,7 @@ export class ImportDepartementService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.departementsToInsert.length) {
-      await this.services.departmentService.createDepartements(this.departementsToInsert, loggedUser);
+      await this.services.departmentService.createDepartments(this.departementsToInsert, loggedUser);
     }
   };
 }

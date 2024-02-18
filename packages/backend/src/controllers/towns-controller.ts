@@ -53,7 +53,7 @@ const townsController: FastifyPluginCallback<{
       data = await Promise.all(
         townsData.map(async (townData) => {
           // TODO look to optimize this request
-          const department = await departmentService.findDepartementOfCommuneId(townData.id, req.user);
+          const department = await departmentService.findDepartmentOfTownId(townData.id, req.user);
           const localitiesCount = await townService.getLieuxDitsCountByCommune(townData.id, req.user);
           const entriesCount = await townService.getDonneesCountByCommune(townData.id, req.user);
           return {

@@ -18,7 +18,7 @@ export class ImportCommuneService extends ImportService {
   protected init = async (): Promise<void> => {
     this.communesToInsert = [];
     [this.departements, this.communes] = await Promise.all([
-      this.services.departmentService.findAllDepartements(),
+      this.services.departmentService.findAllDepartments(),
       this.services.townService.findAllCommunes(),
     ]);
   };
