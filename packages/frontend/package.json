@@ -40,7 +40,7 @@
     "@turf/convex": "6.5.0",
     "@turf/helpers": "6.5.0",
     "date-fns": "3.3.1",
-    "i18next": "23.8.2",
+    "i18next": "23.9.0",
     "i18next-http-backend": "2.4.3",
     "jotai": "2.6.4",
     "lru-cache": "10.2.0",
