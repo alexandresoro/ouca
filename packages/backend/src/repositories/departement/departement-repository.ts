@@ -195,7 +195,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     return slonik.one(query);
   };
 
-  const deleteDepartementById = async (departementId: number): Promise<Department> => {
+  const deleteDepartementById = async (departementId: number): Promise<Department | null> => {
     const query = sql.type(departmentSchema)`
       DELETE
       FROM
@@ -208,7 +208,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
         departement.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

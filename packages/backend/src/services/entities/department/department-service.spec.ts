@@ -1,9 +1,9 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { departmentFactory } from "@fixtures/domain/department/department.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDepartmentInputFactory } from "@fixtures/services/department/department-service.fixtures.js";
 import { type DepartmentsSearchParams } from "@ou-ca/common/api/department";
+import { err, ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
 import { type DepartementRepository } from "../../../repositories/departement/departement-repository.js";
@@ -50,14 +50,16 @@ describe("Find department", () => {
     departmentRepository.findDepartementById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(departmentService.findDepartment(10, loggedUser)).resolves.toEqual(null);
+    await expect(departmentService.findDepartment(10, loggedUser)).resolves.toEqual(ok(null));
 
     expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(departmentService.findDepartment(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const findResult = await departmentService.findDepartment(11, null);
+
+    expect(findResult).toEqual(err("notAllowed"));
     expect(departmentRepository.findDepartementById).not.toHaveBeenCalled();
   });
 });
@@ -73,7 +75,9 @@ describe("Cities count per entity", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.getTownsCountByDepartment("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const townsCountResult = await departmentService.getTownsCountByDepartment("12", null);
+
+    expect(townsCountResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -88,9 +92,9 @@ describe("Localities count per entity", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.getLocalitiesCountByDepartment("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    const localitiesCountResult = await departmentService.getLocalitiesCountByDepartment("12", null);
+
+    expect(localitiesCountResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -105,7 +109,9 @@ describe("Data count per entity", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.getEntriesCountByDepartment("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const entriesCountResult = await departmentService.getEntriesCountByDepartment("12", null);
+
+    expect(entriesCountResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -118,15 +124,18 @@ describe("Find department by city ID", () => {
 
     departmentRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
 
-    const department = await departmentService.findDepartmentOfTownId("43", loggedUser);
+    const departmentResult = await departmentService.findDepartmentOfTownId("43", loggedUser);
 
     expect(departmentRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
     expect(departmentRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
-    expect(department?.id).toEqual("256");
+    expect(departmentResult.isOk()).toBeTruthy();
+    expect(departmentResult._unsafeUnwrap()?.id).toEqual("256");
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.findDepartmentOfTownId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const findResult = await departmentService.findDepartmentOfTownId("12", null);
+
+    expect(findResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -183,7 +192,9 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.findPaginatedDepartments(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
+    const entitiesPaginatedResult = await departmentService.findPaginatedDepartments(null, {});
+
+    expect(entitiesPaginatedResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -207,7 +218,9 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.getDepartmentsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const entitiesCountResult = await departmentService.getDepartmentsCount(null);
+
+    expect(entitiesCountResult).toEqual(err("notAllowed"));
   });
 });
 
@@ -254,10 +267,9 @@ describe("Update of a department", () => {
 
     departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await expect(departmentService.updateDepartment(12, departmentData, user)).rejects.toThrowError(
-      new OucaError("OUCA0001")
-    );
+    const updateResult = await departmentService.updateDepartment(12, departmentData, user);
 
+    expect(updateResult).toEqual(err("notAllowed"));
     expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
   });
 
@@ -268,10 +280,9 @@ describe("Update of a department", () => {
 
     departmentRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => departmentService.updateDepartment(12, departmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
-    );
+    const updateResult = await departmentService.updateDepartment(12, departmentData, loggedUser);
 
+    expect(updateResult).toEqual(err("alreadyExists"));
     expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
     expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
@@ -279,9 +290,9 @@ describe("Update of a department", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
-    await expect(departmentService.updateDepartment(12, departmentData, null)).rejects.toEqual(
-      new OucaError("OUCA0001")
-    );
+    const updateResult = await departmentService.updateDepartment(12, departmentData, null);
+
+    expect(updateResult).toEqual(err("notAllowed"));
     expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
   });
 });
@@ -308,10 +319,9 @@ describe("Creation of a department", () => {
 
     departmentRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => departmentService.createDepartment(departmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
-    );
+    const createResult = await departmentService.createDepartment(departmentData, loggedUser);
 
+    expect(createResult).toEqual(err("alreadyExists"));
     expect(departmentRepository.createDepartement).toHaveBeenCalledTimes(1);
     expect(departmentRepository.createDepartement).toHaveBeenLastCalledWith({
       ...departmentData,
@@ -322,7 +332,9 @@ describe("Creation of a department", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
-    await expect(departmentService.createDepartment(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const createResult = await departmentService.createDepartment(departmentData, null);
+
+    expect(createResult).toEqual(err("notAllowed"));
     expect(departmentRepository.createDepartement).not.toHaveBeenCalled();
   });
 });
@@ -359,20 +371,21 @@ describe("Deletion of a department", () => {
     expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when deleting a non-owned department as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned department as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      id: "12",
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(departmentFactory.build());
+    const deleteResult = await departmentService.deleteDepartment(11, loggedUser);
 
-    await expect(departmentService.deleteDepartment(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
-
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(departmentService.deleteDepartment(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const deleteResult = await departmentService.deleteDepartment(11, null);
+
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 });

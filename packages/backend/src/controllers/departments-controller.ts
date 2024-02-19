@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getDepartmentResponse,
   getDepartmentsExtendedResponse,
@@ -9,8 +8,9 @@ import {
 } from "@ou-ca/common/api/department";
 import { type Department, type DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
+import { Result } from "neverthrow";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const departmentsController: FastifyPluginCallback<{
@@ -23,7 +23,20 @@ const departmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const department = await departmentService.findDepartment(req.params.id, req.user);
+    const departmentResult = await departmentService.findDepartment(req.params.id, req.user);
+
+    if (departmentResult.isErr()) {
+      switch (departmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: departmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const department = departmentResult.value;
+
     if (!department) {
       return await reply.status(404).send();
     }
@@ -43,18 +56,36 @@ const departmentsController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [departmentsData, count] = await Promise.all([
-      departmentService.findPaginatedDepartments(req.user, queryParams),
-      departmentService.getDepartmentsCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await departmentService.findPaginatedDepartments(req.user, queryParams),
+      await departmentService.getDepartmentsCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [departmentsData, count] = paginatedResults.value;
 
     let data: Department[] | DepartmentExtended[] = departmentsData;
     if (extended) {
       data = await Promise.all(
         departmentsData.map(async (departmentData) => {
-          const localitiesCount = await departmentService.getLocalitiesCountByDepartment(departmentData.id, req.user);
-          const townsCount = await departmentService.getTownsCountByDepartment(departmentData.id, req.user);
-          const entriesCount = await departmentService.getEntriesCountByDepartment(departmentData.id, req.user);
+          const localitiesCount = (
+            await departmentService.getLocalitiesCountByDepartment(departmentData.id, req.user)
+          )._unsafeUnwrap();
+          const townsCount = (
+            await departmentService.getTownsCountByDepartment(departmentData.id, req.user)
+          )._unsafeUnwrap();
+          const entriesCount = (
+            await departmentService.getEntriesCountByDepartment(departmentData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...departmentData,
             localitiesCount,
@@ -83,17 +114,22 @@ const departmentsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const department = await departmentService.createDepartment(input, req.user);
-      const response = upsertDepartmentResponse.parse(department);
+    const departmentResult = await departmentService.createDepartment(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (departmentResult.isErr()) {
+      switch (departmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: departmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertDepartmentResponse.parse(departmentResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -109,17 +145,22 @@ const departmentsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const department = await departmentService.updateDepartment(req.params.id, input, req.user);
-      const response = upsertDepartmentResponse.parse(department);
+    const departmentResult = await departmentService.updateDepartment(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (departmentResult.isErr()) {
+      switch (departmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: departmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertDepartmentResponse.parse(departmentResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -127,15 +168,25 @@ const departmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await departmentService.deleteDepartment(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
+    const deletedDepartmentResult = await departmentService.deleteDepartment(req.params.id, req.user);
+
+    if (deletedDepartmentResult.isErr()) {
+      switch (deletedDepartmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedDepartmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const deletedDepartment = deletedDepartmentResult.value;
+
+    if (!deletedDepartment) {
+      return await reply.status(404).send();
+    }
+
+    return await reply.send({ id: deletedDepartment.id });
   });
 
   done();

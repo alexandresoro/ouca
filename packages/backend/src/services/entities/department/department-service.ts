@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import { type DepartmentFailureReason } from "@domain/department/department.js";
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/api/entities/department";
+import { err, ok, type Result } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
 import { type DepartementCreateInput } from "../../../repositories/departement/departement-repository-types.js";
 import { type DepartementRepository } from "../../../repositories/departement/departement-repository.js";
@@ -24,41 +25,63 @@ export const buildDepartmentService = ({
   localityRepository,
   entryRepository,
 }: DepartmentServiceDependencies) => {
-  const findDepartment = async (id: number, loggedUser: LoggedUser | null): Promise<Department | null> => {
-    validateAuthorization(loggedUser);
+  const findDepartment = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<Department | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const department = await departmentRepository.findDepartementById(id);
-    return enrichEntityWithEditableStatus(department, loggedUser);
+    return ok(enrichEntityWithEditableStatus(department, loggedUser));
   };
 
-  const getEntriesCountByDepartment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountByDepartment = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByDepartementId(parseInt(id));
+    return ok(await entryRepository.getCountByDepartementId(parseInt(id)));
   };
 
-  const getLocalitiesCountByDepartment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getLocalitiesCountByDepartment = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return localityRepository.getCountByDepartementId(parseInt(id));
+    return ok(await localityRepository.getCountByDepartementId(parseInt(id)));
   };
 
-  const getTownsCountByDepartment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getTownsCountByDepartment = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return townRepository.getCountByDepartementId(parseInt(id));
+    return ok(await townRepository.getCountByDepartementId(parseInt(id)));
   };
 
   const findDepartmentOfTownId = async (
     communeId: string | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Department | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Department | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const department = await departmentRepository.findDepartementByCommuneId(
       communeId ? parseInt(communeId) : undefined
     );
-    return enrichEntityWithEditableStatus(department, loggedUser);
+    return ok(enrichEntityWithEditableStatus(department, loggedUser));
   };
 
   const findAllDepartments = async (): Promise<Department[]> => {
@@ -76,8 +99,10 @@ export const buildDepartmentService = ({
   const findPaginatedDepartments = async (
     loggedUser: LoggedUser | null,
     options: DepartmentsSearchParams
-  ): Promise<Department[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Department[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -92,17 +117,27 @@ export const buildDepartmentService = ({
       return enrichEntityWithEditableStatus(department, loggedUser);
     });
 
-    return [...enrichedDepartments];
+    return ok([...enrichedDepartments]);
   };
 
-  const getDepartmentsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getDepartmentsCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return departmentRepository.getCount(q);
+    return ok(await departmentRepository.getCount(q));
   };
 
-  const createDepartment = async (input: UpsertDepartmentInput, loggedUser: LoggedUser | null): Promise<Department> => {
-    validateAuthorization(loggedUser);
+  const createDepartment = async (
+    input: UpsertDepartmentInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<Department, DepartmentFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdDepartment = await departmentRepository.createDepartement({
@@ -110,10 +145,10 @@ export const buildDepartmentService = ({
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdDepartment, loggedUser);
+      return ok(enrichEntityWithEditableStatus(createdDepartment, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -123,44 +158,51 @@ export const buildDepartmentService = ({
     id: number,
     input: UpsertDepartmentInput,
     loggedUser: LoggedUser | null
-  ): Promise<Department> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Department, DepartmentFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await departmentRepository.findDepartementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     try {
       const updatedDepartment = await departmentRepository.updateDepartement(id, input);
 
-      return enrichEntityWithEditableStatus(updatedDepartment, loggedUser);
+      return ok(enrichEntityWithEditableStatus(updatedDepartment, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteDepartment = async (id: number, loggedUser: LoggedUser | null): Promise<Department> => {
-    validateAuthorization(loggedUser);
+  const deleteDepartment = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<Department | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await departmentRepository.findDepartementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedDepartment = await departmentRepository.deleteDepartementById(id);
-    return enrichEntityWithEditableStatus(deletedDepartment, loggedUser);
+    return ok(deletedDepartment ? enrichEntityWithEditableStatus(deletedDepartment, loggedUser) : null);
   };
 
   const createDepartments = async (
