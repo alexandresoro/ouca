@@ -60,7 +60,7 @@ export const buildDepartmentRepository = () => {
           .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
 
         if (q?.length) {
-          queryDepartment = queryDepartment.where(sql`unaccent(code)`, "ilike", sql`unaccent(${`%${q}%`})`);
+          queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
         }
 
         queryDepartment = queryDepartment
@@ -77,7 +77,7 @@ export const buildDepartmentRepository = () => {
           .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
 
         if (q?.length) {
-          queryDepartment = queryDepartment.where(sql`unaccent(code)`, "ilike", sql`unaccent(${`%${q}%`})`);
+          queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
         }
 
         queryDepartment = queryDepartment
@@ -93,7 +93,7 @@ export const buildDepartmentRepository = () => {
           .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
 
         if (q?.length) {
-          queryDepartment = queryDepartment.where(sql`unaccent(code)`, "ilike", sql`unaccent(${`%${q}%`})`);
+          queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
         }
 
         queryDepartment = queryDepartment
@@ -108,7 +108,7 @@ export const buildDepartmentRepository = () => {
           .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
 
         if (q?.length) {
-          queryDepartment = queryDepartment.where(sql`unaccent(code)`, "ilike", sql`unaccent(${`%${q}%`})`);
+          queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
         }
 
         if (orderBy) {
