@@ -57,7 +57,7 @@ export const buildDepartmentRepository = () => {
           .leftJoin("lieudit", "lieudit.communeId", "commune.id")
           .leftJoin("inventaire", "inventaire.lieuditId", "lieudit.id")
           .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
-          .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
+          .select([sql`basenaturaliste.departement.id::text`.as("id"), "departement.code", "departement.ownerId"]);
 
         if (q?.length) {
           queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
@@ -74,7 +74,7 @@ export const buildDepartmentRepository = () => {
           .selectFrom("departement")
           .leftJoin("commune", "commune.departementId", "departement.id")
           .leftJoin("lieudit", "lieudit.communeId", "commune.id")
-          .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
+          .select([sql`basenaturaliste.departement.id::text`.as("id"), "departement.code", "departement.ownerId"]);
 
         if (q?.length) {
           queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
@@ -90,7 +90,7 @@ export const buildDepartmentRepository = () => {
         queryDepartment = kysely
           .selectFrom("departement")
           .leftJoin("commune", "commune.departementId", "departement.id")
-          .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
+          .select([sql`basenaturaliste.departement.id::text`.as("id"), "departement.code", "departement.ownerId"]);
 
         if (q?.length) {
           queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
@@ -105,7 +105,7 @@ export const buildDepartmentRepository = () => {
       default:
         queryDepartment = kysely
           .selectFrom("departement")
-          .select([sql`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"]);
+          .select([sql`basenaturaliste.departement.id::text`.as("id"), "departement.code", "departement.ownerId"]);
 
         if (q?.length) {
           queryDepartment = queryDepartment.where(sql`unaccent(departement.code)`, "ilike", sql`unaccent(${`%${q}%`})`);
