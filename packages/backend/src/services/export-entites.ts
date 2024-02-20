@@ -8,12 +8,12 @@ import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper"
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
+import { type DepartmentService } from "../application/services/department/department-service.js";
 import { type ObserverService } from "../application/services/observer/observer-service.js";
 import { type SexService } from "../application/services/sex/sex-service.js";
 import { type WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type BehaviorService } from "./entities/behavior/behavior-service.js";
-import { type DepartmentService } from "./entities/department/department-service.js";
 import { type DistanceEstimateService } from "./entities/distance-estimate/distance-estimate-service.js";
 import { type DonneeService } from "./entities/donnee-service.js";
 import { type EnvironmentService } from "./entities/environment/environment-service.js";

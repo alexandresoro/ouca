@@ -1,19 +1,17 @@
-import { type DepartmentFailureReason } from "@domain/department/department.js";
+import { type DepartmentCreateInput, type DepartmentFailureReason } from "@domain/department/department.js";
 import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type DepartmentRepository } from "@interfaces/department-repository-interface.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/api/entities/department";
 import { err, ok, type Result } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
-import { type DepartementCreateInput } from "../../../repositories/departement/departement-repository-types.js";
-import { type DepartementRepository } from "../../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type DepartmentServiceDependencies = {
-  departmentRepository: DepartementRepository;
+  departmentRepository: DepartmentRepository;
   townRepository: CommuneRepository;
   localityRepository: LieuditRepository;
   entryRepository: DonneeRepository;
@@ -33,7 +31,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    const department = await departmentRepository.findDepartementById(id);
+    const department = await departmentRepository.findDepartmentById(id);
     return ok(enrichEntityWithEditableStatus(department, loggedUser));
   };
 
@@ -78,14 +76,12 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    const department = await departmentRepository.findDepartementByCommuneId(
-      communeId ? parseInt(communeId) : undefined
-    );
+    const department = await departmentRepository.findDepartmentByTownId(communeId ? parseInt(communeId) : undefined);
     return ok(enrichEntityWithEditableStatus(department, loggedUser));
   };
 
   const findAllDepartments = async (): Promise<Department[]> => {
-    const departments = await departmentRepository.findDepartements({
+    const departments = await departmentRepository.findDepartments({
       orderBy: "code",
     });
 
@@ -106,7 +102,7 @@ export const buildDepartmentService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const departments = await departmentRepository.findDepartements({
+    const departments = await departmentRepository.findDepartments({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -139,19 +135,14 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    try {
-      const createdDepartment = await departmentRepository.createDepartement({
-        ...input,
-        owner_id: loggedUser.id,
-      });
+    const createdDepartmentResult = await departmentRepository.createDepartment({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdDepartment, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdDepartmentResult.map((createdDepartment) => {
+      return enrichEntityWithEditableStatus(createdDepartment, loggedUser);
+    });
   };
 
   const updateDepartment = async (
@@ -165,23 +156,18 @@ export const buildDepartmentService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await departmentRepository.findDepartementById(id);
+      const existingData = await departmentRepository.findDepartmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updatedDepartment = await departmentRepository.updateDepartement(id, input);
+    const updatedDepartmentResult = await departmentRepository.updateDepartment(id, input);
 
-      return ok(enrichEntityWithEditableStatus(updatedDepartment, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updatedDepartmentResult.map((updatedDepartment) => {
+      return enrichEntityWithEditableStatus(updatedDepartment, loggedUser);
+    });
   };
 
   const deleteDepartment = async (
@@ -194,24 +180,24 @@ export const buildDepartmentService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await departmentRepository.findDepartementById(id);
+      const existingData = await departmentRepository.findDepartmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedDepartment = await departmentRepository.deleteDepartementById(id);
+    const deletedDepartment = await departmentRepository.deleteDepartmentById(id);
     return ok(deletedDepartment ? enrichEntityWithEditableStatus(deletedDepartment, loggedUser) : null);
   };
 
   const createDepartments = async (
-    departments: Omit<DepartementCreateInput, "owner_id">[],
+    departments: Omit<DepartmentCreateInput, "ownerId">[],
     loggedUser: LoggedUser
   ): Promise<readonly Department[]> => {
-    const createdDepartments = await departmentRepository.createDepartements(
+    const createdDepartments = await departmentRepository.createDepartments(
       departments.map((department) => {
-        return { ...department, owner_id: loggedUser.id };
+        return { ...department, ownerId: loggedUser.id };
       })
     );
 

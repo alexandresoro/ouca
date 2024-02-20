@@ -2,17 +2,16 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { departmentFactory } from "@fixtures/domain/department/department.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDepartmentInputFactory } from "@fixtures/services/department/department-service.fixtures.js";
+import { type DepartmentRepository } from "@interfaces/department-repository-interface.js";
 import { type DepartmentsSearchParams } from "@ou-ca/common/api/department";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
-import { type DepartementRepository } from "../../../repositories/departement/departement-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildDepartmentService } from "./department-service.js";
 
-const departmentRepository = mockVi<DepartementRepository>();
+const departmentRepository = mockVi<DepartmentRepository>();
 const townRepository = mockVi<CommuneRepository>();
 const localityRepository = mockVi<LieuditRepository>();
 const entryRepository = mockVi<DonneeRepository>();
@@ -24,43 +23,34 @@ const departmentService = buildDepartmentService({
   entryRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint"
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
-
 describe("Find department", () => {
   test("should handle a matching department", async () => {
     const departmentData = departmentFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(departmentData);
+    departmentRepository.findDepartmentById.mockResolvedValueOnce(departmentData);
 
     await departmentService.findDepartment(12, loggedUser);
 
-    expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(12);
+    expect(departmentRepository.findDepartmentById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartmentById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle department not found", async () => {
-    departmentRepository.findDepartementById.mockResolvedValueOnce(null);
+    departmentRepository.findDepartmentById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
     await expect(departmentService.findDepartment(10, loggedUser)).resolves.toEqual(ok(null));
 
-    expect(departmentRepository.findDepartementById).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.findDepartementById).toHaveBeenLastCalledWith(10);
+    expect(departmentRepository.findDepartmentById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartmentById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await departmentService.findDepartment(11, null);
 
     expect(findResult).toEqual(err("notAllowed"));
-    expect(departmentRepository.findDepartementById).not.toHaveBeenCalled();
+    expect(departmentRepository.findDepartmentById).not.toHaveBeenCalled();
   });
 });
 
@@ -122,12 +112,12 @@ describe("Find department by city ID", () => {
     });
     const loggedUser = loggedUserFactory.build();
 
-    departmentRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
+    departmentRepository.findDepartmentByTownId.mockResolvedValueOnce(departmentData);
 
     const departmentResult = await departmentService.findDepartmentOfTownId("43", loggedUser);
 
-    expect(departmentRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
+    expect(departmentRepository.findDepartmentByTownId).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartmentByTownId).toHaveBeenLastCalledWith(43);
     expect(departmentResult.isOk()).toBeTruthy();
     expect(departmentResult._unsafeUnwrap()?.id).toEqual("256");
   });
@@ -142,12 +132,12 @@ describe("Find department by city ID", () => {
 test("Find all departments", async () => {
   const departmentsData = departmentFactory.buildList(3);
 
-  departmentRepository.findDepartements.mockResolvedValueOnce(departmentsData);
+  departmentRepository.findDepartments.mockResolvedValueOnce(departmentsData);
 
   await departmentService.findAllDepartments();
 
-  expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
-  expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({
+  expect(departmentRepository.findDepartments).toHaveBeenCalledTimes(1);
+  expect(departmentRepository.findDepartments).toHaveBeenLastCalledWith({
     orderBy: "code",
   });
 });
@@ -157,12 +147,12 @@ describe("Entities paginated find by search criteria", () => {
     const departmentsData = departmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    departmentRepository.findDepartements.mockResolvedValueOnce(departmentsData);
+    departmentRepository.findDepartments.mockResolvedValueOnce(departmentsData);
 
     await departmentService.findPaginatedDepartments(loggedUser, {});
 
-    expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({});
+    expect(departmentRepository.findDepartments).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartments).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated departments", async () => {
@@ -177,12 +167,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    departmentRepository.findDepartements.mockResolvedValueOnce([departmentsData[0]]);
+    departmentRepository.findDepartments.mockResolvedValueOnce([departmentsData[0]]);
 
     await departmentService.findPaginatedDepartments(loggedUser, searchParams);
 
-    expect(departmentRepository.findDepartements).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.findDepartements).toHaveBeenLastCalledWith({
+    expect(departmentRepository.findDepartments).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.findDepartments).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "code",
       sortOrder: "desc",
@@ -230,10 +220,12 @@ describe("Update of a department", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    departmentRepository.updateDepartment.mockResolvedValueOnce(ok(departmentFactory.build()));
+
     await departmentService.updateDepartment(12, departmentData, loggedUser);
 
-    expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
+    expect(departmentRepository.updateDepartment).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.updateDepartment).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -245,12 +237,13 @@ describe("Update of a department", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
+    departmentRepository.findDepartmentById.mockResolvedValueOnce(existingData);
+    departmentRepository.updateDepartment.mockResolvedValueOnce(ok(departmentFactory.build()));
 
     await departmentService.updateDepartment(12, departmentData, loggedUser);
 
-    expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
+    expect(departmentRepository.updateDepartment).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.updateDepartment).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -265,12 +258,12 @@ describe("Update of a department", () => {
       role: "contributor",
     } as const;
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(existingData);
+    departmentRepository.findDepartmentById.mockResolvedValueOnce(existingData);
 
     const updateResult = await departmentService.updateDepartment(12, departmentData, user);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
+    expect(departmentRepository.updateDepartment).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when trying to update to a department that exists", async () => {
@@ -278,13 +271,13 @@ describe("Update of a department", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    departmentRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
+    departmentRepository.updateDepartment.mockResolvedValueOnce(err("alreadyExists"));
 
     const updateResult = await departmentService.updateDepartment(12, departmentData, loggedUser);
 
     expect(updateResult).toEqual(err("alreadyExists"));
-    expect(departmentRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
+    expect(departmentRepository.updateDepartment).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.updateDepartment).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -293,7 +286,7 @@ describe("Update of a department", () => {
     const updateResult = await departmentService.updateDepartment(12, departmentData, null);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(departmentRepository.updateDepartement).not.toHaveBeenCalled();
+    expect(departmentRepository.updateDepartment).not.toHaveBeenCalled();
   });
 });
 
@@ -303,12 +296,14 @@ describe("Creation of a department", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
+    departmentRepository.createDepartment.mockResolvedValueOnce(ok(departmentFactory.build()));
+
     await departmentService.createDepartment(departmentData, loggedUser);
 
-    expect(departmentRepository.createDepartement).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.createDepartement).toHaveBeenLastCalledWith({
+    expect(departmentRepository.createDepartment).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.createDepartment).toHaveBeenLastCalledWith({
       ...departmentData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -317,15 +312,15 @@ describe("Creation of a department", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    departmentRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
+    departmentRepository.createDepartment.mockResolvedValueOnce(err("alreadyExists"));
 
     const createResult = await departmentService.createDepartment(departmentData, loggedUser);
 
     expect(createResult).toEqual(err("alreadyExists"));
-    expect(departmentRepository.createDepartement).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.createDepartement).toHaveBeenLastCalledWith({
+    expect(departmentRepository.createDepartment).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.createDepartment).toHaveBeenLastCalledWith({
       ...departmentData,
-      owner_id: loggedUser.id,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -335,7 +330,7 @@ describe("Creation of a department", () => {
     const createResult = await departmentService.createDepartment(departmentData, null);
 
     expect(createResult).toEqual(err("notAllowed"));
-    expect(departmentRepository.createDepartement).not.toHaveBeenCalled();
+    expect(departmentRepository.createDepartment).not.toHaveBeenCalled();
   });
 });
 
@@ -350,12 +345,12 @@ describe("Deletion of a department", () => {
       ownerId: loggedUser.id,
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(department);
+    departmentRepository.findDepartmentById.mockResolvedValueOnce(department);
 
     await departmentService.deleteDepartment(11, loggedUser);
 
-    expect(departmentRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
+    expect(departmentRepository.deleteDepartmentById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.deleteDepartmentById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any department if admin", async () => {
@@ -363,12 +358,12 @@ describe("Deletion of a department", () => {
       role: "admin",
     });
 
-    departmentRepository.findDepartementById.mockResolvedValueOnce(departmentFactory.build());
+    departmentRepository.findDepartmentById.mockResolvedValueOnce(departmentFactory.build());
 
     await departmentService.deleteDepartment(11, loggedUser);
 
-    expect(departmentRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
-    expect(departmentRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
+    expect(departmentRepository.deleteDepartmentById).toHaveBeenCalledTimes(1);
+    expect(departmentRepository.deleteDepartmentById).toHaveBeenLastCalledWith(11);
   });
 
   test("should not be allowed when deleting a non-owned department as non-admin", async () => {
@@ -379,14 +374,14 @@ describe("Deletion of a department", () => {
     const deleteResult = await departmentService.deleteDepartment(11, loggedUser);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
+    expect(departmentRepository.deleteDepartmentById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await departmentService.deleteDepartment(11, null);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(departmentRepository.deleteDepartementById).not.toHaveBeenCalled();
+    expect(departmentRepository.deleteDepartmentById).not.toHaveBeenCalled();
   });
 });
 
@@ -395,16 +390,16 @@ test("Create multiple departments", async () => {
 
   const loggedUser = loggedUserFactory.build();
 
-  departmentRepository.createDepartements.mockResolvedValueOnce([]);
+  departmentRepository.createDepartments.mockResolvedValueOnce([]);
 
   await departmentService.createDepartments(departmentsData, loggedUser);
 
-  expect(departmentRepository.createDepartements).toHaveBeenCalledTimes(1);
-  expect(departmentRepository.createDepartements).toHaveBeenLastCalledWith(
+  expect(departmentRepository.createDepartments).toHaveBeenCalledTimes(1);
+  expect(departmentRepository.createDepartments).toHaveBeenLastCalledWith(
     departmentsData.map((department) => {
       return {
         ...department,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     })
   );

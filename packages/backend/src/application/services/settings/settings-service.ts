@@ -2,11 +2,11 @@ import { type SettingsEnriched, type UpdateSettingsInput } from "@domain/setting
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { type DepartmentService } from "../../../services/entities/department/department-service.js";
 import { type NumberEstimateService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { logger } from "../../../utils/logger.js";
 import { type AgeService } from "../age/age-service.js";
 import { validateAuthorization } from "../authorization/authorization-utils.js";
+import { type DepartmentService } from "../department/department-service.js";
 import { type ObserverService } from "../observer/observer-service.js";
 import { type SexService } from "../sex/sex-service.js";
 

@@ -1,6 +1,7 @@
 import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
+import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
@@ -8,6 +9,10 @@ import { buildUserRepository } from "@infrastructure/repositories/user/user-repo
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import { type DatabasePool } from "slonik";
 import { buildAgeService, type AgeService } from "../application/services/age/age-service.js";
+import {
+  buildDepartmentService,
+  type DepartmentService,
+} from "../application/services/department/department-service.js";
 import { buildObserverService, type ObserverService } from "../application/services/observer/observer-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
@@ -16,7 +21,6 @@ import { buildWeatherService, type WeatherService } from "../application/service
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
 import { buildComportementRepository } from "../repositories/comportement/comportement-repository.js";
-import { buildDepartementRepository } from "../repositories/departement/departement-repository.js";
 import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
@@ -31,7 +35,6 @@ import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { buildBehaviorService, type BehaviorService } from "./entities/behavior/behavior-service.js";
-import { buildDepartmentService, type DepartmentService } from "./entities/department/department-service.js";
 import {
   buildDistanceEstimateService,
   type DistanceEstimateService,
@@ -83,7 +86,7 @@ export const buildServices = async (): Promise<Services> => {
   const ageRepository = buildAgeRepository();
   const behaviorRepository = buildComportementRepository({ slonik });
   const classRepository = buildClasseRepository({ slonik });
-  const departmentRepository = buildDepartementRepository({ slonik });
+  const departmentRepository = buildDepartmentRepository();
   const distanceEstimateRepository = buildEstimationDistanceRepository({ slonik });
   const entryRepository = buildDonneeRepository({ slonik });
   const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
