@@ -41,7 +41,7 @@
     "@turf/helpers": "6.5.0",
     "date-fns": "3.3.1",
     "i18next": "23.9.0",
-    "i18next-http-backend": "2.4.3",
+    "i18next-http-backend": "2.5.0",
     "jotai": "2.6.4",
     "lru-cache": "10.2.0",
     "maplibre-gl": "4.0.2",
