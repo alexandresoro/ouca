@@ -32,7 +32,7 @@ export const buildDepartmentRepository = () => {
     const departmentResult = await kysely
       .selectFrom("departement")
       .leftJoin("commune", "commune.departementId", "departement.id")
-      .select([sql<string>`basenaturaliste.departement.id::text`.as("id"), "code", "departement.ownerId"])
+      .select([sql<string>`basenaturaliste.departement.id::text`.as("id"), "departement.code", "departement.ownerId"])
       .where("commune.id", "=", townId)
       .executeTakeFirst();
 
