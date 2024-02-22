@@ -2,7 +2,8 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { numberEstimateFactory } from "@fixtures/domain/number-estimate/number-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import { upsertNumberEstimateInputFactory } from "@fixtures/services/number-estimate/number-estimate-service.fixtures.js";
+import { type NumberEstimatesSearchParams } from "@ou-ca/common/api/number-estimate";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -193,7 +194,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a number estimate", () => {
   test("should be allowed when requested by an admin", async () => {
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -212,7 +213,7 @@ describe("Update of a number estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -233,7 +234,7 @@ describe("Update of a number estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -250,7 +251,7 @@ describe("Update of a number estimate", () => {
   });
 
   test("should not be allowed when trying to update to a number estimate that exists", async () => {
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -269,7 +270,7 @@ describe("Update of a number estimate", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     await expect(numberEstimateService.updateNumberEstimate(12, numberEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -280,7 +281,7 @@ describe("Update of a number estimate", () => {
 
 describe("Creation of a number estimate", () => {
   test("should create new number estimate", async () => {
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -298,7 +299,7 @@ describe("Creation of a number estimate", () => {
   });
 
   test("should not be allowed when trying to create a number estimate that already exists", async () => {
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -320,7 +321,7 @@ describe("Creation of a number estimate", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const numberEstimateData = mock<UpsertNumberEstimateInput>();
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
     await expect(numberEstimateService.createNumberEstimate(numberEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")

@@ -2,7 +2,8 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
+import { upsertSpeciesClassInputFactory } from "@fixtures/services/species-class/species-class-service.fixtures.js";
+import { type ClassesSearchParams } from "@ou-ca/common/api/species-class";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { type ClasseCreateInput } from "../../../repositories/classe/classe-repository-types.js";
@@ -198,7 +199,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a class", () => {
   test("should be allowed when requested by an admin", async () => {
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -213,7 +214,7 @@ describe("Update of a class", () => {
       ownerId: "notAdmin",
     });
 
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -230,7 +231,7 @@ describe("Update of a class", () => {
       ownerId: "notAdmin",
     });
 
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     const loggedUser = {
       id: "Bob",
@@ -247,7 +248,7 @@ describe("Update of a class", () => {
   });
 
   test("should not be allowed when trying to update to a class that exists", async () => {
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -262,7 +263,7 @@ describe("Update of a class", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     await expect(speciesClassService.updateSpeciesClass(12, classData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -273,7 +274,7 @@ describe("Update of a class", () => {
 
 describe("Creation of a class", () => {
   test("should create new class", async () => {
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -287,7 +288,7 @@ describe("Creation of a class", () => {
   });
 
   test("should not be allowed when trying to create a class that already exists", async () => {
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -305,7 +306,7 @@ describe("Creation of a class", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const classData = mock<UpsertClassInput>();
+    const classData = upsertSpeciesClassInputFactory.build();
 
     await expect(speciesClassService.createSpeciesClass(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classRepository.createClasse).not.toHaveBeenCalled();

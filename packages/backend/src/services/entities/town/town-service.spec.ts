@@ -2,7 +2,8 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { townFactory } from "@fixtures/domain/town/town.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
+import { upsertTownInputFactory } from "@fixtures/services/town/town-service.fixtures.js";
+import { type TownsSearchParams } from "@ou-ca/common/api/town";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -205,7 +206,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a city", () => {
   test("should be allowed when requested by an admin", async () => {
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -224,7 +225,7 @@ describe("Update of a city", () => {
       ownerId: "notAdmin",
     });
 
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -245,7 +246,7 @@ describe("Update of a city", () => {
       ownerId: "notAdmin",
     });
 
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -260,7 +261,7 @@ describe("Update of a city", () => {
   });
 
   test("should not be allowed when trying to update to a city that exists", async () => {
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -279,7 +280,7 @@ describe("Update of a city", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     await expect(townService.updateTown(12, cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.updateCommune).not.toHaveBeenCalled();
@@ -288,7 +289,7 @@ describe("Update of a city", () => {
 
 describe("Creation of a city", () => {
   test("should create new city", async () => {
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -306,7 +307,7 @@ describe("Creation of a city", () => {
   });
 
   test("should not be allowed when trying to create a city that already exists", async () => {
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputTownUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -328,7 +329,7 @@ describe("Creation of a city", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const cityData = mock<UpsertTownInput>();
+    const cityData = upsertTownInputFactory.build();
 
     await expect(townService.createTown(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(townRepository.createCommune).not.toHaveBeenCalled();

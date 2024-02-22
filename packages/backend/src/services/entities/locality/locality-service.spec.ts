@@ -2,8 +2,9 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { upsertLocalityInputFactory } from "@fixtures/services/locality/locality-service.fixtures.js";
 import { type Locality as LocalityCommon } from "@ou-ca/common/api/entities/locality";
-import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type LocalitiesSearchParams } from "@ou-ca/common/api/locality";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -215,7 +216,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a locality", () => {
   test("should be allowed when requested by an admin", async () => {
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -235,7 +236,7 @@ describe("Update of a locality", () => {
       ownerId: "notAdmin",
     });
 
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -256,7 +257,7 @@ describe("Update of a locality", () => {
       ownerId: "notAdmin",
     });
 
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -273,7 +274,7 @@ describe("Update of a locality", () => {
   });
 
   test("should not be allowed when trying to update to a locality that exists", async () => {
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -292,7 +293,7 @@ describe("Update of a locality", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     await expect(localityService.updateLocality(12, localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
@@ -301,7 +302,7 @@ describe("Update of a locality", () => {
 
 describe("Creation of a locality", () => {
   test("should create new locality", async () => {
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -321,7 +322,7 @@ describe("Creation of a locality", () => {
   });
 
   test("should not be allowed when trying to create a locality that already exists", async () => {
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLocalityUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -343,7 +344,7 @@ describe("Creation of a locality", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const localityData = mock<UpsertLocalityInput>();
+    const localityData = upsertLocalityInputFactory.build();
 
     await expect(localityService.createLocality(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(localityRepository.createLieudit).not.toHaveBeenCalled();

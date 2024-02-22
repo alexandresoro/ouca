@@ -2,7 +2,8 @@ import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { upsertSpeciesInputFactory } from "@fixtures/services/species/species-service.fixtures.js";
+import { type SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -272,7 +273,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a species", () => {
   test("should be allowed when requested by an admin", async () => {
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -296,7 +297,7 @@ describe("Update of a species", () => {
       ownerId: "notAdmin",
     });
 
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -322,7 +323,7 @@ describe("Update of a species", () => {
       ownerId: "notAdmin",
     });
 
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     const user = {
       id: "Bob",
@@ -337,7 +338,7 @@ describe("Update of a species", () => {
   });
 
   test("should not be allowed when trying to update to a species that exists", async () => {
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -356,7 +357,7 @@ describe("Update of a species", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     await expect(speciesService.updateSpecies(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.updateEspece).not.toHaveBeenCalled();
@@ -365,7 +366,7 @@ describe("Update of a species", () => {
 
 describe("Creation of a species", () => {
   test("should create new species", async () => {
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -388,7 +389,7 @@ describe("Creation of a species", () => {
   });
 
   test("should not be allowed when trying to create a species that already exists", async () => {
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -410,7 +411,7 @@ describe("Creation of a species", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const speciesData = mock<UpsertSpeciesInput>();
+    const speciesData = upsertSpeciesInputFactory.build();
 
     await expect(speciesService.createSpecies(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(speciesRepository.createEspece).not.toHaveBeenCalled();
