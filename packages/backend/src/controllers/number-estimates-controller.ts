@@ -77,10 +77,9 @@ const numberEstimatesController: FastifyPluginCallback<{
     if (extended) {
       data = await Promise.all(
         numberEstimatesData.map(async (numberEstimateData) => {
-          const entriesCount = await numberEstimateService.getEntriesCountByNumberEstimate(
-            numberEstimateData.id,
-            req.user
-          );
+          const entriesCount = (
+            await numberEstimateService.getEntriesCountByNumberEstimate(numberEstimateData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...numberEstimateData,
             entriesCount,
