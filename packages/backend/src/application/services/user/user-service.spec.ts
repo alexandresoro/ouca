@@ -1,7 +1,7 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { createUserInputFactory } from "@fixtures/domain/user/user.fixtures.js";
 import { type UserRepository } from "@interfaces/user-repository-interface.js";
+import { err } from "neverthrow";
 import { mockVi } from "../../../utils/mock.js";
 import { buildUserService } from "./user-service.js";
 
@@ -51,8 +51,9 @@ describe("User deletion", () => {
       role: "contributor",
     });
 
-    await expect(userService.deleteUser("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    const deleteResult = await userService.deleteUser("11", loggedUser);
 
+    expect(deleteResult).toEqual(err("notAllowed"));
     expect(userRepository.deleteUserById).not.toHaveBeenCalled();
   });
 });
