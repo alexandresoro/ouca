@@ -1,6 +1,7 @@
 import { getSettingsResponse, putSettingsInput, putSettingsResponse } from "@ou-ca/common/api/settings";
 import { type FastifyPluginCallback } from "fastify";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 
 const settingsController: FastifyPluginCallback<{
   services: Services;
@@ -8,7 +9,20 @@ const settingsController: FastifyPluginCallback<{
   const { settingsService } = services;
 
   fastify.get("/", async (req, reply) => {
-    const settings = await settingsService.getSettings(req.user);
+    const settingsResult = await settingsService.getSettings(req.user);
+
+    if (settingsResult.isErr()) {
+      switch (settingsResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: settingsResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const settings = settingsResult.value;
+
     if (settings) {
       const response = getSettingsResponse.parse(settings);
       return await reply.send(response);
@@ -26,8 +40,19 @@ const settingsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const updatedSettings = await settingsService.updateUserSettings(input, req.user);
-    const response = putSettingsResponse.parse(updatedSettings);
+    const updatedSettingsResult = await settingsService.updateUserSettings(input, req.user);
+
+    if (updatedSettingsResult.isErr()) {
+      switch (updatedSettingsResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: updatedSettingsResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const response = putSettingsResponse.parse(updatedSettingsResult.value);
 
     return await reply.send(response);
   });

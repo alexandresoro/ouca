@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { ageServiceFactory } from "@fixtures/services/age/age-service.fixtures.js";
@@ -7,7 +6,7 @@ import { observerServiceFactory } from "@fixtures/services/observer/observer-ser
 import { sexServiceFactory } from "@fixtures/services/sex/sex-service.fixtures.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { ok } from "neverthrow";
+import { err, ok } from "neverthrow";
 import { type NumberEstimateService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { mockVi } from "../../../utils/mock.js";
 import { type AgeService } from "../age/age-service.js";
@@ -76,7 +75,9 @@ describe("Fetch app configuration for user", () => {
   });
 
   test("should not be allowed when no logged user provided", async () => {
-    await expect(settingsService.getSettings(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    const getSettingsResult = await settingsService.getSettings(null);
+
+    expect(getSettingsResult).toEqual(err("notAllowed"));
     expect(settingsRepository.getUserSettings).not.toHaveBeenCalled();
   });
 });

@@ -1,11 +1,12 @@
 import { type SettingsEnriched, type UpdateSettingsInput } from "@domain/settings/settings.js";
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
+import { err, ok, type Result } from "neverthrow";
 import { type NumberEstimateService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { logger } from "../../../utils/logger.js";
 import { type AgeService } from "../age/age-service.js";
-import { validateAuthorization } from "../authorization/authorization-utils.js";
 import { type DepartmentService } from "../department/department-service.js";
 import { type ObserverService } from "../observer/observer-service.js";
 import { type SexService } from "../sex/sex-service.js";
@@ -27,12 +28,16 @@ export const buildSettingsService = ({
   ageService,
   numberEstimateService,
 }: SettingsServiceDependencies) => {
-  const getSettings = async (loggedUser: LoggedUser | null): Promise<SettingsEnriched | null> => {
-    validateAuthorization(loggedUser);
+  const getSettings = async (
+    loggedUser: LoggedUser | null
+  ): Promise<Result<SettingsEnriched | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const settings = await settingsRepository.getUserSettings(loggedUser.id);
     if (!settings) {
-      return null;
+      return ok(null);
     }
 
     const {
@@ -62,21 +67,23 @@ export const buildSettingsService = ({
         : Promise.resolve(null),
     ]);
 
-    return {
+    return ok({
       ...restSettings,
       defaultDepartment,
       defaultObserver,
       defaultSex,
       defaultAge,
       defaultNumberEstimate,
-    };
+    });
   };
 
   const updateUserSettings = async (
     inputUpdateSettings: PutSettingsInput,
     loggedUser: LoggedUser | null
-  ): Promise<SettingsEnriched> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SettingsEnriched, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const updateSettingsInput = buildSettingsFromInputSettings(inputUpdateSettings);
 
@@ -117,14 +124,14 @@ export const buildSettingsService = ({
         : Promise.resolve(null),
     ]);
 
-    return {
+    return ok({
       ...restSettings,
       defaultDepartment,
       defaultObserver,
       defaultSex,
       defaultAge,
       defaultNumberEstimate,
-    };
+    });
   };
 
   return {
