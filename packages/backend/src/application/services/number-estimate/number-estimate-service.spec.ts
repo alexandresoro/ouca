@@ -1,20 +1,17 @@
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { numberEstimateFactory } from "@fixtures/domain/number-estimate/number-estimate.fixtures.js";
+import {
+  numberEstimateCreateInputFactory,
+  numberEstimateFactory,
+} from "@fixtures/domain/number-estimate/number-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertNumberEstimateInputFactory } from "@fixtures/services/number-estimate/number-estimate-service.fixtures.js";
+import { type NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
 import { type NumberEstimatesSearchParams } from "@ou-ca/common/api/number-estimate";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { vi } from "vitest";
-import { mock } from "vitest-mock-extended";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
-import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { reshapeInputNumberEstimateUpsertData } from "./number-estimate-service-reshape.js";
 import { buildNumberEstimateService } from "./number-estimate-service.js";
 
-const numberEstimateRepository = mockVi<EstimationNombreRepository>();
+const numberEstimateRepository = mockVi<NumberEstimateRepository>();
 const entryRepository = mockVi<DonneeRepository>();
 
 const numberEstimateService = buildNumberEstimateService({
@@ -22,52 +19,34 @@ const numberEstimateService = buildNumberEstimateService({
   entryRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint"
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
-
-vi.mock("./number-estimate-service-reshape.js", () => {
-  return {
-    __esModule: true,
-    reshapeInputNumberEstimateUpsertData: vi.fn(),
-  };
-});
-
-const mockedReshapeInputNumberEstimateUpsertData = vi.mocked(reshapeInputNumberEstimateUpsertData);
-
 describe("Find number estimate", () => {
   test("should handle a matching number estimate", async () => {
     const numberEstimateData = numberEstimateFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateData);
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(numberEstimateData);
 
     await numberEstimateService.findNumberEstimate(12, loggedUser);
 
-    expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenLastCalledWith(12);
+    expect(numberEstimateRepository.findNumberEstimateById).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.findNumberEstimateById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle number estimate not found", async () => {
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(null);
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
     await expect(numberEstimateService.findNumberEstimate(10, loggedUser)).resolves.toEqual(ok(null));
 
-    expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.findEstimationNombreById).toHaveBeenLastCalledWith(10);
+    expect(numberEstimateRepository.findNumberEstimateById).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.findNumberEstimateById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await numberEstimateService.findNumberEstimate(11, null);
 
     expect(findResult).toEqual(err("notAllowed"));
-    expect(numberEstimateRepository.findEstimationNombreById).not.toHaveBeenCalled();
+    expect(numberEstimateRepository.findNumberEstimateById).not.toHaveBeenCalled();
   });
 });
 
@@ -93,12 +72,12 @@ describe("Find number estimate by data ID", () => {
     const numberEstimateData = numberEstimateFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    numberEstimateRepository.findEstimationNombreByDonneeId.mockResolvedValueOnce(numberEstimateData);
+    numberEstimateRepository.findNumberEstimateByEntryId.mockResolvedValueOnce(numberEstimateData);
 
     const numberEstimateResult = await numberEstimateService.findNumberEstimateOfEntryId("43", loggedUser);
 
-    expect(numberEstimateRepository.findEstimationNombreByDonneeId).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.findEstimationNombreByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(numberEstimateRepository.findNumberEstimateByEntryId).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.findNumberEstimateByEntryId).toHaveBeenLastCalledWith(43);
     expect(numberEstimateResult.isOk()).toBeTruthy();
     expect(numberEstimateResult._unsafeUnwrap()?.id).toEqual(numberEstimateData.id);
   });
@@ -113,12 +92,12 @@ describe("Find number estimate by data ID", () => {
 test("Find all number estimates", async () => {
   const numberEstimatesData = numberEstimateFactory.buildList(3);
 
-  numberEstimateRepository.findEstimationsNombre.mockResolvedValueOnce(numberEstimatesData);
+  numberEstimateRepository.findNumberEstimates.mockResolvedValueOnce(numberEstimatesData);
 
   await numberEstimateService.findAllNumberEstimates();
 
-  expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
-  expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenLastCalledWith({
+  expect(numberEstimateRepository.findNumberEstimates).toHaveBeenCalledTimes(1);
+  expect(numberEstimateRepository.findNumberEstimates).toHaveBeenLastCalledWith({
     orderBy: "libelle",
   });
 });
@@ -128,12 +107,12 @@ describe("Entities paginated find by search criteria", () => {
     const numberEstimatesData = numberEstimateFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    numberEstimateRepository.findEstimationsNombre.mockResolvedValueOnce(numberEstimatesData);
+    numberEstimateRepository.findNumberEstimates.mockResolvedValueOnce(numberEstimatesData);
 
     await numberEstimateService.findPaginatesNumberEstimates(loggedUser, {});
 
-    expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenLastCalledWith({});
+    expect(numberEstimateRepository.findNumberEstimates).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.findNumberEstimates).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated number estimates", async () => {
@@ -148,12 +127,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    numberEstimateRepository.findEstimationsNombre.mockResolvedValueOnce([numberEstimatesData[0]]);
+    numberEstimateRepository.findNumberEstimates.mockResolvedValueOnce([numberEstimatesData[0]]);
 
     await numberEstimateService.findPaginatesNumberEstimates(loggedUser, searchParams);
 
-    expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.findEstimationsNombre).toHaveBeenLastCalledWith({
+    expect(numberEstimateRepository.findNumberEstimates).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.findNumberEstimates).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: "libelle",
       sortOrder: "desc",
@@ -199,16 +178,14 @@ describe("Update of a number estimate", () => {
   test("should be allowed when requested by an admin", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
-
     const loggedUser = loggedUserFactory.build({ role: "admin" });
+
+    numberEstimateRepository.updateNumberEstimate.mockResolvedValueOnce(ok(numberEstimateFactory.build()));
 
     await numberEstimateService.updateNumberEstimate(12, numberEstimateData, loggedUser);
 
-    expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(numberEstimateRepository.updateNumberEstimate).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.updateNumberEstimate).toHaveBeenLastCalledWith(12, numberEstimateData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -218,18 +195,15 @@ describe("Update of a number estimate", () => {
 
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
-
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(existingData);
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(existingData);
+    numberEstimateRepository.updateNumberEstimate.mockResolvedValueOnce(ok(numberEstimateFactory.build()));
 
     await numberEstimateService.updateNumberEstimate(12, numberEstimateData, loggedUser);
 
-    expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(numberEstimateRepository.updateNumberEstimate).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.updateNumberEstimate).toHaveBeenLastCalledWith(12, numberEstimateData);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -244,30 +218,26 @@ describe("Update of a number estimate", () => {
       role: "contributor",
     } as const;
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(existingData);
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(existingData);
 
     const updateResult = await numberEstimateService.updateNumberEstimate(12, numberEstimateData, user);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(numberEstimateRepository.updateEstimationNombre).not.toHaveBeenCalled();
+    expect(numberEstimateRepository.updateNumberEstimate).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when trying to update to a number estimate that exists", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
-
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    numberEstimateRepository.updateEstimationNombre.mockImplementation(uniqueConstraintFailed);
+    numberEstimateRepository.updateNumberEstimate.mockResolvedValueOnce(err("alreadyExists"));
 
     const updateResult = await numberEstimateService.updateNumberEstimate(12, numberEstimateData, loggedUser);
 
     expect(updateResult).toEqual(err("alreadyExists"));
-    expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
+    expect(numberEstimateRepository.updateNumberEstimate).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.updateNumberEstimate).toHaveBeenLastCalledWith(12, numberEstimateData);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -276,7 +246,7 @@ describe("Update of a number estimate", () => {
     const updateResult = await numberEstimateService.updateNumberEstimate(12, numberEstimateData, null);
 
     expect(updateResult).toEqual(err("notAllowed"));
-    expect(numberEstimateRepository.updateEstimationNombre).not.toHaveBeenCalled();
+    expect(numberEstimateRepository.updateNumberEstimate).not.toHaveBeenCalled();
   });
 });
 
@@ -284,39 +254,33 @@ describe("Creation of a number estimate", () => {
   test("should create new number estimate", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
-
     const loggedUser = loggedUserFactory.build({ id: "a" });
+
+    numberEstimateRepository.createNumberEstimate.mockResolvedValueOnce(ok(numberEstimateFactory.build()));
 
     await numberEstimateService.createNumberEstimate(numberEstimateData, loggedUser);
 
-    expect(numberEstimateRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.createEstimationNombre).toHaveBeenLastCalledWith({
-      ...reshapedInputData,
-      owner_id: loggedUser.id,
+    expect(numberEstimateRepository.createNumberEstimate).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.createNumberEstimate).toHaveBeenLastCalledWith({
+      ...numberEstimateData,
+      ownerId: loggedUser.id,
     });
   });
 
   test("should not be allowed when trying to create a number estimate that already exists", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const reshapedInputData = mock<EstimationNombreCreateInput>();
-    mockedReshapeInputNumberEstimateUpsertData.mockReturnValueOnce(reshapedInputData);
-
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    numberEstimateRepository.createEstimationNombre.mockImplementation(uniqueConstraintFailed);
+    numberEstimateRepository.createNumberEstimate.mockResolvedValueOnce(err("alreadyExists"));
 
     const createResult = await numberEstimateService.createNumberEstimate(numberEstimateData, loggedUser);
 
     expect(createResult).toEqual(err("alreadyExists"));
-    expect(numberEstimateRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
-    expect(mockedReshapeInputNumberEstimateUpsertData).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.createEstimationNombre).toHaveBeenLastCalledWith({
-      ...reshapedInputData,
-      owner_id: loggedUser.id,
+    expect(numberEstimateRepository.createNumberEstimate).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.createNumberEstimate).toHaveBeenLastCalledWith({
+      ...numberEstimateData,
+      ownerId: loggedUser.id,
     });
   });
 
@@ -326,27 +290,27 @@ describe("Creation of a number estimate", () => {
     const createResult = await numberEstimateService.createNumberEstimate(numberEstimateData, null);
 
     expect(createResult).toEqual(err("notAllowed"));
-    expect(numberEstimateRepository.createEstimationNombre).not.toHaveBeenCalled();
+    expect(numberEstimateRepository.createNumberEstimate).not.toHaveBeenCalled();
   });
 });
 
 describe("Deletion of a number estimate", () => {
   test("should handle the deletion of an owned number estimate", async () => {
-    const loggedUser: LoggedUser = {
+    const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
-    };
+    });
 
     const numberEstimate = numberEstimateFactory.build({
       ownerId: loggedUser.id,
     });
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimate);
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(numberEstimate);
 
     await numberEstimateService.deleteNumberEstimate(11, loggedUser);
 
-    expect(numberEstimateRepository.deleteEstimationNombreById).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.deleteEstimationNombreById).toHaveBeenLastCalledWith(11);
+    expect(numberEstimateRepository.deleteNumberEstimateById).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.deleteNumberEstimateById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any number estimate if admin", async () => {
@@ -354,12 +318,12 @@ describe("Deletion of a number estimate", () => {
       role: "admin",
     });
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateFactory.build());
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(numberEstimateFactory.build());
 
     await numberEstimateService.deleteNumberEstimate(11, loggedUser);
 
-    expect(numberEstimateRepository.deleteEstimationNombreById).toHaveBeenCalledTimes(1);
-    expect(numberEstimateRepository.deleteEstimationNombreById).toHaveBeenLastCalledWith(11);
+    expect(numberEstimateRepository.deleteNumberEstimateById).toHaveBeenCalledTimes(1);
+    expect(numberEstimateRepository.deleteNumberEstimateById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned number estimate as non-admin", async () => {
@@ -367,41 +331,37 @@ describe("Deletion of a number estimate", () => {
       role: "contributor",
     });
 
-    numberEstimateRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateFactory.build());
+    numberEstimateRepository.findNumberEstimateById.mockResolvedValueOnce(numberEstimateFactory.build());
 
     const deleteResult = await numberEstimateService.deleteNumberEstimate(11, loggedUser);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(numberEstimateRepository.deleteEstimationNombreById).not.toHaveBeenCalled();
+    expect(numberEstimateRepository.deleteNumberEstimateById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await numberEstimateService.deleteNumberEstimate(11, null);
 
     expect(deleteResult).toEqual(err("notAllowed"));
-    expect(numberEstimateRepository.deleteEstimationNombreById).not.toHaveBeenCalled();
+    expect(numberEstimateRepository.deleteNumberEstimateById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple number estimates", async () => {
-  const numberEstimatesData = [
-    mock<Omit<EstimationNombreCreateInput, "owner_id">>(),
-    mock<Omit<EstimationNombreCreateInput, "owner_id">>(),
-    mock<Omit<EstimationNombreCreateInput, "owner_id">>(),
-  ];
+  const numberEstimatesData = numberEstimateCreateInputFactory.buildList(3);
 
   const loggedUser = loggedUserFactory.build();
 
-  numberEstimateRepository.createEstimationsNombre.mockResolvedValueOnce([]);
+  numberEstimateRepository.createNumberEstimates.mockResolvedValueOnce([]);
 
   await numberEstimateService.createNumberEstimates(numberEstimatesData, loggedUser);
 
-  expect(numberEstimateRepository.createEstimationsNombre).toHaveBeenCalledTimes(1);
-  expect(numberEstimateRepository.createEstimationsNombre).toHaveBeenLastCalledWith(
+  expect(numberEstimateRepository.createNumberEstimates).toHaveBeenCalledTimes(1);
+  expect(numberEstimateRepository.createNumberEstimates).toHaveBeenLastCalledWith(
     numberEstimatesData.map((numberEstimate) => {
       return {
         ...numberEstimate,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     })
   );

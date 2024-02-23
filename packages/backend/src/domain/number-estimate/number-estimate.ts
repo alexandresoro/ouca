@@ -15,7 +15,7 @@ export type NumberEstimate = z.infer<typeof numberEstimateSchema>;
 
 export type NumberEstimateFindManyInput = Partial<{
   q: string | null;
-  orderBy: "id" | "libelle" | "non_compte" | "nbDonnees" | null;
+  orderBy: "id" | "libelle" | "nonCompte" | "nbDonnees" | null;
   sortOrder: SortOrder;
   offset: number | null;
   limit: number | null;

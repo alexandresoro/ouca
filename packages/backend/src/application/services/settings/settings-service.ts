@@ -4,10 +4,10 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { Result, err, ok } from "neverthrow";
-import { type NumberEstimateService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { logger } from "../../../utils/logger.js";
 import { type AgeService } from "../age/age-service.js";
 import { type DepartmentService } from "../department/department-service.js";
+import { type NumberEstimateService } from "../number-estimate/number-estimate-service.js";
 import { type ObserverService } from "../observer/observer-service.js";
 import { type SexService } from "../sex/sex-service.js";
 

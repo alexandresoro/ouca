@@ -1,18 +1,15 @@
 import { type NumberEstimateFailureReason } from "@domain/number-estimate/number-estimate.js";
 import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
 import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { err, ok, type Result } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
-import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
-import { reshapeInputNumberEstimateUpsertData } from "./number-estimate-service-reshape.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type NumberEstimateServiceDependencies = {
-  numberEstimateRepository: EstimationNombreRepository;
+  numberEstimateRepository: NumberEstimateRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -28,7 +25,7 @@ export const buildNumberEstimateService = ({
       return err("notAllowed");
     }
 
-    const numberEstimate = await numberEstimateRepository.findEstimationNombreById(id);
+    const numberEstimate = await numberEstimateRepository.findNumberEstimateById(id);
     return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
   };
 
@@ -40,7 +37,7 @@ export const buildNumberEstimateService = ({
       return err("notAllowed");
     }
 
-    const numberEstimate = await numberEstimateRepository.findEstimationNombreByDonneeId(
+    const numberEstimate = await numberEstimateRepository.findNumberEstimateByEntryId(
       entryId ? parseInt(entryId) : undefined
     );
     return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
@@ -58,7 +55,7 @@ export const buildNumberEstimateService = ({
   };
 
   const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {
-    const numberEstimates = await numberEstimateRepository.findEstimationsNombre({
+    const numberEstimates = await numberEstimateRepository.findNumberEstimates({
       orderBy: "libelle",
     });
 
@@ -77,12 +74,12 @@ export const buildNumberEstimateService = ({
       return err("notAllowed");
     }
 
-    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
+    const { q, orderBy, sortOrder, ...pagination } = options;
 
-    const numberEstimates = await numberEstimateRepository.findEstimationsNombre({
+    const numberEstimates = await numberEstimateRepository.findNumberEstimates({
       q: q,
       ...getSqlPagination(pagination),
-      orderBy: orderByField === "nonCompte" ? "non_compte" : orderByField,
+      orderBy,
       sortOrder,
     });
 
@@ -112,19 +109,14 @@ export const buildNumberEstimateService = ({
       return err("notAllowed");
     }
 
-    try {
-      const createdNumberEstimate = await numberEstimateRepository.createEstimationNombre({
-        ...reshapeInputNumberEstimateUpsertData(input),
-        owner_id: loggedUser.id,
-      });
+    const createdNumberEstimateResult = await numberEstimateRepository.createNumberEstimate({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdNumberEstimate, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdNumberEstimateResult.map((createdNumberEstimate) => {
+      return enrichEntityWithEditableStatus(createdNumberEstimate, loggedUser);
+    });
   };
 
   const updateNumberEstimate = async (
@@ -138,26 +130,17 @@ export const buildNumberEstimateService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await numberEstimateRepository.findEstimationNombreById(id);
+      const existingData = await numberEstimateRepository.findNumberEstimateById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
+    const updatedNumberEstimateResult = await numberEstimateRepository.updateNumberEstimate(id, input);
 
-    try {
-      const updatedNumberEstimate = await numberEstimateRepository.updateEstimationNombre(
-        id,
-        reshapeInputNumberEstimateUpsertData(input)
-      );
-
-      return ok(enrichEntityWithEditableStatus(updatedNumberEstimate, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updatedNumberEstimateResult.map((updatedNumberEstimate) => {
+      return enrichEntityWithEditableStatus(updatedNumberEstimate, loggedUser);
+    });
   };
 
   const deleteNumberEstimate = async (
@@ -170,24 +153,24 @@ export const buildNumberEstimateService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await numberEstimateRepository.findEstimationNombreById(id);
+      const existingData = await numberEstimateRepository.findNumberEstimateById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedNumberEstimate = await numberEstimateRepository.deleteEstimationNombreById(id);
+    const deletedNumberEstimate = await numberEstimateRepository.deleteNumberEstimateById(id);
     return ok(enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser));
   };
 
   const createNumberEstimates = async (
-    numberEstimates: Omit<EstimationNombreCreateInput[], "owner_id">,
+    numberEstimates: UpsertNumberEstimateInput[],
     loggedUser: LoggedUser
   ): Promise<readonly NumberEstimate[]> => {
-    const createdNumberEstimates = await numberEstimateRepository.createEstimationsNombre(
+    const createdNumberEstimates = await numberEstimateRepository.createNumberEstimates(
       numberEstimates.map((numberEstimate) => {
-        return { ...numberEstimate, owner_id: loggedUser.id };
+        return { ...numberEstimate, ownerId: loggedUser.id };
       })
     );
 

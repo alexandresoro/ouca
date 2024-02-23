@@ -25,7 +25,7 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
       estimationsNombre.map((estimationNombre) => {
         return {
           ...estimationNombre,
-          non_compte: false,
+          nonCompte: false,
         };
       }),
       loggedUser

@@ -2,6 +2,7 @@ import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
+import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
@@ -13,6 +14,10 @@ import {
   buildDepartmentService,
   type DepartmentService,
 } from "../application/services/department/department-service.js";
+import {
+  buildNumberEstimateService,
+  type NumberEstimateService,
+} from "../application/services/number-estimate/number-estimate-service.js";
 import { buildObserverService, type ObserverService } from "../application/services/observer/observer-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
@@ -26,7 +31,6 @@ import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donne
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
 import { buildEspeceRepository } from "../repositories/espece/espece-repository.js";
 import { buildEstimationDistanceRepository } from "../repositories/estimation-distance/estimation-distance-repository.js";
-import { buildEstimationNombreRepository } from "../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { buildInventaireAssocieRepository } from "../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { buildInventaireMeteoRepository } from "../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { buildInventaireRepository } from "../repositories/inventaire/inventaire-repository.js";
@@ -43,10 +47,6 @@ import { buildDonneeService, type DonneeService } from "./entities/donnee-servic
 import { buildEnvironmentService, type EnvironmentService } from "./entities/environment/environment-service.js";
 import { buildInventaireService, type InventaireService } from "./entities/inventaire-service.js";
 import { buildLocalityService, type LocalityService } from "./entities/locality/locality-service.js";
-import {
-  buildNumberEstimateService,
-  type NumberEstimateService,
-} from "./entities/number-estimate/number-estimate-service.js";
 import { buildSpeciesClassService, type SpeciesClassService } from "./entities/species-class/species-class-service.js";
 import { buildSpeciesService, type SpeciesService } from "./entities/species/species-service.js";
 import { buildTownService, type TownService } from "./entities/town/town-service.js";
@@ -96,7 +96,7 @@ export const buildServices = async (): Promise<Services> => {
   const inventoryAssociateRepository = buildInventaireAssocieRepository({ slonik });
   const inventoryWeatherRepository = buildInventaireMeteoRepository({ slonik });
   const localityRepository = buildLieuditRepository({ slonik });
-  const numberEstimateRepository = buildEstimationNombreRepository({ slonik });
+  const numberEstimateRepository = buildNumberEstimateRepository();
   const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();
   const sexRepository = buildSexRepository();
