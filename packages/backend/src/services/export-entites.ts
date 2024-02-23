@@ -192,7 +192,9 @@ export const generateDonneesExport = async (
       const age = (await ageService.findAgeOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const estimationDistance = await distanceEstimateService.findDistanceEstimateOfEntryId(donnee?.id, loggedUser);
-      const estimationNombre = await numberEstimateService.findNumberEstimateOfEntryId(donnee?.id, loggedUser);
+      const estimationNombre = (
+        await numberEstimateService.findNumberEstimateOfEntryId(donnee?.id, loggedUser)
+      )._unsafeUnwrap();
       const comportements = await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser);
       const milieux = await environmentService.findEnvironmentsOfEntryId(donnee.id, loggedUser);
 

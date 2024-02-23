@@ -3,7 +3,7 @@ import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { err, ok, type Result } from "neverthrow";
+import { Result, err, ok } from "neverthrow";
 import { type NumberEstimateService } from "../../../services/entities/number-estimate/number-estimate-service.js";
 import { logger } from "../../../utils/logger.js";
 import { type AgeService } from "../age/age-service.js";
@@ -49,23 +49,41 @@ export const buildSettingsService = ({
       ...restSettings
     } = settings;
 
-    const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
+    const defaultDepartmentResult =
       defaultDepartementId != null
-        ? (await departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
+        ? await departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser)
+        : ok(null);
+
+    const defaultObserverResult =
       defaultObservateurId != null
-        ? (await observerService.findObserver(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
-      defaultSexeId != null
-        ? (await sexService.findSex(parseInt(defaultSexeId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
-      defaultAgeId != null
-        ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
+        ? await observerService.findObserver(parseInt(defaultObservateurId), loggedUser)
+        : ok(null);
+
+    const defaultSexResult =
+      defaultSexeId != null ? await sexService.findSex(parseInt(defaultSexeId), loggedUser) : ok(null);
+
+    const defaultAgeResult =
+      defaultAgeId != null ? await ageService.findAge(parseInt(defaultAgeId), loggedUser) : ok(null);
+
+    const defaultNumberEstimateResult =
       defaultEstimationNombreId != null
-        ? numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
-        : Promise.resolve(null),
+        ? await numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
+        : ok(null);
+
+    const getEnrichedDataResult = Result.combine([
+      defaultDepartmentResult,
+      defaultObserverResult,
+      defaultSexResult,
+      defaultAgeResult,
+      defaultNumberEstimateResult,
     ]);
+
+    if (getEnrichedDataResult.isErr()) {
+      return err(getEnrichedDataResult.error);
+    }
+
+    const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] =
+      getEnrichedDataResult.value;
 
     return ok({
       ...restSettings,
@@ -106,23 +124,41 @@ export const buildSettingsService = ({
       ...restSettings
     } = updatedSettings;
 
-    const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
+    const defaultDepartmentResult =
       defaultDepartementId != null
-        ? (await departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
+        ? await departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser)
+        : ok(null);
+
+    const defaultObserverResult =
       defaultObservateurId != null
-        ? (await observerService.findObserver(parseInt(defaultObservateurId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
-      defaultSexeId != null
-        ? (await sexService.findSex(parseInt(defaultSexeId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
-      defaultAgeId != null
-        ? (await ageService.findAge(parseInt(defaultAgeId), loggedUser))._unsafeUnwrap()
-        : Promise.resolve(null),
+        ? await observerService.findObserver(parseInt(defaultObservateurId), loggedUser)
+        : ok(null);
+
+    const defaultSexResult =
+      defaultSexeId != null ? await sexService.findSex(parseInt(defaultSexeId), loggedUser) : ok(null);
+
+    const defaultAgeResult =
+      defaultAgeId != null ? await ageService.findAge(parseInt(defaultAgeId), loggedUser) : ok(null);
+
+    const defaultNumberEstimateResult =
       defaultEstimationNombreId != null
-        ? numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
-        : Promise.resolve(null),
+        ? await numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
+        : ok(null);
+
+    const getEnrichedDataResult = Result.combine([
+      defaultDepartmentResult,
+      defaultObserverResult,
+      defaultSexResult,
+      defaultAgeResult,
+      defaultNumberEstimateResult,
     ]);
+
+    if (getEnrichedDataResult.isErr()) {
+      return err(getEnrichedDataResult.error);
+    }
+
+    const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] =
+      getEnrichedDataResult.value;
 
     return ok({
       ...restSettings,

@@ -2,6 +2,7 @@ import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js"
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { ageServiceFactory } from "@fixtures/services/age/age-service.fixtures.js";
 import { departmentServiceFactory } from "@fixtures/services/department/department-service.fixtures.js";
+import { numberEstimateServiceFactory } from "@fixtures/services/number-estimate/number-estimate-service.fixtures.js";
 import { observerServiceFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
 import { sexServiceFactory } from "@fixtures/services/sex/sex-service.fixtures.js";
 import { type SettingsRepository } from "@interfaces/settings-repository-interface.js";
@@ -44,6 +45,7 @@ describe("Fetch app configuration for user", () => {
     ageService.findAge.mockResolvedValueOnce(ok(ageServiceFactory.build()));
     observerService.findObserver.mockResolvedValueOnce(ok(observerServiceFactory.build()));
     sexService.findSex.mockResolvedValueOnce(ok(sexServiceFactory.build()));
+    numberEstimateService.findNumberEstimate.mockResolvedValueOnce(ok(numberEstimateServiceFactory.build()));
 
     await settingsService.getSettings(loggedUser);
 
@@ -65,6 +67,7 @@ describe("Fetch app configuration for user", () => {
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
     ageService.findAge.mockResolvedValueOnce(ok(ageServiceFactory.build()));
     sexService.findSex.mockResolvedValueOnce(ok(sexServiceFactory.build()));
+    numberEstimateService.findNumberEstimate.mockResolvedValueOnce(ok(numberEstimateServiceFactory.build()));
 
     await settingsService.getSettings(loggedUser);
 
@@ -107,6 +110,7 @@ test("should update settings with parameters for user", async () => {
   ageService.findAge.mockResolvedValueOnce(ok(ageServiceFactory.build()));
   observerService.findObserver.mockResolvedValueOnce(ok(observerServiceFactory.build()));
   sexService.findSex.mockResolvedValueOnce(ok(sexServiceFactory.build()));
+  numberEstimateService.findNumberEstimate.mockResolvedValueOnce(ok(numberEstimateServiceFactory.build()));
 
   await settingsService.updateUserSettings(updatedAppConfiguration, loggedUser);
 

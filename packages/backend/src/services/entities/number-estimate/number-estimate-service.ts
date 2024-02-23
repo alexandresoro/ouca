@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import { type NumberEstimateFailureReason } from "@domain/number-estimate/number-estimate.js";
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import { err, ok, type Result } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type EstimationNombreCreateInput } from "../../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../../repositories/estimation-nombre/estimation-nombre-repository.js";
@@ -19,29 +20,41 @@ export const buildNumberEstimateService = ({
   numberEstimateRepository,
   entryRepository,
 }: NumberEstimateServiceDependencies) => {
-  const findNumberEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
-    validateAuthorization(loggedUser);
+  const findNumberEstimate = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const numberEstimate = await numberEstimateRepository.findEstimationNombreById(id);
-    return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
+    return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
   };
 
   const findNumberEstimateOfEntryId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<NumberEstimate | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const numberEstimate = await numberEstimateRepository.findEstimationNombreByDonneeId(
       entryId ? parseInt(entryId) : undefined
     );
-    return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
+    return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
   };
 
-  const getEntriesCountByNumberEstimate = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountByNumberEstimate = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByEstimationNombreId(parseInt(id));
+    return ok(await entryRepository.getCountByEstimationNombreId(parseInt(id)));
   };
 
   const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {
@@ -59,8 +72,10 @@ export const buildNumberEstimateService = ({
   const findPaginatesNumberEstimates = async (
     loggedUser: LoggedUser | null,
     options: NumberEstimatesSearchParams
-  ): Promise<NumberEstimate[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<NumberEstimate[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -75,20 +90,27 @@ export const buildNumberEstimateService = ({
       return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
     });
 
-    return [...enrichedNumberEstimates];
+    return ok([...enrichedNumberEstimates]);
   };
 
-  const getNumberEstimatesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getNumberEstimatesCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return numberEstimateRepository.getCount(q);
+    return ok(await numberEstimateRepository.getCount(q));
   };
 
   const createNumberEstimate = async (
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
-  ): Promise<NumberEstimate> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<NumberEstimate, NumberEstimateFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdNumberEstimate = await numberEstimateRepository.createEstimationNombre({
@@ -96,10 +118,10 @@ export const buildNumberEstimateService = ({
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdNumberEstimate, loggedUser);
+      return ok(enrichEntityWithEditableStatus(createdNumberEstimate, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -109,15 +131,17 @@ export const buildNumberEstimateService = ({
     id: number,
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
-  ): Promise<NumberEstimate> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<NumberEstimate, NumberEstimateFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await numberEstimateRepository.findEstimationNombreById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
@@ -127,29 +151,34 @@ export const buildNumberEstimateService = ({
         reshapeInputNumberEstimateUpsertData(input)
       );
 
-      return enrichEntityWithEditableStatus(updatedNumberEstimate, loggedUser);
+      return ok(enrichEntityWithEditableStatus(updatedNumberEstimate, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteNumberEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
-    validateAuthorization(loggedUser);
+  const deleteNumberEstimate = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await numberEstimateRepository.findEstimationNombreById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedNumberEstimate = await numberEstimateRepository.deleteEstimationNombreById(id);
-    return enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser);
+    return ok(enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser));
   };
 
   const createNumberEstimates = async (
