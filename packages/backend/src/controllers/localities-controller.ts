@@ -10,7 +10,6 @@ import {
   upsertLocalityResponse,
 } from "@ou-ca/common/api/locality";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -156,15 +155,13 @@ const localitiesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await localityService.deleteLocality(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
+    const deletedLocality = await localityService.deleteLocality(req.params.id, req.user);
+
+    if (!deletedLocality) {
+      return await reply.status(404).send();
     }
+
+    return await reply.send({ id: deletedLocality.id });
   });
 
   done();

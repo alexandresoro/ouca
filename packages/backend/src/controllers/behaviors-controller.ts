@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/behavior";
 import { type Behavior, type BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -123,15 +122,13 @@ const behaviorsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await behaviorService.deleteBehavior(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
+    const deletedBehavior = await behaviorService.deleteBehavior(req.params.id, req.user);
+
+    if (!deletedBehavior) {
+      return await reply.status(404).send();
     }
+
+    return await reply.send({ id: deletedBehavior.id });
   });
 
   done();

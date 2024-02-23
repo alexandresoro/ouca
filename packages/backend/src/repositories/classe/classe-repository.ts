@@ -173,7 +173,7 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const deleteClasseById = async (classeId: number): Promise<SpeciesClass> => {
+  const deleteClasseById = async (classeId: number): Promise<SpeciesClass | null> => {
     const query = sql.type(speciesClassSchema)`
       DELETE
       FROM
@@ -186,7 +186,7 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
         classe.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

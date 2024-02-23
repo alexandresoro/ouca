@@ -150,7 +150,7 @@ export const buildLocalityService = ({
     }
   };
 
-  const deleteLocality = async (id: number, loggedUser: LoggedUser | null): Promise<Locality> => {
+  const deleteLocality = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data

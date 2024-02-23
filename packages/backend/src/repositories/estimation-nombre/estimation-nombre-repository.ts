@@ -175,7 +175,7 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     return slonik.one(query);
   };
 
-  const deleteEstimationNombreById = async (estimationnombreId: number): Promise<NumberEstimate> => {
+  const deleteEstimationNombreById = async (estimationnombreId: number): Promise<NumberEstimate | null> => {
     const query = sql.type(numberEstimateSchema)`
       DELETE
       FROM
@@ -189,7 +189,7 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
         estimation_nombre.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

@@ -1,5 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
 import { speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSpeciesInputFactory } from "@fixtures/services/species/species-service.fixtures.js";
@@ -425,10 +426,12 @@ describe("Deletion of a species", () => {
       role: "contributor",
     };
 
+    const speciesClass = speciesClassFactory.build();
     const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
 
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce({ ...speciesClass, editable: true });
     speciesRepository.findEspeceById.mockResolvedValueOnce(species);
 
     await speciesService.deleteSpecies(11, loggedUser);
@@ -442,6 +445,9 @@ describe("Deletion of a species", () => {
       role: "admin",
     });
 
+    const speciesClass = speciesClassFactory.build();
+
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce({ ...speciesClass, editable: true });
     speciesRepository.findEspeceById.mockResolvedValueOnce(speciesFactory.build());
 
     await speciesService.deleteSpecies(11, loggedUser);

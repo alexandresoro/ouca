@@ -175,7 +175,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const deleteMilieuById = async (milieuId: number): Promise<Environment> => {
+  const deleteMilieuById = async (milieuId: number): Promise<Environment | null> => {
     const query = sql.type(environmentSchema)`
       DELETE
       FROM
@@ -189,7 +189,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
         milieu.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

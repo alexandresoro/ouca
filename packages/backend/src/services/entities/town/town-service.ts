@@ -138,7 +138,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     }
   };
 
-  const deleteTown = async (id: number, loggedUser: LoggedUser | null): Promise<Town> => {
+  const deleteTown = async (id: number, loggedUser: LoggedUser | null): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data

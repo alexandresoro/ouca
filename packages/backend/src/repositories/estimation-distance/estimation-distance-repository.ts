@@ -169,7 +169,7 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
     return slonik.one(query);
   };
 
-  const deleteEstimationDistanceById = async (estimationdistanceId: number): Promise<DistanceEstimate> => {
+  const deleteEstimationDistanceById = async (estimationdistanceId: number): Promise<DistanceEstimate | null> => {
     const query = sql.type(distanceEstimateSchema)`
       DELETE
       FROM
@@ -182,7 +182,7 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
         estimation_distance.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

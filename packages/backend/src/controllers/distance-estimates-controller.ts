@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -126,15 +125,13 @@ const distanceEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await distanceEstimateService.deleteDistanceEstimate(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
+    const deletedDistanceEstimate = await distanceEstimateService.deleteDistanceEstimate(req.params.id, req.user);
+
+    if (!deletedDistanceEstimate) {
+      return await reply.status(404).send();
     }
+
+    return await reply.send({ id: deletedDistanceEstimate.id });
   });
 
   done();

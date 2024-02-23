@@ -185,7 +185,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.one(query);
   };
 
-  const deleteComportementById = async (comportementId: number): Promise<Behavior> => {
+  const deleteComportementById = async (comportementId: number): Promise<Behavior | null> => {
     const query = sql.type(behaviorSchema)`
       DELETE
       FROM
@@ -200,7 +200,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
         comportement.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

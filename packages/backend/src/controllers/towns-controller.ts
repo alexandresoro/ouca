@@ -9,7 +9,6 @@ import {
   upsertTownResponse,
 } from "@ou-ca/common/api/town";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -128,15 +127,13 @@ const townsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await townService.deleteTown(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
+    const deletedTown = await townService.deleteTown(req.params.id, req.user);
+
+    if (!deletedTown) {
+      return await reply.status(404).send();
     }
+
+    return await reply.send({ id: deletedTown.id });
   });
 
   done();

@@ -136,7 +136,7 @@ export const buildNumberEstimateService = ({
     }
   };
 
-  const deleteNumberEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate> => {
+  const deleteNumberEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data

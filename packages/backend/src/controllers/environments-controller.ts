@@ -9,7 +9,6 @@ import {
   upsertEnvironmentResponse,
 } from "@ou-ca/common/api/environment";
 import { type FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -123,15 +122,13 @@ const environmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await environmentService.deleteEnvironment(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-      }
-      throw e;
+    const deletedEnvironment = await environmentService.deleteEnvironment(req.params.id, req.user);
+
+    if (!deletedEnvironment) {
+      return await reply.status(404).send();
     }
+
+    return await reply.send({ id: deletedEnvironment.id });
   });
 
   done();

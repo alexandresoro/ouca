@@ -138,7 +138,7 @@ export const buildSpeciesClassService = ({
     }
   };
 
-  const deleteSpeciesClass = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
+  const deleteSpeciesClass = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data

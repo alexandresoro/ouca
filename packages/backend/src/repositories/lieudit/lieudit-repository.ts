@@ -307,7 +307,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.one(query);
   };
 
-  const deleteLieuditById = async (lieuditId: number): Promise<Locality> => {
+  const deleteLieuditById = async (lieuditId: number): Promise<Locality | null> => {
     const query = sql.type(localitySchema)`
       DELETE
       FROM
@@ -324,7 +324,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         lieudit.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   const getLocatiesForGeoJSON = async (): Promise<readonly GeoJSONLocality[]> => {

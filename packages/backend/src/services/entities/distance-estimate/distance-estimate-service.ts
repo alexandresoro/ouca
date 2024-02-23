@@ -135,7 +135,10 @@ export const buildDistanceEstimateService = ({
     }
   };
 
-  const deleteDistanceEstimate = async (id: number, loggedUser: LoggedUser | null): Promise<DistanceEstimate> => {
+  const deleteDistanceEstimate = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<DistanceEstimate | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data

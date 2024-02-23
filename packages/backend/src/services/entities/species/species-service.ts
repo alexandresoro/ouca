@@ -169,7 +169,7 @@ export const buildSpeciesService = ({
     }
   };
 
-  const deleteSpecies = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
+  const deleteSpecies = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -183,7 +183,16 @@ export const buildSpeciesService = ({
 
     const speciesClass = await classService.findSpeciesClassOfSpecies(`${id}`, loggedUser);
 
+    if (!speciesClass) {
+      return null;
+    }
+
     const deletedSpecies = await speciesRepository.deleteEspeceById(id);
+
+    if (!deletedSpecies) {
+      return null;
+    }
+
     return enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser);
   };
 

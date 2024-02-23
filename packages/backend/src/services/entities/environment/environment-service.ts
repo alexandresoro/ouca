@@ -140,7 +140,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
     }
   };
 
-  const deleteEnvironment = async (id: number, loggedUser: LoggedUser | null): Promise<Environment> => {
+  const deleteEnvironment = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data

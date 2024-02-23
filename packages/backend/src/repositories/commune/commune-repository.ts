@@ -271,7 +271,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.one(query);
   };
 
-  const deleteCommuneById = async (communeId: number): Promise<Town> => {
+  const deleteCommuneById = async (communeId: number): Promise<Town | null> => {
     const query = sql.type(townSchema)`
       DELETE
       FROM
@@ -286,7 +286,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         commune.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   return {

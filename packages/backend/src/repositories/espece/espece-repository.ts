@@ -247,7 +247,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.one(query);
   };
 
-  const deleteEspeceById = async (especeId: number): Promise<Species> => {
+  const deleteEspeceById = async (especeId: number): Promise<Species | null> => {
     const query = sql.type(speciesSchema)`
       DELETE
       FROM
@@ -263,7 +263,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
         espece.owner_id
     `;
 
-    return slonik.one(query);
+    return slonik.maybeOne(query);
   };
 
   const getCountByClasseId = async (classeId: number): Promise<number> => {
