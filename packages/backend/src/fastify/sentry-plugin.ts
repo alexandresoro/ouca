@@ -5,7 +5,8 @@ import fastifyPlugin from "fastify-plugin";
 const sentry: FastifyPluginCallback = (fastify, options, next) => {
   fastify.addHook("onRequest", (request, reply, done) => {
     return runWithAsyncContext(() => {
-      const transaction = startTransaction({ name: request.routeOptions.url, op: "http" });
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      const transaction = startTransaction({ name: request.routeOptions.url!, op: "http" });
       transaction.setData("http.method", request.method);
       transaction.setTag("http.method", request.method);
 
