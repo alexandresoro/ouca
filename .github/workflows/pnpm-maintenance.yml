@@ -50,6 +50,7 @@ jobs:
           fi
 
       - name: Generate branch
+        id: generate-branch
         run: echo "branch=deps/pnpm-dedupe-$(date +%s)" >> $GITHUB_OUTPUT
 
       - uses: EndBug/add-and-commit@v9
@@ -57,6 +58,5 @@ jobs:
         with:
           add: "pnpm-lock.yaml"
           message: "chore(deps): dedupe pnpm dependencies"
-          fetch: true
           new_branch: ${{ steps.generate-branch.outputs.branch }}
           push: true
