@@ -51,14 +51,6 @@ jobs:
           new_branch: ${{ steps.generate-branch.outputs.branch }}
           push: true
 
-      - name: Create pull request
-        if: steps.git-diff.outputs.has-changes == 'true'
-        run: gh pr create --fill
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      # https://gist.github.com/xt0rted/46475099dc0a70ba63e16e3177407872
-      # https://github.com/dependabot/fetch-metadata/issues/111
       - name: Generate app token
         id: generate-app-token
         uses: tibdex/github-app-token@v2.1.0
@@ -70,8 +62,14 @@ jobs:
         if: steps.git-diff.outputs.has-changes == 'true'
         run: echo "${{ steps.generate-app-token.outputs.token }}" | gh auth login --with-token
 
+      - name: Create pull request
+        if: steps.git-diff.outputs.has-changes == 'true'
+        run: gh pr create --fill
+
       - name: Create pull request, approve and set auto-merge
         if: steps.git-diff.outputs.has-changes == 'true'
         run: |
           gh pr review --approve
           gh pr merge --auto --squash
+        env:
+          GH_TOKEN: ${{ github.token }}
