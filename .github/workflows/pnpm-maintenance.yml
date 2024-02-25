@@ -44,8 +44,6 @@ jobs:
         id: git-diff
         run: |
           echo "has-changes=$(git diff --exit-code)" >> $GITHUB_OUTPUT
-        outputs:
-          has-changes: ${{ steps.git-diff.outputs.has-changes }}
 
       - uses: EndBug/add-and-commit@v9
         if: steps.git-diff.outputs.has-changes == 'true'
