@@ -51,6 +51,7 @@ jobs:
 
       - name: Generate branch
         id: generate-branch
+        if: steps.git-diff.outputs.has-changes == 'true'
         run: echo "branch=deps/pnpm-dedupe-$(date +%s)" >> $GITHUB_OUTPUT
 
       - uses: EndBug/add-and-commit@v9
@@ -60,3 +61,8 @@ jobs:
           message: "chore(deps): dedupe pnpm dependencies"
           new_branch: ${{ steps.generate-branch.outputs.branch }}
           push: true
+
+      - name: Create pull request
+        if: steps.git-diff.outputs.has-changes == 'true'
+        run: |
+          gh pr create --fill
