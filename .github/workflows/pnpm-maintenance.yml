@@ -62,14 +62,15 @@ jobs:
         if: steps.git-diff.outputs.has-changes == 'true'
         run: echo "${{ steps.generate-app-token.outputs.token }}" | gh auth login --with-token
 
-      - name: Create pull request
+      - name: Create pull request and set auto-merge
         if: steps.git-diff.outputs.has-changes == 'true'
-        run: gh pr create --fill
+        run: |
+          gh pr create --fill
+          gh pr merge --auto --squash
 
-      - name: Create pull request, approve and set auto-merge
+      - name: Approve PR
         if: steps.git-diff.outputs.has-changes == 'true'
         run: |
           gh pr review --approve
-          gh pr merge --auto --squash
         env:
           GH_TOKEN: ${{ github.token }}
