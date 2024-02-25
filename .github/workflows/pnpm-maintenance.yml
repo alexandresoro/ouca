@@ -54,4 +54,4 @@ jobs:
         with:
           add: "pnpm-lock.yaml"
           message: "chore(deps): dedupe pnpm dependencies"
-          push: "origin deps/pnpm-dedupe --force-with-lease"
+          push: "origin deps/pnpm-dedupe --set-upstream --force-with-lease"
