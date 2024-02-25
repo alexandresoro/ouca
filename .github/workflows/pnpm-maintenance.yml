@@ -43,10 +43,10 @@ jobs:
       - name: Check if there's anything to commit
         id: git-diff
         run: |
-          if git diff --exit-code; then
-            echo "has-changes=true" >> $GITHUB_OUTPUT
-          else
+          if git diff -q --exit-code; then
             echo "has-changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=true" >> $GITHUB_OUTPUT
           fi
 
       - uses: EndBug/add-and-commit@v9
