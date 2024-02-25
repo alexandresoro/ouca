@@ -62,6 +62,10 @@ jobs:
           new_branch: ${{ steps.generate-branch.outputs.branch }}
           push: true
 
+      - name: Authenticate gh cli with app token
+        if: steps.git-diff.outputs.has-changes == 'true'
+        run: echo "${{ steps.generate-app-token.outputs.token }}" | gh auth login --with-token
+
       - name: Create pull request
         if: steps.git-diff.outputs.has-changes == 'true'
         run: |
