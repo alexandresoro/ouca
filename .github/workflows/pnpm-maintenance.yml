@@ -49,11 +49,14 @@ jobs:
             echo "has-changes=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Generate branch
+        run: echo "branch=deps/pnpm-dedupe-$(date +%s)" >> $GITHUB_OUTPUT
+
       - uses: EndBug/add-and-commit@v9
         if: steps.git-diff.outputs.has-changes == 'true'
         with:
           add: "pnpm-lock.yaml"
           message: "chore(deps): dedupe pnpm dependencies"
           fetch: true
-          new_branch: deps/pnpm-dedupe-$(date +%s)
+          new_branch: ${{ steps.generate-branch.outputs.branch }}
           push: true
