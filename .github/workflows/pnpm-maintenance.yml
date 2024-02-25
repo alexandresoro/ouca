@@ -43,7 +43,11 @@ jobs:
       - name: Check if there's anything to commit
         id: git-diff
         run: |
-          echo "has-changes=$(git diff --exit-code)" >> $GITHUB_OUTPUT
+          if git diff --exit-code; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          fi
 
       - uses: EndBug/add-and-commit@v9
         if: steps.git-diff.outputs.has-changes == 'true'
