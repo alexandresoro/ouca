@@ -2,11 +2,11 @@ name: PNPM dependencies maintenance
 
 on:
   schedule:
-    - cron: '0 5 * * MON'
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 jobs:
-  pnpm-dedupe:
+  pnpm-update:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +26,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Run dedupe
-        run: pnpm dedupe
+      - name: Run update
+        run: pnpm update -r
 
       - name: Check if there's anything to commit
         id: git-diff
@@ -41,17 +41,18 @@ jobs:
       - name: Generate branch
         id: generate-branch
         if: steps.git-diff.outputs.has-changes == 'true'
-        run: echo "branch=deps/pnpm-dedupe-$(date +%s)" >> $GITHUB_OUTPUT
+        run: echo "branch=deps/pnpm-update-$(date +%s)" >> $GITHUB_OUTPUT
 
       - uses: EndBug/add-and-commit@v9
         if: steps.git-diff.outputs.has-changes == 'true'
         with:
           add: "pnpm-lock.yaml"
-          message: "chore(deps): dedupe pnpm dependencies"
+          message: "chore(deps): update lockfile"
           new_branch: ${{ steps.generate-branch.outputs.branch }}
           push: true
 
       - name: Generate app token
+        if: steps.git-diff.outputs.has-changes == 'true'
         id: generate-app-token
         uses: tibdex/github-app-token@v2.1.0
         with:
