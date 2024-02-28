@@ -284,8 +284,8 @@ importers:
         specifier: 2.5.0
         version: 2.5.0
       jotai:
-        specifier: 2.6.5
-        version: 2.6.5(@types/react@18.2.60)(react@18.2.0)
+        specifier: 2.7.0
+        version: 2.7.0(@types/react@18.2.60)(react@18.2.0)
       lru-cache:
         specifier: 10.2.0
         version: 10.2.0
@@ -4792,8 +4792,8 @@ packages:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: false
 
-  /jotai@2.6.5(@types/react@18.2.60)(react@18.2.0):
-    resolution: {integrity: sha512-T+yvY42GXKomvJYqs+NeTH0da9Z1tQ3Qk3zppPHIWnvmOBKpN6Qd4j8h/oo9dwxs3w/Z5r6Kk0I8h6z5orQ/HQ==}
+  /jotai@2.7.0(@types/react@18.2.60)(react@18.2.0):
+    resolution: {integrity: sha512-4qsyFKu4MprI39rj2uoItyhu24NoCHzkOV7z70PQr65SpzV6CSyhQvVIfbNlNqOIOspNMdf5OK+kTXLvqe63Jw==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'
