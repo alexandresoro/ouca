@@ -44,7 +44,7 @@
     "i18next-http-backend": "2.5.0",
     "jotai": "2.7.0",
     "lru-cache": "10.2.0",
-    "maplibre-gl": "4.0.2",
+    "maplibre-gl": "4.1.0",
     "oidc-client-ts": "3.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
