@@ -45,7 +45,7 @@ describe("User deletion", () => {
     expect(userRepository.deleteUserById).toHaveBeenLastCalledWith("11");
   });
 
-  test("should return an error when deleting another user as non-admin", async () => {
+  test("should not be allowed when deleting another user as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",

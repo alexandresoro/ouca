@@ -317,7 +317,7 @@ describe("Deletion of a behavior", () => {
     expect(behaviorRepository.deleteComportementById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when deleting a non-owned behavior as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned behavior as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });

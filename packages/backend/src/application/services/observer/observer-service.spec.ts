@@ -317,7 +317,7 @@ describe("Deletion of an observer", () => {
     expect(observerRepository.deleteObserverById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when trying to delete a non-owned observer as non-admin", async () => {
+  test("should not be allowed when trying to delete a non-owned observer as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
     });

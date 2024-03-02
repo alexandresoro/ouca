@@ -323,7 +323,7 @@ describe("Deletion of an environment", () => {
     expect(environmentRepository.deleteMilieuById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when deleting a non-owned environment as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned environment as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });

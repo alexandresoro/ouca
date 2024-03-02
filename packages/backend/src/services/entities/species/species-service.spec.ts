@@ -456,7 +456,7 @@ describe("Deletion of a species", () => {
     expect(speciesRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when deleting a non-owned species as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned species as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });

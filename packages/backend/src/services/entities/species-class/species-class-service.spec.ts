@@ -345,7 +345,7 @@ describe("Deletion of a class", () => {
     expect(classRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when deleting a non-owned class as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned class as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "contributor",
     });
