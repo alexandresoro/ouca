@@ -2,6 +2,7 @@ import { fastifyCaching } from "@fastify/caching";
 import { type FastifyPluginAsync } from "fastify";
 import { type Services } from "../services/services.js";
 import { sha256 } from "../utils/crypto.js";
+import { logger } from "../utils/logger.js";
 
 const geojsonController: FastifyPluginAsync<{
   services: Services;
@@ -15,8 +16,19 @@ const geojsonController: FastifyPluginAsync<{
   });
 
   fastify.get("/localities.json", async (req, reply) => {
-    const geoJsonLocalities = await geojsonService.getLocalities(req.user);
-    const geoJsonLocalitiesStr = JSON.stringify(geoJsonLocalities);
+    const geoJsonLocalitiesResult = await geojsonService.getLocalities(req.user);
+
+    if (geoJsonLocalitiesResult.isErr()) {
+      switch (geoJsonLocalitiesResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: geoJsonLocalitiesResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const geoJsonLocalitiesStr = JSON.stringify(geoJsonLocalitiesResult.value);
     return await reply.etag(sha256(geoJsonLocalitiesStr)).send(geoJsonLocalitiesStr);
   });
 };

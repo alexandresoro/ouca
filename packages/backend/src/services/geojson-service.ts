@@ -1,10 +1,11 @@
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 // FIXME: https://github.com/Turfjs/turf/issues/2414
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
-import { validateAuthorization } from "../application/services/authorization/authorization-utils.js";
+import { err, ok, type Result } from "neverthrow";
 import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import { logger } from "../utils/logger.js";
 
@@ -15,12 +16,19 @@ type GeoJSONServiceDependencies = {
 };
 
 export const buildGeoJSONService = ({ localityRepository }: GeoJSONServiceDependencies) => {
-  const getLocalities = async (loggedUser: LoggedUser | null): Promise<unknown> => {
-    validateAuthorization(loggedUser);
+  const getLocalities = async (loggedUser: LoggedUser | null): Promise<Result<unknown, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const cachedLocalitiesStr = await redis.get(GEOJSON_DATA_REDIS_KEY);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return cachedLocalitiesStr ? JSON.parse(cachedLocalitiesStr) : updateGeoJSONData();
+
+    if (cachedLocalitiesStr) {
+      return ok(JSON.parse(cachedLocalitiesStr));
+    }
+
+    const geojsonData = await updateGeoJSONData();
+    return ok(geojsonData);
   };
 
   const updateGeoJSONData = async (): Promise<unknown> => {
