@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getDistanceEstimateResponse,
   getDistanceEstimatesExtendedResponse,
@@ -9,7 +8,9 @@ import {
 } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { type FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const distanceEstimatesController: FastifyPluginCallback<{
@@ -22,7 +23,20 @@ const distanceEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const distanceEstimate = await distanceEstimateService.findDistanceEstimate(req.params.id, req.user);
+    const distanceEstimateResult = await distanceEstimateService.findDistanceEstimate(req.params.id, req.user);
+
+    if (distanceEstimateResult.isErr()) {
+      switch (distanceEstimateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: distanceEstimateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const distanceEstimate = distanceEstimateResult.value;
+
     if (!distanceEstimate) {
       return await reply.status(404).send();
     }
@@ -42,19 +56,30 @@ const distanceEstimatesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [distanceEstimatesData, count] = await Promise.all([
-      distanceEstimateService.findPaginatedDistanceEstimates(req.user, queryParams),
-      distanceEstimateService.getDistanceEstimatesCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await distanceEstimateService.findPaginatedDistanceEstimates(req.user, queryParams),
+      await distanceEstimateService.getDistanceEstimatesCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [distanceEstimatesData, count] = paginatedResults.value;
 
     let data: DistanceEstimate[] | DistanceEstimateExtended[] = distanceEstimatesData;
     if (extended) {
       data = await Promise.all(
         distanceEstimatesData.map(async (distanceEstimateData) => {
-          const entriesCount = await distanceEstimateService.getEntriesCountByDistanceEstimate(
-            distanceEstimateData.id,
-            req.user
-          );
+          const entriesCount = (
+            await distanceEstimateService.getEntriesCountByDistanceEstimate(distanceEstimateData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...distanceEstimateData,
             entriesCount,
@@ -81,17 +106,22 @@ const distanceEstimatesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const distanceEstimate = await distanceEstimateService.createDistanceEstimate(input, req.user);
-      const response = upsertDistanceEstimateResponse.parse(distanceEstimate);
+    const distanceEstimateCreateResult = await distanceEstimateService.createDistanceEstimate(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (distanceEstimateCreateResult.isErr()) {
+      switch (distanceEstimateCreateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: distanceEstimateCreateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertDistanceEstimateResponse.parse(distanceEstimateCreateResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -107,17 +137,26 @@ const distanceEstimatesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const distanceEstimate = await distanceEstimateService.updateDistanceEstimate(req.params.id, input, req.user);
-      const response = upsertDistanceEstimateResponse.parse(distanceEstimate);
+    const distanceEstimateUpdateResult = await distanceEstimateService.updateDistanceEstimate(
+      req.params.id,
+      input,
+      req.user
+    );
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (distanceEstimateUpdateResult.isErr()) {
+      switch (distanceEstimateUpdateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: distanceEstimateUpdateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertDistanceEstimateResponse.parse(distanceEstimateUpdateResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -125,7 +164,19 @@ const distanceEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedDistanceEstimate = await distanceEstimateService.deleteDistanceEstimate(req.params.id, req.user);
+    const deletedDistanceEstimateResult = await distanceEstimateService.deleteDistanceEstimate(req.params.id, req.user);
+
+    if (deletedDistanceEstimateResult.isErr()) {
+      switch (deletedDistanceEstimateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedDistanceEstimateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedDistanceEstimate = deletedDistanceEstimateResult.value;
 
     if (!deletedDistanceEstimate) {
       return await reply.status(404).send();
