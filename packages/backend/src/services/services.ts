@@ -7,6 +7,7 @@ import { buildNumberEstimateRepository } from "@infrastructure/repositories/numb
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
+import { buildSpeciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import { type DatabasePool } from "slonik";
@@ -28,7 +29,6 @@ import { buildSettingsService, type SettingsService } from "../application/servi
 import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildWeatherService, type WeatherService } from "../application/services/weather/weather-service.js";
-import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
 import { buildComportementRepository } from "../repositories/comportement/comportement-repository.js";
 import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository.js";
@@ -85,7 +85,7 @@ export const buildServices = async (): Promise<Services> => {
 
   const ageRepository = buildAgeRepository();
   const behaviorRepository = buildComportementRepository({ slonik });
-  const classRepository = buildClasseRepository({ slonik });
+  const classRepository = buildSpeciesClassRepository();
   const departmentRepository = buildDepartmentRepository();
   const distanceEstimateRepository = buildDistanceEstimateRepository();
   const entryRepository = buildDonneeRepository({ slonik });
