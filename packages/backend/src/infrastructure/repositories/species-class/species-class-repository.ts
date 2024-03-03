@@ -31,7 +31,7 @@ export const buildSpeciesClassRepository = () => {
     const speciesClassResult = await kysely
       .selectFrom("classe")
       .leftJoin("espece", "espece.classeId", "classe.id")
-      .select([sql<string>`basenaturaliste.classe.id::text`.as("id"), "libelle", "ownerId"])
+      .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"])
       .where("espece.id", "=", speciesId)
       .executeTakeFirst();
 
