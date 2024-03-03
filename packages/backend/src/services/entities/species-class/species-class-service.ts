@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
+import { type SpeciesClassFailureReason } from "@domain/species-class/species-class.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
+import { err, ok, type Result } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import { type ClasseCreateInput } from "../../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
@@ -21,33 +22,50 @@ export const buildSpeciesClassService = ({
   speciesRepository,
   entryRepository,
 }: SpeciesClassServiceDependencies) => {
-  const findSpeciesClass = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
-    validateAuthorization(loggedUser);
+  const findSpeciesClass = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<SpeciesClass | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const speciesClass = await classRepository.findClasseById(id);
-    return enrichEntityWithEditableStatus(speciesClass, loggedUser);
+    return ok(enrichEntityWithEditableStatus(speciesClass, loggedUser));
   };
 
-  const getSpeciesCountBySpeciesClass = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getSpeciesCountBySpeciesClass = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return speciesRepository.getCountByClasseId(parseInt(id));
+    return ok(await speciesRepository.getCountByClasseId(parseInt(id)));
   };
 
-  const getEntriesCountBySpeciesClass = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountBySpeciesClass = async (
+    id: string,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByClasseId(parseInt(id));
+    return ok(await entryRepository.getCountByClasseId(parseInt(id)));
   };
 
   const findSpeciesClassOfSpecies = async (
     especeId: string | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<SpeciesClass | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SpeciesClass | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const speciesClass = await classRepository.findClasseByEspeceId(especeId ? parseInt(especeId) : undefined);
-    return enrichEntityWithEditableStatus(speciesClass, loggedUser);
+    return ok(enrichEntityWithEditableStatus(speciesClass, loggedUser));
   };
 
   const findAllSpeciesClasses = async (): Promise<SpeciesClass[]> => {
@@ -65,8 +83,10 @@ export const buildSpeciesClassService = ({
   const findPaginatedSpeciesClasses = async (
     loggedUser: LoggedUser | null,
     options: ClassesSearchParams
-  ): Promise<SpeciesClass[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SpeciesClass[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -81,17 +101,27 @@ export const buildSpeciesClassService = ({
       return enrichEntityWithEditableStatus(speciesClass, loggedUser);
     });
 
-    return [...enrichedClasses];
+    return ok([...enrichedClasses]);
   };
 
-  const getSpeciesClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getSpeciesClassesCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return classRepository.getCount(q);
+    return ok(await classRepository.getCount(q));
   };
 
-  const createSpeciesClass = async (input: UpsertClassInput, loggedUser: LoggedUser | null): Promise<SpeciesClass> => {
-    validateAuthorization(loggedUser);
+  const createSpeciesClass = async (
+    input: UpsertClassInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<SpeciesClass, SpeciesClassFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Create a new class
     try {
@@ -100,10 +130,10 @@ export const buildSpeciesClassService = ({
         owner_id: loggedUser?.id,
       });
 
-      return enrichEntityWithEditableStatus(createdClass, loggedUser);
+      return ok(enrichEntityWithEditableStatus(createdClass, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -113,15 +143,17 @@ export const buildSpeciesClassService = ({
     id: number,
     input: UpsertClassInput,
     loggedUser: LoggedUser | null
-  ): Promise<SpeciesClass> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SpeciesClass, SpeciesClassFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
       const existingData = await classRepository.findClasseById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
@@ -129,29 +161,34 @@ export const buildSpeciesClassService = ({
     try {
       const updatedClass = await classRepository.updateClasse(id, input);
 
-      return enrichEntityWithEditableStatus(updatedClass, loggedUser);
+      return ok(enrichEntityWithEditableStatus(updatedClass, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteSpeciesClass = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesClass | null> => {
-    validateAuthorization(loggedUser);
+  const deleteSpeciesClass = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<Result<SpeciesClass | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
       const existingData = await classRepository.findClasseById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedClass = await classRepository.deleteClasseById(id);
-    return enrichEntityWithEditableStatus(deletedClass, loggedUser);
+    return ok(enrichEntityWithEditableStatus(deletedClass, loggedUser));
   };
 
   const createMultipleSpeciesClasses = async (

@@ -52,7 +52,9 @@ const speciesController: FastifyPluginCallback<{
       data = await Promise.all(
         speciesData.map(async (singleSpeciesData) => {
           // TODO look to optimize this request
-          const speciesClass = await classService.findSpeciesClassOfSpecies(singleSpeciesData.id, req.user);
+          const speciesClass = (
+            await classService.findSpeciesClassOfSpecies(singleSpeciesData.id, req.user)
+          )._unsafeUnwrap();
           const entriesCount = await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, req.user);
           return {
             ...singleSpeciesData,

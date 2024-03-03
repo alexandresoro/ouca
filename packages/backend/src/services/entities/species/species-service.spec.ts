@@ -5,6 +5,7 @@ import { speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSpeciesInputFactory } from "@fixtures/services/species/species-service.fixtures.js";
 import { type SpeciesSearchParams } from "@ou-ca/common/api/species";
+import { ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
@@ -48,6 +49,9 @@ describe("Find species", () => {
   test("should handle a matching species", async () => {
     const speciesData = speciesFactory.build();
     const loggedUser = loggedUserFactory.build();
+
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(speciesData);
 
@@ -95,6 +99,9 @@ describe("Find species by data ID", () => {
     });
     const loggedUser = loggedUserFactory.build();
 
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+
     speciesRepository.findEspeceByDonneeId.mockResolvedValueOnce(speciesData);
 
     const species = await speciesService.findSpeciesOfEntryId("43", loggedUser);
@@ -112,6 +119,11 @@ describe("Find species by data ID", () => {
 test("Find all species", async () => {
   const speciesData = speciesFactory.buildList(3);
 
+  const speciesClass = speciesClassFactory.build();
+  classService.findSpeciesClassOfSpecies.mockResolvedValue(ok({ ...speciesClass, editable: true }));
+  classService.findSpeciesClassOfSpecies.mockResolvedValue(ok({ ...speciesClass, editable: true }));
+  classService.findSpeciesClassOfSpecies.mockResolvedValue(ok({ ...speciesClass, editable: true }));
+
   speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
   await speciesService.findAllSpecies();
@@ -126,6 +138,11 @@ describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const speciesData = speciesFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
+
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValue(ok({ ...speciesClass, editable: true }));
+    classService.findSpeciesClassOfSpecies.mockResolvedValue(ok({ ...speciesClass, editable: true }));
+    classService.findSpeciesClassOfSpecies.mockResolvedValue(ok({ ...speciesClass, editable: true }));
 
     speciesRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
@@ -146,6 +163,11 @@ describe("Entities paginated find by search criteria", () => {
       pageNumber: 1,
       pageSize: 10,
     };
+
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
 
     speciesRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
@@ -176,6 +198,11 @@ describe("Entities paginated find by search criteria", () => {
       townIds: ["3", "6"],
       toDate: "2010-01-01",
     };
+
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
 
     speciesRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
@@ -281,6 +308,9 @@ describe("Update of a species", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+
     const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
@@ -304,6 +334,9 @@ describe("Update of a species", () => {
     mockedReshapeInputSpeciesUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
+
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
 
     speciesRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
@@ -374,6 +407,9 @@ describe("Creation of a species", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
+    const speciesClass = speciesClassFactory.build();
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
+
     const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
@@ -431,7 +467,7 @@ describe("Deletion of a species", () => {
       ownerId: loggedUser.id,
     });
 
-    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce({ ...speciesClass, editable: true });
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
     speciesRepository.findEspeceById.mockResolvedValueOnce(species);
 
     await speciesService.deleteSpecies(11, loggedUser);
@@ -447,7 +483,7 @@ describe("Deletion of a species", () => {
 
     const speciesClass = speciesClassFactory.build();
 
-    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce({ ...speciesClass, editable: true });
+    classService.findSpeciesClassOfSpecies.mockResolvedValueOnce(ok({ ...speciesClass, editable: true }));
     speciesRepository.findEspeceById.mockResolvedValueOnce(speciesFactory.build());
 
     await speciesService.deleteSpecies(11, loggedUser);

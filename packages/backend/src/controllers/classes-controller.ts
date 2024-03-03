@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { type SpeciesClass, type SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
 import {
   getClassResponse,
@@ -9,7 +8,9 @@ import {
   upsertClassResponse,
 } from "@ou-ca/common/api/species-class";
 import { type FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import { type Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const classesController: FastifyPluginCallback<{
@@ -22,7 +23,20 @@ const classesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const speciesClass = await classService.findSpeciesClass(req.params.id, req.user);
+    const speciesClassResult = await classService.findSpeciesClass(req.params.id, req.user);
+
+    if (speciesClassResult.isErr()) {
+      switch (speciesClassResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: speciesClassResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const speciesClass = speciesClassResult.value;
+
     if (!speciesClass) {
       return await reply.status(404).send();
     }
@@ -42,17 +56,33 @@ const classesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [classesData, count] = await Promise.all([
-      classService.findPaginatedSpeciesClasses(req.user, queryParams),
-      classService.getSpeciesClassesCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await classService.findPaginatedSpeciesClasses(req.user, queryParams),
+      await classService.getSpeciesClassesCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [classesData, count] = paginatedResults.value;
 
     let data: SpeciesClass[] | SpeciesClassExtended[] = classesData;
     if (extended) {
       data = await Promise.all(
         classesData.map(async (classData) => {
-          const speciesCount = await classService.getSpeciesCountBySpeciesClass(classData.id, req.user);
-          const entriesCount = await classService.getEntriesCountBySpeciesClass(classData.id, req.user);
+          const speciesCount = (
+            await classService.getSpeciesCountBySpeciesClass(classData.id, req.user)
+          )._unsafeUnwrap();
+          const entriesCount = (
+            await classService.getEntriesCountBySpeciesClass(classData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...classData,
             speciesCount,
@@ -80,17 +110,22 @@ const classesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const speciesClass = await classService.createSpeciesClass(input, req.user);
-      const response = upsertClassResponse.parse(speciesClass);
+    const speciesClassCreateResult = await classService.createSpeciesClass(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (speciesClassCreateResult.isErr()) {
+      switch (speciesClassCreateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: speciesClassCreateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertClassResponse.parse(speciesClassCreateResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -106,17 +141,22 @@ const classesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const speciesClass = await classService.updateSpeciesClass(req.params.id, input, req.user);
-      const response = upsertClassResponse.parse(speciesClass);
+    const speciesClassUpdateResult = await classService.updateSpeciesClass(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (speciesClassUpdateResult.isErr()) {
+      switch (speciesClassUpdateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: speciesClassUpdateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertClassResponse.parse(speciesClassUpdateResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -124,7 +164,19 @@ const classesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedSpeciesClass = await classService.deleteSpeciesClass(req.params.id, req.user);
+    const deletedSpeciesClassResult = await classService.deleteSpeciesClass(req.params.id, req.user);
+
+    if (deletedSpeciesClassResult.isErr()) {
+      switch (deletedSpeciesClassResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedSpeciesClassResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedSpeciesClass = deletedSpeciesClassResult.value;
 
     if (!deletedSpeciesClass) {
       return await reply.status(404).send();
