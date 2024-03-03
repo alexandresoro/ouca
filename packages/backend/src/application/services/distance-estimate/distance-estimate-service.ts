@@ -1,20 +1,18 @@
 import { type DistanceEstimateFailureReason } from "@domain/distance-estimate/distance-estimate.js";
 import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
+import { type DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
 import {
   type DistanceEstimatesSearchParams,
   type UpsertDistanceEstimateInput,
 } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { err, ok, type Result } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type EstimationDistanceCreateInput } from "../../../repositories/estimation-distance/estimation-distance-repository-types.js";
-import { type EstimationDistanceRepository } from "../../../repositories/estimation-distance/estimation-distance-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type DistanceEstimateServiceDependencies = {
-  distanceEstimateRepository: EstimationDistanceRepository;
+  distanceEstimateRepository: DistanceEstimateRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -30,7 +28,7 @@ export const buildDistanceEstimateService = ({
       return err("notAllowed");
     }
 
-    const distanceEstimate = await distanceEstimateRepository.findEstimationDistanceById(id);
+    const distanceEstimate = await distanceEstimateRepository.findDistanceEstimateById(id);
     return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
   };
 
@@ -42,7 +40,7 @@ export const buildDistanceEstimateService = ({
       return err("notAllowed");
     }
 
-    const distanceEstimate = await distanceEstimateRepository.findEstimationDistanceByDonneeId(
+    const distanceEstimate = await distanceEstimateRepository.findDistanceEstimateByEntryId(
       entryId ? parseInt(entryId) : undefined
     );
     return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
@@ -60,7 +58,7 @@ export const buildDistanceEstimateService = ({
   };
 
   const findAllDistanceEstimates = async (): Promise<DistanceEstimate[]> => {
-    const distanceEstimates = await distanceEstimateRepository.findEstimationsDistance({
+    const distanceEstimates = await distanceEstimateRepository.findDistanceEstimates({
       orderBy: "libelle",
     });
 
@@ -81,7 +79,7 @@ export const buildDistanceEstimateService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const distanceEstimates = await distanceEstimateRepository.findEstimationsDistance({
+    const distanceEstimates = await distanceEstimateRepository.findDistanceEstimates({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -114,19 +112,14 @@ export const buildDistanceEstimateService = ({
       return err("notAllowed");
     }
 
-    try {
-      const createdDistanceEstimate = await distanceEstimateRepository.createEstimationDistance({
-        ...input,
-        owner_id: loggedUser.id,
-      });
+    const createdDistanceEstimateResult = await distanceEstimateRepository.createDistanceEstimate({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdDistanceEstimate, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdDistanceEstimateResult.map((createdDistanceEstimate) => {
+      return enrichEntityWithEditableStatus(createdDistanceEstimate, loggedUser);
+    });
   };
 
   const updateDistanceEstimate = async (
@@ -140,23 +133,18 @@ export const buildDistanceEstimateService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await distanceEstimateRepository.findEstimationDistanceById(id);
+      const existingData = await distanceEstimateRepository.findDistanceEstimateById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updateDistanceEstimate = await distanceEstimateRepository.updateEstimationDistance(id, input);
+    const updateDistanceEstimateResult = await distanceEstimateRepository.updateDistanceEstimate(id, input);
 
-      return ok(enrichEntityWithEditableStatus(updateDistanceEstimate, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updateDistanceEstimateResult.map((updateDistanceEstimate) => {
+      return enrichEntityWithEditableStatus(updateDistanceEstimate, loggedUser);
+    });
   };
 
   const deleteDistanceEstimate = async (
@@ -169,24 +157,24 @@ export const buildDistanceEstimateService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await distanceEstimateRepository.findEstimationDistanceById(id);
+      const existingData = await distanceEstimateRepository.findDistanceEstimateById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedDistanceEstimate = await distanceEstimateRepository.deleteEstimationDistanceById(id);
+    const deletedDistanceEstimate = await distanceEstimateRepository.deleteDistanceEstimateById(id);
     return ok(enrichEntityWithEditableStatus(deletedDistanceEstimate, loggedUser));
   };
 
   const createDistanceEstimates = async (
-    distanceEstimates: Omit<EstimationDistanceCreateInput[], "owner_id">,
+    distanceEstimates: UpsertDistanceEstimateInput[],
     loggedUser: LoggedUser
   ): Promise<readonly DistanceEstimate[]> => {
-    const createdDistanceEstimates = await distanceEstimateRepository.createEstimationsDistance(
+    const createdDistanceEstimates = await distanceEstimateRepository.createDistanceEstimates(
       distanceEstimates.map((distanceEstimate) => {
-        return { ...distanceEstimate, owner_id: loggedUser.id };
+        return { ...distanceEstimate, ownerId: loggedUser.id };
       })
     );
 

@@ -1,0 +1,187 @@
+import {
+  distanceEstimateSchema,
+  type DistanceEstimate,
+  type DistanceEstimateCreateInput,
+  type DistanceEstimateFindManyInput,
+} from "@domain/distance-estimate/distance-estimate.js";
+import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
+import { kysely } from "@infrastructure/kysely/kysely.js";
+import { sql } from "kysely";
+import { fromPromise, type Result } from "neverthrow";
+import { z } from "zod";
+import { countSchema } from "../common.js";
+
+export const buildDistanceEstimateRepository = () => {
+  const findDistanceEstimateById = async (id: number): Promise<DistanceEstimate | null> => {
+    const distanceEstimateResult = await kysely
+      .selectFrom("estimation_distance")
+      .select([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .where("id", "=", id)
+      .executeTakeFirst();
+
+    return distanceEstimateResult ? distanceEstimateSchema.parse(distanceEstimateResult) : null;
+  };
+
+  const findDistanceEstimateByEntryId = async (entryId: number | undefined): Promise<DistanceEstimate | null> => {
+    if (!entryId) {
+      return null;
+    }
+
+    const distanceEstimateResult = await kysely
+      .selectFrom("estimation_distance")
+      .leftJoin("donnee", "donnee.estimationDistanceId", "estimation_distance.id")
+      .select([sql<string>`basenaturaliste.estimation_distance.id::text`.as("id"), "libelle", "ownerId"])
+      .where("donnee.id", "=", entryId)
+      .executeTakeFirst();
+
+    return distanceEstimateResult ? distanceEstimateSchema.parse(distanceEstimateResult) : null;
+  };
+
+  const findDistanceEstimates = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: DistanceEstimateFindManyInput = {}): Promise<DistanceEstimate[]> => {
+    const isSortByNbDonnees = orderBy === "nbDonnees";
+
+    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+    let queryDistanceEstimate;
+
+    if (isSortByNbDonnees) {
+      queryDistanceEstimate = kysely
+        .selectFrom("estimation_distance")
+        .leftJoin("donnee", "donnee.estimationDistanceId", "estimation_distance.id")
+        .select([sql`basenaturaliste.estimation_distance.id::text`.as("id"), "libelle", "ownerId"]);
+
+      if (q?.length) {
+        queryDistanceEstimate = queryDistanceEstimate.where(
+          sql`unaccent(libelle)`,
+          "ilike",
+          sql`unaccent(${`%${q}%`})`
+        );
+      }
+
+      queryDistanceEstimate = queryDistanceEstimate
+        .groupBy("estimation_distance.id")
+        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy("estimation_distance.libelle asc");
+    } else {
+      queryDistanceEstimate = kysely
+        .selectFrom("estimation_distance")
+        .select([sql`basenaturaliste.estimation_distance.id::text`.as("id"), "libelle", "ownerId"]);
+
+      if (q?.length) {
+        queryDistanceEstimate = queryDistanceEstimate.where(
+          sql`unaccent(libelle)`,
+          "ilike",
+          sql`unaccent(${`%${q}%`})`
+        );
+      }
+
+      if (orderBy) {
+        queryDistanceEstimate = queryDistanceEstimate.orderBy(orderBy, sortOrder ?? undefined);
+      }
+    }
+
+    if (offset) {
+      queryDistanceEstimate = queryDistanceEstimate.offset(offset);
+    }
+
+    if (limit) {
+      queryDistanceEstimate = queryDistanceEstimate.limit(limit);
+    }
+
+    const distanceEstimatesResult = await queryDistanceEstimate.execute();
+
+    return z.array(distanceEstimateSchema).parse(distanceEstimatesResult);
+  };
+
+  const getCount = async (q?: string | null): Promise<number> => {
+    let query = kysely.selectFrom("estimation_distance").select((eb) => eb.fn.countAll().as("count"));
+
+    if (q?.length) {
+      query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+    }
+
+    const countResult = await query.executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
+  const createDistanceEstimate = async (
+    distanceEstimateInput: DistanceEstimateCreateInput
+  ): Promise<Result<DistanceEstimate, EntityFailureReason>> => {
+    return fromPromise(
+      kysely
+        .insertInto("estimation_distance")
+        .values({
+          libelle: distanceEstimateInput.libelle,
+          ownerId: distanceEstimateInput.ownerId,
+        })
+        .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+        .executeTakeFirstOrThrow(),
+      handleDatabaseError
+    ).map((createdDistanceEstimate) => distanceEstimateSchema.parse(createdDistanceEstimate));
+  };
+
+  const createDistanceEstimates = async (
+    distanceEstimateInputs: DistanceEstimateCreateInput[]
+  ): Promise<DistanceEstimate[]> => {
+    const createdDistanceEstimates = await kysely
+      .insertInto("estimation_distance")
+      .values(
+        distanceEstimateInputs.map((distanceEstimateInput) => {
+          return {
+            libelle: distanceEstimateInput.libelle,
+            ownerId: distanceEstimateInput.ownerId,
+          };
+        })
+      )
+      .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .execute();
+
+    return z.array(distanceEstimateSchema).nonempty().parse(createdDistanceEstimates);
+  };
+
+  const updateDistanceEstimate = async (
+    distanceEstimateId: number,
+    distanceEstimateInput: DistanceEstimateCreateInput
+  ): Promise<Result<DistanceEstimate, EntityFailureReason>> => {
+    return fromPromise(
+      kysely
+        .updateTable("estimation_distance")
+        .set({
+          libelle: distanceEstimateInput.libelle,
+          ownerId: distanceEstimateInput.ownerId,
+        })
+        .where("id", "=", distanceEstimateId)
+        .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+        .executeTakeFirstOrThrow(),
+      handleDatabaseError
+    ).map((updatedDistanceEstimate) => distanceEstimateSchema.parse(updatedDistanceEstimate));
+  };
+
+  const deleteDistanceEstimateById = async (distanceEstimateId: number): Promise<DistanceEstimate | null> => {
+    const deletedDistanceEstimate = await kysely
+      .deleteFrom("estimation_distance")
+      .where("id", "=", distanceEstimateId)
+      .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .executeTakeFirst();
+
+    return deletedDistanceEstimate ? distanceEstimateSchema.parse(deletedDistanceEstimate) : null;
+  };
+
+  return {
+    findDistanceEstimateById,
+    findDistanceEstimateByEntryId,
+    findDistanceEstimates,
+    getCount,
+    createDistanceEstimate,
+    createDistanceEstimates,
+    updateDistanceEstimate,
+    deleteDistanceEstimateById,
+  };
+};

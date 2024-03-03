@@ -2,6 +2,7 @@ import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
+import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
 import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
@@ -14,6 +15,10 @@ import {
   buildDepartmentService,
   type DepartmentService,
 } from "../application/services/department/department-service.js";
+import {
+  buildDistanceEstimateService,
+  type DistanceEstimateService,
+} from "../application/services/distance-estimate/distance-estimate-service.js";
 import {
   buildNumberEstimateService,
   type NumberEstimateService,
@@ -30,7 +35,6 @@ import { buildDonneeComportementRepository } from "../repositories/donnee-compor
 import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
 import { buildEspeceRepository } from "../repositories/espece/espece-repository.js";
-import { buildEstimationDistanceRepository } from "../repositories/estimation-distance/estimation-distance-repository.js";
 import { buildInventaireAssocieRepository } from "../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { buildInventaireMeteoRepository } from "../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { buildInventaireRepository } from "../repositories/inventaire/inventaire-repository.js";
@@ -39,10 +43,6 @@ import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { buildBehaviorService, type BehaviorService } from "./entities/behavior/behavior-service.js";
-import {
-  buildDistanceEstimateService,
-  type DistanceEstimateService,
-} from "./entities/distance-estimate/distance-estimate-service.js";
 import { buildDonneeService, type DonneeService } from "./entities/donnee-service.js";
 import { buildEnvironmentService, type EnvironmentService } from "./entities/environment/environment-service.js";
 import { buildInventaireService, type InventaireService } from "./entities/inventaire-service.js";
@@ -87,7 +87,7 @@ export const buildServices = async (): Promise<Services> => {
   const behaviorRepository = buildComportementRepository({ slonik });
   const classRepository = buildClasseRepository({ slonik });
   const departmentRepository = buildDepartmentRepository();
-  const distanceEstimateRepository = buildEstimationDistanceRepository({ slonik });
+  const distanceEstimateRepository = buildDistanceEstimateRepository();
   const entryRepository = buildDonneeRepository({ slonik });
   const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
   const entryEnvironmentRepository = buildDonneeMilieuRepository({ slonik });
