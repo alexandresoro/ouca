@@ -27,6 +27,10 @@ import {
 import { buildObserverService, type ObserverService } from "../application/services/observer/observer-service.js";
 import { buildSettingsService, type SettingsService } from "../application/services/settings/settings-service.js";
 import { buildSexService, type SexService } from "../application/services/sex/sex-service.js";
+import {
+  buildSpeciesClassService,
+  type SpeciesClassService,
+} from "../application/services/species-class/species-class-service.js";
 import { buildUserService, type UserService } from "../application/services/user/user-service.js";
 import { buildWeatherService, type WeatherService } from "../application/services/weather/weather-service.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
@@ -47,7 +51,6 @@ import { buildDonneeService, type DonneeService } from "./entities/donnee-servic
 import { buildEnvironmentService, type EnvironmentService } from "./entities/environment/environment-service.js";
 import { buildInventaireService, type InventaireService } from "./entities/inventaire-service.js";
 import { buildLocalityService, type LocalityService } from "./entities/locality/locality-service.js";
-import { buildSpeciesClassService, type SpeciesClassService } from "./entities/species-class/species-class-service.js";
 import { buildSpeciesService, type SpeciesService } from "./entities/species/species-service.js";
 import { buildTownService, type TownService } from "./entities/town/town-service.js";
 import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";

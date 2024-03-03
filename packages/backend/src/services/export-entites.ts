@@ -13,6 +13,7 @@ import { type DistanceEstimateService } from "../application/services/distance-e
 import { type NumberEstimateService } from "../application/services/number-estimate/number-estimate-service.js";
 import { type ObserverService } from "../application/services/observer/observer-service.js";
 import { type SexService } from "../application/services/sex/sex-service.js";
+import { type SpeciesClassService } from "../application/services/species-class/species-class-service.js";
 import { type WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type BehaviorService } from "./entities/behavior/behavior-service.js";
@@ -20,7 +21,6 @@ import { type DonneeService } from "./entities/donnee-service.js";
 import { type EnvironmentService } from "./entities/environment/environment-service.js";
 import { type InventaireService } from "./entities/inventaire-service.js";
 import { type LocalityService } from "./entities/locality/locality-service.js";
-import { type SpeciesClassService } from "./entities/species-class/species-class-service.js";
 import { type SpeciesService } from "./entities/species/species-service.js";
 import { type TownService } from "./entities/town/town-service.js";
 

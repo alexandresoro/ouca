@@ -5,6 +5,7 @@ import { type Species as SpeciesCommon } from "@ou-ca/common/api/entities/specie
 import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
+import { type SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import {
   type EspeceCreateInput,
@@ -13,7 +14,6 @@ import {
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { reshapeSearchCriteria } from "../../../repositories/search-criteria.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
-import { type SpeciesClassService } from "../species-class/species-class-service.js";
 import { reshapeInputSpeciesUpsertData } from "./species-service-reshape.js";
 
 type SpeciesServiceDependencies = {

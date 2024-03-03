@@ -9,11 +9,11 @@ import { ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
+import { type SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type EspeceCreateInput } from "../../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mockVi } from "../../../utils/mock.js";
-import { type SpeciesClassService } from "../species-class/species-class-service.js";
 import { reshapeInputSpeciesUpsertData } from "./species-service-reshape.js";
 import { buildSpeciesService } from "./species-service.js";
 
