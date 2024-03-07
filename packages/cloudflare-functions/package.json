@@ -21,6 +21,6 @@
     "@biomejs/biome": "1.5.3",
     "@cloudflare/workers-types": "4.20240222.0",
     "@ou-ca/eslint-config": "workspace:*",
-    "typescript": "5.3.3"
+    "typescript": "5.4.2"
   }
 }
