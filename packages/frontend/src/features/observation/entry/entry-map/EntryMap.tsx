@@ -124,7 +124,10 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
     }
 
     // If no selection, we don't care much about a realistic shape -> Infinity
-    const selectionPolygon = boundingPolygon(selectionFeatureCollection, localitySelection != null ? 2 : Infinity);
+    const selectionPolygon = boundingPolygon(
+      selectionFeatureCollection,
+      localitySelection != null ? 2 : Number.POSITIVE_INFINITY
+    );
 
     if (!selectionPolygon) {
       return null;

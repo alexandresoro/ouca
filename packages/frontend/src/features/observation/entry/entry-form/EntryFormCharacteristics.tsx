@@ -123,7 +123,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
       schema: getNumberEstimatesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -138,7 +138,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
       schema: getSexesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -153,7 +153,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
       schema: getAgesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -163,7 +163,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
       <div className="flex gap-4">
         <TextInput
           {...register("number", {
-            setValueAs: (v: string) => (v?.length ? parseInt(v) : typeof v === "number" ? v : null),
+            setValueAs: (v: string) => (v?.length ? Number.parseInt(v) : typeof v === "number" ? v : null),
           })}
           textInputClassName={`w-36 py-1 ${selectedNumberEstimate?.nonCompte ? "invisible" : ""}`}
           label={t("observationsTable.header.number")}

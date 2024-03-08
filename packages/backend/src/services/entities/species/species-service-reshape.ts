@@ -5,7 +5,7 @@ export const reshapeInputSpeciesUpsertData = (data: UpsertSpeciesInput): EspeceC
   const { classId, nomFrancais, nomLatin, ...rest } = data;
   return {
     ...rest,
-    classe_id: parseInt(classId),
+    classe_id: Number.parseInt(classId),
     nom_francais: nomFrancais,
     nom_latin: nomLatin,
   };

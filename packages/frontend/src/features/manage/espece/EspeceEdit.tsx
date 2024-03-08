@@ -51,7 +51,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
       schema: getClassesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

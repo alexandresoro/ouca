@@ -43,7 +43,7 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
       schema: getBehaviorsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

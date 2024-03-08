@@ -34,7 +34,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByMeteoId(parseInt(id)));
+    return ok(await entryRepository.getCountByMeteoId(Number.parseInt(id)));
   };
 
   const findWeathersOfInventoryId = async (

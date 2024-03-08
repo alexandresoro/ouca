@@ -63,7 +63,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
       schema: getClassesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -79,7 +79,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
       schema: getSpeciesPaginatedResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

@@ -176,16 +176,16 @@ export const generateDonneesExport = async (
       }
 
       const observateur = (
-        await observerService.findObserverOfInventoryId(parseInt(inventaire.id), loggedUser)
+        await observerService.findObserverOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const lieudit = await localityService.findLocalityOfInventoryId(parseInt(inventaire.id), loggedUser);
+      const lieudit = await localityService.findLocalityOfInventoryId(Number.parseInt(inventaire.id), loggedUser);
       const commune = await townService.findTownOfLocalityId(lieudit?.id, loggedUser);
       const departement = (await departmentService.findDepartmentOfTownId(commune?.id, loggedUser))._unsafeUnwrap();
       const associes = (
-        await observerService.findAssociatesOfInventoryId(parseInt(inventaire.id), loggedUser)
+        await observerService.findAssociatesOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
       const meteos = (
-        await weatherService.findWeathersOfInventoryId(parseInt(inventaire.id), loggedUser)
+        await weatherService.findWeathersOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
       const espece = await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser);
       const classe = (await classService.findSpeciesClassOfSpecies(espece?.id, loggedUser))._unsafeUnwrap();

@@ -45,10 +45,10 @@ export const reshapeInputInventoryUpsertData = (
 
   return {
     ...rest,
-    observateur_id: parseInt(observerId),
+    observateur_id: Number.parseInt(observerId),
     heure: time,
     duree: duration != null ? getHumanFriendlyTimeFromMinutes(duration) : null,
-    lieudit_id: parseInt(localityId),
+    lieudit_id: Number.parseInt(localityId),
     altitude: customAltitude,
     latitude: customLatitude,
     longitude: customLongitude,

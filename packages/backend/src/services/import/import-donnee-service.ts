@@ -235,11 +235,15 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.coordinates?.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
-          new Set(await this.services.observerService.findAssociateIdsOfInventoryId(parseInt(existingInventaire.id))),
+          new Set(
+            await this.services.observerService.findAssociateIdsOfInventoryId(Number.parseInt(existingInventaire.id))
+          ),
           new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.weatherService.findWeatherIdsOfInventoryId(parseInt(existingInventaire.id))),
+          new Set(
+            await this.services.weatherService.findWeatherIdsOfInventoryId(Number.parseInt(existingInventaire.id))
+          ),
           new Set(inputInventaire.weatherIds)
         )
       );

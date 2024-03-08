@@ -40,7 +40,7 @@ export const buildSpeciesClassService = ({
       return err("notAllowed");
     }
 
-    return ok(await speciesRepository.getCountByClasseId(parseInt(id)));
+    return ok(await speciesRepository.getCountByClasseId(Number.parseInt(id)));
   };
 
   const getEntriesCountBySpeciesClass = async (
@@ -51,7 +51,7 @@ export const buildSpeciesClassService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByClasseId(parseInt(id)));
+    return ok(await entryRepository.getCountByClasseId(Number.parseInt(id)));
   };
 
   const findSpeciesClassOfSpecies = async (
@@ -62,7 +62,9 @@ export const buildSpeciesClassService = ({
       return err("notAllowed");
     }
 
-    const speciesClass = await classRepository.findSpeciesClassBySpeciesId(especeId ? parseInt(especeId) : undefined);
+    const speciesClass = await classRepository.findSpeciesClassBySpeciesId(
+      especeId ? Number.parseInt(especeId) : undefined
+    );
     return ok(enrichEntityWithEditableStatus(speciesClass, loggedUser));
   };
 

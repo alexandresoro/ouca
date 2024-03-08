@@ -8,30 +8,30 @@ export const validTimeSchema = z
   .string()
   .regex(TIME_REGEX)
   .refine((timeStr) => {
-    return !/^[0-9]+$/.test(timeStr) || parseInt(timeStr) <= MAX_SUPPORTED_MINUTES;
+    return !/^[0-9]+$/.test(timeStr) || Number.parseInt(timeStr) <= MAX_SUPPORTED_MINUTES;
   });
 
 export const getMinutesFromTime = (timeStr: string): number => {
   const validTimeResult = validTimeSchema.safeParse(timeStr);
   if (!validTimeResult.success) {
-    return NaN;
+    return Number.NaN;
   }
 
   const { data: validTime } = validTimeResult;
 
   // Format is in minutes
   if (/^[0-9]+$/.test(validTime)) {
-    const validTimeInt = parseInt(validTime);
+    const validTimeInt = Number.parseInt(validTime);
     return validTimeInt;
   }
 
   // Format is a time
   const matchTime = validTime.match(/^([0-9]{1,2})(:|h|H)([0-5][0-9])$/);
   if (matchTime != null) {
-    return parseInt(matchTime[1]) * MINUTES_IN_HOUR + parseInt(matchTime[3]);
+    return Number.parseInt(matchTime[1]) * MINUTES_IN_HOUR + Number.parseInt(matchTime[3]);
   }
 
-  return NaN;
+  return Number.NaN;
 };
 
 const validMinutesSchema = z.number().nonnegative().safe().int().max(MAX_SUPPORTED_MINUTES); //Database does not allow more than 5 characters

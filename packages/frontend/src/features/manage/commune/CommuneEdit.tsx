@@ -50,7 +50,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
       schema: getDepartmentsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

@@ -62,7 +62,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Create and save the espece
-    const especeToSave = importedEspece.buildEspece(parseInt(classe.id));
+    const especeToSave = importedEspece.buildEspece(Number.parseInt(classe.id));
 
     this.especesToInsert.push(especeToSave);
     this.especes.push(importedEspece);

@@ -9,7 +9,7 @@ export const reshapeInputLocalityUpsertData = (data: UpsertLocalityInput): Lieud
   const { townId, ...rest } = data;
   return {
     ...rest,
-    commune_id: parseInt(townId),
+    commune_id: Number.parseInt(townId),
     coordinates_system: "gps",
   };
 };
