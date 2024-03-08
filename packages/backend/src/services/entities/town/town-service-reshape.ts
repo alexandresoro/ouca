@@ -5,6 +5,6 @@ export const reshapeInputTownUpsertData = (data: UpsertTownInput): CommuneCreate
   const { departmentId, ...rest } = data;
   return {
     ...rest,
-    departement_id: parseInt(departmentId),
+    departement_id: Number.parseInt(departmentId),
   };
 };

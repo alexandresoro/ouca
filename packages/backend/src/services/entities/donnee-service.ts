@@ -76,9 +76,9 @@ export const buildDonneeService = ({
     validateAuthorization(loggedUser);
 
     const [previousEntryId, nextEntryId, index] = await Promise.all([
-      entryRepository.findPreviousDonneeId(parseInt(entryId)),
-      entryRepository.findNextDonneeId(parseInt(entryId)),
-      entryRepository.findDonneeIndex(parseInt(entryId)),
+      entryRepository.findPreviousDonneeId(Number.parseInt(entryId)),
+      entryRepository.findNextDonneeId(Number.parseInt(entryId)),
+      entryRepository.findDonneeIndex(Number.parseInt(entryId)),
     ]);
 
     return {
@@ -131,16 +131,16 @@ export const buildDonneeService = ({
 
       if (behaviorIds?.length) {
         await entryBehaviorRepository.insertDonneeWithComportements(
-          parseInt(createdDonnee.id),
-          behaviorIds.map((behavior) => parseInt(behavior)),
+          Number.parseInt(createdDonnee.id),
+          behaviorIds.map((behavior) => Number.parseInt(behavior)),
           transactionConnection
         );
       }
 
       if (environmentIds?.length) {
         await entryEnvironmentRepository.insertDonneeWithMilieux(
-          parseInt(createdDonnee.id),
-          environmentIds.map((environment) => parseInt(environment)),
+          Number.parseInt(createdDonnee.id),
+          environmentIds.map((environment) => Number.parseInt(environment)),
           transactionConnection
         );
       }
@@ -173,27 +173,27 @@ export const buildDonneeService = ({
     } else {
       const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
         const updatedDonnee = await entryRepository.updateDonnee(
-          parseInt(id),
+          Number.parseInt(id),
           reshapeInputEntryUpsertData(input),
           transactionConnection
         );
 
-        await entryBehaviorRepository.deleteComportementsOfDonneeId(parseInt(id), transactionConnection);
+        await entryBehaviorRepository.deleteComportementsOfDonneeId(Number.parseInt(id), transactionConnection);
 
         if (behaviorIds?.length) {
           await entryBehaviorRepository.insertDonneeWithComportements(
-            parseInt(id),
-            behaviorIds.map((behavior) => parseInt(behavior)),
+            Number.parseInt(id),
+            behaviorIds.map((behavior) => Number.parseInt(behavior)),
             transactionConnection
           );
         }
 
-        await entryEnvironmentRepository.deleteMilieuxOfDonneeId(parseInt(id), transactionConnection);
+        await entryEnvironmentRepository.deleteMilieuxOfDonneeId(Number.parseInt(id), transactionConnection);
 
         if (environmentIds?.length) {
           await entryEnvironmentRepository.insertDonneeWithMilieux(
-            parseInt(id),
-            environmentIds.map((environment) => parseInt(environment)),
+            Number.parseInt(id),
+            environmentIds.map((environment) => Number.parseInt(environment)),
             transactionConnection
           );
         }

@@ -24,7 +24,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
   const findEnvironmentIdsOfEntryId = async (entryId: string): Promise<string[]> => {
     const environmentIds = await environmentRepository
-      .findMilieuxOfDonneeId(parseInt(entryId))
+      .findMilieuxOfDonneeId(Number.parseInt(entryId))
       .then((environments) => environments.map(({ id }) => id));
 
     return [...environmentIds];
@@ -36,7 +36,9 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   ): Promise<Environment[]> => {
     validateAuthorization(loggedUser);
 
-    const environments = await environmentRepository.findMilieuxOfDonneeId(entryId ? parseInt(entryId) : undefined);
+    const environments = await environmentRepository.findMilieuxOfDonneeId(
+      entryId ? Number.parseInt(entryId) : undefined
+    );
 
     const enrichedEnvironments = environments.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);
@@ -48,7 +50,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   const getEntriesCountByEnvironment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return entryRepository.getCountByMilieuId(parseInt(id));
+    return entryRepository.getCountByMilieuId(Number.parseInt(id));
   };
 
   const findAllEnvironments = async (): Promise<Environment[]> => {

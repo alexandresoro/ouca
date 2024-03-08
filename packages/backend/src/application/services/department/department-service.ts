@@ -43,7 +43,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByDepartementId(parseInt(id)));
+    return ok(await entryRepository.getCountByDepartementId(Number.parseInt(id)));
   };
 
   const getLocalitiesCountByDepartment = async (
@@ -54,7 +54,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    return ok(await localityRepository.getCountByDepartementId(parseInt(id)));
+    return ok(await localityRepository.getCountByDepartementId(Number.parseInt(id)));
   };
 
   const getTownsCountByDepartment = async (
@@ -65,7 +65,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    return ok(await townRepository.getCountByDepartementId(parseInt(id)));
+    return ok(await townRepository.getCountByDepartementId(Number.parseInt(id)));
   };
 
   const findDepartmentOfTownId = async (
@@ -76,7 +76,9 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    const department = await departmentRepository.findDepartmentByTownId(communeId ? parseInt(communeId) : undefined);
+    const department = await departmentRepository.findDepartmentByTownId(
+      communeId ? Number.parseInt(communeId) : undefined
+    );
     return ok(enrichEntityWithEditableStatus(department, loggedUser));
   };
 

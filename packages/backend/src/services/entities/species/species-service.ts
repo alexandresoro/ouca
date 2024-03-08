@@ -47,7 +47,7 @@ export const buildSpeciesService = ({
   const getEntriesCountBySpecies = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return entryRepository.getCountByEspeceId(parseInt(id));
+    return entryRepository.getCountByEspeceId(Number.parseInt(id));
   };
 
   const findSpeciesOfEntryId = async (
@@ -56,7 +56,7 @@ export const buildSpeciesService = ({
   ): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
-    const species = await speciesRepository.findEspeceByDonneeId(entryId ? parseInt(entryId) : undefined);
+    const species = await speciesRepository.findEspeceByDonneeId(entryId ? Number.parseInt(entryId) : undefined);
     if (!species) {
       return null;
     }

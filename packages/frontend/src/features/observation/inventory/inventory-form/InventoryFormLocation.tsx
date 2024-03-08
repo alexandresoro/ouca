@@ -56,7 +56,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       schema: getDepartmentResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: departmentId != null,
     }
@@ -73,7 +73,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       schema: getTownResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: townId != null,
     }
@@ -154,7 +154,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       schema: getDepartmentsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -170,7 +170,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       schema: getTownsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: department?.id != null,
     }
@@ -187,7 +187,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       schema: getLocalitiesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: town?.id != null,
     }
@@ -219,15 +219,15 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 
   // Handlers when fields are changed manually by the user
   const handleLatitudeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    void setLatitude(event.target.value ? parseFloat(event.target.value) : null);
+    void setLatitude(event.target.value ? Number.parseFloat(event.target.value) : null);
   };
 
   const handleLongitudeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    void setLongitude(event.target.value ? parseFloat(event.target.value) : null);
+    void setLongitude(event.target.value ? Number.parseFloat(event.target.value) : null);
   };
 
   const handleAltitudeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setAltitude(event.target.value ? parseFloat(event.target.value) : null);
+    setAltitude(event.target.value ? Number.parseFloat(event.target.value) : null);
   };
 
   return (

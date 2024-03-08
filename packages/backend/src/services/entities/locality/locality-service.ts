@@ -35,13 +35,13 @@ export const buildLocalityService = ({
   const getInventoriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return inventoryRepository.getCountByLocality(parseInt(id));
+    return inventoryRepository.getCountByLocality(Number.parseInt(id));
   };
 
   const getEntriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return entryRepository.getCountByLieuditId(parseInt(id));
+    return entryRepository.getCountByLieuditId(Number.parseInt(id));
   };
 
   const findLocalityOfInventoryId = async (
@@ -77,7 +77,7 @@ export const buildLocalityService = ({
     const localities = await localityRepository.findLieuxdits({
       q,
       ...getSqlPagination(pagination),
-      townId: townId ? parseInt(townId) : undefined,
+      townId: townId ? Number.parseInt(townId) : undefined,
       orderBy: orderByField,
       sortOrder,
     });
@@ -101,7 +101,7 @@ export const buildLocalityService = ({
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return localityRepository.getCount(q, townId ? parseInt(townId) : undefined);
+    return localityRepository.getCount(q, townId ? Number.parseInt(townId) : undefined);
   };
 
   const createLocality = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Locality> => {

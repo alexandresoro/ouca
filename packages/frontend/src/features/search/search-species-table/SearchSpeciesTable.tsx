@@ -56,7 +56,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
       schema: getSpeciesExtendedResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

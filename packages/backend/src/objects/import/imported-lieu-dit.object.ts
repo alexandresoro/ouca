@@ -32,7 +32,7 @@ export class ImportedLieuDit {
 
   buildLieudit = (communeId: string): Omit<LieuditCreateInput, "owner_id"> => {
     return {
-      commune_id: parseInt(communeId),
+      commune_id: Number.parseInt(communeId),
       nom: this.nom,
       altitude: +this.altitude,
       longitude: +this.longitude,

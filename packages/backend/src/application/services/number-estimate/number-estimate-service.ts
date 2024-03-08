@@ -38,7 +38,7 @@ export const buildNumberEstimateService = ({
     }
 
     const numberEstimate = await numberEstimateRepository.findNumberEstimateByEntryId(
-      entryId ? parseInt(entryId) : undefined
+      entryId ? Number.parseInt(entryId) : undefined
     );
     return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
   };
@@ -51,7 +51,7 @@ export const buildNumberEstimateService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByEstimationNombreId(parseInt(id)));
+    return ok(await entryRepository.getCountByEstimationNombreId(Number.parseInt(id)));
   };
 
   const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {

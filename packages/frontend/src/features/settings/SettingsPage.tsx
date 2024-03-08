@@ -248,7 +248,7 @@ const SettingsPage: FunctionComponent = () => {
                   hasError={!!errors.defaultNombre}
                   className="text-base-content text-sm font-semibold"
                   {...register("defaultNombre", {
-                    setValueAs: (v: string) => (v?.length ? parseInt(v) : typeof v === "number" ? v : null),
+                    setValueAs: (v: string) => (v?.length ? Number.parseInt(v) : typeof v === "number" ? v : null),
                   })}
                 />
               </div>

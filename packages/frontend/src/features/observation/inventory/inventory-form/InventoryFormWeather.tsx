@@ -44,7 +44,7 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
       schema: getWeathersResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -53,7 +53,7 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
     <div className="flex gap-2">
       <TextInput
         {...register("temperature", {
-          setValueAs: (v: string) => (v?.length ? parseInt(v) : typeof v === "number" ? v : null),
+          setValueAs: (v: string) => (v?.length ? Number.parseInt(v) : typeof v === "number" ? v : null),
         })}
         textInputClassName="w-24 py-1"
         label={t("inventoryForm.temperature")}

@@ -21,7 +21,7 @@ export class ImportedCommune {
 
   buildCommune = (departementId: string): Omit<CommuneCreateInput, "owner_id"> => {
     return {
-      departement_id: parseInt(departementId),
+      departement_id: Number.parseInt(departementId),
       code: +this.code,
       nom: this.nom,
     };

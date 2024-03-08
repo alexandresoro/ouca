@@ -23,10 +23,10 @@ export const enrichedInventory = async (
   user: LoggedUser | null
 ): Promise<InventoryExtended> => {
   const [observer, associates, locality, weathers] = await Promise.all([
-    (await services.observerService.findObserverOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
-    (await services.observerService.findAssociatesOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
-    services.localityService.findLocalityOfInventoryId(parseInt(inventory.id), user),
-    (await services.weatherService.findWeathersOfInventoryId(parseInt(inventory.id), user))._unsafeUnwrap(),
+    (await services.observerService.findObserverOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
+    (await services.observerService.findAssociatesOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
+    services.localityService.findLocalityOfInventoryId(Number.parseInt(inventory.id), user),
+    (await services.weatherService.findWeathersOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
   ]);
 
   if (!observer || !locality) {

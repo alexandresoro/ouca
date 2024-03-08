@@ -24,7 +24,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
   const findBehaviorIdsOfEntryId = async (entryId: string): Promise<string[]> => {
     const behaviorIds = await behaviorRepository
-      .findComportementsOfDonneeId(parseInt(entryId))
+      .findComportementsOfDonneeId(Number.parseInt(entryId))
       .then((behaviors) => behaviors.map(({ id }) => id));
 
     return [...behaviorIds];
@@ -36,7 +36,9 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
   ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
-    const behaviors = await behaviorRepository.findComportementsOfDonneeId(entryId ? parseInt(entryId) : undefined);
+    const behaviors = await behaviorRepository.findComportementsOfDonneeId(
+      entryId ? Number.parseInt(entryId) : undefined
+    );
 
     const enrichedBehaviors = behaviors.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, loggedUser);
@@ -48,7 +50,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
   const getEntriesCountByBehavior = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return entryRepository.getCountByComportementId(parseInt(id));
+    return entryRepository.getCountByComportementId(Number.parseInt(id));
   };
 
   const findAllBehaviors = async (): Promise<Behavior[]> => {

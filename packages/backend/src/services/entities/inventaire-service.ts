@@ -59,7 +59,7 @@ export const buildInventaireService = ({
   ): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
-    return inventoryRepository.findInventaireByDonneeId(entryId ? parseInt(entryId) : undefined);
+    return inventoryRepository.findInventaireByDonneeId(entryId ? Number.parseInt(entryId) : undefined);
   };
 
   const findAllInventaires = async (): Promise<Inventaire[]> => {
@@ -99,7 +99,7 @@ export const buildInventaireService = ({
 
     const { associateIds, weatherIds } = input;
 
-    const locality = await localityRepository.findLieuditById(parseInt(input.localityId));
+    const locality = await localityRepository.findLieuditById(Number.parseInt(input.localityId));
     if (!locality) {
       logger.warn(
         {
@@ -135,16 +135,16 @@ export const buildInventaireService = ({
 
         if (associateIds?.length) {
           await inventoryAssociateRepository.insertInventaireWithAssocies(
-            parseInt(createdInventaire.id),
-            associateIds.map((associateId) => parseInt(associateId)),
+            Number.parseInt(createdInventaire.id),
+            associateIds.map((associateId) => Number.parseInt(associateId)),
             transactionConnection
           );
         }
 
         if (weatherIds?.length) {
           await inventoryWeatherRepository.insertInventaireWithMeteos(
-            parseInt(createdInventaire.id),
-            weatherIds.map((weatherId) => parseInt(weatherId)),
+            Number.parseInt(createdInventaire.id),
+            weatherIds.map((weatherId) => Number.parseInt(weatherId)),
             transactionConnection
           );
         }
@@ -166,7 +166,7 @@ export const buildInventaireService = ({
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
     const { associateIds, weatherIds } = inputData;
 
-    const locality = await localityRepository.findLieuditById(parseInt(input.localityId));
+    const locality = await localityRepository.findLieuditById(Number.parseInt(input.localityId));
     if (!locality) {
       logger.warn(
         {
@@ -209,7 +209,11 @@ export const buildInventaireService = ({
 
       // We update the inventaire ID for the donnees and we delete the duplicated inventaire
       await slonik.transaction(async (transactionConnection) => {
-        await entryRepository.updateAssociatedInventaire(id, parseInt(existingInventaire.id), transactionConnection);
+        await entryRepository.updateAssociatedInventaire(
+          id,
+          Number.parseInt(existingInventaire.id),
+          transactionConnection
+        );
         await inventoryRepository.deleteInventaireById(id, transactionConnection);
       });
 
@@ -234,7 +238,7 @@ export const buildInventaireService = ({
         if (associateIds?.length) {
           await inventoryAssociateRepository.insertInventaireWithAssocies(
             id,
-            associateIds.map((associateId) => parseInt(associateId)),
+            associateIds.map((associateId) => Number.parseInt(associateId)),
             transactionConnection
           );
         }
@@ -244,7 +248,7 @@ export const buildInventaireService = ({
         if (weatherIds?.length) {
           await inventoryWeatherRepository.insertInventaireWithMeteos(
             id,
-            weatherIds.map((weatherId) => parseInt(weatherId)),
+            weatherIds.map((weatherId) => Number.parseInt(weatherId)),
             transactionConnection
           );
         }
@@ -261,7 +265,7 @@ export const buildInventaireService = ({
 
     // Check that the user is allowed to modify the existing inventory
     if (loggedUser?.role !== "admin") {
-      const existingInventory = await inventoryRepository.findInventaireById(parseInt(id));
+      const existingInventory = await inventoryRepository.findInventaireById(Number.parseInt(id));
 
       if (existingInventory?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
@@ -269,12 +273,15 @@ export const buildInventaireService = ({
     }
 
     const deletedInventory = await slonik.transaction(async (transactionConnection) => {
-      const entriesOfInventory = await entryRepository.getCountByInventaireId(parseInt(id), transactionConnection);
+      const entriesOfInventory = await entryRepository.getCountByInventaireId(
+        Number.parseInt(id),
+        transactionConnection
+      );
 
       if (entriesOfInventory > 0) {
         throw new OucaError("OUCA0005");
       }
-      return inventoryRepository.deleteInventaireById(parseInt(id), transactionConnection);
+      return inventoryRepository.deleteInventaireById(Number.parseInt(id), transactionConnection);
     });
 
     return deletedInventory;

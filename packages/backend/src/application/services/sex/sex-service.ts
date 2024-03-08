@@ -34,7 +34,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
       return err("notAllowed");
     }
 
-    const sex = await sexRepository.findSexByEntryId(entryId ? parseInt(entryId) : undefined);
+    const sex = await sexRepository.findSexByEntryId(entryId ? Number.parseInt(entryId) : undefined);
     return ok(enrichEntityWithEditableStatus(sex, loggedUser));
   };
 
@@ -46,7 +46,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountBySexeId(parseInt(id)));
+    return ok(await entryRepository.getCountBySexeId(Number.parseInt(id)));
   };
 
   const findAllSexes = async (): Promise<Sex[]> => {

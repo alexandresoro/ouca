@@ -43,7 +43,7 @@ const EntryFormEnvironments: FunctionComponent<EntryFormEnvironmentsProps> = ({ 
       schema: getEnvironmentsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

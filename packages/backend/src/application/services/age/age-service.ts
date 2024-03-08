@@ -34,7 +34,7 @@ export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDe
       return err("notAllowed");
     }
 
-    const age = await ageRepository.findAgeByEntryId(entryId ? parseInt(entryId) : undefined);
+    const age = await ageRepository.findAgeByEntryId(entryId ? Number.parseInt(entryId) : undefined);
     return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
@@ -46,7 +46,7 @@ export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDe
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByAgeId(parseInt(id)));
+    return ok(await entryRepository.getCountByAgeId(Number.parseInt(id)));
   };
 
   const findAllAges = async (): Promise<AgeSimple[]> => {

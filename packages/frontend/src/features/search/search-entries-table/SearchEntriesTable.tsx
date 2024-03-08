@@ -67,7 +67,7 @@ const SearchEntriesTable: FunctionComponent = () => {
       schema: getEntriesExtendedResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );

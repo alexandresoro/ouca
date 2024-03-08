@@ -51,23 +51,23 @@ export const buildSettingsService = ({
 
     const defaultDepartmentResult =
       defaultDepartementId != null
-        ? await departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser)
+        ? await departmentService.findDepartment(Number.parseInt(defaultDepartementId), loggedUser)
         : ok(null);
 
     const defaultObserverResult =
       defaultObservateurId != null
-        ? await observerService.findObserver(parseInt(defaultObservateurId), loggedUser)
+        ? await observerService.findObserver(Number.parseInt(defaultObservateurId), loggedUser)
         : ok(null);
 
     const defaultSexResult =
-      defaultSexeId != null ? await sexService.findSex(parseInt(defaultSexeId), loggedUser) : ok(null);
+      defaultSexeId != null ? await sexService.findSex(Number.parseInt(defaultSexeId), loggedUser) : ok(null);
 
     const defaultAgeResult =
-      defaultAgeId != null ? await ageService.findAge(parseInt(defaultAgeId), loggedUser) : ok(null);
+      defaultAgeId != null ? await ageService.findAge(Number.parseInt(defaultAgeId), loggedUser) : ok(null);
 
     const defaultNumberEstimateResult =
       defaultEstimationNombreId != null
-        ? await numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
+        ? await numberEstimateService.findNumberEstimate(Number.parseInt(defaultEstimationNombreId), loggedUser)
         : ok(null);
 
     const getEnrichedDataResult = Result.combine([
@@ -126,23 +126,23 @@ export const buildSettingsService = ({
 
     const defaultDepartmentResult =
       defaultDepartementId != null
-        ? await departmentService.findDepartment(parseInt(defaultDepartementId), loggedUser)
+        ? await departmentService.findDepartment(Number.parseInt(defaultDepartementId), loggedUser)
         : ok(null);
 
     const defaultObserverResult =
       defaultObservateurId != null
-        ? await observerService.findObserver(parseInt(defaultObservateurId), loggedUser)
+        ? await observerService.findObserver(Number.parseInt(defaultObservateurId), loggedUser)
         : ok(null);
 
     const defaultSexResult =
-      defaultSexeId != null ? await sexService.findSex(parseInt(defaultSexeId), loggedUser) : ok(null);
+      defaultSexeId != null ? await sexService.findSex(Number.parseInt(defaultSexeId), loggedUser) : ok(null);
 
     const defaultAgeResult =
-      defaultAgeId != null ? await ageService.findAge(parseInt(defaultAgeId), loggedUser) : ok(null);
+      defaultAgeId != null ? await ageService.findAge(Number.parseInt(defaultAgeId), loggedUser) : ok(null);
 
     const defaultNumberEstimateResult =
       defaultEstimationNombreId != null
-        ? await numberEstimateService.findNumberEstimate(parseInt(defaultEstimationNombreId), loggedUser)
+        ? await numberEstimateService.findNumberEstimate(Number.parseInt(defaultEstimationNombreId), loggedUser)
         : ok(null);
 
     const getEnrichedDataResult = Result.combine([
@@ -180,14 +180,16 @@ export type SettingsService = ReturnType<typeof buildSettingsService>;
 
 const buildSettingsFromInputSettings = (inputUpdateSettings: PutSettingsInput): UpdateSettingsInput => {
   return {
-    defaultObservateurId: inputUpdateSettings.defaultObserver ? parseInt(inputUpdateSettings.defaultObserver) : null,
-    defaultDepartementId: inputUpdateSettings.defaultDepartment
-      ? parseInt(inputUpdateSettings.defaultDepartment)
+    defaultObservateurId: inputUpdateSettings.defaultObserver
+      ? Number.parseInt(inputUpdateSettings.defaultObserver)
       : null,
-    defaultAgeId: inputUpdateSettings.defaultAge ? parseInt(inputUpdateSettings.defaultAge) : null,
-    defaultSexeId: inputUpdateSettings.defaultSexe ? parseInt(inputUpdateSettings.defaultSexe) : null,
+    defaultDepartementId: inputUpdateSettings.defaultDepartment
+      ? Number.parseInt(inputUpdateSettings.defaultDepartment)
+      : null,
+    defaultAgeId: inputUpdateSettings.defaultAge ? Number.parseInt(inputUpdateSettings.defaultAge) : null,
+    defaultSexeId: inputUpdateSettings.defaultSexe ? Number.parseInt(inputUpdateSettings.defaultSexe) : null,
     defaultEstimationNombreId: inputUpdateSettings.defaultEstimationNombre
-      ? parseInt(inputUpdateSettings.defaultEstimationNombre)
+      ? Number.parseInt(inputUpdateSettings.defaultEstimationNombre)
       : null,
     defaultNombre: inputUpdateSettings.defaultNombre,
     areAssociesDisplayed: inputUpdateSettings.areAssociesDisplayed,

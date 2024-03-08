@@ -31,13 +31,13 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
   const getEntriesCountByTown = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return entryRepository.getCountByCommuneId(parseInt(id));
+    return entryRepository.getCountByCommuneId(Number.parseInt(id));
   };
 
   const getLocalitiesCountByTown = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return localityRepository.getCountByCommuneId(parseInt(id));
+    return localityRepository.getCountByCommuneId(Number.parseInt(id));
   };
 
   const findTownOfLocalityId = async (
@@ -46,7 +46,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
   ): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
-    const town = await townRepository.findCommuneByLieuDitId(lieuditId ? parseInt(lieuditId) : undefined);
+    const town = await townRepository.findCommuneByLieuDitId(lieuditId ? Number.parseInt(lieuditId) : undefined);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
@@ -70,7 +70,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
     const towns = await townRepository.findCommunes({
       q,
       ...getSqlPagination(pagination),
-      departmentId: departmentId ? parseInt(departmentId) : undefined,
+      departmentId: departmentId ? Number.parseInt(departmentId) : undefined,
       orderBy: orderByField,
       sortOrder,
     });
@@ -93,7 +93,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return townRepository.getCount(q, departmentId ? parseInt(departmentId) : undefined);
+    return townRepository.getCount(q, departmentId ? Number.parseInt(departmentId) : undefined);
   };
 
   const createTown = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {

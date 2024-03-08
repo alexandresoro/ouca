@@ -41,7 +41,7 @@ export const buildDistanceEstimateService = ({
     }
 
     const distanceEstimate = await distanceEstimateRepository.findDistanceEstimateByEntryId(
-      entryId ? parseInt(entryId) : undefined
+      entryId ? Number.parseInt(entryId) : undefined
     );
     return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
   };
@@ -54,7 +54,7 @@ export const buildDistanceEstimateService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByEstimationDistanceId(parseInt(id)));
+    return ok(await entryRepository.getCountByEstimationDistanceId(Number.parseInt(id)));
   };
 
   const findAllDistanceEstimates = async (): Promise<DistanceEstimate[]> => {

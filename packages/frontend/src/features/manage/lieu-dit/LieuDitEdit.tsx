@@ -61,7 +61,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
       schema: getDepartmentsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -81,7 +81,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
       schema: getTownsResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: !!selectedDepartmentId,
     }

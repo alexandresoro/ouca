@@ -73,7 +73,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
       schema: getObserversResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
     }
   );
@@ -88,7 +88,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
       schema: getObserversResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: areAssociesDisplayed,
     }

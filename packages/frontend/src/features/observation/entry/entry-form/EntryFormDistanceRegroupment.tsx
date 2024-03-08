@@ -68,7 +68,7 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
       schema: getDistanceEstimatesResponse,
     },
     {
-      staleTime: Infinity,
+      staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: isDistanceDisplayed,
     }
@@ -104,7 +104,7 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
           />
           <TextInput
             {...register("distance", {
-              setValueAs: (v: string) => (v?.length ? parseInt(v) : typeof v === "number" ? v : null),
+              setValueAs: (v: string) => (v?.length ? Number.parseInt(v) : typeof v === "number" ? v : null),
             })}
             className="w-32"
             suffix={t("entryForm.distanceUnit")}
@@ -119,7 +119,7 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
         <div className="flex gap-4 items-center">
           <TextInput
             {...register("regroupment", {
-              setValueAs: (v: string) => (v?.length ? parseInt(v) : typeof v === "number" ? v : null),
+              setValueAs: (v: string) => (v?.length ? Number.parseInt(v) : typeof v === "number" ? v : null),
             })}
             textInputClassName="w-36 py-1"
             label={t("entryForm.regroupment")}

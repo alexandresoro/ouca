@@ -26,20 +26,20 @@ describe("getMinutesFromTime", () => {
   });
 
   test("should return NaN for values that do no match any pattern", () => {
-    assert.strictEqual(getMinutesFromTime("H13"), NaN);
-    assert.strictEqual(getMinutesFromTime("h13"), NaN);
-    assert.strictEqual(getMinutesFromTime("2:91"), NaN);
-    assert.strictEqual(getMinutesFromTime("2H91"), NaN);
-    assert.strictEqual(getMinutesFromTime("9h91"), NaN);
-    assert.strictEqual(getMinutesFromTime("15o32"), NaN);
-    assert.strictEqual(getMinutesFromTime("15H223"), NaN);
-    assert.strictEqual(getMinutesFromTime("15:223"), NaN);
-    assert.strictEqual(getMinutesFromTime("99bb"), NaN);
-    assert.strictEqual(getMinutesFromTime("fail"), NaN);
-    assert.strictEqual(getMinutesFromTime(":34"), NaN);
-    assert.strictEqual(getMinutesFromTime("6321"), NaN);
-    assert.strictEqual(getMinutesFromTime("14.38"), NaN);
-    assert.strictEqual(getMinutesFromTime("6,35"), NaN);
+    assert.strictEqual(getMinutesFromTime("H13"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("h13"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("2:91"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("2H91"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("9h91"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("15o32"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("15H223"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("15:223"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("99bb"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("fail"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime(":34"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("6321"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("14.38"), Number.NaN);
+    assert.strictEqual(getMinutesFromTime("6,35"), Number.NaN);
   });
 });
 
