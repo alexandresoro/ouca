@@ -1606,10 +1606,10 @@ packages:
     dependencies:
       '@babel/core': 7.24.0
       '@sentry/babel-plugin-component-annotate': 2.14.3
-      '@sentry/cli': 2.29.1
+      '@sentry/cli': 2.30.0
       dotenv: 16.4.5
       find-up: 5.0.0
-      glob: 9.3.2
+      glob: 9.3.5
       magic-string: 0.27.0
       unplugin: 1.0.1
     transitivePeerDependencies:
@@ -1617,16 +1617,16 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/cli-darwin@2.29.1:
-    resolution: {integrity: sha512-FfYkME4stq6q1sWWsxFAjTa1pxc+GV+HTHYcnajqU+X0rQReoOvFvi00AHua1qKy8+lH5/RgEvMJcDBdoa0h3A==}
+  /@sentry/cli-darwin@2.30.0:
+    resolution: {integrity: sha512-JVesQ9PznbHBOOOwuej2X8/onfXdmAEjBH6fTyWxBl6K8mB4KmBX/aHunXWMBX+VR9X32XZghIqj7acwaFUMPA==}
     engines: {node: '>=10'}
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@sentry/cli-linux-arm64@2.29.1:
-    resolution: {integrity: sha512-xcwNMJDC10kbi7T1kXRtZCMfgBtD3qLRgYEHJR0UuTONF+pF80uacdde+7oABW+rA3jy2G+4+cR5pN9M2x8wGQ==}
+  /@sentry/cli-linux-arm64@2.30.0:
+    resolution: {integrity: sha512-JNXPkkMubKoZVlcFIoClSmTb9C/I6Bz08DuAZm2jnjRaaOMiCBxI/l50H3dmfVZ6apjEguG9JkjFdb0kqKB90w==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux, freebsd]
@@ -1634,8 +1634,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-arm@2.29.1:
-    resolution: {integrity: sha512-lqOsmAVVgRYZzNyGQA1jnmALx0LnZ/Z7zc8/2TFrQYT7FUps5FP3yDDKlsUTaB8Z8A0++k7AqFgwlIeJw7+mPQ==}
+  /@sentry/cli-linux-arm@2.30.0:
+    resolution: {integrity: sha512-MDB3iS31WKg4krCcLo520yxbUERPeA2DCtk9Qs9vSDbQl6Er64dteHllOdx1SDOyX/7GKcxrQEQ6SMmbnOo6wg==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux, freebsd]
@@ -1643,8 +1643,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-i686@2.29.1:
-    resolution: {integrity: sha512-yOe7YEx42vl0Q8MgkbQmLbRe2KjijjMP+l9DYAfbOJHdTJ+3tNfBcRqFXsVNiobGxUeaVE5oDkOJ+7iGGgM2HA==}
+  /@sentry/cli-linux-i686@2.30.0:
+    resolution: {integrity: sha512-WhVVziFQw/fO0Cc53pY8goPAzJtIs6ORTR89fVbKwa3ZDNkX++mEOECbP7RkmD87kuRxyKzN543RPV971PcAHw==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [linux, freebsd]
@@ -1652,8 +1652,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-x64@2.29.1:
-    resolution: {integrity: sha512-fzKh/lRwzZSb+QIebuWN9qXXABGarsL9V2xONGwWv202AueK0WFxr6/ADsE7OlmM/4cDby5Sd+oMKos2eeVcVA==}
+  /@sentry/cli-linux-x64@2.30.0:
+    resolution: {integrity: sha512-QkiVDeSfspotZ0Au5Yauv2DAm/BC1fL9BwPek/WwddM18I2HqnDp6l4TA4bQeEY++o0KEuNF53cPahpepltPjw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux, freebsd]
@@ -1661,8 +1661,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-win32-i686@2.29.1:
-    resolution: {integrity: sha512-qdzg2nCSLfMgwhH7HLb6nPngJgbDvcOfDPtF+Y7axoe18iiQW0Ju7M9/e30t8vaOcUz9ZowQgFvxdgYlHJ3jMw==}
+  /@sentry/cli-win32-i686@2.30.0:
+    resolution: {integrity: sha512-xLY9B1EEGuNYPKpK6M9PMmcu2PzofdvRtbraTcU6Ck2zALS5oXB9kmWc4dDKucZ/uu9JB0m+Lo4ebaNlca45qQ==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [win32]
@@ -1670,8 +1670,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-win32-x64@2.29.1:
-    resolution: {integrity: sha512-CtGuRmwJ06WVMyVOq/Oa0l/1fI7rSAxcAlCzVAvj1p09aLXAGObGXmljXUeQ1jxE/Ll4yRAo9TjA8Y+vxPtkJw==}
+  /@sentry/cli-win32-x64@2.30.0:
+    resolution: {integrity: sha512-CiXuxnpJI0zho0XE5PVqIS9CwjDEYoMnHQRIr4Jj9OzlGTJ2iSSU6Zp3Ykd7lgo2iK4P6MfxIBm30gFQPnSvVA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
@@ -1679,8 +1679,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli@2.29.1:
-    resolution: {integrity: sha512-STtuGm8vdR4ifR3I6mFmt9y7Dk9QzeOvpyXEG5H7dkFDSvU7cepkYAlli5QiZDzECngxGx/uLAzZzFKSATF1Qw==}
+  /@sentry/cli@2.30.0:
+    resolution: {integrity: sha512-GTO5e98vy2QwEYQvhE/ZtGUiVrUu4XungLioJbazm+ZOen8cyac8YOapZfozN5mtxjWOWMOwhOqoTeCU3Q8YKQ==}
     engines: {node: '>= 10'}
     hasBin: true
     requiresBuild: true
@@ -1691,13 +1691,13 @@ packages:
       proxy-from-env: 1.1.0
       which: 2.0.2
     optionalDependencies:
-      '@sentry/cli-darwin': 2.29.1
-      '@sentry/cli-linux-arm': 2.29.1
-      '@sentry/cli-linux-arm64': 2.29.1
-      '@sentry/cli-linux-i686': 2.29.1
-      '@sentry/cli-linux-x64': 2.29.1
-      '@sentry/cli-win32-i686': 2.29.1
-      '@sentry/cli-win32-x64': 2.29.1
+      '@sentry/cli-darwin': 2.30.0
+      '@sentry/cli-linux-arm': 2.30.0
+      '@sentry/cli-linux-arm64': 2.30.0
+      '@sentry/cli-linux-i686': 2.30.0
+      '@sentry/cli-linux-x64': 2.30.0
+      '@sentry/cli-win32-i686': 2.30.0
+      '@sentry/cli-win32-x64': 2.30.0
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -2709,7 +2709,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.23.0
-      caniuse-lite: 1.0.30001594
+      caniuse-lite: 1.0.30001596
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2813,8 +2813,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001594
-      electron-to-chromium: 1.4.695
+      caniuse-lite: 1.0.30001596
+      electron-to-chromium: 1.4.698
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
 
@@ -2918,8 +2918,8 @@ packages:
     resolution: {integrity: sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==}
     dev: false
 
-  /caniuse-lite@1.0.30001594:
-    resolution: {integrity: sha512-VblSX6nYqyJVs8DKFMldE2IVCJjZ225LW00ydtUWwh5hk9IfkTOffO6r8gJNsH0qqqeAF8KrbMYA2VEwTlGW5g==}
+  /caniuse-lite@1.0.30001596:
+    resolution: {integrity: sha512-zpkZ+kEr6We7w63ORkoJ2pOfBwBkY/bJrG/UZ90qNb45Isblu8wzDgevEOrRL1r9dWayHjYiiyCMEXPn4DweGQ==}
 
   /chai@4.4.1:
     resolution: {integrity: sha512-13sOfMv2+DWduEU+/xbun3LScLoqN17nBeTLUsmDfKdoiC1fr0n9PU4guu4AhRcOVFk/sW8LyZWHuhWtQZiF+g==}
@@ -3356,8 +3356,8 @@ packages:
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  /electron-to-chromium@1.4.695:
-    resolution: {integrity: sha512-eMijZmeqPtm774pCZIOrfUHMs/7ls++W1sLhxwqgu8KQ8E2WmMtzwyqOMt0XXUJ3HTIPfuwlfwF+I5cwnfItBA==}
+  /electron-to-chromium@1.4.698:
+    resolution: {integrity: sha512-f9iZD1t3CLy1AS6vzM5EKGa6p9pRcOeEFXRFbaG2Ta+Oe7MkfRQ3fsvPYidzHe1h4i0JvIvpcY55C+B6BZNGtQ==}
 
   /emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -3590,7 +3590,7 @@ packages:
       eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.1.1)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.1.1)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       fast-glob: 3.3.2
-      get-tsconfig: 4.7.2
+      get-tsconfig: 4.7.3
       is-core-module: 2.13.1
       is-glob: 4.0.3
     transitivePeerDependencies:
@@ -3926,8 +3926,8 @@ packages:
       fast-decode-uri-component: 1.0.1
     dev: false
 
-  /fast-redact@3.3.0:
-    resolution: {integrity: sha512-6T5V1QK1u4oF+ATxs1lWUmlEk6P2T9HqJG3e2DnHOdVgZy2rFJBoEnrIedcTXlkAHU/zKC+7KETJ+KGGKwxgMQ==}
+  /fast-redact@3.4.0:
+    resolution: {integrity: sha512-2gwPvyna0zwBdxKnng1suu/dTL5s8XEy2ZqH8mwDUwJdDkV8w5kp+JV26mupdK68HmPMbm6yjW9m7/Ys/BHEHg==}
     engines: {node: '>=6'}
     dev: false
 
@@ -3954,7 +3954,7 @@ packages:
       fast-content-type-parse: 1.1.0
       fast-json-stringify: 5.12.0
       find-my-way: 8.1.0
-      light-my-request: 5.11.1
+      light-my-request: 5.12.0
       pino: 8.19.0
       process-warning: 3.0.0
       proxy-addr: 2.0.7
@@ -4169,8 +4169,8 @@ packages:
       get-intrinsic: 1.2.4
     dev: true
 
-  /get-tsconfig@4.7.2:
-    resolution: {integrity: sha512-wuMsz4leaj5hbGgg4IvDU0bqJagpftG5l5cXIAvo8uZrqn0NJqwtfupTN00VnkQJPcIRrxYrm1Ue24btpCha2A==}
+  /get-tsconfig@4.7.3:
+    resolution: {integrity: sha512-ZvkrzoUA0PQZM6fy6+/Hce561s+faD1rsNwhnO5FelNjyy7EMGJ3Rz1AQ8GYDWjhRs/7dBLOEJvhK8MiEJOAFg==}
     dependencies:
       resolve-pkg-maps: 1.0.0
     dev: true
@@ -4230,12 +4230,12 @@ packages:
       once: 1.4.0
     dev: false
 
-  /glob@9.3.2:
-    resolution: {integrity: sha512-BTv/JhKXFEHsErMte/AnfiSv8yYOLLiyH2lTg8vn02O21zWFgHPTfxtgn1QRe7NRgggUhC8hacR2Re94svHqeA==}
+  /glob@9.3.5:
+    resolution: {integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==}
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       fs.realpath: 1.0.0
-      minimatch: 7.4.6
+      minimatch: 8.0.4
       minipass: 4.2.8
       path-scurry: 1.10.1
     dev: true
@@ -4944,11 +4944,11 @@ packages:
       immediate: 3.0.6
     dev: false
 
-  /light-my-request@5.11.1:
-    resolution: {integrity: sha512-KXAh2m6VRlkWCk2KfmHE7tLBXKh30JE0tXUJY4dNxje4oLmPKUqlUfImiEQZLphx+Z9KTQcVv4DjGnJxkVOIbA==}
+  /light-my-request@5.12.0:
+    resolution: {integrity: sha512-P526OX6E7aeCIfw/9UyJNsAISfcFETghysaWHQAlQYayynShT08MOj4c6fBCvTWBrHXSvqBAKDp3amUPSCQI4w==}
     dependencies:
       cookie: 0.6.0
-      process-warning: 2.3.2
+      process-warning: 3.0.0
       set-cookie-parser: 2.6.0
     dev: false
 
@@ -5273,9 +5273,9 @@ packages:
       brace-expansion: 2.0.1
     dev: false
 
-  /minimatch@7.4.6:
-    resolution: {integrity: sha512-sBz8G/YjVniEz6lKPNpKxXwazJe4c19fEfV2GDMX6AjFz+MX9uDWIZW8XreVhkFW3fkIdTv/gxWr/Kks5FFAVw==}
-    engines: {node: '>=10'}
+  /minimatch@8.0.4:
+    resolution: {integrity: sha512-W0Wvr9HyFXZRGIDgCicunpQ299OKXs9RgZfaukz4qAW/pJhcpUfupc9c+OObPOFueNy8VSrZgEmDtk6Kh4WzDA==}
+    engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       brace-expansion: 2.0.1
     dev: true
@@ -5799,7 +5799,7 @@ packages:
     hasBin: true
     dependencies:
       atomic-sleep: 1.0.0
-      fast-redact: 3.3.0
+      fast-redact: 3.4.0
       on-exit-leak-free: 2.1.2
       pino-abstract-transport: 1.1.0
       pino-std-serializers: 6.2.2
@@ -5991,10 +5991,6 @@ packages:
 
   /process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
-    dev: false
-
-  /process-warning@2.3.2:
-    resolution: {integrity: sha512-n9wh8tvBe5sFmsqlg+XQhaQLumwpqoAUruLwjCopgTmUBjJ/fjtBsJzKleCaIGBOMXYEhp1YfKl4d7rJ5ZKJGA==}
     dev: false
 
   /process-warning@3.0.0:
@@ -7138,7 +7134,7 @@ packages:
     hasBin: true
     dependencies:
       esbuild: 0.19.12
-      get-tsconfig: 4.7.2
+      get-tsconfig: 4.7.3
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
