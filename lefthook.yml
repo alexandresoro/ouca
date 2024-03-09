@@ -4,10 +4,6 @@ pre-commit:
       root: "packages/frontend/"
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
       run: pnpm eslint {staged_files}
-    eslint-common:
-      root: "packages/common/"
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
-      run: pnpm eslint {staged_files}
     eslint-backend:
       root: "packages/backend/"
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"

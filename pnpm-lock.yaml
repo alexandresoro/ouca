@@ -178,9 +178,6 @@ importers:
       '@biomejs/biome':
         specifier: 1.6.0
         version: 1.6.0
-      '@ou-ca/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
       '@types/node':
         specifier: 20.11.25
         version: 20.11.25

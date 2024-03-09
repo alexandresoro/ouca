@@ -1,4 +1,4 @@
-import assert from "node:assert";
+import assert from "node:assert/strict";
 import test, { describe } from "node:test";
 import { getHumanFriendlyTimeFromMinutes, getMinutesFromTime } from "./time-format-convert.js";
 

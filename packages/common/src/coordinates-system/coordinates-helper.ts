@@ -28,11 +28,11 @@ export const areCoordinatesCustomized = (
     const lieuditCoordinates: Coordinates = getCoordinates(
       {
         coordinates: {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
           latitude: lieudit.latitude!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
           longitude: lieudit.longitude!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
           system: lieudit.coordinatesSystem!,
         },
       },

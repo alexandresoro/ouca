@@ -4,11 +4,11 @@ export const getHighestNicheurStatus = (comportements: { nicheur?: NicheurCode |
   // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
   // First we keep only the comportements having a nicheur status
   const nicheurStatuses = comportements
-    ?.filter((comportement) => {
+    ?.filter((comportement): comportement is { nicheur: NicheurCode } => {
       return comportement?.nicheur != null;
     })
     .map((comportement) => {
-      return comportement.nicheur!;
+      return comportement.nicheur;
     });
 
   // Then we keep the highest nicheur status

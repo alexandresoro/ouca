@@ -21,7 +21,7 @@
   "type": "module",
   "scripts": {
     "test": "node --import tsx --test src/**/*.spec.ts",
-    "lint": "eslint .",
+    "lint": "biome lint *",
     "biome:ci": "biome ci *"
   },
   "dependencies": {
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.0",
-    "@ou-ca/eslint-config": "workspace:*",
     "@types/node": "20.11.25",
     "@types/proj4": "2.5.5",
     "tsx": "4.7.1",
