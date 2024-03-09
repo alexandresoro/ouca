@@ -1,5 +1,4 @@
 import { redis } from "@infrastructure/ioredis/redis.js";
-import { add, compareAsc } from "date-fns";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ZitadelIntrospectionResult } from "../services/oidc/zitadel-oidc-service.js";
 import type { Services } from "../services/services.js";
@@ -29,8 +28,11 @@ const storeIntrospectionResultInCache = async (
   // Compute the TTL, it has to be the earliest between the cache duration and the expiration time, if active
   if (introspectionResult.active) {
     const tokenExpirationDate = new Date(introspectionResult.exp * 1000); // Token is in seconds
-    const cacheExpirationDate = add(new Date(), { seconds: ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION });
-    if (compareAsc(cacheExpirationDate, tokenExpirationDate) <= 0) {
+
+    const cacheExpirationDate = new Date();
+    cacheExpirationDate.setSeconds(cacheExpirationDate.getSeconds() + ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
+
+    if (cacheExpirationDate <= tokenExpirationDate) {
       // Default cache duration is earlier than token duration
       await redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
     } else {
