@@ -1,9 +1,12 @@
 import TextInput from "@components/base/TextInput";
-import { isValid } from "date-fns";
 import { useAtom } from "jotai";
 import type { ChangeEventHandler, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { searchEntriesFilterFromDateAtom, searchEntriesFilterToDateAtom } from "../searchEntriesCriteriaAtom";
+
+const isValidDate = (date: Date) => {
+  return date instanceof Date && !Number.isNaN(Number(date));
+};
 
 const SearchFilterDateRange: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -13,12 +16,12 @@ const SearchFilterDateRange: FunctionComponent = () => {
 
   const onChangeFromDate: ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value } = event.target;
-    setFromDate(isValid(new Date(value)) ? value : null);
+    setFromDate(isValidDate(new Date(value)) ? value : null);
   };
 
   const onChangeToDate: ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value } = event.target;
-    setToDate(isValid(new Date(value)) ? value : null);
+    setToDate(isValidDate(new Date(value)) ? value : null);
   };
 
   return (
