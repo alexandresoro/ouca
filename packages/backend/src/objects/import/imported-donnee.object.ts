@@ -2,11 +2,8 @@ import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
-import { format } from "date-fns";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
-
-const DATE_PATTERN = "yyyy-MM-dd";
 
 const OBSERVATEUR_INDEX = 0;
 const ASSOCIES_INDEX = 1;
@@ -161,7 +158,7 @@ export class ImportedDonnee {
 
     return {
       observerId: observateurId,
-      date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
+      date: formattedDate ? formattedDate.toISOString().slice(0, 10) : "null",
       time: getFormattedTime(this.heure),
       duration: getMinutesFromTime(this.duree),
       localityId: lieuditId,
