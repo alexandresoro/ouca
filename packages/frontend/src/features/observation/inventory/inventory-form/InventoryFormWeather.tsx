@@ -46,7 +46,7 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   return (

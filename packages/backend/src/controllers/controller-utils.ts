@@ -8,7 +8,7 @@ export const getPaginationMetadata = (
   }: {
     pageNumber?: number;
     pageSize?: number;
-  }
+  },
 ): PaginationMetadata => {
   return {
     count,

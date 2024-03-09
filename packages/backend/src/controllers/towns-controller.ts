@@ -61,7 +61,7 @@ const townsController: FastifyPluginCallback<{
             localitiesCount,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

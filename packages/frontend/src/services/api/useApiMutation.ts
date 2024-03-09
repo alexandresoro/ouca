@@ -16,7 +16,7 @@ const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
     method: string;
     schema?: z.ZodType<T>;
   },
-  swrOptions?: Omit<SWRMutationConfiguration<T, E, ApiQueryKey>, "fetcher">
+  swrOptions?: Omit<SWRMutationConfiguration<T, E, ApiQueryKey>, "fetcher">,
 ) => {
   const { user } = useAuth();
   const apiUrl = useApiUrl();
@@ -41,7 +41,7 @@ const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
     {
       throwOnError: false, // Don't throw errors, let them be handled by the onError callback
       ...swrOptions,
-    }
+    },
   );
 };
 

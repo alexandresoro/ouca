@@ -2,13 +2,13 @@
 
 export const findFirstFocusableElement = (
   container: HTMLElement | null,
-  byTag?: keyof HTMLElementTagNameMap
+  byTag?: keyof HTMLElementTagNameMap,
 ): HTMLElement | undefined => {
   if (!container) {
     return undefined;
   }
   return Array.from(container.getElementsByTagName(byTag ?? "*") as HTMLCollectionOf<HTMLElement>).find((element) =>
-    isFocusable(element)
+    isFocusable(element),
   );
 };
 

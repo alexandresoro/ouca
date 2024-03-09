@@ -9,7 +9,7 @@ export type SexeRepositoryDependencies = {
 export const buildDonneeMilieuRepository = ({ slonik }: SexeRepositoryDependencies) => {
   const deleteMilieuxOfDonneeId = async (
     entryId: number,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<QueryResult<void>> => {
     const query = sql.type(z.void())`
       DELETE 
@@ -25,7 +25,7 @@ export const buildDonneeMilieuRepository = ({ slonik }: SexeRepositoryDependenci
   const insertDonneeWithMilieux = async (
     entryId: number,
     milieuIds: number[],
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ): Promise<QueryResult<void> | void> => {
     if (!milieuIds.length) {

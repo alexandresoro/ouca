@@ -14,14 +14,14 @@ const ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION = 3600; // 1h
 const storeIntrospectionResultInCache = async (
   key: string,
   introspectionResult: ZitadelIntrospectionResult,
-  accessToken: string
+  accessToken: string,
 ) => {
   await redis.set(key, JSON.stringify(introspectionResult)).catch(() => {
     logger.warn(
       {
         accessToken,
       },
-      "Storing token introspection result has failed."
+      "Storing token introspection result has failed.",
     );
     return;
   });
@@ -46,7 +46,7 @@ const storeIntrospectionResultInCache = async (
 const handleAuthorizationHook = async (
   request: FastifyRequest,
   reply: FastifyReply,
-  services: Services
+  services: Services,
 ): Promise<void> => {
   const { zitadelOidcService } = services;
 

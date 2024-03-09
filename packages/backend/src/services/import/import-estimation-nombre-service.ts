@@ -19,7 +19,7 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
 
   protected saveEntities = (
     estimationsNombre: Omit<NumberEstimate, "id" | "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly NumberEstimate[]> => {
     return this.services.numberEstimateService.createNumberEstimates(
       estimationsNombre.map((estimationNombre) => {
@@ -28,7 +28,7 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
           nonCompte: false,
         };
       }),
-      loggedUser
+      loggedUser,
     );
   };
 }

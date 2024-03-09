@@ -84,7 +84,7 @@ const numberEstimatesController: FastifyPluginCallback<{
             ...numberEstimateData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

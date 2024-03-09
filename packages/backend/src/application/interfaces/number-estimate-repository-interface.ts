@@ -18,12 +18,12 @@ export type NumberEstimateRepository = {
   }: NumberEstimateFindManyInput) => Promise<NumberEstimate[]>;
   getCount: (q?: string | null) => Promise<number>;
   createNumberEstimate: (
-    numberEstimateInput: NumberEstimateCreateInput
+    numberEstimateInput: NumberEstimateCreateInput,
   ) => Promise<Result<NumberEstimate, EntityFailureReason>>;
   createNumberEstimates: (numberEstimateInputs: NumberEstimateCreateInput[]) => Promise<NumberEstimate[]>;
   updateNumberEstimate: (
     numberEstimateId: number,
-    numberEstimateInput: NumberEstimateCreateInput
+    numberEstimateInput: NumberEstimateCreateInput,
   ) => Promise<Result<NumberEstimate, EntityFailureReason>>;
   deleteNumberEstimateById: (numberEstimateId: number) => Promise<NumberEstimate | null>;
 };

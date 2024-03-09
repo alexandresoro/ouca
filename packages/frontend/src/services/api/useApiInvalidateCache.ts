@@ -27,7 +27,7 @@ const useApiInvalidateCache = (path: string, mutatorOptions?: MutatorOptions) =>
         return isMatchingCacheKey(key, queryUrlPath);
       },
       undefined,
-      mutatorOptions
+      mutatorOptions,
     );
 };
 

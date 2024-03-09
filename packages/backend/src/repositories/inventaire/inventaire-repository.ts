@@ -56,12 +56,12 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     }: {
       orderBy: NonNullable<InventaireFindManyInput["orderBy"]>;
       sortOrder: NonNullable<InventaireFindManyInput["sortOrder"]>;
-    }
+    },
   ): Promise<number | null> => {
     const query = sql.type(
       z.object({
         rowNumber: z.bigint().transform((v) => Number(v)),
-      })
+      }),
     )`
       SELECT
 	      row_number
@@ -164,7 +164,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
 
   const findInventaireByDonneeId = async (
     entryId: number | undefined,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<Inventaire | null> => {
     if (!entryId) {
       return null;
@@ -236,7 +236,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
 
   const createInventaire = async (
     inventaireInput: InventaireCreateInput,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<Inventaire> => {
     const query = sql.type(inventaireSchema)`
       INSERT INTO
@@ -265,7 +265,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   const updateInventaire = async (
     inventoryId: number,
     inventaireInput: InventaireCreateInput,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<Inventaire> => {
     const query = sql.type(inventaireSchema)`
       UPDATE
@@ -296,7 +296,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
 
   const deleteInventaireById = async (
     inventoryId: number,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<Inventaire> => {
     const query = sql.type(inventaireSchema)`
       DELETE

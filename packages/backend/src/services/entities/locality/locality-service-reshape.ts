@@ -18,11 +18,11 @@ export function reshapeLocalityRepositoryToApi(locality: Locality, user: LoggedU
 export function reshapeLocalityRepositoryToApi(locality: null, user: LoggedUser | null): null;
 export function reshapeLocalityRepositoryToApi(
   locality: Locality | null,
-  loggedUser: LoggedUser | null
+  loggedUser: LoggedUser | null,
 ): LocalityCommon | null;
 export function reshapeLocalityRepositoryToApi(
   locality: Locality | null,
-  loggedUser: LoggedUser | null
+  loggedUser: LoggedUser | null,
 ): LocalityCommon | null {
   if (!locality) {
     return null;
@@ -38,6 +38,6 @@ export function reshapeLocalityRepositoryToApi(
         longitude,
       },
     },
-    loggedUser
+    loggedUser,
   );
 }

@@ -56,7 +56,7 @@ const EspecePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateSpecies } = useApiMutation(
@@ -88,7 +88,7 @@ const EspecePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteSpecies } = useApiMutation(
@@ -110,7 +110,7 @@ const EspecePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("species") });

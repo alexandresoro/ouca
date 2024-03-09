@@ -23,7 +23,7 @@ export type ObserverRepository = {
   createObservers: (observerInputs: ObserverCreateInput[]) => Promise<ObserverSimple[]>;
   updateObserver: (
     observerId: number,
-    observerInput: ObserverCreateInput
+    observerInput: ObserverCreateInput,
   ) => Promise<Result<Observer, EntityFailureReason>>;
   deleteObserverById: (observerId: number) => Promise<ObserverSimple | null>;
 };

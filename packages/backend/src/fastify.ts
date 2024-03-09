@@ -29,7 +29,7 @@ import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, IMPORT_REPORTS_DIR, IMPORT_REPORTS
 const API_V1_PREFIX = "/api/v1";
 
 export const buildServer = async (
-  services: Services
+  services: Services,
 ): Promise<
   FastifyInstance<
     RawServerDefault,
@@ -93,13 +93,13 @@ const registerFastifyStaticRoutes = (
     RawRequestDefaultExpression<RawServerDefault>,
     RawReplyDefaultExpression<RawServerDefault>,
     Logger
-  >
+  >,
 ): void => {
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
     "/download/importReports/:id",
     async (req, reply) => {
       return reply.download(req.params.id, req.query.filename ?? undefined);
-    }
+    },
   );
 
   // Upload import path
@@ -133,7 +133,7 @@ const registerFastifyStaticRoutes = (
     await reply.send(
       JSON.stringify({
         uploadId,
-      })
+      }),
     );
   });
 };

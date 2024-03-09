@@ -46,7 +46,7 @@ export const getAltitudeToDisplay = async (
     longitude: number;
   },
   localityCoordinates: CoordinatesWithAltitude,
-  customizedCoordinates: CoordinatesWithAltitude | null
+  customizedCoordinates: CoordinatesWithAltitude | null,
 ): Promise<AltitudeToDisplayResult> => {
   defaultAtomStore.set(altitudeServiceStatusAtom, "ongoing");
 

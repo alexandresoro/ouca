@@ -132,7 +132,7 @@ describe("Inventories paginated find by search criteria", () => {
 
   test("should not be allowed when the requester is not logged", async () => {
     await expect(inventaireService.findPaginatedInventaires(null, mock<InventoriesSearchParams>())).rejects.toEqual(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
   });
 });
@@ -165,7 +165,7 @@ describe("Update of an inventory", () => {
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
-        })
+        }),
       );
 
       await expect(inventaireService.updateInventaire(12, inventoryData, loggedUser)).rejects.toEqual({
@@ -188,7 +188,7 @@ describe("Update of an inventory", () => {
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
-        })
+        }),
       );
 
       const result = await inventaireService.updateInventaire(12, inventoryData, loggedUser);
@@ -204,7 +204,7 @@ describe("Update of an inventory", () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
-        new OucaError("OUCA0001")
+        new OucaError("OUCA0001"),
       );
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
@@ -224,7 +224,7 @@ describe("Update of an inventory", () => {
       inventoryRepository.updateInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "12",
-        })
+        }),
       );
 
       const reshapedInputData = mock<InventaireCreateInput>();
@@ -240,7 +240,7 @@ describe("Update of an inventory", () => {
       expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(
         anyNumber(),
         expect.arrayContaining([2, 3]),
-        anyObject()
+        anyObject(),
       );
       expect(inventoryWeatherRepository.deleteMeteosOfInventaireId).toHaveBeenCalledTimes(1);
       expect(inventoryWeatherRepository.deleteMeteosOfInventaireId).toHaveBeenLastCalledWith(12, any());
@@ -248,7 +248,7 @@ describe("Update of an inventory", () => {
       expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(
         anyNumber(),
         expect.arrayContaining([4, 5]),
-        anyObject()
+        anyObject(),
       );
     });
 
@@ -256,7 +256,7 @@ describe("Update of an inventory", () => {
       const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
-        new OucaError("OUCA0001")
+        new OucaError("OUCA0001"),
       );
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
@@ -276,7 +276,7 @@ describe("Creation of an inventory", () => {
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "345",
-        })
+        }),
       );
 
       const result = await inventaireService.createInventaire(inventoryData, loggedUser);
@@ -309,7 +309,7 @@ describe("Creation of an inventory", () => {
       inventoryRepository.createInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
           id: "322",
-        })
+        }),
       );
 
       const reshapedInputData = mock<InventaireCreateInput>();

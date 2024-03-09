@@ -107,7 +107,7 @@ export const buildSexRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdSex) => sexSchema.parse(createdSex));
   };
 
@@ -120,7 +120,7 @@ export const buildSexRepository = () => {
             libelle: sexInput.libelle,
             ownerId: sexInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
@@ -139,7 +139,7 @@ export const buildSexRepository = () => {
         .where("id", "=", sexId)
         .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedSex) => sexSchema.parse(updatedSex));
   };
 

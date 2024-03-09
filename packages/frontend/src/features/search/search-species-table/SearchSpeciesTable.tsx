@@ -58,7 +58,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {

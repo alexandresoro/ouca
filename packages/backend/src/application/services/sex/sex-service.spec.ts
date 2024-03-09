@@ -358,6 +358,6 @@ test("Create multiple sexes", async () => {
         ...sex,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

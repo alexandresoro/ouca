@@ -15,7 +15,7 @@ const areCoordinatesInvalid = (longitude: number, latitude: number, system: Coor
 
 export const transformCoordinates = (
   inputCoordinates: Coordinates | null | undefined,
-  outputSystemType: CoordinatesSystemType | null | undefined
+  outputSystemType: CoordinatesSystemType | null | undefined,
 ): Coordinates => {
   if (!inputCoordinates?.system || !outputSystemType) {
     throw new Error("Wrong usage of method transformCoordinates");

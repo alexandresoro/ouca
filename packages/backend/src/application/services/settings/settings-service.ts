@@ -29,7 +29,7 @@ export const buildSettingsService = ({
   numberEstimateService,
 }: SettingsServiceDependencies) => {
   const getSettings = async (
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SettingsEnriched | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -97,7 +97,7 @@ export const buildSettingsService = ({
 
   const updateUserSettings = async (
     inputUpdateSettings: PutSettingsInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SettingsEnriched, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -110,7 +110,7 @@ export const buildSettingsService = ({
         userId: loggedUser.id,
         updateSettingsInput,
       },
-      `Saving user settings of User=${loggedUser.id}`
+      `Saving user settings of User=${loggedUser.id}`,
     );
 
     const updatedSettings = await settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);

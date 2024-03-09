@@ -45,7 +45,7 @@ const EntryFormEnvironments: FunctionComponent<EntryFormEnvironmentsProps> = ({ 
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const handleUpdatedEnvironment = (newEnvironment: Environment | null, index: number) => {
@@ -53,14 +53,14 @@ const EntryFormEnvironments: FunctionComponent<EntryFormEnvironmentsProps> = ({ 
       setSelectedEnvironments((currentSelectedEnvironments) =>
         currentSelectedEnvironments.map((selectedEnvironment, i) => {
           return index === i ? newEnvironment : selectedEnvironment;
-        })
+        }),
       );
     } else {
       // Remove environment from the list
       setSelectedEnvironments((currentSelectedEnvironments) =>
         currentSelectedEnvironments.filter((_, i) => {
           return index !== i;
-        })
+        }),
       );
     }
   };

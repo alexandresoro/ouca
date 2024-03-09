@@ -16,7 +16,7 @@ import { getPaginationMetadata } from "./controller-utils.js";
 export const enrichedLocality = async (
   services: Services,
   locality: Locality,
-  user: LoggedUser | null
+  user: LoggedUser | null,
 ): Promise<Omit<LocalityExtended, "inventoriesCount" | "entriesCount">> => {
   const town = await services.townService.findTownOfLocalityId(locality.id, user);
   const department = town
@@ -89,7 +89,7 @@ const localitiesController: FastifyPluginCallback<{
             inventoriesCount,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

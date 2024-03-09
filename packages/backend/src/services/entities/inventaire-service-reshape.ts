@@ -7,7 +7,7 @@ import { type InventaireCreateInput } from "../../repositories/inventaire/invent
 export const reshapeInputInventoryUpsertData = (
   inventory: UpsertInventoryInput,
   locality: Locality,
-  ownerId?: string | null
+  ownerId?: string | null,
 ): InventaireCreateInput => {
   const {
     observerId,

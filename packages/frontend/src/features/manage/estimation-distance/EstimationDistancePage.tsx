@@ -56,7 +56,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateDistanceEstimate } = useApiMutation(
@@ -88,7 +88,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteDistanceEstimate } = useApiMutation(
@@ -110,7 +110,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("distancePrecisions") });

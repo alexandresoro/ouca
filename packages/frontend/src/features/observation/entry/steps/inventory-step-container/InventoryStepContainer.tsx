@@ -23,7 +23,7 @@ const InventoryEditContainer: FunctionComponent<InventoryEditContainerProps> = (
     },
     {
       enabled: false,
-    }
+    },
   );
   useEffect(() => {
     if (createFromInventoryId) {

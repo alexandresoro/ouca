@@ -26,7 +26,7 @@ export const useDisplayNotification = (): ((notification: Omit<Notification, "id
         });
       }, NOTIFICATION_TIMEOUT_MS);
     },
-    [setNotifications]
+    [setNotifications],
   );
 
   const displayNotification = useCallback(
@@ -41,7 +41,7 @@ export const useDisplayNotification = (): ((notification: Omit<Notification, "id
 
       return notificationId;
     },
-    [addNotification]
+    [addNotification],
   );
 
   return displayNotification;

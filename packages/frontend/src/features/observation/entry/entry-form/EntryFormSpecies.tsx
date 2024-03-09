@@ -65,7 +65,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { data: dataSpecies } = useApiQuery(
@@ -81,7 +81,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   // Handle when class is changed by the user

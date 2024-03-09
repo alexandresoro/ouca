@@ -93,7 +93,7 @@ const entriesController: FastifyPluginCallback<{
     const enrichedEntries = await Promise.all(
       entriesData.map(async (entryData) => {
         return enrichedEntry(services, entryData, req.user);
-      })
+      }),
     );
 
     let data: Entry[] | EntryExtended[] = enrichedEntries;
@@ -111,7 +111,7 @@ const entriesController: FastifyPluginCallback<{
             ...enrichedEntryData,
             inventory: inventoryEnriched,
           };
-        })
+        }),
       );
     }
 

@@ -20,7 +20,7 @@ const behaviorService = buildBehaviorService({
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
   new Error("errorMessage"),
-  "constraint"
+  "constraint",
 );
 
 const uniqueConstraintFailed = () => {
@@ -215,7 +215,7 @@ describe("Update of a behavior", () => {
     behaviorRepository.findComportementById.mockResolvedValueOnce(existingData);
 
     await expect(behaviorService.updateBehavior(12, behaviorData, user)).rejects.toThrowError(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
 
     expect(behaviorRepository.updateComportement).not.toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe("Update of a behavior", () => {
     behaviorRepository.updateComportement.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => behaviorService.updateBehavior(12, behaviorData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(behaviorRepository.updateComportement).toHaveBeenCalledTimes(1);
@@ -267,7 +267,7 @@ describe("Creation of a behavior", () => {
     behaviorRepository.createComportement.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => behaviorService.createBehavior(behaviorData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(behaviorRepository.createComportement).toHaveBeenCalledTimes(1);
@@ -351,6 +351,6 @@ test("Create multiple comportements", async () => {
         ...comportement,
         owner_id: loggedUser.id,
       };
-    })
+    }),
   );
 });

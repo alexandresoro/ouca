@@ -20,7 +20,7 @@ import { enrichedLocality } from "./localities-controller.js";
 export const enrichedInventory = async (
   services: Services,
   inventory: Inventaire,
-  user: LoggedUser | null
+  user: LoggedUser | null,
 ): Promise<InventoryExtended> => {
   const [observer, associates, locality, weathers] = await Promise.all([
     (await services.observerService.findObserverOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
@@ -82,7 +82,7 @@ const inventoriesController: FastifyPluginCallback<{
     const inventoryIndex = await inventoryService.findInventoryIndex(
       req.params.id,
       parsedQueryParamsResult.data,
-      req.user
+      req.user,
     );
     if (inventoryIndex == null) {
       return await reply.status(404).send();
@@ -109,7 +109,7 @@ const inventoriesController: FastifyPluginCallback<{
     const enrichedInventories = await Promise.all(
       inventoriesData.map(async (inventoryData) => {
         return enrichedInventory(services, inventoryData, req.user);
-      })
+      }),
     );
 
     const response = getInventoriesResponse.parse({

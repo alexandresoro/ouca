@@ -10,7 +10,7 @@ const alticodageResponseSchema = z.object({
         lat: z.number(),
         z: z.number(),
         acc: z.number(),
-      })
+      }),
     )
     .length(1),
 });

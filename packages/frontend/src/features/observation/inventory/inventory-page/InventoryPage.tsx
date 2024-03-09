@@ -24,7 +24,7 @@ const InventoryPage: FunctionComponent = () => {
     },
     {
       enabled: id != null,
-    }
+    },
   );
 
   const {
@@ -44,7 +44,7 @@ const InventoryPage: FunctionComponent = () => {
     },
     {
       enabled: inventory != null,
-    }
+    },
   );
 
   const { ref } = useInView({

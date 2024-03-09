@@ -32,11 +32,11 @@ export const searchEntriesFilterDepartmentsAtom = atom<Department[], [Department
     } else if (departments.length === 1) {
       // If only a single department is selected, set the towns filter to the towns of that department
       const townsOfDepartments = get(searchEntriesFilterTownsInternalAtom).filter(
-        ({ departmentId }) => departmentId === departments[0].id
+        ({ departmentId }) => departmentId === departments[0].id,
       );
       set(searchEntriesFilterTownsInternalAtom, townsOfDepartments);
     }
-  }
+  },
 );
 
 const searchEntriesFilterTownsInternalAtom = atom<Town[]>([]);
@@ -50,7 +50,7 @@ export const searchEntriesFilterTownsAtom = atom<Town[], [Town[]], unknown>(
     if (towns.length !== 1) {
       set(searchEntriesFilterLocalitiesAtom, []);
     }
-  }
+  },
 );
 
 export const searchEntriesFilterLocalitiesAtom = atom<Locality[]>([]);

@@ -361,6 +361,6 @@ test("Create multiple distance estimates", async () => {
         ...distanceEstimate,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

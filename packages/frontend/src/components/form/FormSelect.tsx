@@ -19,7 +19,7 @@ type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalK
     : { by: K });
 
 const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>>(
-  props: FormSelectProps<TFieldValues, T, K>
+  props: FormSelectProps<TFieldValues, T, K>,
 ) => {
   const { data, by, renderValue, name, label, required, defaultValue, control, rules, selectClassName } = props;
 

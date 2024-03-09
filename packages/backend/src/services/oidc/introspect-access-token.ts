@@ -9,7 +9,7 @@ import { logger } from "../../utils/logger.js";
 const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
   accessToken: string,
   introspectionResultSchema: T,
-  oidcConfig: OidcConfig
+  oidcConfig: OidcConfig,
 ): Promise<z.infer<typeof introspectionResultSchema>> => {
   const basicAuthHeader = Buffer.from(`${oidcConfig.clientId}:${oidcConfig.clientSecret}`).toString("base64");
 
@@ -32,7 +32,7 @@ const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
       jsonBody: responseBody,
       ok: response.ok,
     },
-    "Token instrospection response"
+    "Token instrospection response",
   );
 
   const parsedResponse = introspectionResultSchema.parse(responseBody);

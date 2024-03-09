@@ -52,7 +52,7 @@ export const buildSpeciesService = ({
 
   const findSpeciesOfEntryId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<SpeciesCommon | null> => {
     validateAuthorization(loggedUser);
 
@@ -71,7 +71,7 @@ export const buildSpeciesService = ({
     const enrichedSpecies = await Promise.all(
       species.map((species) => {
         return enrichSpecies(species, null);
-      })
+      }),
     );
 
     return [...enrichedSpecies];
@@ -84,7 +84,7 @@ export const buildSpeciesService = ({
 
   const findPaginatedSpecies = async (
     loggedUser: LoggedUser | null,
-    options: SpeciesSearchParams
+    options: SpeciesSearchParams,
   ): Promise<SpeciesCommon[]> => {
     validateAuthorization(loggedUser);
 
@@ -106,7 +106,7 @@ export const buildSpeciesService = ({
     const enrichedSpecies = await Promise.all(
       species.map((species) => {
         return enrichSpecies(species, loggedUser);
-      })
+      }),
     );
 
     return [...enrichedSpecies];
@@ -144,7 +144,7 @@ export const buildSpeciesService = ({
   const updateSpecies = async (
     id: number,
     input: UpsertSpeciesInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<SpeciesCommon> => {
     validateAuthorization(loggedUser);
 
@@ -198,18 +198,18 @@ export const buildSpeciesService = ({
 
   const createMultipleSpecies = async (
     species: Omit<EspeceCreateInput, "owner_id">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly SpeciesCommon[]> => {
     const createdSpecies = await speciesRepository.createEspeces(
       species.map((species) => {
         return { ...species, owner_id: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedSpecies = await Promise.all(
       createdSpecies.map((species) => {
         return enrichSpecies(species, loggedUser);
-      })
+      }),
     );
 
     return enrichedCreatedSpecies;

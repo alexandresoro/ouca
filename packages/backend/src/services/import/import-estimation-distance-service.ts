@@ -14,7 +14,7 @@ export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleServ
 
   protected saveEntities = (
     estimationsDistance: Omit<DistanceEstimate, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly DistanceEstimate[]> => {
     return this.services.distanceEstimateService.createDistanceEstimates(estimationsDistance, loggedUser);
   };

@@ -56,7 +56,7 @@ const EstimationNombrePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateNumberEstimate } = useApiMutation(
@@ -88,7 +88,7 @@ const EstimationNombrePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteNumberEstimate } = useApiMutation(
@@ -110,7 +110,7 @@ const EstimationNombrePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("numberPrecisions") });

@@ -352,6 +352,6 @@ test("Create multiple observers", async () => {
         ...observer,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

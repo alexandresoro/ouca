@@ -1,5 +1,5 @@
 export const toUrlSearchParams = (
-  params: Record<string, string | string[] | number | number[] | boolean | undefined> | undefined
+  params: Record<string, string | string[] | number | number[] | boolean | undefined> | undefined,
 ): URLSearchParams => {
   if (params === undefined) {
     return new URLSearchParams();

@@ -401,6 +401,6 @@ test("Create multiple departments", async () => {
         ...department,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

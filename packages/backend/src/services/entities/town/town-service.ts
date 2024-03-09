@@ -42,7 +42,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
 
   const findTownOfLocalityId = async (
     lieuditId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
@@ -89,7 +89,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
 
   const getTownsCount = async (
     loggedUser: LoggedUser | null,
-    { q, departmentId }: Pick<TownsSearchParams, "q" | "departmentId">
+    { q, departmentId }: Pick<TownsSearchParams, "q" | "departmentId">,
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -156,12 +156,12 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
 
   const createTowns = async (
     towns: Omit<CommuneCreateInput, "owner_id">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Town[]> => {
     const createdTowns = await townRepository.createCommunes(
       towns.map((town) => {
         return { ...town, owner_id: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedTowns = createdTowns.map((town) => {

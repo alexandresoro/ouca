@@ -59,7 +59,7 @@ type ImportGlobalErrorStructure = {
 
 export const startImportTask = (importId: string, importType: ImportType, loggedUser: LoggedUser) => {
   logger.debug(
-    `Creating new worker for import id ${importId} and type ${importType} initiatied by user ${loggedUser.id}`
+    `Creating new worker for import id ${importId} and type ${importType} initiatied by user ${loggedUser.id}`,
   );
 
   const worker = new Worker("./services/import-worker.js", {

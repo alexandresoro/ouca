@@ -56,7 +56,7 @@ const MilieuPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateEnvironment } = useApiMutation(
@@ -88,7 +88,7 @@ const MilieuPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteEnvironment } = useApiMutation(
@@ -110,7 +110,7 @@ const MilieuPage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("environments") });

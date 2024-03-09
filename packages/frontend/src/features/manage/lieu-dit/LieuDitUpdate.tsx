@@ -28,7 +28,7 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ locality, onCanc
     { path: `/towns/${locality.townId}`, schema: getTownResponse },
     {
       enabled: enabledQueryTown,
-    }
+    },
   );
 
   useEffect(() => {

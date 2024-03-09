@@ -63,7 +63,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const {
@@ -84,7 +84,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: !!selectedDepartmentId,
-    }
+    },
   );
 
   // When the list of towns change, reset the selection if no longer in the new list

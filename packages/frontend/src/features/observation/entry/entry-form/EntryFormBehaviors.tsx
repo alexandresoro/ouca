@@ -45,7 +45,7 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const handleUpdatedBehavior = (newBehavior: Behavior | null, index: number) => {
@@ -53,14 +53,14 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
       setSelectedBehaviors((currentSelectedBehaviors) =>
         currentSelectedBehaviors.map((selectedBehavior, i) => {
           return index === i ? newBehavior : selectedBehavior;
-        })
+        }),
       );
     } else {
       // Remove behavior from the list
       setSelectedBehaviors((currentSelectedBehaviors) =>
         currentSelectedBehaviors.filter((_, i) => {
           return index !== i;
-        })
+        }),
       );
     }
   };

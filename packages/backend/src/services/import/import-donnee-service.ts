@@ -219,7 +219,7 @@ export class ImportDonneeService extends ImportService {
       lieudit.id,
       meteosIds,
       altitude,
-      coordinates
+      coordinates,
     );
 
     // Find if we already have an existing inventaire that matches the one from the current donnee
@@ -236,15 +236,15 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
           new Set(
-            await this.services.observerService.findAssociateIdsOfInventoryId(Number.parseInt(existingInventaire.id))
+            await this.services.observerService.findAssociateIdsOfInventoryId(Number.parseInt(existingInventaire.id)),
           ),
-          new Set(inputInventaire.associateIds)
+          new Set(inputInventaire.associateIds),
         ) &&
         areSetsContainingSameValues(
           new Set(
-            await this.services.weatherService.findWeatherIdsOfInventoryId(Number.parseInt(existingInventaire.id))
+            await this.services.weatherService.findWeatherIdsOfInventoryId(Number.parseInt(existingInventaire.id)),
           ),
-          new Set(inputInventaire.weatherIds)
+          new Set(inputInventaire.weatherIds),
         )
       );
     });
@@ -264,11 +264,11 @@ export class ImportDonneeService extends ImportService {
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
           new Set(await this.services.behaviorService.findBehaviorIdsOfEntryId(donnee.id)),
-          comportementsIds
+          comportementsIds,
         ) &&
         areSetsContainingSameValues(
           new Set(await this.services.environmentService.findEnvironmentIdsOfEntryId(donnee.id)),
-          milieuxIds
+          milieuxIds,
         )
       );
     });
@@ -322,7 +322,7 @@ export class ImportDonneeService extends ImportService {
       estimationNombre.id,
       estimationDistance?.id ?? null,
       comportementsIds,
-      milieuxIds
+      milieuxIds,
     );
 
     this.newDonnees.push(newDonnee);

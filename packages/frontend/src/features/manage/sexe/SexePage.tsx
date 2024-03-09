@@ -22,7 +22,7 @@ const SexePage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertSexDialog, setUpsertSexDialog] = useState<null | { mode: "create" } | { mode: "update"; sex: Sex }>(
-    null
+    null,
   );
   const [sexToDelete, setSexToDelete] = useState<SexExtended | null>(null);
 
@@ -56,7 +56,7 @@ const SexePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateSex } = useApiMutation(
@@ -88,7 +88,7 @@ const SexePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteSex } = useApiMutation(
@@ -110,7 +110,7 @@ const SexePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("genders") });

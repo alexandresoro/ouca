@@ -15,7 +15,7 @@ export type DepartmentRepository = {
   createDepartments: (departmentInputs: DepartmentCreateInput[]) => Promise<Department[]>;
   updateDepartment: (
     departmentId: number,
-    departmentInput: DepartmentCreateInput
+    departmentInput: DepartmentCreateInput,
   ) => Promise<Result<Department, EntityFailureReason>>;
   deleteDepartmentById: (departmentId: number) => Promise<Department | null>;
 };

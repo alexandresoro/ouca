@@ -75,7 +75,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { data: dataAssociateObservers } = useApiQuery(
@@ -91,7 +91,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: areAssociesDisplayed,
-    }
+    },
   );
 
   return (

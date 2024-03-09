@@ -23,7 +23,7 @@ const useApiQuery = <
     queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
     schema?: z.ZodType<TQueryFnData>;
   },
-  queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn">
+  queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn">,
 ) => {
   const { user } = useAuth();
   const apiUrl = useAtomValue(apiUrlAtom);

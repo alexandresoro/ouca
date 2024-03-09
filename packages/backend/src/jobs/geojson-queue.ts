@@ -26,7 +26,7 @@ export const buildWorkerGeoJSONRefresh = (services: Services, logger: Logger): v
         max: 5,
         duration: 30000,
       },
-    }
+    },
   );
 
   logger.debug({ worker: GEOJSON_QUEUE_NAME }, "Worker geojson has been created");

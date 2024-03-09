@@ -41,12 +41,12 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
     storage: {
       async executed() {
         await sql`CREATE TABLE IF NOT EXISTS ${sql.ref(
-          `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}`
+          `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}`,
         )} (name text, date timestamptz not null default now())`.execute(kysely);
 
         const rawNames = await kysely
           .selectFrom(
-            `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}` as "migrationTable"
+            `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}` as "migrationTable",
           )
           .select("name")
           .execute();
@@ -55,7 +55,7 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
           .array(
             z.object({
               name: z.string(),
-            })
+            }),
           )
           .parse(rawNames)
           .map(({ name }) => name);
@@ -64,7 +64,7 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
       async logMigration({ name }) {
         await kysely
           .insertInto(
-            `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}` as "migrationTable"
+            `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}` as "migrationTable",
           )
           .values({
             name,
@@ -74,7 +74,7 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
       async unlogMigration({ name }) {
         await kysely
           .deleteFrom(
-            `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}` as "migrationTable"
+            `${dbConfig.migrator.migrationTableSchema}.${dbConfig.migrator.migrationTableName}` as "migrationTable",
           )
           .where("name", "=", name)
           .execute();

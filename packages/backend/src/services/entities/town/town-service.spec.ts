@@ -27,7 +27,7 @@ const townService = buildTownService({
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
   new Error("errorMessage"),
-  "constraint"
+  "constraint",
 );
 
 const uniqueConstraintFailed = () => {
@@ -271,7 +271,7 @@ describe("Update of a city", () => {
     townRepository.updateCommune.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => townService.updateTown(12, cityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(townRepository.updateCommune).toHaveBeenCalledTimes(1);
@@ -317,7 +317,7 @@ describe("Creation of a city", () => {
     townRepository.createCommune.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => townService.createTown(cityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(townRepository.createCommune).toHaveBeenCalledTimes(1);
@@ -406,6 +406,6 @@ test("Create multiple cities", async () => {
         ...town,
         owner_id: loggedUser.id,
       };
-    })
+    }),
   );
 });

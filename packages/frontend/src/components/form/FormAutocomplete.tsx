@@ -35,7 +35,7 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> =
   );
 
 const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
-  props: FormAutocompleteProps<TFieldValues, T>
+  props: FormAutocompleteProps<TFieldValues, T>,
 ) => {
   const {
     data,

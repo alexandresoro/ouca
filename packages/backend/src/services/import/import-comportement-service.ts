@@ -14,7 +14,7 @@ export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeServ
 
   protected saveEntities = (
     comportements: Omit<Behavior, "id" | "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Behavior[]> => {
     return this.services.behaviorService.createBehaviors(comportements, loggedUser);
   };

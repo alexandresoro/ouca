@@ -32,7 +32,7 @@ const TextArea: FunctionComponent<TextAreaProps> = forwardRef<HTMLTextAreaElemen
         />
       </div>
     );
-  }
+  },
 );
 
 export default TextArea;

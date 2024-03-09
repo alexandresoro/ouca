@@ -18,7 +18,7 @@ function useApiFetch<T>({
   method,
   schema,
 }: { path: string; method?: string; schema?: z.ZodType<T> }): (
-  options?: Omit<UseApiFetchCallParams, "path">
+  options?: Omit<UseApiFetchCallParams, "path">,
 ) => Promise<T>;
 function useApiFetch<T>({ method, schema }: Omit<UseApiFetchParams<T>, "path">): ({
   path,
@@ -58,7 +58,7 @@ function useApiFetch<T>({
         schema,
       });
     },
-    [apiUrl, accessToken, pathFromSignature, method, schema]
+    [apiUrl, accessToken, pathFromSignature, method, schema],
   );
 }
 

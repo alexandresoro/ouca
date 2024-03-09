@@ -56,7 +56,7 @@ const LieuDitPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateLocality } = useApiMutation(
@@ -88,7 +88,7 @@ const LieuDitPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteLocality } = useApiMutation(
@@ -110,7 +110,7 @@ const LieuDitPage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("localities") });

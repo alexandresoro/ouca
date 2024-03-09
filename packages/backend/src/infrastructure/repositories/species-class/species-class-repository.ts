@@ -60,7 +60,7 @@ export const buildSpeciesClassRepository = () => {
           querySpeciesClass = querySpeciesClass.where(
             sql`unaccent(classe.libelle)`,
             "ilike",
-            sql`unaccent(${`%${q}%`})`
+            sql`unaccent(${`%${q}%`})`,
           );
         }
 
@@ -80,7 +80,7 @@ export const buildSpeciesClassRepository = () => {
           querySpeciesClass = querySpeciesClass.where(
             sql`unaccent(classe.libelle)`,
             "ilike",
-            sql`unaccent(${`%${q}%`})`
+            sql`unaccent(${`%${q}%`})`,
           );
         }
 
@@ -99,7 +99,7 @@ export const buildSpeciesClassRepository = () => {
           querySpeciesClass = querySpeciesClass.where(
             sql`unaccent(classe.libelle)`,
             "ilike",
-            sql`unaccent(${`%${q}%`})`
+            sql`unaccent(${`%${q}%`})`,
           );
         }
 
@@ -138,7 +138,7 @@ export const buildSpeciesClassRepository = () => {
   };
 
   const createSpeciesClass = async (
-    speciesClassInput: SpeciesClassCreateInput
+    speciesClassInput: SpeciesClassCreateInput,
   ): Promise<Result<SpeciesClass, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -149,7 +149,7 @@ export const buildSpeciesClassRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdSpeciesClass) => speciesClassSchema.parse(createdSpeciesClass));
   };
 
@@ -162,7 +162,7 @@ export const buildSpeciesClassRepository = () => {
             libelle: speciesClassInput.libelle,
             ownerId: speciesClassInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
@@ -172,7 +172,7 @@ export const buildSpeciesClassRepository = () => {
 
   const updateSpeciesClass = async (
     speciesClassId: number,
-    speciesClassInput: SpeciesClassCreateInput
+    speciesClassInput: SpeciesClassCreateInput,
   ): Promise<Result<SpeciesClass, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -184,7 +184,7 @@ export const buildSpeciesClassRepository = () => {
         .where("id", "=", speciesClassId)
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedSpeciesClass) => speciesClassSchema.parse(updatedSpeciesClass));
   };
 

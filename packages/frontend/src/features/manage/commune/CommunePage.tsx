@@ -22,7 +22,7 @@ const CommunePage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [upsertTownDialog, setUpsertTownDialog] = useState<null | { mode: "create" } | { mode: "update"; town: Town }>(
-    null
+    null,
   );
   const [townToDelete, setTownToDelete] = useState<TownExtended | null>(null);
 
@@ -56,7 +56,7 @@ const CommunePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateTown } = useApiMutation(
@@ -88,7 +88,7 @@ const CommunePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteTown } = useApiMutation(
@@ -110,7 +110,7 @@ const CommunePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("towns") });

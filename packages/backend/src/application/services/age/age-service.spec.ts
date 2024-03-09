@@ -356,6 +356,6 @@ test("Create multiple ages", async () => {
         ...age,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

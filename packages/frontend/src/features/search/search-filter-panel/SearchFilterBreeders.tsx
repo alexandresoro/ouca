@@ -23,7 +23,7 @@ const SearchFilterBreeders: FunctionComponent = () => {
           value: CERTAIN,
         },
       ] satisfies { label: string; value: NicheurCode }[],
-    [t]
+    [t],
   );
 
   const [selectedBreeders, setSelectedBreeders] = useAtom(searchEntriesFilterBreedersAtom);

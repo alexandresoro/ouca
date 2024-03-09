@@ -34,7 +34,7 @@ type AutocompleteMultipleProps<T extends object> = {
 
 const AutocompleteMultiple = <T extends object>(
   props: AutocompleteMultipleProps<T>,
-  ref: ForwardedRef<HTMLElement>
+  ref: ForwardedRef<HTMLElement>,
 ) => {
   const {
     data,

@@ -62,7 +62,7 @@ const ObservateurPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { trigger: deleteObserver } = useApiObserverDelete(observerToDelete?.id ?? null, {

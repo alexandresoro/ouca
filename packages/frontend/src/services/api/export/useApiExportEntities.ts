@@ -17,7 +17,7 @@ const useApiExportEntities = ({ filename }: { filename: string }) => {
           downloadFile(location, `${filename}${EXCEL_FILE_EXTENSION}`);
         }
       },
-    }
+    },
   );
 };
 

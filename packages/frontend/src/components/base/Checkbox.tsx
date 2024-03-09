@@ -26,7 +26,7 @@ const Checkbox: FunctionComponent<CheckboxProps> = forwardRef<HTMLInputElement, 
         </label>
       </div>
     );
-  }
+  },
 );
 
 export default Checkbox;

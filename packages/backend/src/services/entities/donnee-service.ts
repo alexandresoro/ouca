@@ -43,7 +43,7 @@ export const buildDonneeService = ({
 
   const findPaginatedDonnees = async (
     loggedUser: LoggedUser | null,
-    options: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> & Partial<{ pageNumber: number; pageSize: number }>
+    options: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> & Partial<{ pageNumber: number; pageSize: number }>,
   ): Promise<Donnee[]> => {
     validateAuthorization(loggedUser);
 
@@ -126,14 +126,14 @@ export const buildDonneeService = ({
     const createdDonnee = await slonik.transaction(async (transactionConnection) => {
       const createdDonnee = await entryRepository.createDonnee(
         reshapeInputEntryUpsertData(input),
-        transactionConnection
+        transactionConnection,
       );
 
       if (behaviorIds?.length) {
         await entryBehaviorRepository.insertDonneeWithComportements(
           Number.parseInt(createdDonnee.id),
           behaviorIds.map((behavior) => Number.parseInt(behavior)),
-          transactionConnection
+          transactionConnection,
         );
       }
 
@@ -141,7 +141,7 @@ export const buildDonneeService = ({
         await entryEnvironmentRepository.insertDonneeWithMilieux(
           Number.parseInt(createdDonnee.id),
           environmentIds.map((environment) => Number.parseInt(environment)),
-          transactionConnection
+          transactionConnection,
         );
       }
 
@@ -175,7 +175,7 @@ export const buildDonneeService = ({
         const updatedDonnee = await entryRepository.updateDonnee(
           Number.parseInt(id),
           reshapeInputEntryUpsertData(input),
-          transactionConnection
+          transactionConnection,
         );
 
         await entryBehaviorRepository.deleteComportementsOfDonneeId(Number.parseInt(id), transactionConnection);
@@ -184,7 +184,7 @@ export const buildDonneeService = ({
           await entryBehaviorRepository.insertDonneeWithComportements(
             Number.parseInt(id),
             behaviorIds.map((behavior) => Number.parseInt(behavior)),
-            transactionConnection
+            transactionConnection,
           );
         }
 
@@ -194,7 +194,7 @@ export const buildDonneeService = ({
           await entryEnvironmentRepository.insertDonneeWithMilieux(
             Number.parseInt(id),
             environmentIds.map((environment) => Number.parseInt(environment)),
-            transactionConnection
+            transactionConnection,
           );
         }
 

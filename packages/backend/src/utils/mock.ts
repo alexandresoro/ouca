@@ -10,7 +10,7 @@ class Matcher<T> {
 
   constructor(
     readonly asymmetricMatch: MatcherFn<T>,
-    private readonly description: string
+    private readonly description: string,
   ) {
     this.$$typeof = Symbol.for("vi.asymmetricMatcher");
   }

@@ -53,7 +53,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { displayNotification } = useSnackbar();

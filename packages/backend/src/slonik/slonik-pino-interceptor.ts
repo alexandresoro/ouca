@@ -11,7 +11,7 @@ export const createQueryLoggingInterceptor = (pinoLogger: Logger): Interceptor =
           rowCount: result?.rowCount ?? null,
           queryId: context.queryId,
         },
-        "query execution result"
+        "query execution result",
       );
 
       return null;
@@ -23,7 +23,7 @@ export const createQueryLoggingInterceptor = (pinoLogger: Logger): Interceptor =
           sql: query.sql,
           queryId: context.queryId,
         },
-        "executing query"
+        "executing query",
       );
 
       return null;
@@ -33,7 +33,7 @@ export const createQueryLoggingInterceptor = (pinoLogger: Logger): Interceptor =
         {
           error: serializeError(error),
         },
-        "query execution produced an error"
+        "query execution produced an error",
       );
 
       return null;

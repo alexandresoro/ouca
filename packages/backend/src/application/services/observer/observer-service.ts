@@ -15,7 +15,7 @@ type ObserverServiceDependencies = {
 export const buildObserverService = ({ observerRepository }: ObserverServiceDependencies) => {
   const findObserver = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Observer | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -27,7 +27,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const findObserverOfInventoryId = async (
     inventoryId: number | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -47,7 +47,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const findAssociatesOfInventoryId = async (
     inventoryId: number | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -76,7 +76,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const findPaginatedObservers = async (
     loggedUser: LoggedUser | null,
-    options: ObserversSearchParams
+    options: ObserversSearchParams,
   ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -100,7 +100,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const getObserversCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -111,7 +111,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const createObserver = async (
     input: UpsertObserverInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Observer, ObserverFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -131,7 +131,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
   const updateObserver = async (
     id: number,
     input: UpsertObserverInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Observer, ObserverFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -156,7 +156,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const deleteObserver = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -177,12 +177,12 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   const createObservers = async (
     observers: Omit<AgeCreateInput, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly ObserverSimple[]> => {
     const createdObservers = await observerRepository.createObservers(
       observers.map((observateur) => {
         return { ...observateur, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedObservers = createdObservers.map((observer) => {

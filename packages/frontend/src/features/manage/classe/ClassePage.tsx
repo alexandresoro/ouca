@@ -56,7 +56,7 @@ const ClassePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateSpeciesClass } = useApiMutation(
@@ -88,7 +88,7 @@ const ClassePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteSpeciesClass } = useApiMutation(
@@ -110,7 +110,7 @@ const ClassePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("speciesClasses") });

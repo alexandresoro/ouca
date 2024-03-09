@@ -32,12 +32,12 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
   const findEnvironmentsOfEntryId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Environment[]> => {
     validateAuthorization(loggedUser);
 
     const environments = await environmentRepository.findMilieuxOfDonneeId(
-      entryId ? Number.parseInt(entryId) : undefined
+      entryId ? Number.parseInt(entryId) : undefined,
     );
 
     const enrichedEnvironments = environments.map((environment) => {
@@ -67,7 +67,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
   const findPaginatedEnvironments = async (
     loggedUser: LoggedUser | null,
-    options: EnvironmentsSearchParams
+    options: EnvironmentsSearchParams,
   ): Promise<Environment[]> => {
     validateAuthorization(loggedUser);
 
@@ -95,7 +95,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
   const createEnvironment = async (
     input: UpsertEnvironmentInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Environment> => {
     validateAuthorization(loggedUser);
 
@@ -117,7 +117,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   const updateEnvironment = async (
     id: number,
     input: UpsertEnvironmentInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Environment> => {
     validateAuthorization(loggedUser);
 
@@ -160,12 +160,12 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
   const createEnvironments = async (
     environments: Omit<MilieuCreateInput[], "owner_id">,
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Environment[]> => {
     const createdEnvironments = await environmentRepository.createMilieux(
       environments.map((environment) => {
         return { ...environment, owner_id: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedEnvironments = createdEnvironments.map((environment) => {

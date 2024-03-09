@@ -19,7 +19,7 @@ export const buildOidcWithInternalUserMappingService = ({
 }: OidcWithInternalUserMappingServiceDependencies) => {
   const findLoggedUserFromProvider = async (
     externalProviderName: string,
-    externalUserId: string
+    externalUserId: string,
   ): Promise<FindLoggedUserFromProviderResult> => {
     const matchingUser = await userService.findUserByExternalId(externalProviderName, externalUserId);
 

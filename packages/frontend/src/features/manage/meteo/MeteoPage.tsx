@@ -56,7 +56,7 @@ const MeteoPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateWeather } = useApiMutation(
@@ -88,7 +88,7 @@ const MeteoPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteWeather } = useApiMutation(
@@ -110,7 +110,7 @@ const MeteoPage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("weathers") });

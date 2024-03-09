@@ -41,7 +41,7 @@ const EntryFormBehavior: FunctionComponent<EntryFormBehaviorProps> = ({
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   return (

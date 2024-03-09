@@ -46,7 +46,7 @@ export const buildLocalityService = ({
 
   const findLocalityOfInventoryId = async (
     inventoryId: number | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
@@ -68,7 +68,7 @@ export const buildLocalityService = ({
 
   const findPaginatedLocalities = async (
     loggedUser: LoggedUser | null,
-    options: LocalitiesSearchParams
+    options: LocalitiesSearchParams,
   ): Promise<Locality[]> => {
     validateAuthorization(loggedUser);
 
@@ -97,7 +97,7 @@ export const buildLocalityService = ({
 
   const getLocalitiesCount = async (
     loggedUser: LoggedUser | null,
-    { q, townId }: Pick<LocalitiesSearchParams, "q" | "townId">
+    { q, townId }: Pick<LocalitiesSearchParams, "q" | "townId">,
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -125,7 +125,7 @@ export const buildLocalityService = ({
   const updateLocality = async (
     id: number,
     input: UpsertLocalityInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
@@ -168,12 +168,12 @@ export const buildLocalityService = ({
 
   const createLocalities = async (
     localities: Omit<LieuditCreateInput, "owner_id">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Locality[]> => {
     const createdLocalities = await localityRepository.createLieuxdits(
       localities.map((locality) => {
         return { ...locality, owner_id: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedLocalities = createdLocalities.map((locality) => {

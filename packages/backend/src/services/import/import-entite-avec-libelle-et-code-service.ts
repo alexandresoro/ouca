@@ -43,7 +43,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService<T = unknown> extends 
 
   protected abstract saveEntities(
     entities: { libelle: string; code: string }[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly T[]>;
 
   protected abstract getAnEntityName(): string;

@@ -52,7 +52,7 @@ const TextInput: FunctionComponent<TextInputProps> = forwardRef<HTMLInputElement
         )}
       </div>
     );
-  }
+  },
 );
 
 export default TextInput;

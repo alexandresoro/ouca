@@ -147,7 +147,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
       ${
         !orderBy && q
           ? sql.fragment`ORDER BY (espece.code ~* ${matchStartCode}) DESC, (espece.code ~* ${escapeStringRegexp(
-              q
+              q,
             )}) DESC, espece.code ASC`
           : sql.fragment``
       }

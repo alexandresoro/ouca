@@ -129,7 +129,7 @@ const SettingsPage: FunctionComponent = () => {
         });
         void refetch();
       },
-    }
+    },
   );
 
   const {
@@ -179,7 +179,7 @@ const SettingsPage: FunctionComponent = () => {
 
       mutate({ body: values });
     },
-    [mutate, settings]
+    [mutate, settings],
   );
 
   // Watch inputs for changes, and submit the form if any

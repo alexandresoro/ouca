@@ -12,12 +12,12 @@ export type SpeciesClassRepository = {
   findSpeciesClasses: ({ orderBy, sortOrder, q, offset, limit }: SpeciesClassFindManyInput) => Promise<SpeciesClass[]>;
   getCount: (q?: string | null) => Promise<number>;
   createSpeciesClass: (
-    speciesClassInput: SpeciesClassCreateInput
+    speciesClassInput: SpeciesClassCreateInput,
   ) => Promise<Result<SpeciesClass, EntityFailureReason>>;
   createSpeciesClasses: (speciesClassInputs: SpeciesClassCreateInput[]) => Promise<SpeciesClass[]>;
   updateSpeciesClass: (
     speciesClassId: number,
-    speciesClassInput: SpeciesClassCreateInput
+    speciesClassInput: SpeciesClassCreateInput,
   ) => Promise<Result<SpeciesClass, EntityFailureReason>>;
   deleteSpeciesClassById: (speciesClassId: number) => Promise<SpeciesClass | null>;
 };

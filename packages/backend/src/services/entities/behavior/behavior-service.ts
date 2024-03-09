@@ -32,12 +32,12 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
   const findBehaviorsOfEntryId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
     const behaviors = await behaviorRepository.findComportementsOfDonneeId(
-      entryId ? Number.parseInt(entryId) : undefined
+      entryId ? Number.parseInt(entryId) : undefined,
     );
 
     const enrichedBehaviors = behaviors.map((behavior) => {
@@ -67,7 +67,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
   const findPaginatedBehaviors = async (
     loggedUser: LoggedUser | null,
-    options: BehaviorsSearchParams
+    options: BehaviorsSearchParams,
   ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
@@ -114,7 +114,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
   const updateBehavior = async (
     id: number,
     input: UpsertBehaviorInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
@@ -157,12 +157,12 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
   const createBehaviors = async (
     behaviors: Omit<ComportementCreateInput[], "owner_id">,
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Behavior[]> => {
     const createdBehaviors = await behaviorRepository.createComportements(
       behaviors.map((behavior) => {
         return { ...behavior, owner_id: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedBehaviors = createdBehaviors.map((behavior) => {

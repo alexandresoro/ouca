@@ -61,7 +61,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     },
     {
       enabled: inventory != null,
-    }
+    },
   );
 
   const previousInventoryIndex =
@@ -85,7 +85,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     {
       enabled: previousInventoryIndex != null,
       staleTime: 30000,
-    }
+    },
   );
 
   const { data: nextInventoryData, isFetching: isFetchingNext } = useApiQuery(
@@ -103,7 +103,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     {
       enabled: nextInventoryIndex != null,
       staleTime: 30000,
-    }
+    },
   );
 
   const { mutate: updateInventory } = useApiInventoryUpdate({

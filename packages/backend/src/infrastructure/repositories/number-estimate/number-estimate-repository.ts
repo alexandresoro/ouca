@@ -104,7 +104,7 @@ export const buildNumberEstimateRepository = () => {
   };
 
   const createNumberEstimate = async (
-    numberEstimateInput: NumberEstimateCreateInput
+    numberEstimateInput: NumberEstimateCreateInput,
   ): Promise<Result<NumberEstimate, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -116,12 +116,12 @@ export const buildNumberEstimateRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdNumberEstimate) => numberEstimateSchema.parse(createdNumberEstimate));
   };
 
   const createNumberEstimates = async (
-    numberEstimateInputs: NumberEstimateCreateInput[]
+    numberEstimateInputs: NumberEstimateCreateInput[],
   ): Promise<NumberEstimate[]> => {
     const createdNumberEstimates = await kysely
       .insertInto("estimation_nombre")
@@ -132,7 +132,7 @@ export const buildNumberEstimateRepository = () => {
             nonCompte: numberEstimateInput.nonCompte,
             ownerId: numberEstimateInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
       .execute();
@@ -142,7 +142,7 @@ export const buildNumberEstimateRepository = () => {
 
   const updateNumberEstimate = async (
     numberEstimateId: number,
-    numberEstimateInput: NumberEstimateCreateInput
+    numberEstimateInput: NumberEstimateCreateInput,
   ): Promise<Result<NumberEstimate, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -155,7 +155,7 @@ export const buildNumberEstimateRepository = () => {
         .where("id", "=", numberEstimateId)
         .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedNumberEstimate) => numberEstimateSchema.parse(updatedNumberEstimate));
   };
 

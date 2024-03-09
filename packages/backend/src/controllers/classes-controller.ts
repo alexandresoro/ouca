@@ -88,7 +88,7 @@ const classesController: FastifyPluginCallback<{
             speciesCount,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

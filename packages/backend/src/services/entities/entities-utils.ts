@@ -10,7 +10,7 @@ export function enrichEntityWithEditableStatus<E>(entity: E, user: LoggedUser | 
 export function enrichEntityWithEditableStatus(entity: null, user: LoggedUser | null): null;
 export function enrichEntityWithEditableStatus<E>(
   entity: E | null,
-  user: LoggedUser | null
+  user: LoggedUser | null,
 ): (E & { editable: boolean }) | null {
   if (!entity) {
     return null;
@@ -25,7 +25,7 @@ export function enrichEntityWithEditableStatus<E>(
 // Utility method to compute the SQL pagination from the API pagination
 // Page number is starting at index 1
 export const getSqlPagination = (
-  paginationOptions: PaginationOptions | null | undefined
+  paginationOptions: PaginationOptions | null | undefined,
 ): { offset: number | undefined; limit: number | undefined } => {
   return {
     offset:

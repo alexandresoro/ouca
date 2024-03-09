@@ -21,7 +21,7 @@ export const useApiObserverCreate = () => {
 
 export const useApiObserverUpdate = (
   id: string | null,
-  swrOptions?: SWRMutationConfiguration<z.infer<typeof upsertObserverResponse>, unknown>
+  swrOptions?: SWRMutationConfiguration<z.infer<typeof upsertObserverResponse>, unknown>,
 ) => {
   return useApiMutation(
     id ? `/observers/${id}` : null,
@@ -33,13 +33,13 @@ export const useApiObserverUpdate = (
       revalidate: false,
       populateCache: true,
       ...swrOptions,
-    }
+    },
   );
 };
 
 export const useApiObserverDelete = (
   id: string | null,
-  swrOptions?: SWRMutationConfiguration<z.infer<typeof deleteObserverResponse>, unknown>
+  swrOptions?: SWRMutationConfiguration<z.infer<typeof deleteObserverResponse>, unknown>,
 ) => {
   return useApiMutation(
     id ? `/observers/${id}` : null,
@@ -50,6 +50,6 @@ export const useApiObserverDelete = (
     {
       revalidate: false,
       ...swrOptions,
-    }
+    },
   );
 };

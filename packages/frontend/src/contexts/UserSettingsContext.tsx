@@ -37,7 +37,7 @@ const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }
         // otherwise use regular retry mechanism
         return !(error?.status === 404) && count < 3;
       },
-    }
+    },
   );
 
   useEffect(() => {

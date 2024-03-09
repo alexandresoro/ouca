@@ -30,7 +30,7 @@ export const initializeSentry = (config: AppConfig) => {
           useLocation,
           useNavigationType,
           createRoutesFromChildren,
-          matchRoutes
+          matchRoutes,
         ),
       }),
       // Disable replay as not supported by GlitchTip
@@ -74,6 +74,6 @@ export const setUser = (user: User | null | undefined): void => {
           username: user.profile.name,
           email: user.profile.email,
         }
-      : null
+      : null,
   );
 };

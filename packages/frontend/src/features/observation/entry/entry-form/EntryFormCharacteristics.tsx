@@ -125,7 +125,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { data: dataSexes } = useApiQuery(
@@ -140,7 +140,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { data: dataAges } = useApiQuery(
@@ -155,7 +155,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   return (

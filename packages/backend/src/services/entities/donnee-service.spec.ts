@@ -135,7 +135,7 @@ describe("Data paginated find by search criteria", () => {
       donneeService.findPaginatedDonnees(null, {
         pageNumber: 1,
         pageSize: 10,
-      })
+      }),
     ).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -177,7 +177,7 @@ describe("Entities count by search criteria", () => {
       donneeService.getDonneesCount(null, {
         pageNumber: 1,
         pageSize: 10,
-      })
+      }),
     ).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
@@ -361,7 +361,7 @@ describe("Update of a data", () => {
     entryRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: "12",
-      })
+      }),
     );
 
     const reshapedInputData = mock<DonneeCreateInput>();
@@ -377,7 +377,7 @@ describe("Update of a data", () => {
     expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
       anyNumber(),
       expect.arrayContaining([2, 3]),
-      anyObject()
+      anyObject(),
     );
     expect(entryEnvironmentRepository.deleteMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
     expect(entryEnvironmentRepository.deleteMilieuxOfDonneeId).toHaveBeenLastCalledWith(12, any());
@@ -385,7 +385,7 @@ describe("Update of a data", () => {
     expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(
       anyNumber(),
       expect.arrayContaining([4, 5]),
-      anyObject()
+      anyObject(),
     );
   });
 
@@ -397,14 +397,14 @@ describe("Update of a data", () => {
     entryRepository.findExistingDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: "345",
-      })
+      }),
     );
 
     await expect(donneeService.updateDonnee("12", dataData, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0004", {
         code: "OUCA0004",
         message: "Cette donnée existe déjà (ID = 345).",
-      })
+      }),
     );
     expect(entryRepository.updateDonnee).not.toHaveBeenCalled();
   });
@@ -450,7 +450,7 @@ describe("Creation of a data", () => {
     entryRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: "12",
-      })
+      }),
     );
 
     await donneeService.createDonnee(dataData, loggedUser);
@@ -475,7 +475,7 @@ describe("Creation of a data", () => {
     entryRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: "12",
-      })
+      }),
     );
 
     await donneeService.createDonnee(dataData, loggedUser);

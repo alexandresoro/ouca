@@ -6,7 +6,7 @@ import { type Feature, type FeatureCollection, type Point, type Polygon } from "
 
 export const boundingPolygon = (
   pointsFeatureCollection: FeatureCollection<Point>,
-  concavity: number
+  concavity: number,
 ): Feature<Polygon> | null => {
   if (!pointsFeatureCollection.features.length) {
     return null;

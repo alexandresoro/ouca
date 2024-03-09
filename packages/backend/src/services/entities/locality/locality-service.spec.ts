@@ -28,7 +28,7 @@ const localityService = buildLocalityService({
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
   new Error("errorMessage"),
-  "constraint"
+  "constraint",
 );
 
 const uniqueConstraintFailed = () => {
@@ -118,7 +118,7 @@ describe("Find locality by inventary ID", () => {
     mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(
       mock<LocalityCommon>({
         id: "258",
-      })
+      }),
     );
 
     const locality = await localityService.findLocalityOfInventoryId(43, loggedUser);
@@ -267,7 +267,7 @@ describe("Update of a locality", () => {
     localityRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
     await expect(localityService.updateLocality(12, localityData, user)).rejects.toThrowError(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
 
     expect(localityRepository.updateLieudit).not.toHaveBeenCalled();
@@ -284,7 +284,7 @@ describe("Update of a locality", () => {
     localityRepository.updateLieudit.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => localityService.updateLocality(12, localityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(localityRepository.updateLieudit).toHaveBeenCalledTimes(1);
@@ -332,7 +332,7 @@ describe("Creation of a locality", () => {
     localityRepository.createLieudit.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => localityService.createLocality(localityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(localityRepository.createLieudit).toHaveBeenCalledTimes(1);
@@ -423,6 +423,6 @@ test("Create multiple localities", async () => {
         ...locality,
         owner_id: loggedUser.id,
       };
-    })
+    }),
   );
 });

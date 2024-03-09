@@ -14,7 +14,7 @@ export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
 
   protected saveEntities = (
     milieux: Omit<Environment, "id" | "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Environment[]> => {
     return this.services.environmentService.createEnvironments(milieux, loggedUser);
   };

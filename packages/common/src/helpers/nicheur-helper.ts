@@ -25,7 +25,7 @@ export const getHighestNicheurStatus = (comportements: { nicheur?: NicheurCode |
 
 export const getNicheurStatusToDisplay = (
   comportements: { nicheur?: NicheurCode | null }[],
-  noNicheurFoundText: string
+  noNicheurFoundText: string,
 ): string => {
   const nicheurStatusCode = getHighestNicheurStatus(comportements);
 

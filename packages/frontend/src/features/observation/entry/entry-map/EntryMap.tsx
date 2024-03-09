@@ -70,7 +70,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
         lat: event.lngLat.lat,
       });
     },
-    [setInventoryCoordinates]
+    [setInventoryCoordinates],
   );
 
   const [selectedLocality, setSelectedLocality] = useAtom(inventoryLocalityAtom);
@@ -87,7 +87,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
     {
       staleTime: 5 * 60 * 1000,
       cacheTime: 2 * 60 * 60 * 1000,
-    }
+    },
   );
 
   // Compute the polygon for the selection
@@ -126,7 +126,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
     // If no selection, we don't care much about a realistic shape -> Infinity
     const selectionPolygon = boundingPolygon(
       selectionFeatureCollection,
-      localitySelection != null ? 2 : Number.POSITIVE_INFINITY
+      localitySelection != null ? 2 : Number.POSITIVE_INFINITY,
     );
 
     if (!selectionPolygon) {
@@ -150,8 +150,8 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
         featureCollection([
           point(currentMapBounds.getSouthWest().toArray()),
           point(currentMapBounds.getNorthEast().toArray()),
-        ])
-      )
+        ]),
+      ),
     );
 
     const shouldMoveToSelection =
@@ -219,7 +219,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
     setHoverLocalityProperties(
       hoveredFeature?.properties && !hoveredFeature.properties.cluster
         ? { locality: hoveredFeature.properties as GeoJSONLocality, x, y }
-        : null
+        : null,
     );
   }, []);
 
@@ -260,7 +260,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
         }
       }
     },
-    [fetchLocality, selectedLocality?.id, setSelectedLocality]
+    [fetchLocality, selectedLocality?.id, setSelectedLocality],
   );
 
   const handleOnMapLoad = () => {
@@ -276,7 +276,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
             lat: selectedLocality?.coordinates.latitude,
             lng: selectedLocality?.coordinates.longitude,
           }
-        : RESET
+        : RESET,
     );
   };
 

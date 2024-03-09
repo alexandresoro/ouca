@@ -12,7 +12,7 @@ type LieuDitForCoordinates = {
 
 export const getCoordinates = (
   object: { coordinates: Coordinates },
-  coordinatesSystem: CoordinatesSystemType
+  coordinatesSystem: CoordinatesSystemType,
 ): Coordinates => {
   return transformCoordinates(object.coordinates, coordinatesSystem);
 };
@@ -22,7 +22,7 @@ export const areCoordinatesCustomized = (
   altitude: number,
   longitude: number,
   latitude: number,
-  system: CoordinatesSystemType
+  system: CoordinatesSystemType,
 ): boolean => {
   if (lieudit?.id) {
     const lieuditCoordinates: Coordinates = getCoordinates(
@@ -36,7 +36,7 @@ export const areCoordinatesCustomized = (
           system: lieudit.coordinatesSystem!,
         },
       },
-      system
+      system,
     );
 
     if (

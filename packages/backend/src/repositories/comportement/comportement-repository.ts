@@ -165,7 +165,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
 
   const updateComportement = async (
     comportementId: number,
-    comportementInput: ComportementCreateInput
+    comportementInput: ComportementCreateInput,
   ): Promise<Behavior> => {
     const query = sql.type(behaviorSchema)`
       UPDATE

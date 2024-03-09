@@ -16,7 +16,7 @@ type WeatherServiceDependencies = {
 export const buildWeatherService = ({ weatherRepository, entryRepository }: WeatherServiceDependencies) => {
   const findWeather = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Weather | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -28,7 +28,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const getEntriesCountByWeather = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -39,7 +39,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const findWeathersOfInventoryId = async (
     inventoryId: number | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Weather[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -76,7 +76,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const findPaginatedWeathers = async (
     loggedUser: LoggedUser | null,
-    options: WeathersSearchParams
+    options: WeathersSearchParams,
   ): Promise<Result<Weather[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -100,7 +100,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const getWeathersCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -111,7 +111,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const createWeather = async (
     input: UpsertWeatherInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Weather, WeatherFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -131,7 +131,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
   const updateWeather = async (
     id: number,
     input: UpsertWeatherInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Weather, WeatherFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -156,7 +156,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const deleteWeather = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Weather | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -177,12 +177,12 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   const createWeathers = async (
     weathers: Omit<WeatherCreateInput, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<Weather[]> => {
     const createdWeathers = await weatherRepository.createWeathers(
       weathers.map((weather) => {
         return { ...weather, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedWeathers = createdWeathers.map((weather) => {

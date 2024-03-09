@@ -56,7 +56,7 @@ const DepartementPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateDepartment } = useApiMutation(
@@ -88,7 +88,7 @@ const DepartementPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteDepartment } = useApiMutation(
@@ -110,7 +110,7 @@ const DepartementPage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("departments") });

@@ -20,7 +20,7 @@ const environmentService = buildEnvironmentService({
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
   new Error("errorMessage"),
-  "constraint"
+  "constraint",
 );
 
 const uniqueConstraintFailed = () => {
@@ -68,7 +68,7 @@ describe("Data count per entity", () => {
 
   test("should not be allowed when the requester is not logged", async () => {
     await expect(environmentService.getEntriesCountByEnvironment("12", null)).rejects.toEqual(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
   });
 });
@@ -217,7 +217,7 @@ describe("Update of an environment", () => {
     environmentRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
     await expect(environmentService.updateEnvironment(12, environmentData, user)).rejects.toThrowError(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
 
     expect(environmentRepository.updateMilieu).not.toHaveBeenCalled();
@@ -231,7 +231,7 @@ describe("Update of an environment", () => {
     environmentRepository.updateMilieu.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => environmentService.updateEnvironment(12, environmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(environmentRepository.updateMilieu).toHaveBeenCalledTimes(1);
@@ -242,7 +242,7 @@ describe("Update of an environment", () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
     await expect(environmentService.updateEnvironment(12, environmentData, null)).rejects.toEqual(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
     expect(environmentRepository.updateMilieu).not.toHaveBeenCalled();
   });
@@ -271,7 +271,7 @@ describe("Creation of an environment", () => {
     environmentRepository.createMilieu.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => environmentService.createEnvironment(environmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(environmentRepository.createMilieu).toHaveBeenCalledTimes(1);
@@ -285,7 +285,7 @@ describe("Creation of an environment", () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
     await expect(environmentService.createEnvironment(environmentData, null)).rejects.toEqual(
-      new OucaError("OUCA0001")
+      new OucaError("OUCA0001"),
     );
     expect(environmentRepository.createMilieu).not.toHaveBeenCalled();
   });
@@ -357,6 +357,6 @@ test("Create multiple environments", async () => {
         ...environment,
         owner_id: loggedUser.id,
       };
-    })
+    }),
   );
 });

@@ -156,7 +156,7 @@ export const buildDepartmentRepository = () => {
   };
 
   const createDepartment = async (
-    departmentInput: DepartmentCreateInput
+    departmentInput: DepartmentCreateInput,
   ): Promise<Result<Department, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -167,7 +167,7 @@ export const buildDepartmentRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "code", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdDepartment) => departmentSchema.parse(createdDepartment));
   };
 
@@ -180,7 +180,7 @@ export const buildDepartmentRepository = () => {
             code: departmentInput.code,
             ownerId: departmentInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "code", "ownerId"])
       .execute();
@@ -190,7 +190,7 @@ export const buildDepartmentRepository = () => {
 
   const updateDepartment = async (
     departmentId: number,
-    departmentInput: DepartmentCreateInput
+    departmentInput: DepartmentCreateInput,
   ): Promise<Result<Department, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -202,7 +202,7 @@ export const buildDepartmentRepository = () => {
         .where("id", "=", departmentId)
         .returning([sql`id::text`.as("id"), "code", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedDepartment) => departmentSchema.parse(updatedDepartment));
   };
 

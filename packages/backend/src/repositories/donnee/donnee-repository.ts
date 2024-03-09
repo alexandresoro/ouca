@@ -172,7 +172,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
           id: z.number(),
           date: z.string(),
           heure: z.string().nullable(),
-        })
+        }),
       )`
         SELECT
 	        id,
@@ -240,7 +240,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
           id: z.number(),
           date: z.string(),
           heure: z.string().nullable(),
-        })
+        }),
       )`
         SELECT
 	        id,
@@ -491,7 +491,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
 
   const getCountByInventaireId = async (
     inventoryId: number,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -583,7 +583,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
 
   const createDonnee = async (
     donneeInput: DonneeCreateInput,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<Donnee> => {
     const query = sql.type(donneeSchema)`
       INSERT INTO
@@ -610,7 +610,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const updateDonnee = async (
     entryId: number,
     donneeInput: DonneeCreateInput,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<Donnee> => {
     const query = sql.type(donneeSchema)`
       UPDATE
@@ -665,7 +665,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const updateAssociatedInventaire = async (
     currentInventaireId: number,
     newInventaireId: number,
-    transaction?: DatabaseTransactionConnection
+    transaction?: DatabaseTransactionConnection,
   ): Promise<QueryResult<void>> => {
     const query = sql.type(z.void())`
       UPDATE

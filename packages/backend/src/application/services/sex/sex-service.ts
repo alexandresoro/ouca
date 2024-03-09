@@ -16,7 +16,7 @@ type SexServiceDependencies = {
 export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDependencies) => {
   const findSex = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Sex | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -28,7 +28,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const findSexOfEntryId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Sex | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -40,7 +40,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const getEntriesCountBySex = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -63,7 +63,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const findPaginatedSexes = async (
     loggedUser: LoggedUser | null,
-    options: SexesSearchParams
+    options: SexesSearchParams,
   ): Promise<Result<Sex[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -87,7 +87,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const getSexesCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -98,7 +98,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const createSex = async (
     input: UpsertSexInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Sex, SexFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -117,7 +117,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
   const updateSex = async (
     id: number,
     input: UpsertSexInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Sex, SexFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -141,7 +141,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const deleteSex = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Sex | null, SexFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -162,12 +162,12 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
 
   const createSexes = async (
     sexes: Omit<SexCreateInput, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Sex[]> => {
     const createdSexes = await sexRepository.createSexes(
       sexes.map((sexe) => {
         return { ...sexe, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedSexes = createdSexes.map((sex) => {

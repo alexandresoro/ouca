@@ -84,7 +84,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
             ...distanceEstimateData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 
@@ -140,7 +140,7 @@ const distanceEstimatesController: FastifyPluginCallback<{
     const distanceEstimateUpdateResult = await distanceEstimateService.updateDistanceEstimate(
       req.params.id,
       input,
-      req.user
+      req.user,
     );
 
     if (distanceEstimateUpdateResult.isErr()) {

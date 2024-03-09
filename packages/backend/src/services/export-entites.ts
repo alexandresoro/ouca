@@ -31,7 +31,7 @@ const SEPARATOR_COMMA = ", ";
 const storeExportInCache = async (
   entitiesToExport: Record<string, unknown>[],
   sheetName: string,
-  redis: Redis
+  redis: Redis,
 ): Promise<string> => {
   const id = randomUUID();
 
@@ -160,7 +160,7 @@ export const generateDonneesExport = async (
   },
   loggedUser: LoggedUser | null,
   searchCriteria: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> &
-    Partial<{ pageNumber: number; pageSize: number }>
+    Partial<{ pageNumber: number; pageSize: number }>,
 ): Promise<string> => {
   const coordinatesSystem = GPS_COORDINATES;
   const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
@@ -245,7 +245,7 @@ export const generateDonneesExport = async (
         "Milieu 4": getMilieu(milieux, 4),
         Commentaires: donnee.commentaire,
       };
-    })
+    }),
   );
 
   const id = await storeExportInCache(objectsToExport, "Données", redis);

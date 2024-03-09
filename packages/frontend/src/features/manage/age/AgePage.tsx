@@ -56,7 +56,7 @@ const AgePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateAge } = useApiMutation(
@@ -88,7 +88,7 @@ const AgePage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteAge } = useApiMutation(
@@ -110,7 +110,7 @@ const AgePage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("ages") });

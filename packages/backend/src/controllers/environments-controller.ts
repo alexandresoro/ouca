@@ -56,7 +56,7 @@ const environmentsController: FastifyPluginCallback<{
             ...environmentData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

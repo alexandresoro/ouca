@@ -25,7 +25,7 @@ export const buildDepartmentService = ({
 }: DepartmentServiceDependencies) => {
   const findDepartment = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Department | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -37,7 +37,7 @@ export const buildDepartmentService = ({
 
   const getEntriesCountByDepartment = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -48,7 +48,7 @@ export const buildDepartmentService = ({
 
   const getLocalitiesCountByDepartment = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -59,7 +59,7 @@ export const buildDepartmentService = ({
 
   const getTownsCountByDepartment = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -70,14 +70,14 @@ export const buildDepartmentService = ({
 
   const findDepartmentOfTownId = async (
     communeId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Department | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const department = await departmentRepository.findDepartmentByTownId(
-      communeId ? Number.parseInt(communeId) : undefined
+      communeId ? Number.parseInt(communeId) : undefined,
     );
     return ok(enrichEntityWithEditableStatus(department, loggedUser));
   };
@@ -96,7 +96,7 @@ export const buildDepartmentService = ({
 
   const findPaginatedDepartments = async (
     loggedUser: LoggedUser | null,
-    options: DepartmentsSearchParams
+    options: DepartmentsSearchParams,
   ): Promise<Result<Department[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -120,7 +120,7 @@ export const buildDepartmentService = ({
 
   const getDepartmentsCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -131,7 +131,7 @@ export const buildDepartmentService = ({
 
   const createDepartment = async (
     input: UpsertDepartmentInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Department, DepartmentFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -150,7 +150,7 @@ export const buildDepartmentService = ({
   const updateDepartment = async (
     id: number,
     input: UpsertDepartmentInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Department, DepartmentFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -174,7 +174,7 @@ export const buildDepartmentService = ({
 
   const deleteDepartment = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<Department | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -195,12 +195,12 @@ export const buildDepartmentService = ({
 
   const createDepartments = async (
     departments: Omit<DepartmentCreateInput, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Department[]> => {
     const createdDepartments = await departmentRepository.createDepartments(
       departments.map((department) => {
         return { ...department, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedDepartments = createdDepartments.map((department) => {

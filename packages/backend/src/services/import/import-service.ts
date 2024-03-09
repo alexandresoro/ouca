@@ -93,7 +93,7 @@ export abstract class ImportService extends EventEmitter {
     logger.debug(
       `Résultat de l'import : ${numberOfLines - errors.length}/${numberOfLines} importées avec succès --> ${
         errors.length
-      } lignes en erreur`
+      } lignes en erreur`,
     );
 
     if (errors.length > 0) {
@@ -111,7 +111,7 @@ export abstract class ImportService extends EventEmitter {
 
   protected abstract validateAndPrepareEntity(
     entityTab: string[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): string | null | Promise<string | null>;
 
   private buildErrorObject = (entityTab: string[], errorMessage: string): string[] => {

@@ -10,7 +10,7 @@ import { lazyRoute } from "./lazy-route";
 import { routesManage } from "./routes-manage";
 
 export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => RouteObject[] = (
-  SentryErrorBoundary?: typeof Sentry.ErrorBoundary
+  SentryErrorBoundary?: typeof Sentry.ErrorBoundary,
 ) => {
   const GlobalErrorBoundary = SentryErrorBoundary ?? Fragment;
 

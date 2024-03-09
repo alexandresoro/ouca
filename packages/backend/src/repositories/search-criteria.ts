@@ -3,7 +3,7 @@ import { type SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { type IdentifierSqlToken, sql } from "slonik";
 
 export const reshapeSearchCriteria = (
-  params: Omit<SpeciesSearchParams, "q" | "pageNumber" | "pageSize" | "orderBy" | "sortOrder">
+  params: Omit<SpeciesSearchParams, "q" | "pageNumber" | "pageSize" | "orderBy" | "sortOrder">,
 ): SearchCriteria | undefined => {
   const {
     entryId,
@@ -143,7 +143,7 @@ export const buildSearchCriteriaParameters = (searchCriteria: SearchCriteria) =>
     .filter(
       (criteria): criteria is [keyof SearchCriteria, Exclude<SearchCriteria[keyof SearchCriteria], undefined>] => {
         return criteria?.[1] !== undefined;
-      }
+      },
     )
     .map(([criteriaName, criteriaValue]) => {
       const identifierCriteria = getIdentifierForCriteria(criteriaName);

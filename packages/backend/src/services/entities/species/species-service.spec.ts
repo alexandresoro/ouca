@@ -29,7 +29,7 @@ const speciesService = buildSpeciesService({
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
   new Error("errorMessage"),
-  "constraint"
+  "constraint",
 );
 
 const uniqueConstraintFailed = () => {
@@ -382,7 +382,7 @@ describe("Update of a species", () => {
     speciesRepository.updateEspece.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => speciesService.updateSpecies(12, speciesData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(speciesRepository.updateEspece).toHaveBeenCalledTimes(1);
@@ -436,7 +436,7 @@ describe("Creation of a species", () => {
     speciesRepository.createEspece.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => speciesService.createSpecies(speciesData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", uniqueConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError),
     );
 
     expect(speciesRepository.createEspece).toHaveBeenCalledTimes(1);
@@ -530,6 +530,6 @@ test("Create multiple species", async () => {
         ...species,
         owner_id: loggedUser.id,
       };
-    })
+    }),
   );
 });

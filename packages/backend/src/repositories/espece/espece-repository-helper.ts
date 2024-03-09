@@ -26,7 +26,7 @@ export const buildSearchEspeceClause = ({ q, searchCriteria }: Pick<SpeciesFindM
 };
 
 export const buildOrderByIdentifier = (
-  orderBy: Omit<NonNullable<SpeciesFindManyInput["orderBy"]>, "nbDonnees">
+  orderBy: Omit<NonNullable<SpeciesFindManyInput["orderBy"]>, "nbDonnees">,
 ): IdentifierSqlToken => {
   switch (orderBy) {
     case "id":

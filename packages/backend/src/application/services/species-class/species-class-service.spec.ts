@@ -381,6 +381,6 @@ test("Create multiple classes", async () => {
         ...speciesClass,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

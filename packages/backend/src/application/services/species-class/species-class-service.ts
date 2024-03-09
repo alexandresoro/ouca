@@ -22,7 +22,7 @@ export const buildSpeciesClassService = ({
 }: SpeciesClassServiceDependencies) => {
   const findSpeciesClass = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesClass | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -34,7 +34,7 @@ export const buildSpeciesClassService = ({
 
   const getSpeciesCountBySpeciesClass = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -45,7 +45,7 @@ export const buildSpeciesClassService = ({
 
   const getEntriesCountBySpeciesClass = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -56,14 +56,14 @@ export const buildSpeciesClassService = ({
 
   const findSpeciesClassOfSpecies = async (
     especeId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesClass | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const speciesClass = await classRepository.findSpeciesClassBySpeciesId(
-      especeId ? Number.parseInt(especeId) : undefined
+      especeId ? Number.parseInt(especeId) : undefined,
     );
     return ok(enrichEntityWithEditableStatus(speciesClass, loggedUser));
   };
@@ -82,7 +82,7 @@ export const buildSpeciesClassService = ({
 
   const findPaginatedSpeciesClasses = async (
     loggedUser: LoggedUser | null,
-    options: ClassesSearchParams
+    options: ClassesSearchParams,
   ): Promise<Result<SpeciesClass[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -106,7 +106,7 @@ export const buildSpeciesClassService = ({
 
   const getSpeciesClassesCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -117,7 +117,7 @@ export const buildSpeciesClassService = ({
 
   const createSpeciesClass = async (
     input: UpsertClassInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesClass, SpeciesClassFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -136,7 +136,7 @@ export const buildSpeciesClassService = ({
   const updateSpeciesClass = async (
     id: number,
     input: UpsertClassInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesClass, SpeciesClassFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -160,7 +160,7 @@ export const buildSpeciesClassService = ({
 
   const deleteSpeciesClass = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesClass | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -181,12 +181,12 @@ export const buildSpeciesClassService = ({
 
   const createMultipleSpeciesClasses = async (
     classes: UpsertClassInput[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<SpeciesClass[]> => {
     const createdClasses = await classRepository.createSpeciesClasses(
       classes.map((speciesClass) => {
         return { ...speciesClass, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedClasses = createdClasses.map((speciesClass) => {

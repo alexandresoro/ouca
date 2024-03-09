@@ -121,7 +121,7 @@ export class ImportedDonnee {
     estimationNombreId: string,
     estimationDistanceId: string | null,
     comportementsIds: Set<string>,
-    milieuxIds: Set<string>
+    milieuxIds: Set<string>,
   ): UpsertEntryInput => {
     return {
       inventoryId: inventoryId,
@@ -145,7 +145,7 @@ export class ImportedDonnee {
     lieuditId: string,
     meteosIds: Set<string>,
     customizedAltitude: number | null,
-    customizedCoordinates: Coordinates | null
+    customizedCoordinates: Coordinates | null,
   ): UpsertInventoryInput => {
     const customizedCoordinatesStr =
       customizedAltitude != null && customizedCoordinates != null

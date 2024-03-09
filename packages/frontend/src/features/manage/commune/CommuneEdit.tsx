@@ -52,7 +52,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { displayNotification } = useSnackbar();

@@ -28,7 +28,7 @@ type FormAutocompleteMultipleProps<TFieldValues extends FieldValues, T extends o
   );
 
 const FormAutocompleteMultiple = <TFieldValues extends FieldValues, T extends object>(
-  props: FormAutocompleteMultipleProps<TFieldValues, T>
+  props: FormAutocompleteMultipleProps<TFieldValues, T>,
 ) => {
   const {
     data,

@@ -15,7 +15,7 @@ export class ImportAgeService extends ImportEntiteAvecLibelleService<AgeSimple> 
 
   protected saveEntities = (
     ages: Omit<AgeCreateInput, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly AgeSimple[]> => {
     return this.services.ageService.createAges(ages, loggedUser);
   };

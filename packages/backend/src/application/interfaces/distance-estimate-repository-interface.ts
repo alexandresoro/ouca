@@ -18,12 +18,12 @@ export type DistanceEstimateRepository = {
   }: DistanceEstimateFindManyInput) => Promise<DistanceEstimate[]>;
   getCount: (q?: string | null) => Promise<number>;
   createDistanceEstimate: (
-    distanceEstimateInput: DistanceEstimateCreateInput
+    distanceEstimateInput: DistanceEstimateCreateInput,
   ) => Promise<Result<DistanceEstimate, EntityFailureReason>>;
   createDistanceEstimates: (distanceEstimateInputs: DistanceEstimateCreateInput[]) => Promise<DistanceEstimate[]>;
   updateDistanceEstimate: (
     distanceEstimateId: number,
-    distanceEstimateInput: DistanceEstimateCreateInput
+    distanceEstimateInput: DistanceEstimateCreateInput,
   ) => Promise<Result<DistanceEstimate, EntityFailureReason>>;
   deleteDistanceEstimateById: (distanceEstimateId: number) => Promise<DistanceEstimate | null>;
 };

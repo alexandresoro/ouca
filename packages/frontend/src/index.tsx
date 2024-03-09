@@ -17,7 +17,7 @@ initApp()
     Root.render(
       <StrictMode>
         <App router={router} />
-      </StrictMode>
+      </StrictMode>,
     );
   })
   .catch(() => {

@@ -21,7 +21,7 @@ const shutdown =
       RawReplyDefaultExpression<RawServerDefault>,
       Logger
     >,
-    services: Services
+    services: Services,
   ): (() => void) =>
   () => {
     logger.info("Shutdown requested");

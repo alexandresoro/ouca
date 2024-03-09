@@ -61,7 +61,7 @@ const speciesController: FastifyPluginCallback<{
             speciesClassName: speciesClass?.libelle,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

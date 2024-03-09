@@ -69,7 +69,7 @@ const SearchEntriesTable: FunctionComponent = () => {
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { mutate: updateEntry } = useApiEntryUpdate({

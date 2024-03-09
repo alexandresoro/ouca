@@ -56,7 +56,7 @@ const ComportementPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: updateBehavior } = useApiMutation(
@@ -88,7 +88,7 @@ const ComportementPage: FunctionComponent = () => {
           });
         }
       },
-    }
+    },
   );
 
   const { mutate: deleteBehavior } = useApiMutation(
@@ -110,7 +110,7 @@ const ComportementPage: FunctionComponent = () => {
           message: t("deleteErrorMessage"),
         });
       },
-    }
+    },
   );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("behaviors") });

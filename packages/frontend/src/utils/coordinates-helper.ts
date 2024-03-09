@@ -1,7 +1,7 @@
 import { type Inventory } from "@ou-ca/common/api/entities/inventory";
 
 export const getInventaireCoordinates = (
-  inventaire: Inventory
+  inventaire: Inventory,
 ): { latitude: number; longitude: number; altitude: number } => {
   // Customized coordinates are defined
   if (inventaire.customizedCoordinates?.longitude != null) {

@@ -14,7 +14,7 @@ export class ImportMeteoService extends ImportEntiteAvecLibelleService {
 
   protected saveEntities = (
     ages: Omit<Weather, "id" | "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly Weather[]> => {
     return this.services.weatherService.createWeathers(ages, loggedUser);
   };

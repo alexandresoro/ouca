@@ -56,7 +56,7 @@ const behaviorsController: FastifyPluginCallback<{
             ...behaviorData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

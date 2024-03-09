@@ -92,7 +92,7 @@ const departmentsController: FastifyPluginCallback<{
             townsCount,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

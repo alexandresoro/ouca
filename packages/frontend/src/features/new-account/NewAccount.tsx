@@ -23,7 +23,7 @@ const NewAccount: FunctionComponent = () => {
       retry: 0,
       refetchOnWindowFocus: false,
       enabled: enabledQuery,
-    }
+    },
   );
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -42,7 +42,7 @@ const NewAccount: FunctionComponent = () => {
         // Redirect to settings page when account has been created
         navigate("/settings", { replace: true });
       },
-    }
+    },
   );
 
   useEffect(() => {

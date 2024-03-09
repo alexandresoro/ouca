@@ -82,7 +82,7 @@ const agesController: FastifyPluginCallback<{
             ...ageData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

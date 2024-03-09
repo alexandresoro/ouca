@@ -22,7 +22,7 @@ export const buildDistanceEstimateService = ({
 }: DistanceEstimateServiceDependencies) => {
   const findDistanceEstimate = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<DistanceEstimate | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -34,21 +34,21 @@ export const buildDistanceEstimateService = ({
 
   const findDistanceEstimateOfEntryId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<DistanceEstimate | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const distanceEstimate = await distanceEstimateRepository.findDistanceEstimateByEntryId(
-      entryId ? Number.parseInt(entryId) : undefined
+      entryId ? Number.parseInt(entryId) : undefined,
     );
     return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
   };
 
   const getEntriesCountByDistanceEstimate = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -71,7 +71,7 @@ export const buildDistanceEstimateService = ({
 
   const findPaginatedDistanceEstimates = async (
     loggedUser: LoggedUser | null,
-    options: DistanceEstimatesSearchParams
+    options: DistanceEstimatesSearchParams,
   ): Promise<Result<DistanceEstimate[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -95,7 +95,7 @@ export const buildDistanceEstimateService = ({
 
   const getDistanceEstimatesCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -106,7 +106,7 @@ export const buildDistanceEstimateService = ({
 
   const createDistanceEstimate = async (
     input: UpsertDistanceEstimateInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<DistanceEstimate, DistanceEstimateFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -125,7 +125,7 @@ export const buildDistanceEstimateService = ({
   const updateDistanceEstimate = async (
     id: number,
     input: UpsertDistanceEstimateInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<DistanceEstimate, DistanceEstimateFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -149,7 +149,7 @@ export const buildDistanceEstimateService = ({
 
   const deleteDistanceEstimate = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<DistanceEstimate | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -170,12 +170,12 @@ export const buildDistanceEstimateService = ({
 
   const createDistanceEstimates = async (
     distanceEstimates: UpsertDistanceEstimateInput[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly DistanceEstimate[]> => {
     const createdDistanceEstimates = await distanceEstimateRepository.createDistanceEstimates(
       distanceEstimates.map((distanceEstimate) => {
         return { ...distanceEstimate, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedDistanceEstimates = createdDistanceEstimates.map((distanceEstimate) => {

@@ -84,7 +84,7 @@ const weathersController: FastifyPluginCallback<{
             ...weatherData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

@@ -25,11 +25,6 @@
     "indentStyle": "space",
     "lineWidth": 120
   },
-  "javascript": {
-    "formatter": {
-      "trailingComma": "es5"
-    }
-  },
   "vcs": {
     "enabled": true,
     "clientKind": "git",

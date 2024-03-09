@@ -32,7 +32,7 @@ const storeMappedUserToCache = async (user: User): Promise<void> => {
         {
           user,
         },
-        "Storing internal user mapping has failed."
+        "Storing internal user mapping has failed.",
       );
     });
 };

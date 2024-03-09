@@ -15,7 +15,7 @@ export class ImportObservateurService extends ImportEntiteAvecLibelleService {
 
   protected saveEntities = (
     observateurs: Omit<ObserverCreateInput, "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly ObserverSimple[]> => {
     return this.services.observerService.createObservers(observateurs, loggedUser);
   };

@@ -359,6 +359,6 @@ test("Create multiple weathers", async () => {
         ...weather,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

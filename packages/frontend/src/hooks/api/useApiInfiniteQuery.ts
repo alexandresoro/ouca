@@ -40,7 +40,7 @@ const useApiInfiniteQuery = <
   queryOptions?: Omit<
     UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     "queryKey" | "queryFn"
-  >
+  >,
 ) => {
   const { user } = useAuth();
   const apiUrl = useAtomValue(apiUrlAtom);

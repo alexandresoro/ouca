@@ -22,7 +22,7 @@ const SearchFilterPanel: FunctionComponent = () => {
   const features = useFeatures();
 
   const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
-    features.tmp_only_own_observations_filter
+    features.tmp_only_own_observations_filter,
   );
 
   return (

@@ -60,7 +60,7 @@ export const buildDistanceEstimateRepository = () => {
         queryDistanceEstimate = queryDistanceEstimate.where(
           sql`unaccent(libelle)`,
           "ilike",
-          sql`unaccent(${`%${q}%`})`
+          sql`unaccent(${`%${q}%`})`,
         );
       }
 
@@ -77,7 +77,7 @@ export const buildDistanceEstimateRepository = () => {
         queryDistanceEstimate = queryDistanceEstimate.where(
           sql`unaccent(libelle)`,
           "ilike",
-          sql`unaccent(${`%${q}%`})`
+          sql`unaccent(${`%${q}%`})`,
         );
       }
 
@@ -112,7 +112,7 @@ export const buildDistanceEstimateRepository = () => {
   };
 
   const createDistanceEstimate = async (
-    distanceEstimateInput: DistanceEstimateCreateInput
+    distanceEstimateInput: DistanceEstimateCreateInput,
   ): Promise<Result<DistanceEstimate, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -123,12 +123,12 @@ export const buildDistanceEstimateRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdDistanceEstimate) => distanceEstimateSchema.parse(createdDistanceEstimate));
   };
 
   const createDistanceEstimates = async (
-    distanceEstimateInputs: DistanceEstimateCreateInput[]
+    distanceEstimateInputs: DistanceEstimateCreateInput[],
   ): Promise<DistanceEstimate[]> => {
     const createdDistanceEstimates = await kysely
       .insertInto("estimation_distance")
@@ -138,7 +138,7 @@ export const buildDistanceEstimateRepository = () => {
             libelle: distanceEstimateInput.libelle,
             ownerId: distanceEstimateInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
@@ -148,7 +148,7 @@ export const buildDistanceEstimateRepository = () => {
 
   const updateDistanceEstimate = async (
     distanceEstimateId: number,
-    distanceEstimateInput: DistanceEstimateCreateInput
+    distanceEstimateInput: DistanceEstimateCreateInput,
   ): Promise<Result<DistanceEstimate, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -160,7 +160,7 @@ export const buildDistanceEstimateRepository = () => {
         .where("id", "=", distanceEstimateId)
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedDistanceEstimate) => distanceEstimateSchema.parse(updatedDistanceEstimate));
   };
 

@@ -19,7 +19,7 @@ export const buildNumberEstimateService = ({
 }: NumberEstimateServiceDependencies) => {
   const findNumberEstimate = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -31,21 +31,21 @@ export const buildNumberEstimateService = ({
 
   const findNumberEstimateOfEntryId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const numberEstimate = await numberEstimateRepository.findNumberEstimateByEntryId(
-      entryId ? Number.parseInt(entryId) : undefined
+      entryId ? Number.parseInt(entryId) : undefined,
     );
     return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
   };
 
   const getEntriesCountByNumberEstimate = async (
     id: string,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -68,7 +68,7 @@ export const buildNumberEstimateService = ({
 
   const findPaginatesNumberEstimates = async (
     loggedUser: LoggedUser | null,
-    options: NumberEstimatesSearchParams
+    options: NumberEstimatesSearchParams,
   ): Promise<Result<NumberEstimate[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -92,7 +92,7 @@ export const buildNumberEstimateService = ({
 
   const getNumberEstimatesCount = async (
     loggedUser: LoggedUser | null,
-    q?: string | null
+    q?: string | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -103,7 +103,7 @@ export const buildNumberEstimateService = ({
 
   const createNumberEstimate = async (
     input: UpsertNumberEstimateInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<NumberEstimate, NumberEstimateFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -122,7 +122,7 @@ export const buildNumberEstimateService = ({
   const updateNumberEstimate = async (
     id: number,
     input: UpsertNumberEstimateInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<NumberEstimate, NumberEstimateFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -145,7 +145,7 @@ export const buildNumberEstimateService = ({
 
   const deleteNumberEstimate = async (
     id: number,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
@@ -166,12 +166,12 @@ export const buildNumberEstimateService = ({
 
   const createNumberEstimates = async (
     numberEstimates: UpsertNumberEstimateInput[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly NumberEstimate[]> => {
     const createdNumberEstimates = await numberEstimateRepository.createNumberEstimates(
       numberEstimates.map((numberEstimate) => {
         return { ...numberEstimate, ownerId: loggedUser.id };
-      })
+      }),
     );
 
     const enrichedCreatedNumberEstimates = createdNumberEstimates.map((numberEstimate) => {

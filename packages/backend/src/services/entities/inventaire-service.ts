@@ -47,7 +47,7 @@ export const buildInventaireService = ({
       orderBy: NonNullable<InventaireFindManyInput["orderBy"]>;
       sortOrder: NonNullable<InventaireFindManyInput["sortOrder"]>;
     },
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<number | null> => {
     validateAuthorization(loggedUser);
     return inventoryRepository.findInventoryIndex(id, order);
@@ -55,7 +55,7 @@ export const buildInventaireService = ({
 
   const findInventaireOfDonneeId = async (
     entryId: string | undefined,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
@@ -70,7 +70,7 @@ export const buildInventaireService = ({
 
   const findPaginatedInventaires = async (
     loggedUser: LoggedUser | null,
-    options: InventoriesSearchParams
+    options: InventoriesSearchParams,
   ): Promise<Inventaire[]> => {
     validateAuthorization(loggedUser);
 
@@ -105,7 +105,7 @@ export const buildInventaireService = ({
         {
           localityId: input.localityId,
         },
-        `Corresponding locality for ID=${input.localityId} not found`
+        `Corresponding locality for ID=${input.localityId} not found`,
       );
       return Promise.reject("");
     }
@@ -130,14 +130,14 @@ export const buildInventaireService = ({
       const createdInventaire = await slonik.transaction(async (transactionConnection) => {
         const createdInventaire = await inventoryRepository.createInventaire(
           reshapeInputInventoryUpsertData(input, locality, loggedUser.id),
-          transactionConnection
+          transactionConnection,
         );
 
         if (associateIds?.length) {
           await inventoryAssociateRepository.insertInventaireWithAssocies(
             Number.parseInt(createdInventaire.id),
             associateIds.map((associateId) => Number.parseInt(associateId)),
-            transactionConnection
+            transactionConnection,
           );
         }
 
@@ -145,7 +145,7 @@ export const buildInventaireService = ({
           await inventoryWeatherRepository.insertInventaireWithMeteos(
             Number.parseInt(createdInventaire.id),
             weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-            transactionConnection
+            transactionConnection,
           );
         }
 
@@ -159,7 +159,7 @@ export const buildInventaireService = ({
   const updateInventaire = async (
     id: number,
     input: UpsertInventoryInput,
-    loggedUser: LoggedUser | null
+    loggedUser: LoggedUser | null,
   ): Promise<Inventaire> => {
     validateAuthorization(loggedUser);
 
@@ -172,7 +172,7 @@ export const buildInventaireService = ({
         {
           localityId: input.localityId,
         },
-        `Corresponding locality for ID=${input.localityId} not found`
+        `Corresponding locality for ID=${input.localityId} not found`,
       );
       return Promise.reject("");
     }
@@ -212,7 +212,7 @@ export const buildInventaireService = ({
         await entryRepository.updateAssociatedInventaire(
           id,
           Number.parseInt(existingInventaire.id),
-          transactionConnection
+          transactionConnection,
         );
         await inventoryRepository.deleteInventaireById(id, transactionConnection);
       });
@@ -230,7 +230,7 @@ export const buildInventaireService = ({
         const updatedInventaire = await inventoryRepository.updateInventaire(
           id,
           reshapeInputInventoryUpsertData(inputData, locality, loggedUser.id),
-          transactionConnection
+          transactionConnection,
         );
 
         await inventoryAssociateRepository.deleteAssociesOfInventaireId(id, transactionConnection);
@@ -239,7 +239,7 @@ export const buildInventaireService = ({
           await inventoryAssociateRepository.insertInventaireWithAssocies(
             id,
             associateIds.map((associateId) => Number.parseInt(associateId)),
-            transactionConnection
+            transactionConnection,
           );
         }
 
@@ -249,7 +249,7 @@ export const buildInventaireService = ({
           await inventoryWeatherRepository.insertInventaireWithMeteos(
             id,
             weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-            transactionConnection
+            transactionConnection,
           );
         }
 
@@ -275,7 +275,7 @@ export const buildInventaireService = ({
     const deletedInventory = await slonik.transaction(async (transactionConnection) => {
       const entriesOfInventory = await entryRepository.getCountByInventaireId(
         Number.parseInt(id),
-        transactionConnection
+        transactionConnection,
       );
 
       if (entriesOfInventory > 0) {

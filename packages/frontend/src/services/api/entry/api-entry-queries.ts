@@ -7,7 +7,7 @@ export const useApiEntryCreate = (
   mutationOptions?: Omit<
     UseMutationOptions<UpsertEntryResponse, FetchErrorType, { body: UpsertEntryInput }>,
     "mutationFn"
-  >
+  >,
 ) =>
   useApiMutation(
     {
@@ -15,21 +15,21 @@ export const useApiEntryCreate = (
       method: "POST",
       schema: upsertEntryResponse,
     },
-    mutationOptions
+    mutationOptions,
   );
 
 export const useApiEntryUpdate = (
   mutationOptions?: Omit<
     UseMutationOptions<UpsertEntryResponse, FetchErrorType, { path?: string; body: UpsertEntryInput }>,
     "mutationFn"
-  >
+  >,
 ) => {
   const { mutate, ...restUseMutation } = useApiMutation(
     {
       method: "PUT",
       schema: upsertEntryResponse,
     },
-    { ...mutationOptions }
+    { ...mutationOptions },
   );
 
   const mutateApi = ({ entryId, body }: { entryId: string; body: UpsertEntryInput }) =>
@@ -42,13 +42,13 @@ export const useApiEntryUpdate = (
 };
 
 export const useApiEntryDelete = (
-  mutationOptions?: Omit<UseMutationOptions<unknown, FetchErrorType, { path?: string }>, "mutationFn">
+  mutationOptions?: Omit<UseMutationOptions<unknown, FetchErrorType, { path?: string }>, "mutationFn">,
 ) => {
   const { mutate, ...restUseMutation } = useApiMutation(
     {
       method: "DELETE",
     },
-    { ...mutationOptions }
+    { ...mutationOptions },
   );
 
   const mutateApi = ({ entryId }: { entryId: string }) =>

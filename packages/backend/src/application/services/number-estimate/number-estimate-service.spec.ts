@@ -363,6 +363,6 @@ test("Create multiple number estimates", async () => {
         ...numberEstimate,
         ownerId: loggedUser.id,
       };
-    })
+    }),
   );
 });

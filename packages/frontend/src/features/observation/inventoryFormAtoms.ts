@@ -33,7 +33,7 @@ export const inventoryLatitudeAtom = atom(
             lng: localityCoordinates.longitude,
             altitude: localityCoordinates.altitude,
           },
-          customizedCoordinates
+          customizedCoordinates,
         );
         if (altitudeResult.outcome === "success") {
           set(inventoryAltitudeAtom, altitudeResult.altitude);
@@ -41,7 +41,7 @@ export const inventoryLatitudeAtom = atom(
       }
     }
     set(inventoryLatitudeInternal, roundedLatitude);
-  }
+  },
 );
 
 export const inventoryLongitudeInternal = atomWithReset<number | null>(null);
@@ -71,7 +71,7 @@ export const inventoryLongitudeAtom = atom(
             lng: localityCoordinates.longitude,
             altitude: localityCoordinates.altitude,
           },
-          customizedCoordinates
+          customizedCoordinates,
         );
         if (altitudeResult.outcome === "success") {
           set(inventoryAltitudeAtom, altitudeResult.altitude);
@@ -79,7 +79,7 @@ export const inventoryLongitudeAtom = atom(
       }
     }
     set(inventoryLongitudeInternal, roundedLongitude);
-  }
+  },
 );
 
 export const inventoryAltitudeAtom = atomWithReset<number | null>(null);
@@ -128,14 +128,14 @@ export const inventoryCoordinatesAtom = atom(
             lng: localityCoordinates.longitude,
             altitude: localityCoordinates.altitude,
           },
-          customizedCoordinates
+          customizedCoordinates,
         );
         if (altitudeResult.outcome === "success") {
           set(inventoryAltitudeAtom, altitudeResult.altitude);
         }
       }
     }
-  }
+  },
 );
 
 const inventoryCoordinatesWithAltitudeSetAtom = atom(
@@ -143,7 +143,7 @@ const inventoryCoordinatesWithAltitudeSetAtom = atom(
   async (get, set, newCoordinates: CoordinatesWithAltitude | typeof RESET) => {
     await set(inventoryCoordinatesAtom, newCoordinates);
     set(inventoryAltitudeAtom, newCoordinates === RESET ? newCoordinates : newCoordinates.altitude);
-  }
+  },
 );
 
 // To make sure that when the locality is set/reset, the coordinates are also set/reset
@@ -167,7 +167,7 @@ export const inventoryLocalityAtom = atom(
       };
       await set(inventoryCoordinatesWithAltitudeSetAtom, coordinates);
     }
-  }
+  },
 );
 
 // Write-only atom to update data when a new inventory is the current one
@@ -198,7 +198,7 @@ export const inventorySetAtom = atom(
         await set(inventoryCoordinatesWithAltitudeSetAtom, localityCoordinates);
       }
     }
-  }
+  },
 );
 
 // Returns true if and only if the current coordinates are defined, a locality is defined,

@@ -12,7 +12,7 @@ export const useApiInventoryCreate = (
   mutationOptions?: Omit<
     UseMutationOptions<UpsertInventoryResponse, FetchErrorType, { body: UpsertInventoryInput }>,
     "mutationFn"
-  >
+  >,
 ) =>
   useApiMutation(
     {
@@ -20,21 +20,21 @@ export const useApiInventoryCreate = (
       method: "POST",
       schema: upsertInventoryResponse,
     },
-    mutationOptions
+    mutationOptions,
   );
 
 export const useApiInventoryUpdate = (
   mutationOptions?: Omit<
     UseMutationOptions<UpsertInventoryResponse, FetchErrorType, { path?: string; body: UpsertInventoryInput }>,
     "mutationFn"
-  >
+  >,
 ) => {
   const { mutate, ...restUseMutation } = useApiMutation(
     {
       method: "PUT",
       schema: upsertInventoryResponse,
     },
-    { ...mutationOptions }
+    { ...mutationOptions },
   );
 
   const mutateApi = ({ inventoryId, body }: { inventoryId: string; body: UpsertInventoryInput }) =>
@@ -47,14 +47,14 @@ export const useApiInventoryUpdate = (
 };
 
 export const useApiInventoryDelete = (
-  mutationOptions?: Omit<UseMutationOptions<{ id: string }, FetchErrorType, { path?: string }>, "mutationFn">
+  mutationOptions?: Omit<UseMutationOptions<{ id: string }, FetchErrorType, { path?: string }>, "mutationFn">,
 ) => {
   const { mutate, ...restUseMutation } = useApiMutation(
     {
       method: "DELETE",
       schema: z.object({ id: z.string() }),
     },
-    { ...mutationOptions }
+    { ...mutationOptions },
   );
 
   const mutateApi = ({ inventoryId }: { inventoryId: string }) =>

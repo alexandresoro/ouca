@@ -4,12 +4,12 @@ import { type z } from "zod";
 import useApiQuery from "../useApiQuery";
 
 export const useApiGetSettings = <E = unknown>(
-  swrOptions?: Omit<SWRConfiguration<z.infer<typeof getSettingsResponse>, E>, "fetcher">
+  swrOptions?: Omit<SWRConfiguration<z.infer<typeof getSettingsResponse>, E>, "fetcher">,
 ) =>
   useApiQuery(
     "/settings",
     {
       schema: getSettingsResponse,
     },
-    swrOptions
+    swrOptions,
   );

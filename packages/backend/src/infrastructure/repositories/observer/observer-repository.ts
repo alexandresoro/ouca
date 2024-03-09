@@ -143,7 +143,7 @@ export const buildObserverRepository = () => {
         })
         .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdObserver) => observerSchema.parse({ ...createdObserver, inventoriesCount: 0, entriesCount: 0 }));
   };
 
@@ -156,7 +156,7 @@ export const buildObserverRepository = () => {
             libelle: observerInput.libelle,
             ownerId: observerInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
@@ -166,7 +166,7 @@ export const buildObserverRepository = () => {
 
   const updateObserver = async (
     observateurId: number,
-    observateurInput: ObserverCreateInput
+    observateurInput: ObserverCreateInput,
   ): Promise<Result<Observer, EntityFailureReason>> => {
     return fromPromise(
       kysely.transaction().execute(async (trx) => {
@@ -198,7 +198,7 @@ export const buildObserverRepository = () => {
           entriesCount,
         };
       }),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedObserver) => {
       return observerSchema.parse(updatedObserver);
     });

@@ -82,7 +82,7 @@ const sexesController: FastifyPluginCallback<{
             ...sexData,
             entriesCount,
           };
-        })
+        }),
       );
     }
 

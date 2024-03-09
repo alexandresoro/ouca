@@ -8,7 +8,7 @@ import {
 import { type SortOrder } from "./common.js";
 
 export const objectToKeyValueSet = (
-  obj: Record<string, string | number | boolean | undefined | null>
+  obj: Record<string, string | number | boolean | undefined | null>,
 ): ListSqlToken => {
   return sql.join(
     Object.entries(obj)
@@ -16,12 +16,12 @@ export const objectToKeyValueSet = (
       .map(([key, value]) => {
         return sql.fragment`${sql.identifier([key])} = ${value}`;
       }),
-    sql.fragment`, `
+    sql.fragment`, `,
   );
 };
 
 export const objectToKeyValueInsert = (
-  obj: Record<string, string | number | boolean | undefined | null>
+  obj: Record<string, string | number | boolean | undefined | null>,
 ): SqlFragment => {
   const entries = Object.entries(obj);
   if (!entries?.length) {
@@ -32,20 +32,20 @@ export const objectToKeyValueInsert = (
     entries
       .filter((entry): entry is [string, string | number | boolean | null] => entry[1] !== undefined)
       .map((entry) => sql.identifier([entry[0]])),
-    sql.fragment`, `
+    sql.fragment`, `,
   )})
     VALUES
   (${sql.join(
     entries
       .filter((entry): entry is [string, string | number | boolean | null] => entry[1] !== undefined)
       .map((entry) => entry[1]),
-    sql.fragment`, `
+    sql.fragment`, `,
   )})
   `;
 };
 
 export const objectsToKeyValueInsert = <T extends string>(
-  objects: Partial<Record<T, string | number | boolean | undefined | null>>[]
+  objects: Partial<Record<T, string | number | boolean | undefined | null>>[],
 ): SqlFragment => {
   // FIXME There's an edge case where one property could be undefined in an object and defined in another
   // In that case, it will set it to NULL in DB.
@@ -57,7 +57,7 @@ export const objectsToKeyValueInsert = <T extends string>(
         return Object.entries(object)
           .filter((entry): entry is [T, string | number | boolean | null] => entry[1] !== undefined)
           .map((entry) => entry[0]);
-      })
+      }),
     ),
   ];
   if (!columnsToInsert?.length) {
@@ -66,17 +66,17 @@ export const objectsToKeyValueInsert = <T extends string>(
   return sql.fragment`
   (${sql.join(
     columnsToInsert.map((entry) => sql.identifier([entry])),
-    sql.fragment`, `
+    sql.fragment`, `,
   )})
     VALUES
   (${sql.join(
     objects.map((object) => {
       return sql.join(
         columnsToInsert.map((column) => object?.[column] ?? null),
-        sql.fragment`, `
+        sql.fragment`, `,
       );
     }),
-    sql.fragment`), (`
+    sql.fragment`), (`,
   )})
   `;
 };
@@ -93,7 +93,7 @@ export const buildAndClause = (
         }>?,
       ])[]
     | null
-    | undefined
+    | undefined,
 ): ListSqlToken | null => {
   if (!conditions?.length) {
     return null;
@@ -118,7 +118,7 @@ export const buildAndClause = (
     } else {
       return sql.join(
         [identifier, value],
-        overrideConditionComparator ? sql.fragment` ${overrideConditionComparator} ` : sql.fragment` = `
+        overrideConditionComparator ? sql.fragment` ${overrideConditionComparator} ` : sql.fragment` = `,
       );
     }
   });

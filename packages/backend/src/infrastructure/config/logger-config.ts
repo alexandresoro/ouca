@@ -17,7 +17,7 @@ const getLoggerConfig = () => {
   if (!envLoggerParseResult.success) {
     initLogger.fatal(
       { error: envLoggerParseResult.error },
-      "An error has occurred when trying to parse the environment"
+      "An error has occurred when trying to parse the environment",
     );
     process.exit(1);
   }

@@ -101,7 +101,7 @@ export const buildAgeRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdAge) => ageSchema.parse(createdAge));
   };
 
@@ -114,7 +114,7 @@ export const buildAgeRepository = () => {
             libelle: ageInput.libelle,
             ownerId: ageInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
@@ -133,7 +133,7 @@ export const buildAgeRepository = () => {
         .where("id", "=", ageId)
         .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedAge) => ageSchema.parse(updatedAge));
   };
 

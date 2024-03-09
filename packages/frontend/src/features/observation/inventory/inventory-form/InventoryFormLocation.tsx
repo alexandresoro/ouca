@@ -59,7 +59,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: departmentId != null,
-    }
+    },
   );
   useEffect(() => {
     setDepartmentsInput(renderDepartment(department ?? null));
@@ -76,7 +76,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: townId != null,
-    }
+    },
   );
   useEffect(() => {
     setTownsInput(renderTown(town ?? null));
@@ -156,7 +156,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   const { data: dataTowns } = useApiQuery(
@@ -173,7 +173,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: department?.id != null,
-    }
+    },
   );
 
   const { data: dataLocalities } = useApiQuery(
@@ -190,7 +190,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: town?.id != null,
-    }
+    },
   );
 
   // Handle when department is changed by the user

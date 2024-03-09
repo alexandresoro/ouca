@@ -114,7 +114,7 @@ export const buildWeatherRepository = () => {
         })
         .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((createdWeather) => weatherSchema.parse(createdWeather));
   };
 
@@ -127,7 +127,7 @@ export const buildWeatherRepository = () => {
             libelle: weatherInput.libelle,
             ownerId: weatherInput.ownerId,
           };
-        })
+        }),
       )
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
       .execute();
@@ -137,7 +137,7 @@ export const buildWeatherRepository = () => {
 
   const updateWeather = async (
     weatherId: number,
-    weatherInput: WeatherCreateInput
+    weatherInput: WeatherCreateInput,
   ): Promise<Result<Weather, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -149,7 +149,7 @@ export const buildWeatherRepository = () => {
         .where("id", "=", weatherId)
         .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
         .executeTakeFirstOrThrow(),
-      handleDatabaseError
+      handleDatabaseError,
     ).map((updatedWeather) => weatherSchema.parse(updatedWeather));
   };
 

@@ -31,7 +31,7 @@ export const introspectionResultSchema = z.union([
   introspectionUser.merge(
     z.object({
       active: z.literal(true),
-    })
+    }),
   ),
 ]);
 
@@ -63,17 +63,17 @@ export const buildZitadelOidcService = ({
   const getRoleFromLoggedUser = (introspectionUser: ZitadelIntrospectionUser): UserRole | null => {
     return (
       userRoles.find((existingRole) =>
-        introspectionUser?.["urn:zitadel:iam:org:project:roles"]?.includes(existingRole)
+        introspectionUser?.["urn:zitadel:iam:org:project:roles"]?.includes(existingRole),
       ) ?? null
     );
   };
 
   const getMatchingLoggedUser = async (
-    introspectionUser: ZitadelIntrospectionUser
+    introspectionUser: ZitadelIntrospectionUser,
   ): Promise<GetMatchingLoggedUserResult> => {
     const internalUserResult = await oidcWithInternalUserMappingService.findLoggedUserFromProvider(
       EXTERNAL_PROVIDER_NAME,
-      introspectionUser.sub
+      introspectionUser.sub,
     );
 
     if (internalUserResult.outcome === "internalUserNotFound") {

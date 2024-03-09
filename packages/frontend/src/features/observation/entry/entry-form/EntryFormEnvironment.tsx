@@ -41,7 +41,7 @@ const EntryFormEnvironment: FunctionComponent<EntryFormEnvironmentProps> = ({
     {
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
-    }
+    },
   );
 
   return (

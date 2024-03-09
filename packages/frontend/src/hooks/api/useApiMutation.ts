@@ -25,7 +25,7 @@ type MutationVariables = { path?: string; body?: Record<string, unknown> };
 
 const useApiMutation = <TData, TVariables extends MutationVariables, TError extends FetchErrorType = FetchErrorType>(
   { path: pathFromOptions, method, responseHandler, schema }: MutationParams<TData>,
-  mutationOptions?: Omit<UseMutationOptions<TData, TError, TVariables>, "mutationFn">
+  mutationOptions?: Omit<UseMutationOptions<TData, TError, TVariables>, "mutationFn">,
 ) => {
   const { user } = useAuth();
   const apiUrl = useAtomValue(apiUrlAtom);

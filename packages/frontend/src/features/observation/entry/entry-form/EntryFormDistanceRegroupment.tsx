@@ -71,7 +71,7 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
       staleTime: Number.POSITIVE_INFINITY,
       refetchOnMount: "always",
       enabled: isDistanceDisplayed,
-    }
+    },
   );
 
   const generateRegroupment = () => {

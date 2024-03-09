@@ -19,7 +19,7 @@ type UseApiQueryParams<T = unknown> = {
 const useApiQuery = <T = unknown, E = unknown>(
   path: string,
   { queryParams, paused, schema }: UseApiQueryParams<T> = {},
-  swrOptions?: Omit<SWRConfiguration<T, E>, "fetcher">
+  swrOptions?: Omit<SWRConfiguration<T, E>, "fetcher">,
 ) => {
   const { user } = useAuth();
   const apiUrl = useApiUrl();
@@ -33,7 +33,7 @@ const useApiQuery = <T = unknown, E = unknown>(
   return useSWR<T, E, ApiQueryKey>(
     !paused ? { url: queryUrl, token: accessToken } : null,
     ({ url, token }) => fetchApi({ url, token, schema }),
-    swrOptions
+    swrOptions,
   );
 };
 

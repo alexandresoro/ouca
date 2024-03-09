@@ -14,7 +14,7 @@ export class ImportClasseService extends ImportEntiteAvecLibelleService {
 
   protected saveEntities = (
     classes: Omit<SpeciesClass, "id" | "ownerId">[],
-    loggedUser: LoggedUser
+    loggedUser: LoggedUser,
   ): Promise<readonly SpeciesClass[]> => {
     return this.services.classService.createMultipleSpeciesClasses(classes, loggedUser);
   };

@@ -70,7 +70,7 @@ export const getKyselyInstance = () => {
               executionTime: event.queryDurationMillis,
               query: event.query.sql,
             },
-            "query"
+            "query",
           );
           break;
         case "error":
@@ -78,7 +78,7 @@ export const getKyselyInstance = () => {
             {
               error: serializeError(event.error),
             },
-            "query execution produced an error"
+            "query execution produced an error",
           );
           break;
         default:
