@@ -2,7 +2,7 @@ import { oidcConfigAtom } from "@services/auth/oidc-config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAtomValue } from "jotai";
-import { Suspense, type FunctionComponent } from "react";
+import { type FunctionComponent, Suspense } from "react";
 import { AuthProvider } from "react-oidc-context";
 import { RouterProvider, type createBrowserRouter } from "react-router-dom";
 

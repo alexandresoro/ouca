@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef, type FunctionComponent } from "react";
+import { type ComponentPropsWithoutRef, type FunctionComponent, forwardRef } from "react";
 import RequiredField from "./RequiredField";
 
 type CheckboxProps = {

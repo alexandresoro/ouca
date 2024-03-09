@@ -7,7 +7,7 @@ import {
   type UpsertDistanceEstimateInput,
 } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 

@@ -1,5 +1,5 @@
 import useApiMutation from "@hooks/api/useApiMutation";
-import { upsertEntryResponse, type UpsertEntryInput, type UpsertEntryResponse } from "@ou-ca/common/api/entry";
+import { type UpsertEntryInput, type UpsertEntryResponse, upsertEntryResponse } from "@ou-ca/common/api/entry";
 import { type UseMutationOptions } from "@tanstack/react-query";
 import { type FetchErrorType } from "@utils/fetch-api";
 

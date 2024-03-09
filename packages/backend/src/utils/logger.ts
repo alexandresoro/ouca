@@ -1,5 +1,5 @@
 import { loggerConfig } from "@infrastructure/config/logger-config.js";
-import { pino, type TransportTargetOptions } from "pino";
+import { type TransportTargetOptions, pino } from "pino";
 
 const getPinoTransportsToUse = ({ level, pretty }: typeof loggerConfig) => {
   const transports: TransportTargetOptions[] = [];

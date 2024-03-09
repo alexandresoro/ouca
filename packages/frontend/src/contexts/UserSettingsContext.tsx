@@ -1,6 +1,6 @@
 import useApiQuery from "@hooks/api/useApiQuery";
-import { getSettingsResponse, type GetSettingsResponse } from "@ou-ca/common/api/settings";
-import { createContext, useEffect, type FunctionComponent, type PropsWithChildren } from "react";
+import { type GetSettingsResponse, getSettingsResponse } from "@ou-ca/common/api/settings";
+import { type FunctionComponent, type PropsWithChildren, createContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 

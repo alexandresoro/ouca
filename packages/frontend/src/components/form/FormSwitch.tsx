@@ -1,9 +1,9 @@
 import {
-  useController,
   type FieldPathByValue,
   type FieldValues,
   type PathValue,
   type UseControllerProps,
+  useController,
 } from "react-hook-form";
 import { type SetRequired } from "type-fest";
 import Switch from "../base/Switch";

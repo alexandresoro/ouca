@@ -1,4 +1,4 @@
-import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 import {
@@ -10,11 +10,11 @@ import {
 import { buildFindMatchingInventaireClause, buildOrderByIdentifier } from "./inventaire-repository-helper.js";
 import { reshapeRawInventaire } from "./inventaire-repository-reshape.js";
 import {
-  inventaireSchema,
   type Inventaire,
   type InventaireCreateInput,
   type InventaireFindManyInput,
   type InventaireFindMatchingInput,
+  inventaireSchema,
 } from "./inventaire-repository-types.js";
 
 export type InventaireRepositoryDependencies = {

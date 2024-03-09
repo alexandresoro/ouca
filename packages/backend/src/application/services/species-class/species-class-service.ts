@@ -4,7 +4,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SpeciesClassRepository } from "@interfaces/species-class-repository-interface.js";
 import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";

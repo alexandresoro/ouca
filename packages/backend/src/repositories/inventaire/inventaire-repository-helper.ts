@@ -1,4 +1,4 @@
-import { sql, type IdentifierSqlToken } from "slonik";
+import { type IdentifierSqlToken, sql } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
 import { type InventaireFindManyInput, type InventaireFindMatchingInput } from "./inventaire-repository-types.js";
 

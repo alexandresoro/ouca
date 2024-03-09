@@ -1,6 +1,6 @@
-import { behaviorSchema, type Behavior, type BehaviorFindManyInput } from "@domain/behavior/behavior.js";
+import { type Behavior, type BehaviorFindManyInput, behaviorSchema } from "@domain/behavior/behavior.js";
 import escapeStringRegexp from "escape-string-regexp";
-import { sql, type DatabasePool } from "slonik";
+import { type DatabasePool, sql } from "slonik";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,

@@ -1,5 +1,5 @@
 import { type TownExtended } from "@ou-ca/common/api/entities/town";
-import { getTownsExtendedResponse, type TownsOrderBy } from "@ou-ca/common/api/town";
+import { type TownsOrderBy, getTownsExtendedResponse } from "@ou-ca/common/api/town";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

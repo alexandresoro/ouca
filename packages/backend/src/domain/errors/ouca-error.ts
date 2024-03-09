@@ -1,4 +1,4 @@
-import { getErrorMessage, type ErrorCode } from "@domain/errors/ErrorCode.js";
+import { type ErrorCode, getErrorMessage } from "@domain/errors/ErrorCode.js";
 
 type SubError =
   | {

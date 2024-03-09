@@ -13,20 +13,20 @@ import { type FeatureCollection, type Point, type Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
 import { type GeoJSONSource } from "maplibre-gl";
-import { useCallback, useEffect, useMemo, useRef, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FullscreenControl,
   Layer,
+  type MapLayerMouseEvent,
+  type MapRef,
   Marker,
+  type MarkerDragEvent,
   NavigationControl,
   Popup,
   Map as ReactMapGl,
   ScaleControl,
   Source,
-  type MapLayerMouseEvent,
-  type MapRef,
-  type MarkerDragEvent,
   type ViewState,
 } from "react-map-gl/maplibre";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
@@ -39,7 +39,7 @@ import {
   inventoryCoordinatesAtom,
   inventoryLocalityAtom,
 } from "../../inventoryFormAtoms";
-import { localitySelectionAtom, type LocalitySelectionType } from "../../inventoryMapAtom";
+import { type LocalitySelectionType, localitySelectionAtom } from "../../inventoryMapAtom";
 
 type EntryMapProps = {
   initialMapState?: Partial<ViewState>;

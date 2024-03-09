@@ -2,7 +2,7 @@ import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMult
 import { getTownsResponse } from "@ou-ca/common/api/town";
 import useApiQuery from "@services/api/useApiQuery";
 import { useAtom, useAtomValue } from "jotai";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { searchEntriesFilterDepartmentsAtom, searchEntriesFilterTownsAtom } from "../searchEntriesCriteriaAtom";
 

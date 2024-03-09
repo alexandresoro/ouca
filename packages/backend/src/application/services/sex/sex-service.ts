@@ -4,7 +4,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type SexRepository } from "@interfaces/sex-repository-interface.js";
 import { type Sex } from "@ou-ca/common/api/entities/sex";
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 

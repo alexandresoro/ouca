@@ -1,5 +1,5 @@
 import { type Key } from "react";
-import { useController, type FieldValues, type Path, type PathValue, type UseControllerProps } from "react-hook-form";
+import { type FieldValues, type Path, type PathValue, type UseControllerProps, useController } from "react-hook-form";
 import { type ConditionalKeys, type SetRequired } from "type-fest";
 import Select from "../base/select/Select";
 

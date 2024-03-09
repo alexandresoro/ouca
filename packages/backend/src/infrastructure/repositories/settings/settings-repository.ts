@@ -1,6 +1,6 @@
-import { settingsSchema, type Settings, type UpdateSettingsInput } from "@domain/settings/settings.js";
-import { kysely, type Database } from "@infrastructure/kysely/kysely.js";
-import { sql, type Transaction } from "kysely";
+import { type Settings, type UpdateSettingsInput, settingsSchema } from "@domain/settings/settings.js";
+import { type Database, kysely } from "@infrastructure/kysely/kysely.js";
+import { type Transaction, sql } from "kysely";
 
 export const buildSettingsRepository = () => {
   const getUserSettings = async (userId: string): Promise<Settings | null> => {

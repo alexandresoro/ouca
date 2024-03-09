@@ -1,17 +1,17 @@
 import {
-  observerSchema,
-  observerSimpleSchema,
   type Observer,
   type ObserverCreateInput,
   type ObserverFindManyInput,
   type ObserverSimple,
+  observerSchema,
+  observerSimpleSchema,
 } from "@domain/observer/observer.js";
 import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { sql } from "kysely";
-import { fromPromise, type Result } from "neverthrow";
+import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 

@@ -5,7 +5,7 @@ import { redis } from "@infrastructure/ioredis/redis.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import { logger } from "../utils/logger.js";
 

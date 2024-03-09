@@ -2,7 +2,7 @@ import useApiMutation from "@hooks/api/useApiMutation";
 import useApiQuery from "@hooks/api/useApiQuery";
 import { getSettingsResponse } from "@ou-ca/common/api/settings";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 

@@ -1,6 +1,6 @@
 import { isSentryEnabledAtom } from "@services/sentry/sentry-atom";
 import { useAtomValue } from "jotai";
-import { useEffect, type ReactElement } from "react";
+import { type ReactElement, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { hasAuthParams, useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router-dom";

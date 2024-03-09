@@ -1,14 +1,14 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { type LoggedUser } from "@domain/user/logged-user.js";
-import { entryNavigationSchema, type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
+import { type Entry, type EntryExtended, entryNavigationSchema } from "@ou-ca/common/api/entities/entry";
 import {
+  type GetEntryResponse,
   getEntriesExtendedResponse,
   getEntriesQueryParamsSchema,
   getEntriesResponse,
   getEntryResponse,
   upsertEntryInput,
   upsertEntryResponse,
-  type GetEntryResponse,
 } from "@ou-ca/common/api/entry";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";

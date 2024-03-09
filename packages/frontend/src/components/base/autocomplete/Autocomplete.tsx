@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ComponentPropsWithoutRef, type FocusEventHandler, type ForwardedRef, type Key } from "react";
+import { type ComponentPropsWithoutRef, type FocusEventHandler, type ForwardedRef, type Key, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 import RequiredField from "../RequiredField";

@@ -1,10 +1,10 @@
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import NewEntryFormContainer from "../new-entry-form-container/NewEntryFormContainer";
 import NewEntryPageStepper from "./NewEntryPageStepper";
-import { getNewEntryStepFromHash, type NewEntryStep } from "./new-entry-hash-step-mapper";
+import { type NewEntryStep, getNewEntryStepFromHash } from "./new-entry-hash-step-mapper";
 
 const NewEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();

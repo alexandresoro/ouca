@@ -1,6 +1,6 @@
 import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
-import { useFeatures, type Features } from "@services/app-features/features";
+import { type Features, useFeatures } from "@services/app-features/features";
 import { Cog, Import, LogOut, User } from "@styled-icons/boxicons-regular";
 import stringToColor from "@utils/user-profile/stringToColor";
 import { getFullName, getInitials } from "@utils/user-profile/usernameUtils";

@@ -1,5 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import { useRef, type FunctionComponent } from "react";
+import { type FunctionComponent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 type DeletionConfirmationDialogProps = {

@@ -1,5 +1,5 @@
 import { useDisplayNotification } from "@hooks/useNotifications";
-import { Suspense, lazy, type FunctionComponent } from "react";
+import { type FunctionComponent, Suspense, lazy } from "react";
 import { Outlet } from "react-router-dom";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 

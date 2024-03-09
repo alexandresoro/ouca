@@ -7,7 +7,7 @@ import {
 } from "@services/api/observer/api-observer-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";

@@ -2,7 +2,7 @@ import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMult
 import { getClassesResponse } from "@ou-ca/common/api/species-class";
 import useApiQuery from "@services/api/useApiQuery";
 import { useAtom } from "jotai";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { searchEntriesFilterClassesAtom } from "../searchEntriesCriteriaAtom";
 

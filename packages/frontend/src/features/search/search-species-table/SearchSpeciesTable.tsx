@@ -1,8 +1,8 @@
 import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "@hooks/usePaginationParams";
-import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
+import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
 import { useAtomValue } from "jotai";
-import { Fragment, useEffect, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
 import TableSortLabel from "../../../components/base/table/TableSortLabel";

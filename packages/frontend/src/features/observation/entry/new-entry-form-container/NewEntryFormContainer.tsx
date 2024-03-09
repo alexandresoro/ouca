@@ -1,7 +1,7 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useSnackbar from "../../../../hooks/useSnackbar";

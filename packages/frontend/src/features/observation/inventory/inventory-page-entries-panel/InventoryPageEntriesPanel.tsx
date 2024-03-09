@@ -1,8 +1,8 @@
 import { type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { type UpsertEntryInput, type getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
-import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
+import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { type z } from "zod";

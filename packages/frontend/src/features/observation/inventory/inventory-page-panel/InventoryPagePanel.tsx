@@ -1,7 +1,7 @@
-import { FloatingArrow, arrow, autoUpdate, offset, shift, useFloating, type VirtualElement } from "@floating-ui/react";
+import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
 import { type InventoryExtended } from "@ou-ca/common/api/entities/inventory";
-import { getInventoriesResponse, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import {
   ChevronLeft,
   ChevronRight,
@@ -11,7 +11,7 @@ import {
   Trash,
 } from "@styled-icons/boxicons-regular";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRef, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";

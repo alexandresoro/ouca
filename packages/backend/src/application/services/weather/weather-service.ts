@@ -4,7 +4,7 @@ import { type WeatherCreateInput, type WeatherFailureReason } from "@domain/weat
 import { type WeatherRepository } from "@interfaces/weather-repository-interface.js";
 import { type Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 

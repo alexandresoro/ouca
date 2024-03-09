@@ -1,8 +1,8 @@
 import useApiMutation from "@hooks/api/useApiMutation";
 import {
-  upsertInventoryResponse,
   type UpsertInventoryInput,
   type UpsertInventoryResponse,
+  upsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
 import { type UseMutationOptions } from "@tanstack/react-query";
 import { type FetchErrorType } from "@utils/fetch-api";

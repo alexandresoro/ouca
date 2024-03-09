@@ -1,7 +1,7 @@
 import { type Town, type TownExtended } from "@ou-ca/common/api/entities/town";
-import { upsertTownResponse, type UpsertTownInput } from "@ou-ca/common/api/town";
+import { type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";

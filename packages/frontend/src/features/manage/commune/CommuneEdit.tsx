@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
-import { upsertTownInput, type UpsertTownInput } from "@ou-ca/common/api/town";
-import { useEffect, type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type UpsertTownInput, upsertTownInput } from "@ou-ca/common/api/town";
+import { type FunctionComponent, useEffect } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import FormSelect from "../../../components/form/FormSelect";

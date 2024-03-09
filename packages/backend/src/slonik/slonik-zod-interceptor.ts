@@ -1,5 +1,5 @@
 import { type Logger } from "pino";
-import { SchemaValidationError, type Interceptor, type QueryResultRow } from "slonik";
+import { type Interceptor, type QueryResultRow, SchemaValidationError } from "slonik";
 
 export const createResultParserInterceptor = (logger: Logger): Interceptor => {
   return {

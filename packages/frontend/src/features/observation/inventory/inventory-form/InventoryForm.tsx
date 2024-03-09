@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Inventory } from "@ou-ca/common/api/entities/inventory";
-import { upsertInventoryInput, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type UpsertInventoryInput, upsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
-import { useEffect, useState, type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type FunctionComponent, useEffect, useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import useUserSettingsContext from "../../../../hooks/useUserSettingsContext";

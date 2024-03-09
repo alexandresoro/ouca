@@ -1,14 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.6.0/schema.json",
-  "organizeImports": {
-    "enabled": false
-  },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "a11y": {
         "useAltText": "warn"
+      },
+      "correctness": {
+        "noUnusedImports": "warn"
       },
       "suspicious": {
         "noEmptyInterface": "warn"

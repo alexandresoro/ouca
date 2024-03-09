@@ -12,15 +12,15 @@ import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
 import {
+  type PutSettingsInput,
   getSettingsResponse,
   putSettingsInput,
   putSettingsResponse,
-  type PutSettingsInput,
 } from "@ou-ca/common/api/settings";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type FunctionComponent, useCallback, useEffect } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 type SettingsInputs = {

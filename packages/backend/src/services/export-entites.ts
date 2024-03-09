@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { type Behavior } from "@ou-ca/common/api/entities/behavior";
@@ -6,7 +7,6 @@ import { type EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
 import { type Redis } from "ioredis";
-import { randomUUID } from "node:crypto";
 import { type AgeService } from "../application/services/age/age-service.js";
 import { type DepartmentService } from "../application/services/department/department-service.js";
 import { type DistanceEstimateService } from "../application/services/distance-estimate/distance-estimate-service.js";

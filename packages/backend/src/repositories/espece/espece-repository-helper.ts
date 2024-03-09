@@ -1,6 +1,6 @@
 import { type SpeciesFindManyInput } from "@domain/species/species.js";
 import escapeStringRegexp from "escape-string-regexp";
-import { sql, type IdentifierSqlToken } from "slonik";
+import { type IdentifierSqlToken, sql } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
 import { buildSearchCriteriaParameters } from "../search-criteria.js";
 

@@ -1,6 +1,6 @@
-import { CERTAIN, POSSIBLE, PROBABLE, type NicheurCode } from "@ou-ca/common/types/nicheur.model";
+import { CERTAIN, type NicheurCode, POSSIBLE, PROBABLE } from "@ou-ca/common/types/nicheur.model";
 import { useAtom } from "jotai";
-import { useMemo, type ChangeEventHandler, type FunctionComponent } from "react";
+import { type ChangeEventHandler, type FunctionComponent, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { searchEntriesFilterBreedersAtom } from "../searchEntriesCriteriaAtom";
 

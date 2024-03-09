@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithRef, type FunctionComponent } from "react";
+import { type ComponentPropsWithRef, type FunctionComponent, forwardRef } from "react";
 import RequiredField from "./RequiredField";
 
 type TextInputProps = {

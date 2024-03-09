@@ -5,7 +5,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
 import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type ObserverServiceDependencies = {

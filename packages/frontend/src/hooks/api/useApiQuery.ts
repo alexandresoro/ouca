@@ -1,5 +1,5 @@
 import { apiUrlAtom } from "@services/api/useApiUrl";
-import { useQuery, type QueryFunction, type UseQueryOptions } from "@tanstack/react-query";
+import { type QueryFunction, type UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { type FetchErrorType } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAtomValue } from "jotai";

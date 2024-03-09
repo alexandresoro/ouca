@@ -1,6 +1,6 @@
 import Switch from "@components/base/Switch";
 import { useFeatures } from "@services/app-features/features";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchFilterAges from "./SearchFilterAges";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";

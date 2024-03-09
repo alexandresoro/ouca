@@ -4,7 +4,7 @@ import { type LoggedUser } from "@domain/user/logged-user.js";
 import { type DepartmentRepository } from "@interfaces/department-repository-interface.js";
 import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/api/entities/department";
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";

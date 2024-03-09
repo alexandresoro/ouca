@@ -1,5 +1,5 @@
 import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import useApiFetch from "../../../../services/api/useApiFetch";

@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { upsertBehaviorInput, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
-import { CERTAIN, POSSIBLE, PROBABLE, type NicheurCode } from "@ou-ca/common/types/nicheur.model";
+import { type UpsertBehaviorInput, upsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import { CERTAIN, type NicheurCode, POSSIBLE, PROBABLE } from "@ou-ca/common/types/nicheur.model";
 import { type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import FormSelect from "../../../components/form/FormSelect";

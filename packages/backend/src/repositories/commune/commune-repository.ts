@@ -1,6 +1,6 @@
-import { townSchema, type Town } from "@domain/town/town.js";
+import { type Town, townSchema } from "@domain/town/town.js";
 import escapeStringRegexp from "escape-string-regexp";
-import { sql, type DatabasePool } from "slonik";
+import { type DatabasePool, sql } from "slonik";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
@@ -10,10 +10,10 @@ import {
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
-  communeWithDepartementCodeSchema,
   type CommuneCreateInput,
   type CommuneFindManyInput,
   type CommuneWithDepartementCode,
+  communeWithDepartementCodeSchema,
 } from "./commune-repository-types.js";
 
 export type CommuneRepositoryDependencies = {

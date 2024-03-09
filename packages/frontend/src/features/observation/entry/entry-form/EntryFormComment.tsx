@@ -1,5 +1,5 @@
 import { type FunctionComponent } from "react";
-import { useFormState, type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextArea from "../../../../components/base/TextArea";
 import { type EntryFormState } from "./EntryFormState";

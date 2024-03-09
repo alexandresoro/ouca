@@ -1,7 +1,7 @@
-import { localitySchema, type Locality } from "@domain/locality/locality.js";
-import { geoJSONLocalitySchema, type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+import { type Locality, localitySchema } from "@domain/locality/locality.js";
+import { type GeoJSONLocality, geoJSONLocalitySchema } from "@ou-ca/common/geojson/geojson-localities";
 import escapeStringRegexp from "escape-string-regexp";
-import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
@@ -11,10 +11,10 @@ import {
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
-  lieuditWithCommuneAndDepartementCodeSchema,
   type LieuditCreateInput,
   type LieuditFindManyInput,
   type LieuditWithCommuneAndDepartementCode,
+  lieuditWithCommuneAndDepartementCodeSchema,
 } from "./lieudit-repository-types.js";
 
 export type LieuditRepositoryDependencies = {

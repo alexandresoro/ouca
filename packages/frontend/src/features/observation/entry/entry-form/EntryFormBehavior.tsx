@@ -1,6 +1,6 @@
 import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
 import { type Behavior } from "@ou-ca/common/api/entities/behavior";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import useApiQuery from "../../../../hooks/api/useApiQuery";

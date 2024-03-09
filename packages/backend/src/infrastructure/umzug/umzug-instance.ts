@@ -1,8 +1,8 @@
-import { dbConfig } from "@infrastructure/config/database-config.js";
-import { kysely as defaultKysely, type Database } from "@infrastructure/kysely/kysely.js";
-import { sql, type Generated, type Kysely } from "kysely";
 import fs from "node:fs";
 import path from "node:path";
+import { dbConfig } from "@infrastructure/config/database-config.js";
+import { type Database, kysely as defaultKysely } from "@infrastructure/kysely/kysely.js";
+import { type Generated, type Kysely, sql } from "kysely";
 import { Umzug } from "umzug";
 import { z } from "zod";
 import { logger } from "../../utils/logger.js";

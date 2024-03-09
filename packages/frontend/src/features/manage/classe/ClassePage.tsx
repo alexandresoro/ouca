@@ -1,7 +1,7 @@
 import { type SpeciesClass, type SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
-import { upsertClassResponse, type UpsertClassInput } from "@ou-ca/common/api/species-class";
+import { type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, type FunctionComponent } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";

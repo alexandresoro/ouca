@@ -1,6 +1,6 @@
 import { type PaginatedResponseSchemaType } from "@ou-ca/common/api/common/pagination";
 import { apiUrlAtom } from "@services/api/useApiUrl";
-import { useInfiniteQuery, type QueryFunction, type UseInfiniteQueryOptions } from "@tanstack/react-query";
+import { type QueryFunction, type UseInfiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
 import { type FetchErrorType } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAtomValue } from "jotai";

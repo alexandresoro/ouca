@@ -1,5 +1,5 @@
-import { getInventoryResponse, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { useEffect, type FunctionComponent } from "react";
+import { type UpsertInventoryInput, getInventoryResponse } from "@ou-ca/common/api/inventory";
+import { type FunctionComponent, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import useApiQuery from "../../../../../hooks/api/useApiQuery";
 import InventoryFormWithMap from "../../../inventory/inventory-form-with-map/InventoryFormWithMap";

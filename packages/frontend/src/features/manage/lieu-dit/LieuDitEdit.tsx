@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { type Department } from "@ou-ca/common/api/entities/department";
-import { upsertLocalityInput, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type UpsertLocalityInput, upsertLocalityInput } from "@ou-ca/common/api/locality";
 import { getTownsResponse } from "@ou-ca/common/api/town";
-import { useEffect, useState, type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type FunctionComponent, useEffect, useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Select from "../../../components/base/select/Select";
 import TextInput from "../../../components/base/TextInput";
+import Select from "../../../components/base/select/Select";
 import FormSelect from "../../../components/form/FormSelect";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";

@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Entry } from "@ou-ca/common/api/entities/entry";
-import { upsertEntryInput, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type UpsertEntryInput, upsertEntryInput } from "@ou-ca/common/api/entry";
 import { type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useUserSettingsContext from "../../../../hooks/useUserSettingsContext";
 import EntryFormBehaviors from "./EntryFormBehaviors";

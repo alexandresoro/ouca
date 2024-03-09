@@ -1,5 +1,5 @@
 import { loadAnalytics } from "@services/analytics/umami";
-import { initConfig, type AppConfig } from "@services/config/config";
+import { type AppConfig, initConfig } from "@services/config/config";
 
 const fetchAppConfig = fetch("/appconfig", {
   method: "GET",

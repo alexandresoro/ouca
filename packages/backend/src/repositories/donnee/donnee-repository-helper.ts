@@ -1,4 +1,4 @@
-import { sql, type IdentifierSqlToken } from "slonik";
+import { type IdentifierSqlToken, sql } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
 import { buildSearchCriteriaParameters } from "../search-criteria.js";
 import { type DonneeFindManyInput, type DonneeFindMatchingInput } from "./donnee-repository-types.js";

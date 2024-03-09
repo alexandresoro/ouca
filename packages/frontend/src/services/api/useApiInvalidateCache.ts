@@ -1,4 +1,4 @@
-import { useSWRConfig, type Arguments, type MutatorOptions } from "swr";
+import { type Arguments, type MutatorOptions, useSWRConfig } from "swr";
 import useApiUrl from "./useApiUrl";
 
 const isApiCacheKey = (key: Arguments): key is { url: string } => {

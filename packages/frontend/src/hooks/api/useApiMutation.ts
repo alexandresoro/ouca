@@ -1,5 +1,5 @@
 import { apiUrlAtom } from "@services/api/useApiUrl";
-import { useMutation, type MutationFunction, type UseMutationOptions } from "@tanstack/react-query";
+import { type MutationFunction, type UseMutationOptions, useMutation } from "@tanstack/react-query";
 import { type FetchErrorType } from "@utils/fetch-api";
 import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";

@@ -1,15 +1,15 @@
 import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
 import {
-  weatherSchema,
   type Weather,
   type WeatherCreateInput,
   type WeatherFindManyInput,
+  weatherSchema,
 } from "@domain/weather/weather.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { countSchema } from "@infrastructure/repositories/common.js";
 import { sql } from "kysely";
-import { fromPromise, type Result } from "neverthrow";
+import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 
 export const buildWeatherRepository = () => {

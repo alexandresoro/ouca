@@ -1,4 +1,4 @@
-import { sql, type DatabasePool, type DatabaseTransactionConnection, type QueryResult } from "slonik";
+import { type DatabasePool, type DatabaseTransactionConnection, type QueryResult, sql } from "slonik";
 import { z } from "zod";
 import { objectsToKeyValueInsert } from "../repository-helpers.js";
 

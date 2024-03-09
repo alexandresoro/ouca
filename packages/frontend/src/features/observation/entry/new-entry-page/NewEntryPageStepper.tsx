@@ -1,6 +1,6 @@
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { STEPS, type NewEntryStep } from "./new-entry-hash-step-mapper";
+import { type NewEntryStep, STEPS } from "./new-entry-hash-step-mapper";
 
 type NewEntryPageStepperProps = {
   currentStep: NewEntryStep;

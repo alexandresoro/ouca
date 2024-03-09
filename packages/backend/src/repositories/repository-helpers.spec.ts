@@ -1,4 +1,4 @@
-import { sql, type ListSqlToken, type SqlFragment } from "slonik";
+import { type ListSqlToken, type SqlFragment, sql } from "slonik";
 import {
   buildAndClause,
   buildPaginationFragment,

@@ -1,9 +1,9 @@
 import {
-  sql,
   type IdentifierSqlToken,
   type ListSqlToken,
   type PrimitiveValueExpression,
   type SqlFragment,
+  sql,
 } from "slonik";
 import { type SortOrder } from "./common.js";
 

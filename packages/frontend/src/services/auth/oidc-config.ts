@@ -1,6 +1,6 @@
 import { configAtom } from "@services/config/config";
 import { atom } from "jotai";
-import { WebStorageStateStore, type UserManagerSettings } from "oidc-client-ts";
+import { type UserManagerSettings, WebStorageStateStore } from "oidc-client-ts";
 
 export const oidcConfigAtom = atom<UserManagerSettings>((get) => {
   const oidcConfig = get(configAtom).oidc;

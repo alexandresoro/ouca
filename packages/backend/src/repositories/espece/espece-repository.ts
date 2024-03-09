@@ -1,6 +1,6 @@
-import { speciesSchema, type Species, type SpeciesFindManyInput } from "@domain/species/species.js";
+import { type Species, type SpeciesFindManyInput, speciesSchema } from "@domain/species/species.js";
 import escapeStringRegexp from "escape-string-regexp";
-import { sql, type DatabasePool } from "slonik";
+import { type DatabasePool, sql } from "slonik";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
@@ -11,9 +11,9 @@ import {
 } from "../repository-helpers.js";
 import { buildOrderByIdentifier, buildSearchEspeceClause } from "./espece-repository-helper.js";
 import {
-  especeWithClasseLibelleSchema,
   type EspeceCreateInput,
   type EspeceWithClasseLibelle,
+  especeWithClasseLibelleSchema,
 } from "./espece-repository-types.js";
 
 export type EspeceRepositoryDependencies = {

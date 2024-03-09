@@ -1,4 +1,4 @@
-import { sql, type DatabasePool, type DatabaseTransactionConnection, type QueryResult } from "slonik";
+import { type DatabasePool, type DatabaseTransactionConnection, type QueryResult, sql } from "slonik";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 import {
@@ -13,13 +13,13 @@ import {
   buildSearchCriteriaClause,
 } from "./donnee-repository-helper.js";
 import {
-  donneeSchema,
-  idSchema,
-  maxRegoupementSchema,
   type Donnee,
   type DonneeCreateInput,
   type DonneeFindManyInput,
   type DonneeFindMatchingInput,
+  donneeSchema,
+  idSchema,
+  maxRegoupementSchema,
 } from "./donnee-repository-types.js";
 
 export type DonneeRepositoryDependencies = {

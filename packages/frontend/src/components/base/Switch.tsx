@@ -1,5 +1,5 @@
 import { Switch as SwitchHeadless } from "@headlessui/react";
-import { forwardRef, type ForwardedRef } from "react";
+import { type ForwardedRef, forwardRef } from "react";
 import RequiredField from "./RequiredField";
 
 type SwitchProps = {

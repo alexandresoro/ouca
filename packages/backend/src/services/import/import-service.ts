@@ -1,7 +1,7 @@
+import { EventEmitter } from "node:events";
 import { type LoggedUser } from "@domain/user/logged-user.js";
 import { OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
 import { parse } from "csv-parse/sync";
-import { EventEmitter } from "node:events";
 import { type ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message.js";
 import { logger } from "../../utils/logger.js";
 import { type Services } from "../services.js";

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { upsertAgeInput, type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type UpsertAgeInput, upsertAgeInput } from "@ou-ca/common/api/age";
 import { type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";

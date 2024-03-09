@@ -1,4 +1,4 @@
-import { userSchema, type User } from "@domain/user/user.js";
+import { type User, userSchema } from "@domain/user/user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { type SettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";

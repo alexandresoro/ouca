@@ -2,7 +2,7 @@ import { type Inventory, type InventoryExtended } from "@ou-ca/common/api/entiti
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
-import { lazy, useEffect, useState, type FunctionComponent } from "react";
+import { type FunctionComponent, lazy, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { inventorySetAtom } from "../../inventoryFormAtoms";
 import InventoryForm from "../inventory-form/InventoryForm";
