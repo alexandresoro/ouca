@@ -33,12 +33,16 @@ const upsertInventoryFormInput = upsertInventoryInput.omit({ duration: true }).e
     .union([z.string(), z.number()])
     .nullable()
     .transform((value) => {
+      // biome-ignore lint/style/useBlockStatements: <explanation>
       if (typeof value === "string" && !value.length) return null;
+      // biome-ignore lint/style/useBlockStatements: <explanation>
       if (typeof value === "string") return getMinutesFromTime(value);
       return value;
     })
     .refine((value) => {
+      // biome-ignore lint/style/useBlockStatements: <explanation>
       if (value === null) return true;
+      // biome-ignore lint/style/useBlockStatements: <explanation>
       if (typeof value === "number") return Number.isFinite(value);
     }),
 });

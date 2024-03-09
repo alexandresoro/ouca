@@ -12,13 +12,22 @@
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error"
       },
-      "suspicious": {
-        "noEmptyInterface": "warn"
-      },
       "style": {
+        "noDefaultExport": "warn",
+        "noNamespace": "error",
         "noNonNullAssertion": "warn",
+        "noShoutyConstants": "error",
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "warn",
+        "useForOf": "warn",
+        "useFragmentSyntax": "warn",
         "useImportType": "off",
-        "useSelfClosingElements": "warn"
+        "useSelfClosingElements": "warn",
+        "useShorthandArrayType": "error"
+      },
+      "suspicious": {
+        "noConsoleLog": "warn",
+        "noEmptyInterface": "warn"
       }
     }
   },

@@ -23,6 +23,7 @@ export const onRequestPost: PagesFunction = async ({ request }) => {
 
     return response;
   } catch (e) {
+    // biome-ignore lint/suspicious/noConsoleLog: <explanation>
     console.log(e);
     return new Response("Invalid request", { status: 400 });
   }

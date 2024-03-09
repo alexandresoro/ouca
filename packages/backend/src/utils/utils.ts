@@ -4,6 +4,7 @@ import { parse } from "date-fns";
 import { fr as locale } from "date-fns/locale";
 
 export const areSetsContainingSameValues = <T>(firstArray: Set<T>, secondArray: Set<T>): boolean => {
+  // biome-ignore lint/style/useBlockStatements: <explanation>
   if (firstArray.size !== secondArray.size) return false;
   return [...firstArray].every((value) => secondArray.has(value));
 };
