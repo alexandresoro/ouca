@@ -19,6 +19,7 @@
     "start:tsc": "pnpm run compile:tsc:dev && node -r dotenv/config dist/main",
     "test": "vitest run",
     "lint": "eslint .",
+    "lint:ci": "eslint .",
     "typecheck": "tsc --build tsconfig.build.json",
     "biome:ci": "biome ci *",
     "compile:tsc": "tsc --build tsconfig.build.json && tsc-alias",

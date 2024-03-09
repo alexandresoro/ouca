@@ -17,6 +17,7 @@
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint .",
+    "lint:ci": "eslint .",
     "typecheck": "tsc --build tsconfig.build.json",
     "biome:ci": "biome ci *"
   },

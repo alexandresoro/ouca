@@ -34,7 +34,7 @@ jobs:
         run: pnpm --aggregate-output --recursive run test
         
       - name: Lint
-        run: pnpm --aggregate-output --recursive run lint
+        run: pnpm --aggregate-output --recursive run lint:ci
 
       - name: Typecheck
         run: pnpm --aggregate-output --recursive run typecheck
