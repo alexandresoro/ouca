@@ -1,3 +1,0 @@
-{
-  "*.ts": ["node --import tsx", "eslint", "biome ci"]
-}
