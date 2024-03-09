@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, upsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
-import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -63,7 +62,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
           // Brand new inventory
           observerId: userSettings.defaultObserver?.id ?? null,
           associateIds: [],
-          date: format(new Date(), "yyyy-MM-dd"),
+          date: new Date().toISOString().slice(0, 10),
           time: null,
           duration: null,
           localityId: null,
