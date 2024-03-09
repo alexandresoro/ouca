@@ -8,7 +8,9 @@
         "useAltText": "warn"
       },
       "correctness": {
-        "noUnusedImports": "warn"
+        "noUnusedImports": "warn",
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error"
       },
       "suspicious": {
         "noEmptyInterface": "warn"

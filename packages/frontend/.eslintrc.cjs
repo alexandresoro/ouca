@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: ["react"],
-  extends: ["@ou-ca", "plugin:react/jsx-runtime", "plugin:react-hooks/recommended"],
+  extends: ["@ou-ca", "plugin:react/jsx-runtime"],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
