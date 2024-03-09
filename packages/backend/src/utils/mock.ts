@@ -1,4 +1,4 @@
-import { type Mock } from "vitest";
+import type { Mock } from "vitest";
 
 // Adapted from https://github.com/eratio08/vitest-mock-extended/blob/main/src/Mock.ts
 

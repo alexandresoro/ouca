@@ -1,9 +1,9 @@
-import { type Behavior } from "@ou-ca/common/api/entities/behavior";
-import { type EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, CalendarPlus, Comment, MaleSign, PieChartAlt2 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import ItemWithAvatar from "../../../../components/base/ItemWithAvatar";
 

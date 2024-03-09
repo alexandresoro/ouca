@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
+import type { UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { Factory } from "fishery";
 
 export const numberEstimateServiceFactory = Factory.define<NumberEstimate>(() => {

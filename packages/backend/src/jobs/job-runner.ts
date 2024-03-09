@@ -1,4 +1,4 @@
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { createWorkers } from "./queue-workers.js";
 import { type Queues, createQueues } from "./queues.js";

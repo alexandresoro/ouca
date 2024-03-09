@@ -1,7 +1,7 @@
-import { type Inventory } from "@ou-ca/common/api/entities/inventory";
-import { type Locality } from "@ou-ca/common/api/entities/locality";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { getAltitudeToDisplay } from "@services/altitude/altitude-service";
-import { type Coordinates, type CoordinatesWithAltitude } from "@typings/Coordinates";
+import type { Coordinates, CoordinatesWithAltitude } from "@typings/Coordinates";
 import { atom } from "jotai";
 import { RESET, atomWithReset } from "jotai/utils";
 

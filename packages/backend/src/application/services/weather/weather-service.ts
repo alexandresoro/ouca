@@ -1,11 +1,11 @@
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type WeatherCreateInput, type WeatherFailureReason } from "@domain/weather/weather.js";
-import { type WeatherRepository } from "@interfaces/weather-repository-interface.js";
-import { type Weather } from "@ou-ca/common/api/entities/weather";
-import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { WeatherCreateInput, WeatherFailureReason } from "@domain/weather/weather.js";
+import type { WeatherRepository } from "@interfaces/weather-repository-interface.js";
+import type { Weather } from "@ou-ca/common/api/entities/weather";
+import type { UpsertWeatherInput, WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Result, err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type WeatherServiceDependencies = {

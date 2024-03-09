@@ -1,4 +1,4 @@
-import { type NumberEstimate, type NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimate, NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import {
   getNumberEstimateResponse,
   getNumberEstimatesExtendedResponse,
@@ -7,9 +7,9 @@ import {
   upsertNumberEstimateInput,
   upsertNumberEstimateResponse,
 } from "@ou-ca/common/api/number-estimate";
-import { type FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 

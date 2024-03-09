@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { type SearchCriteria } from "../search/search-criteria.js";
-import { type CommonFailureReason } from "../shared/failure-reason.js";
-import { type SortOrder } from "../shared/sort-order.js";
+import type { SearchCriteria } from "../search/search-criteria.js";
+import type { CommonFailureReason } from "../shared/failure-reason.js";
+import type { SortOrder } from "../shared/sort-order.js";
 
 export type SpeciesFailureReason = CommonFailureReason;
 

@@ -8,7 +8,7 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import { type MilieuCreateInput } from "./milieu-repository-types.js";
+import type { MilieuCreateInput } from "./milieu-repository-types.js";
 
 export type MilieuRepositoryDependencies = {
   slonik: DatabasePool;

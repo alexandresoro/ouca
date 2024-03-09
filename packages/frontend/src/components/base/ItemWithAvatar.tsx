@@ -1,4 +1,4 @@
-import { type FunctionComponent, type ReactNode } from "react";
+import type { FunctionComponent, ReactNode } from "react";
 import Avatar from "./Avatar";
 
 type ItemWithAvatarProps = {

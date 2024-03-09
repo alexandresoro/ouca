@@ -1,6 +1,6 @@
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import type { Observer } from "@ou-ca/common/api/entities/observer";
 import { useApiObserverQuery } from "@services/api/observer/api-observer-queries";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ObserverTableRowProps = {

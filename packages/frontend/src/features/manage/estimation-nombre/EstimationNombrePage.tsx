@@ -1,4 +1,4 @@
-import { type NumberEstimate, type NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimate, NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import { type UpsertNumberEstimateInput, upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";

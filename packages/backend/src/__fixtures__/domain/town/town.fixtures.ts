@@ -1,4 +1,4 @@
-import { type Town, type TownCreateInput } from "@domain/town/town.js";
+import type { Town, TownCreateInput } from "@domain/town/town.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

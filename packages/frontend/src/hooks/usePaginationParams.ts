@@ -1,4 +1,4 @@
-import { type SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { useState } from "react";
 
 export type PaginationParams<T> = {

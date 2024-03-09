@@ -6,10 +6,10 @@ import {
   upsertAgeInput,
   upsertAgeResponse,
 } from "@ou-ca/common/api/age";
-import { type Age, type AgeSimple } from "@ou-ca/common/api/entities/age";
-import { type FastifyPluginCallback } from "fastify";
+import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 

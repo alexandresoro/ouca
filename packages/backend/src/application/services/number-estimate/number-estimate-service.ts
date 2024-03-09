@@ -1,11 +1,11 @@
-import { type NumberEstimateFailureReason } from "@domain/number-estimate/number-estimate.js";
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
-import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import type { NumberEstimateFailureReason } from "@domain/number-estimate/number-estimate.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimatesSearchParams, UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Result, err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type NumberEstimateServiceDependencies = {

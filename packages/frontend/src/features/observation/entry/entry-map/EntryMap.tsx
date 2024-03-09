@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLocalityResponse } from "@ou-ca/common/api/locality";
-import { type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+import type { GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
 import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
 import booleanWithin from "@turf/boolean-within";
 import { featureCollection, point } from "@turf/helpers";
-import { type BBox2d } from "@turf/helpers/dist/js/lib/geojson";
+import type { BBox2d } from "@turf/helpers/dist/js/lib/geojson";
 // eslint-disable-next-line import/no-unresolved
-import { type FeatureCollection, type Point, type Polygon } from "geojson";
+import type { FeatureCollection, Point, Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
-import { type GeoJSONSource } from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import { type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {

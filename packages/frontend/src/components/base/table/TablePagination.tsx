@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef, type FunctionComponent } from "react";
+import type { ComponentPropsWithoutRef, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 type TypePaginationProps = ComponentPropsWithoutRef<"div"> & {

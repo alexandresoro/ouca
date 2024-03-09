@@ -1,4 +1,4 @@
-import { type Environment, type EnvironmentCreateInput } from "@domain/environment/environment.js";
+import type { Environment, EnvironmentCreateInput } from "@domain/environment/environment.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

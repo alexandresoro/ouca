@@ -1,4 +1,4 @@
-import { type Settings, type UpdateSettingsInput } from "@domain/settings/settings.js";
+import type { Settings, UpdateSettingsInput } from "@domain/settings/settings.js";
 
 export type SettingsRepository = {
   getUserSettings: (userId: string) => Promise<Settings | null>;

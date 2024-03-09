@@ -1,7 +1,7 @@
-import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
-import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
-import { type FunctionComponent } from "react";
-import { type SubmitHandler } from "react-hook-form";
+import type { ObserverSimple } from "@ou-ca/common/api/entities/observer";
+import type { UpsertObserverInput } from "@ou-ca/common/api/observer";
+import type { FunctionComponent } from "react";
+import type { SubmitHandler } from "react-hook-form";
 import ObservateurEdit from "./ObservateurEdit";
 
 type ObservateurUpdateProps = {

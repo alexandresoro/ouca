@@ -1,9 +1,9 @@
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { type UserRole, userRoles } from "@domain/user/user-role.js";
-import { type OidcConfig } from "@infrastructure/config/oidc-config.js";
+import type { OidcConfig } from "@infrastructure/config/oidc-config.js";
 import { z } from "zod";
 import introspectAccessTokenCommon from "./introspect-access-token.js";
-import { type OidcWithInternalUserMappingService } from "./oidc-with-internal-user-mapping.js";
+import type { OidcWithInternalUserMappingService } from "./oidc-with-internal-user-mapping.js";
 
 export const EXTERNAL_PROVIDER_NAME = "zitadel";
 

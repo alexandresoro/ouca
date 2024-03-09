@@ -5,7 +5,7 @@ import {
   type SqlFragment,
   sql,
 } from "slonik";
-import { type SortOrder } from "./common.js";
+import type { SortOrder } from "./common.js";
 
 export const objectToKeyValueSet = (
   obj: Record<string, string | number | boolean | undefined | null>,

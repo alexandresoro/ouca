@@ -1,4 +1,4 @@
-import { type Environment } from "@ou-ca/common/api/entities/environment";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { getEnvironmentsResponse } from "@ou-ca/common/api/environment";
 import { type FunctionComponent, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
@@ -7,7 +7,7 @@ import Autocomplete from "../../../../components/base/autocomplete/Autocomplete"
 import useApiQuery from "../../../../hooks/api/useApiQuery";
 import { findFirstFocusableElement } from "../../../../utils/dom/find-first-focusable-element";
 import EntryFormEnvironment, { renderEnvironment } from "./EntryFormEnvironment";
-import { type EntryFormState } from "./EntryFormState";
+import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormEnvironmentsProps = Pick<UseFormReturn<EntryFormState>, "control"> & {
   initialEnvironments?: Environment[];

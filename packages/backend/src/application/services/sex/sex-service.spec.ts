@@ -1,10 +1,10 @@
 import { sexCreateInputFactory, sexFactory } from "@fixtures/domain/sex/sex.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSexInputFactory } from "@fixtures/services/sex/sex-service.fixtures.js";
-import { type SexRepository } from "@interfaces/sex-repository-interface.js";
-import { type SexesSearchParams } from "@ou-ca/common/api/sex";
+import type { SexRepository } from "@interfaces/sex-repository-interface.js";
+import type { SexesSearchParams } from "@ou-ca/common/api/sex";
 import { err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildSexService } from "./sex-service.js";
 

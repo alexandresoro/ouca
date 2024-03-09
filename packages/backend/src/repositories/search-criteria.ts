@@ -1,5 +1,5 @@
-import { type SearchCriteria } from "@domain/search/search-criteria.js";
-import { type SpeciesSearchParams } from "@ou-ca/common/api/species";
+import type { SearchCriteria } from "@domain/search/search-criteria.js";
+import type { SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { type IdentifierSqlToken, sql } from "slonik";
 
 export const reshapeSearchCriteria = (

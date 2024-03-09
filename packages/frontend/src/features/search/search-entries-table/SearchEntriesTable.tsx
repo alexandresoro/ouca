@@ -4,7 +4,7 @@ import DeletionConfirmationDialog from "@components/common/DeletionConfirmationD
 import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "@hooks/usePaginationParams";
 import useSnackbar from "@hooks/useSnackbar";
-import { type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { type EntriesOrderBy, type UpsertEntryInput, getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-entry-queries";
 import { useQueryClient } from "@tanstack/react-query";

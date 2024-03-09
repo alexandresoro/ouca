@@ -1,10 +1,10 @@
-import {
-  type DistanceEstimate,
-  type DistanceEstimateCreateInput,
-  type DistanceEstimateFindManyInput,
+import type {
+  DistanceEstimate,
+  DistanceEstimateCreateInput,
+  DistanceEstimateFindManyInput,
 } from "@domain/distance-estimate/distance-estimate.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Result } from "neverthrow";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Result } from "neverthrow";
 
 export type DistanceEstimateRepository = {
   findDistanceEstimateById: (id: number) => Promise<DistanceEstimate | null>;

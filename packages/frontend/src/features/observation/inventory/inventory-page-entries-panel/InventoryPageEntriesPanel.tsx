@@ -1,11 +1,11 @@
-import { type Entry, type EntryExtended } from "@ou-ca/common/api/entities/entry";
-import { type UpsertEntryInput, type getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
+import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { UpsertEntryInput, getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { type z } from "zod";
+import type { z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import useSnackbar from "../../../../hooks/useSnackbar";
 import { useApiEntryDelete, useApiEntryUpdate } from "../../../../services/api/entry/api-entry-queries";

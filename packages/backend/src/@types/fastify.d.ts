@@ -1,4 +1,4 @@
-import { type LoggedUser } from "@domain/user/logged-user.ts";
+import type { LoggedUser } from "@domain/user/logged-user.ts";
 import type * as Sentry from "@sentry/node";
 
 declare module "fastify" {

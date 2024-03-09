@@ -1,10 +1,10 @@
-import {
-  type NumberEstimate,
-  type NumberEstimateCreateInput,
-  type NumberEstimateFindManyInput,
+import type {
+  NumberEstimate,
+  NumberEstimateCreateInput,
+  NumberEstimateFindManyInput,
 } from "@domain/number-estimate/number-estimate.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Result } from "neverthrow";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Result } from "neverthrow";
 
 export type NumberEstimateRepository = {
   findNumberEstimateById: (id: number) => Promise<NumberEstimate | null>;

@@ -3,7 +3,7 @@ import { Combobox } from "@headlessui/react";
 import { ExpandVertical } from "@styled-icons/boxicons-regular";
 import { type ComponentPropsWithRef, type FocusEventHandler, type ForwardedRef, type Key, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
-import { type ConditionalKeys } from "type-fest";
+import type { ConditionalKeys } from "type-fest";
 import Chip from "../Chip";
 import RequiredField from "../RequiredField";
 

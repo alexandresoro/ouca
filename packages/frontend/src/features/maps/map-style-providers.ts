@@ -1,5 +1,5 @@
-import { type ParseKeys } from "i18next";
-import { type MapStyle } from "react-map-gl";
+import type { ParseKeys } from "i18next";
+import type { MapStyle } from "react-map-gl";
 import ignMapSatelliteStyle from "./ign-satellite.json";
 import ignMapStyle from "./ign.json";
 

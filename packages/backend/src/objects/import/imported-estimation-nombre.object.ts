@@ -1,4 +1,4 @@
-import { type NumberEstimate } from "@domain/number-estimate/number-estimate.js";
+import type { NumberEstimate } from "@domain/number-estimate/number-estimate.js";
 import { ImportedEntiteAvecLibelle } from "./imported-entite-avec-libelle.object.js";
 
 export class ImportedEstimationNombre extends ImportedEntiteAvecLibelle {

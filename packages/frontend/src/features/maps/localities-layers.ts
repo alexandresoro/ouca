@@ -1,4 +1,4 @@
-import { type LayerProps } from "react-map-gl/maplibre";
+import type { LayerProps } from "react-map-gl/maplibre";
 
 export const clusterLayer: LayerProps = {
   id: "clusters-localities",

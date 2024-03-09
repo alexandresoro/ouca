@@ -1,4 +1,4 @@
-import { type NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesOrderBy, getNumberEstimatesExtendedResponse } from "@ou-ca/common/api/number-estimate";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

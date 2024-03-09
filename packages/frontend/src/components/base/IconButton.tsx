@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef, type FunctionComponent, type PropsWithChildren } from "react";
+import type { ComponentPropsWithoutRef, FunctionComponent, PropsWithChildren } from "react";
 
 const IconButton: FunctionComponent<PropsWithChildren<ComponentPropsWithoutRef<"button">>> = ({
   children,

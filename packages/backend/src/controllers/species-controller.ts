@@ -1,5 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Species, type SpeciesExtended } from "@ou-ca/common/api/entities/species";
+import type { Species, SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import {
   getSpeciesExtendedResponse,
   getSpeciesPaginatedResponse,
@@ -8,8 +8,8 @@ import {
   upsertSpeciesInput,
   upsertSpeciesResponse,
 } from "@ou-ca/common/api/species";
-import { type FastifyPluginCallback } from "fastify";
-import { type Services } from "../services/services.js";
+import type { FastifyPluginCallback } from "fastify";
+import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const speciesController: FastifyPluginCallback<{

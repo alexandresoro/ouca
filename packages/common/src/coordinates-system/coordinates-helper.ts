@@ -1,5 +1,5 @@
-import { type Coordinates } from "../types/coordinates.object.js";
-import { type CoordinatesSystemType } from "./coordinates-system.object.js";
+import type { Coordinates } from "../types/coordinates.object.js";
+import type { CoordinatesSystemType } from "./coordinates-system.object.js";
 import { transformCoordinates } from "./coordinates-transformer.js";
 
 type LieuDitForCoordinates = {

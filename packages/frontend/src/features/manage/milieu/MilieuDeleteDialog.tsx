@@ -1,5 +1,5 @@
-import { type EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
-import { type FunctionComponent } from "react";
+import type { EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 

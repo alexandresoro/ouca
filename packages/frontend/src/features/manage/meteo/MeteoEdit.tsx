@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UpsertWeatherInput, upsertWeatherInput } from "@ou-ca/common/api/weather";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";

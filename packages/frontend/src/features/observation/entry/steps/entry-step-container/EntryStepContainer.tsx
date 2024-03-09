@@ -1,5 +1,5 @@
-import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { type FunctionComponent } from "react";
+import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventoryDetails from "../../../inventory/inventory-details/InventoryDetails";
 import EntryForm from "../../entry-form/EntryForm";

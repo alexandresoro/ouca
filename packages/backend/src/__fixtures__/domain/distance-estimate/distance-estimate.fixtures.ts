@@ -1,7 +1,4 @@
-import {
-  type DistanceEstimate,
-  type DistanceEstimateCreateInput,
-} from "@domain/distance-estimate/distance-estimate.js";
+import type { DistanceEstimate, DistanceEstimateCreateInput } from "@domain/distance-estimate/distance-estimate.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

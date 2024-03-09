@@ -1,4 +1,4 @@
-import { type FunctionComponent, type PropsWithChildren } from "react";
+import type { FunctionComponent, PropsWithChildren } from "react";
 
 const Avatar: FunctionComponent<PropsWithChildren> = ({ children }) => {
   return (

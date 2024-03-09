@@ -1,4 +1,4 @@
-import { type Age, type AgeCreateInput } from "@domain/age/age.js";
+import type { Age, AgeCreateInput } from "@domain/age/age.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

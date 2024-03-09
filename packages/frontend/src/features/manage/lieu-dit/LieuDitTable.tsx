@@ -1,4 +1,4 @@
-import { type LocalityExtended } from "@ou-ca/common/api/entities/locality";
+import type { LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesOrderBy, getLocalitiesExtendedResponse } from "@ou-ca/common/api/locality";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

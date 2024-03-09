@@ -1,5 +1,5 @@
-import { type TownExtended } from "@ou-ca/common/api/entities/town";
-import { type FunctionComponent } from "react";
+import type { TownExtended } from "@ou-ca/common/api/entities/town";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 

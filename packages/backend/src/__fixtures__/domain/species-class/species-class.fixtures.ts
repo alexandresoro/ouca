@@ -1,4 +1,4 @@
-import { type SpeciesClass, type SpeciesClassCreateInput } from "@domain/species-class/species-class.js";
+import type { SpeciesClass, SpeciesClassCreateInput } from "@domain/species-class/species-class.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

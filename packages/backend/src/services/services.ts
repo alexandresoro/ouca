@@ -10,7 +10,7 @@ import { buildSexRepository } from "@infrastructure/repositories/sex/sex-reposit
 import { buildSpeciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
-import { type DatabasePool } from "slonik";
+import type { DatabasePool } from "slonik";
 import { type AgeService, buildAgeService } from "../application/services/age/age-service.js";
 import {
   type DepartmentService,

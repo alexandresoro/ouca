@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Inventory } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, upsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
 import { format } from "date-fns";
@@ -18,7 +18,7 @@ import {
 import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
 import InventoryFormObserver from "./InventoryFormObserver";
-import { type InventoryFormState } from "./InventoryFormState";
+import type { InventoryFormState } from "./InventoryFormState";
 import InventoryFormWeather from "./InventoryFormWeather";
 
 type InventoryFormProps = {

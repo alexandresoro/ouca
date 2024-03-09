@@ -2,10 +2,10 @@ import { weatherCreateInputFactory } from "@fixtures/domain/species-class/specie
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { weatherFactory } from "@fixtures/domain/weather/weather.fixtures.js";
 import { upsertWeatherInputFactory } from "@fixtures/services/weather/weather-service.fixtures.js";
-import { type WeatherRepository } from "@interfaces/weather-repository-interface.js";
-import { type WeathersSearchParams } from "@ou-ca/common/api/weather";
+import type { WeatherRepository } from "@interfaces/weather-repository-interface.js";
+import type { WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildWeatherService } from "./weather-service.js";
 

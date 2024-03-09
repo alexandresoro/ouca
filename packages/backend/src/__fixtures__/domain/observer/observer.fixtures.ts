@@ -1,4 +1,4 @@
-import { type Observer, type ObserverCreateInput } from "@domain/observer/observer.js";
+import type { Observer, ObserverCreateInput } from "@domain/observer/observer.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

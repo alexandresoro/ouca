@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UpsertNumberEstimateInput, upsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Checkbox from "../../../components/base/Checkbox";

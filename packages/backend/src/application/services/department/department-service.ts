@@ -1,13 +1,13 @@
-import { type DepartmentCreateInput, type DepartmentFailureReason } from "@domain/department/department.js";
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type DepartmentRepository } from "@interfaces/department-repository-interface.js";
-import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
-import { type Department } from "@ou-ca/common/api/entities/department";
+import type { DepartmentCreateInput, DepartmentFailureReason } from "@domain/department/department.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { DepartmentRepository } from "@interfaces/department-repository-interface.js";
+import type { DepartmentsSearchParams, UpsertDepartmentInput } from "@ou-ca/common/api/department";
+import type { Department } from "@ou-ca/common/api/entities/department";
 import { type Result, err, ok } from "neverthrow";
-import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
+import type { CommuneRepository } from "../../../repositories/commune/commune-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type DepartmentServiceDependencies = {

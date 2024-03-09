@@ -1,15 +1,15 @@
-import { type SearchCriteriaParams } from "@ou-ca/common/api/common/search-criteria";
-import { type AgeSimple } from "@ou-ca/common/api/entities/age";
-import { type Behavior } from "@ou-ca/common/api/entities/behavior";
-import { type Department } from "@ou-ca/common/api/entities/department";
-import { type Environment } from "@ou-ca/common/api/entities/environment";
-import { type Locality } from "@ou-ca/common/api/entities/locality";
-import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
-import { type Sex } from "@ou-ca/common/api/entities/sex";
-import { type Species } from "@ou-ca/common/api/entities/species";
-import { type SpeciesClass } from "@ou-ca/common/api/entities/species-class";
-import { type Town } from "@ou-ca/common/api/entities/town";
-import { type NicheurCode } from "@ou-ca/common/types/nicheur.model";
+import type { SearchCriteriaParams } from "@ou-ca/common/api/common/search-criteria";
+import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import type { Department } from "@ou-ca/common/api/entities/department";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
+import type { ObserverSimple } from "@ou-ca/common/api/entities/observer";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
+import type { Species } from "@ou-ca/common/api/entities/species";
+import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
+import type { Town } from "@ou-ca/common/api/entities/town";
+import type { NicheurCode } from "@ou-ca/common/types/nicheur.model";
 import { atom } from "jotai";
 
 export const searchEntriesFilterObserversAtom = atom<ObserverSimple[]>([]);

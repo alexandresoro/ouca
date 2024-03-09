@@ -22,7 +22,7 @@
         "useCollapsedElseIf": "warn",
         "useForOf": "warn",
         "useFragmentSyntax": "warn",
-        "useImportType": "off",
+        "useImportType": "warn",
         "useSelfClosingElements": "warn",
         "useShorthandArrayType": "error"
       },

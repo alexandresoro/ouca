@@ -1,8 +1,8 @@
 import { Dialog } from "@headlessui/react";
-import { type EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { Link } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventorySummaryPanel from "../../inventory/inventory-summary-panel/InventorySummaryPanel";
 import EntrySummaryPanel from "../entry-summary-panel/EntrySummaryPanel";

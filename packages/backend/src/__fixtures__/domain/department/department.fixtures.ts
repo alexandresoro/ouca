@@ -1,4 +1,4 @@
-import { type Department, type DepartmentCreateInput } from "@domain/department/department.js";
+import type { Department, DepartmentCreateInput } from "@domain/department/department.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

@@ -1,4 +1,4 @@
-import { type User } from "oidc-client-ts";
+import type { User } from "oidc-client-ts";
 
 export const getFullName = (user: User | null | undefined): string | null => {
   if (!user?.profile) {

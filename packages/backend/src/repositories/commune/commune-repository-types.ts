@@ -1,6 +1,6 @@
 import { townSchema } from "@domain/town/town.js";
 import { z } from "zod";
-import { type SortOrder } from "../common.js";
+import type { SortOrder } from "../common.js";
 
 export const communeWithDepartementCodeSchema = townSchema.extend({
   departementCode: z.string(),

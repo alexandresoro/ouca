@@ -1,4 +1,4 @@
-import { type SpeciesFindManyInput } from "@domain/species/species.js";
+import type { SpeciesFindManyInput } from "@domain/species/species.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { type IdentifierSqlToken, sql } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";

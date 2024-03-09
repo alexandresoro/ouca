@@ -1,13 +1,13 @@
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { departmentFactory } from "@fixtures/domain/department/department.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDepartmentInputFactory } from "@fixtures/services/department/department-service.fixtures.js";
-import { type DepartmentRepository } from "@interfaces/department-repository-interface.js";
-import { type DepartmentsSearchParams } from "@ou-ca/common/api/department";
+import type { DepartmentRepository } from "@interfaces/department-repository-interface.js";
+import type { DepartmentsSearchParams } from "@ou-ca/common/api/department";
 import { err, ok } from "neverthrow";
-import { type CommuneRepository } from "../../../repositories/commune/commune-repository.js";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
+import type { CommuneRepository } from "../../../repositories/commune/commune-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildDepartmentService } from "./department-service.js";
 

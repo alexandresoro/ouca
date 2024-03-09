@@ -1,12 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { behaviorFactory } from "@fixtures/domain/behavior/behavior.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertBehaviorInputFactory } from "@fixtures/services/behavior/behavior-service.fixtures.js";
-import { type BehaviorsSearchParams } from "@ou-ca/common/api/behavior";
+import type { BehaviorsSearchParams } from "@ou-ca/common/api/behavior";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildBehaviorService } from "./behavior-service.js";
 

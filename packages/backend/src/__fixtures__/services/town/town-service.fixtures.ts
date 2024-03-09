@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type Town } from "@ou-ca/common/api/entities/town";
-import { type UpsertTownInput } from "@ou-ca/common/api/town";
+import type { Town } from "@ou-ca/common/api/entities/town";
+import type { UpsertTownInput } from "@ou-ca/common/api/town";
 import { Factory } from "fishery";
 
 export const townServiceFactory = Factory.define<Town>(() => {

@@ -1,5 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Town, type TownExtended } from "@ou-ca/common/api/entities/town";
+import type { Town, TownExtended } from "@ou-ca/common/api/entities/town";
 import {
   getTownResponse,
   getTownsExtendedResponse,
@@ -8,8 +8,8 @@ import {
   upsertTownInput,
   upsertTownResponse,
 } from "@ou-ca/common/api/town";
-import { type FastifyPluginCallback } from "fastify";
-import { type Services } from "../services/services.js";
+import type { FastifyPluginCallback } from "fastify";
+import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const townsController: FastifyPluginCallback<{

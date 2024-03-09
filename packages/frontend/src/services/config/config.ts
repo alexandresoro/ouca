@@ -1,7 +1,7 @@
 import type * as Sentry from "@sentry/react";
-import { type UmamiConfig } from "@services/analytics/umami";
+import type { UmamiConfig } from "@services/analytics/umami";
 import { atom, getDefaultStore } from "jotai";
-import { type UserManagerSettings } from "oidc-client-ts";
+import type { UserManagerSettings } from "oidc-client-ts";
 
 // Application configuration structure
 export type AppConfig = {

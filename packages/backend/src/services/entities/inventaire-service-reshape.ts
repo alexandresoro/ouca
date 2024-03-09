@@ -1,8 +1,8 @@
-import { type Locality } from "@domain/locality/locality.js";
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import type { Locality } from "@domain/locality/locality.js";
+import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import type { CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { getHumanFriendlyTimeFromMinutes } from "@ou-ca/common/utils/time-format-convert";
-import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
+import type { InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 
 export const reshapeInputInventoryUpsertData = (
   inventory: UpsertInventoryInput,

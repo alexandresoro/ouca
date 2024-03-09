@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type Locality } from "@ou-ca/common/api/entities/locality";
-import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
+import type { UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { Factory } from "fishery";
 
 export const localityServiceFactory = Factory.define<Locality>(() => {

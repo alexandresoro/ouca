@@ -1,7 +1,7 @@
-import { type FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback } from "fastify";
 import { BEARER_PATTERN } from "../fastify/handle-authorization-hook.js";
 import { EXTERNAL_PROVIDER_NAME } from "../services/oidc/zitadel-oidc-service.js";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 
 const userController: FastifyPluginCallback<{
   services: Services;

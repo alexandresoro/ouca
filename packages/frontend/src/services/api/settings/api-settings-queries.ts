@@ -1,6 +1,6 @@
 import { getSettingsResponse } from "@ou-ca/common/api/settings";
-import { type SWRConfiguration } from "swr";
-import { type z } from "zod";
+import type { SWRConfiguration } from "swr";
+import type { z } from "zod";
 import useApiQuery from "../useApiQuery";
 
 export const useApiGetSettings = <E = unknown>(

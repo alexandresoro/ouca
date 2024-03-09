@@ -1,12 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { environmentFactory } from "@fixtures/domain/environment/environment.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertEnvironmentInputFactory } from "@fixtures/services/environment/environment-service.fixtures.js";
-import { type EnvironmentsSearchParams } from "@ou-ca/common/api/environment";
+import type { EnvironmentsSearchParams } from "@ou-ca/common/api/environment";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildEnvironmentService } from "./environment-service.js";
 

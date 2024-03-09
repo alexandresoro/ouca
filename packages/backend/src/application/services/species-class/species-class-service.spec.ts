@@ -1,12 +1,12 @@
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSpeciesClassInputFactory } from "@fixtures/services/species-class/species-class-service.fixtures.js";
-import { type SpeciesClassRepository } from "@interfaces/species-class-repository-interface.js";
-import { type ClassesSearchParams } from "@ou-ca/common/api/species-class";
+import type { SpeciesClassRepository } from "@interfaces/species-class-repository-interface.js";
+import type { ClassesSearchParams } from "@ou-ca/common/api/species-class";
 import { err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type EspeceRepository } from "../../../repositories/espece/espece-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildSpeciesClassService } from "./species-class-service.js";
 

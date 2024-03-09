@@ -1,4 +1,4 @@
-import { type EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
+import type { EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import { type EnvironmentsOrderBy, getEnvironmentsExtendedResponse } from "@ou-ca/common/api/environment";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

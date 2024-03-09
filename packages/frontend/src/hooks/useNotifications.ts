@@ -1,4 +1,4 @@
-import { type Notification } from "@typings/Notification";
+import type { Notification } from "@typings/Notification";
 import { useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { notificationsAtom } from "../features/notifications/notificationAtoms";

@@ -1,7 +1,7 @@
 import { localitySchema } from "@domain/locality/locality.js";
-import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import type { CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
-import { type SortOrder } from "../common.js";
+import type { SortOrder } from "../common.js";
 
 export const lieuditWithCommuneAndDepartementCodeSchema = localitySchema.extend({
   communeCode: z.number(),

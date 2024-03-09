@@ -1,4 +1,4 @@
-import { type z } from "zod";
+import type { z } from "zod";
 
 export class FetchError extends Error {
   status: number;

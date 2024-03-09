@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { type Age } from "@ou-ca/common/api/entities/age";
+import type { UpsertAgeInput } from "@ou-ca/common/api/age";
+import type { Age } from "@ou-ca/common/api/entities/age";
 import { Factory } from "fishery";
 
 export const ageServiceFactory = Factory.define<Age>(() => {

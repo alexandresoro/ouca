@@ -1,16 +1,16 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Locality } from "@ou-ca/common/api/entities/locality";
-import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
+import type { LocalitiesSearchParams, UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
-import {
-  type LieuditCreateInput,
-  type LieuditWithCommuneAndDepartementCode,
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
+import type {
+  LieuditCreateInput,
+  LieuditWithCommuneAndDepartementCode,
 } from "../../../repositories/lieudit/lieudit-repository-types.js";
-import { type LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
+import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { getSqlPagination } from "../entities-utils.js";
 import { reshapeInputLocalityUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 

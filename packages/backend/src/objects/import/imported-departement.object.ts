@@ -1,4 +1,4 @@
-import { type Department } from "@domain/department/department.js";
+import type { Department } from "@domain/department/department.js";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;

@@ -1,11 +1,11 @@
-import { type PaginatedResponseSchemaType } from "@ou-ca/common/api/common/pagination";
+import type { PaginatedResponseSchemaType } from "@ou-ca/common/api/common/pagination";
 import { apiUrlAtom } from "@services/api/useApiUrl";
 import { type QueryFunction, type UseInfiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
-import { type FetchErrorType } from "@utils/fetch-api";
+import type { FetchErrorType } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
-import { type z } from "zod";
+import type { z } from "zod";
 
 const getNextPage = (page: z.infer<PaginatedResponseSchemaType<z.ZodAny>>): number | undefined => {
   if (page.meta.pageNumber === undefined || page.meta.pageSize === undefined) {

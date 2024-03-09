@@ -1,14 +1,11 @@
-import { type DistanceEstimateFailureReason } from "@domain/distance-estimate/distance-estimate.js";
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
-import {
-  type DistanceEstimatesSearchParams,
-  type UpsertDistanceEstimateInput,
-} from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
+import type { DistanceEstimateFailureReason } from "@domain/distance-estimate/distance-estimate.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
+import type { DistanceEstimatesSearchParams, UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
+import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { type Result, err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type DistanceEstimateServiceDependencies = {

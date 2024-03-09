@@ -1,5 +1,5 @@
-import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { type WeatherExtended } from "@ou-ca/common/api/entities/weather";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,7 +1,7 @@
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import type { CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
-import { type SortOrder } from "../common.js";
+import type { SortOrder } from "../common.js";
 
 export const inventaireSchema = z.object({
   id: z.string(),

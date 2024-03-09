@@ -1,4 +1,4 @@
-import { type BreederCode } from "../behavior/breeder.js";
+import type { BreederCode } from "../behavior/breeder.js";
 
 // FIXME: use string instead of number for ids
 export type SearchCriteria = {

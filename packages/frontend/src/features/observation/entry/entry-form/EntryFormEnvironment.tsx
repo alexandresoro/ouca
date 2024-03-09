@@ -1,4 +1,4 @@
-import { type Environment } from "@ou-ca/common/api/entities/environment";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { getEnvironmentsResponse } from "@ou-ca/common/api/environment";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

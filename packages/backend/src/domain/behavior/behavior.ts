@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { type CommonFailureReason } from "../shared/failure-reason.js";
-import { type SortOrder } from "../shared/sort-order.js";
+import type { CommonFailureReason } from "../shared/failure-reason.js";
+import type { SortOrder } from "../shared/sort-order.js";
 import { BREEDER_CODES, type BreederCode } from "./breeder.js";
 
 export type BehaviorFailureReason = CommonFailureReason;

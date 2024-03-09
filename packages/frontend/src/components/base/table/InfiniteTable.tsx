@@ -1,4 +1,4 @@
-import { type FunctionComponent, type ReactElement } from "react";
+import type { FunctionComponent, ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 

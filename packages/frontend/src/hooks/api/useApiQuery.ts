@@ -1,10 +1,10 @@
 import { apiUrlAtom } from "@services/api/useApiUrl";
 import { type QueryFunction, type UseQueryOptions, useQuery } from "@tanstack/react-query";
-import { type FetchErrorType } from "@utils/fetch-api";
+import type { FetchErrorType } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
-import { type z } from "zod";
+import type { z } from "zod";
 
 const useApiQuery = <
   TQueryFnData = unknown,

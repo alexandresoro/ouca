@@ -1,5 +1,5 @@
-import { type Locality } from "@domain/locality/locality.js";
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import type { Locality } from "@domain/locality/locality.js";
+import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { mock } from "vitest-mock-extended";
 import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
 

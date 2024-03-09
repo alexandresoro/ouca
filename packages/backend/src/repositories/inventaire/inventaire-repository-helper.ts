@@ -1,6 +1,6 @@
 import { type IdentifierSqlToken, sql } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
-import { type InventaireFindManyInput, type InventaireFindMatchingInput } from "./inventaire-repository-types.js";
+import type { InventaireFindManyInput, InventaireFindMatchingInput } from "./inventaire-repository-types.js";
 
 export const buildFindMatchingInventaireClause = (criteria: InventaireFindMatchingInput) => {
   if (!criteria) {

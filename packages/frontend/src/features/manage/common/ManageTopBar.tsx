@@ -1,6 +1,6 @@
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
 import { Export, Plus } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 type ManageTopBarProps = {

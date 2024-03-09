@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { type InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {

@@ -6,7 +6,7 @@ import {
   observerSchema,
   observerSimpleSchema,
 } from "@domain/observer/observer.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import escapeStringRegexp from "escape-string-regexp";

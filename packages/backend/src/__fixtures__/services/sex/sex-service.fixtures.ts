@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type Sex } from "@ou-ca/common/api/entities/sex";
-import { type UpsertSexInput } from "@ou-ca/common/api/sex";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
+import type { UpsertSexInput } from "@ou-ca/common/api/sex";
 import { Factory } from "fishery";
 
 export const sexServiceFactory = Factory.define<Sex>(() => {

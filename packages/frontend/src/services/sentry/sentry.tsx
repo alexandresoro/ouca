@@ -1,7 +1,7 @@
 import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
-import { type AppConfig } from "@services/config/config";
-import { type User } from "oidc-client-ts";
+import type { AppConfig } from "@services/config/config";
+import type { User } from "oidc-client-ts";
 import { useEffect } from "react";
 import {
   createBrowserRouter,

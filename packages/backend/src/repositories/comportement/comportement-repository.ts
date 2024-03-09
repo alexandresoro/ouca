@@ -9,7 +9,7 @@ import {
   objectToKeyValueSet,
   objectsToKeyValueInsert,
 } from "../repository-helpers.js";
-import { type ComportementCreateInput } from "./comportement-repository-types.js";
+import type { ComportementCreateInput } from "./comportement-repository-types.js";
 
 export type ComportementRepositoryDependencies = {
   slonik: DatabasePool;

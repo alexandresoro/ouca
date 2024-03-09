@@ -1,10 +1,10 @@
 import { ageCreateInputFactory, ageFactory } from "@fixtures/domain/age/age.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertAgeInputFactory } from "@fixtures/services/age/age-service.fixtures.js";
-import { type AgeRepository } from "@interfaces/age-repository-interface.js";
-import { type AgesSearchParams } from "@ou-ca/common/api/age";
+import type { AgeRepository } from "@interfaces/age-repository-interface.js";
+import type { AgesSearchParams } from "@ou-ca/common/api/age";
 import { err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildAgeService } from "./age-service.js";
 

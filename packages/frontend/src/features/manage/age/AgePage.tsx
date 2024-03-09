@@ -1,5 +1,5 @@
 import { type UpsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
-import { type Age, type AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";

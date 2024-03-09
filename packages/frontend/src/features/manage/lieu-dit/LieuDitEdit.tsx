@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
-import { type Department } from "@ou-ca/common/api/entities/department";
+import type { Department } from "@ou-ca/common/api/entities/department";
 import { type UpsertLocalityInput, upsertLocalityInput } from "@ou-ca/common/api/locality";
 import { getTownsResponse } from "@ou-ca/common/api/town";
 import { type FunctionComponent, useEffect, useState } from "react";

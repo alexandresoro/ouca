@@ -1,5 +1,5 @@
 import { type Age, type AgeCreateInput, type AgeFindManyInput, ageSchema } from "@domain/age/age.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql } from "kysely";

@@ -1,5 +1,5 @@
 import { UpArrowAlt } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent, type PropsWithChildren } from "react";
+import type { FunctionComponent, PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 
 type TableSortLabelProps = PropsWithChildren<{

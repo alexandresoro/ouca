@@ -1,6 +1,6 @@
-import { type Age, type AgeCreateInput, type AgeFindManyInput } from "@domain/age/age.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Result } from "neverthrow";
+import type { Age, AgeCreateInput, AgeFindManyInput } from "@domain/age/age.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Result } from "neverthrow";
 
 export type AgeRepository = {
   findAgeById: (id: number) => Promise<Age | null>;

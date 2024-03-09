@@ -1,6 +1,6 @@
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { createUserInputFactory } from "@fixtures/domain/user/user.fixtures.js";
-import { type UserRepository } from "@interfaces/user-repository-interface.js";
+import type { UserRepository } from "@interfaces/user-repository-interface.js";
 import { err } from "neverthrow";
 import { mockVi } from "../../../utils/mock.js";
 import { buildUserService } from "./user-service.js";

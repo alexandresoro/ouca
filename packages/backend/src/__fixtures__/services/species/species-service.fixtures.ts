@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { speciesClassServiceFactory } from "@fixtures/services/species-class/species-class-service.fixtures.js";
-import { type Species } from "@ou-ca/common/api/entities/species";
-import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import type { Species } from "@ou-ca/common/api/entities/species";
+import type { UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { Factory } from "fishery";
 
 export const speciesServiceFactory = Factory.define<Species>(() => {

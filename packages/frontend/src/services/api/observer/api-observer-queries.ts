@@ -2,8 +2,8 @@ import { deleteObserverResponse, getObserverResponse, upsertObserverResponse } f
 import useApiFetch from "@services/api/useApiFetch";
 import useApiMutation from "@services/api/useApiMutation";
 import useApiQuery from "@services/api/useApiQuery";
-import { type SWRMutationConfiguration } from "swr/mutation";
-import { type z } from "zod";
+import type { SWRMutationConfiguration } from "swr/mutation";
+import type { z } from "zod";
 
 export const useApiObserverQuery = (id: string) => {
   return useApiQuery(`/observers/${id}`, {

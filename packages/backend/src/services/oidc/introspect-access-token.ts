@@ -1,5 +1,5 @@
-import { type OidcConfig } from "@infrastructure/config/oidc-config.js";
-import { type z } from "zod";
+import type { OidcConfig } from "@infrastructure/config/oidc-config.js";
+import type { z } from "zod";
 import { logger } from "../../utils/logger.js";
 
 /**

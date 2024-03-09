@@ -1,8 +1,8 @@
-import { type AgeSimple } from "@ou-ca/common/api/entities/age";
-import { type Department } from "@ou-ca/common/api/entities/department";
-import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
-import { type Sex } from "@ou-ca/common/api/entities/sex";
+import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Department } from "@ou-ca/common/api/entities/department";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
+import type { ObserverSimple } from "@ou-ca/common/api/entities/observer";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { z } from "zod";
 
 export const settingsSchema = z.object({

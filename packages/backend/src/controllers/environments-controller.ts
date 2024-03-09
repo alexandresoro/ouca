@@ -1,5 +1,5 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Environment, type EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
+import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import {
   getEnvironmentResponse,
   getEnvironmentsExtendedResponse,
@@ -8,8 +8,8 @@ import {
   upsertEnvironmentInput,
   upsertEnvironmentResponse,
 } from "@ou-ca/common/api/environment";
-import { type FastifyPluginCallback } from "fastify";
-import { type Services } from "../services/services.js";
+import type { FastifyPluginCallback } from "fastify";
+import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const environmentsController: FastifyPluginCallback<{

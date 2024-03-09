@@ -7,9 +7,9 @@ import {
   upsertBehaviorInput,
   upsertBehaviorResponse,
 } from "@ou-ca/common/api/behavior";
-import { type Behavior, type BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
-import { type FastifyPluginCallback } from "fastify";
-import { type Services } from "../services/services.js";
+import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
+import type { FastifyPluginCallback } from "fastify";
+import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const behaviorsController: FastifyPluginCallback<{

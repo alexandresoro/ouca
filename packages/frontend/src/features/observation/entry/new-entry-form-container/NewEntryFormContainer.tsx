@@ -1,5 +1,5 @@
-import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
+import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";

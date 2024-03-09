@@ -1,4 +1,4 @@
-import { type NumberEstimate, type NumberEstimateCreateInput } from "@domain/number-estimate/number-estimate.js";
+import type { NumberEstimate, NumberEstimateCreateInput } from "@domain/number-estimate/number-estimate.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

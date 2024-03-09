@@ -1,11 +1,11 @@
-import { type SexCreateInput, type SexFailureReason } from "@domain/sex/sex.js";
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type SexRepository } from "@interfaces/sex-repository-interface.js";
-import { type Sex } from "@ou-ca/common/api/entities/sex";
-import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
+import type { SexCreateInput, SexFailureReason } from "@domain/sex/sex.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { SexRepository } from "@interfaces/sex-repository-interface.js";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
+import type { SexesSearchParams, UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Result, err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type SexServiceDependencies = {

@@ -1,4 +1,4 @@
-import { type PaginationMetadata } from "@ou-ca/common/api/common/pagination";
+import type { PaginationMetadata } from "@ou-ca/common/api/common/pagination";
 
 export const getPaginationMetadata = (
   count: number,

@@ -1,4 +1,4 @@
-import { type Behavior, type BehaviorCreateInput } from "@domain/behavior/behavior.js";
+import type { Behavior, BehaviorCreateInput } from "@domain/behavior/behavior.js";
 import { BREEDER_CODES } from "@domain/behavior/breeder.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";

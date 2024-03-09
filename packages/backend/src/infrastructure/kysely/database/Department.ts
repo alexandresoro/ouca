@@ -1,4 +1,4 @@
-import { type Generated } from "kysely";
+import type { Generated } from "kysely";
 
 export type Department = {
   id: Generated<number>;

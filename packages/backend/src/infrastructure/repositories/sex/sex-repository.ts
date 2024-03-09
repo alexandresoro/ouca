@@ -1,5 +1,5 @@
 import { type Sex, type SexCreateInput, type SexFindManyInput, sexSchema } from "@domain/sex/sex.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql } from "kysely";

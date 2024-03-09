@@ -1,7 +1,7 @@
 import useApiMutation from "@hooks/api/useApiMutation";
 import { type UpsertEntryInput, type UpsertEntryResponse, upsertEntryResponse } from "@ou-ca/common/api/entry";
-import { type UseMutationOptions } from "@tanstack/react-query";
-import { type FetchErrorType } from "@utils/fetch-api";
+import type { UseMutationOptions } from "@tanstack/react-query";
+import type { FetchErrorType } from "@utils/fetch-api";
 
 export const useApiEntryCreate = (
   mutationOptions?: Omit<

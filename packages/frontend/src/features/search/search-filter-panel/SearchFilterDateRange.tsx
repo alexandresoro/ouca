@@ -1,7 +1,7 @@
 import TextInput from "@components/base/TextInput";
 import { isValid } from "date-fns";
 import { useAtom } from "jotai";
-import { type ChangeEventHandler, type FunctionComponent } from "react";
+import type { ChangeEventHandler, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { searchEntriesFilterFromDateAtom, searchEntriesFilterToDateAtom } from "../searchEntriesCriteriaAtom";
 

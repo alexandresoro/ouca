@@ -1,5 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import { type FunctionComponent, type PropsWithChildren } from "react";
+import type { FunctionComponent, PropsWithChildren } from "react";
 
 type EntityUpsertDialogProps = {
   open: boolean;

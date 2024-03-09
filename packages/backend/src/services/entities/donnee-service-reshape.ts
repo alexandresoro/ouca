@@ -1,5 +1,5 @@
-import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
+import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
+import type { DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 
 export const reshapeInputEntryUpsertData = (data: UpsertEntryInput): DonneeCreateInput => {
   const {

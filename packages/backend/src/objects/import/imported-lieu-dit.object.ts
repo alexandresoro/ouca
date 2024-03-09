@@ -1,5 +1,5 @@
-import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
-import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
+import type { CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import type { LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
 
 const DEPARTEMENT_INDEX = 0;

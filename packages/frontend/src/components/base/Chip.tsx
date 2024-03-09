@@ -1,5 +1,5 @@
 import { X } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 
 type ChipProps = {
   content: string;

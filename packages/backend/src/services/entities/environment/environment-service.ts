@@ -1,12 +1,12 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type Environment } from "@ou-ca/common/api/entities/environment";
-import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
+import type { EnvironmentsSearchParams, UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { type MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
-import { type MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
+import type { MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type EnvironmentServiceDependencies = {

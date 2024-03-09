@@ -2,7 +2,7 @@ import fetchApi from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useCallback } from "react";
 import { useAuth } from "react-oidc-context";
-import { type z } from "zod";
+import type { z } from "zod";
 import useApiUrl from "./useApiUrl";
 
 type UseApiFetchParams<T> = { path?: string; method?: string; schema?: z.ZodType<T> };

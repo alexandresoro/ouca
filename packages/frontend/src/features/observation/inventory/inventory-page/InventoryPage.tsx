@@ -1,6 +1,6 @@
 import { getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { getInventoryResponse } from "@ou-ca/common/api/inventory";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "react-router-dom";

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import test from "node:test";
-import { type Coordinates } from "../types/coordinates.object.js";
+import type { Coordinates } from "../types/coordinates.object.js";
 import { transformCoordinates } from "./coordinates-transformer.js";
 
 test("should throw an error if coordinates are missing", () => {

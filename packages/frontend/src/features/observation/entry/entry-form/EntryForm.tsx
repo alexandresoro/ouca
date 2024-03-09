@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Entry } from "@ou-ca/common/api/entities/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { type UpsertEntryInput, upsertEntryInput } from "@ou-ca/common/api/entry";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useUserSettingsContext from "../../../../hooks/useUserSettingsContext";
@@ -11,7 +11,7 @@ import EntryFormComment from "./EntryFormComment";
 import EntryFormDistanceRegroupment from "./EntryFormDistanceRegroupment";
 import EntryFormEnvironments from "./EntryFormEnvironments";
 import EntryFormSpecies from "./EntryFormSpecies";
-import { type EntryFormState } from "./EntryFormState";
+import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormProps = {
   submitFormText?: string;

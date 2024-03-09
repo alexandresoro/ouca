@@ -1,7 +1,7 @@
 import { getDepartmentResponse, getDepartmentsResponse } from "@ou-ca/common/api/department";
-import { type Department } from "@ou-ca/common/api/entities/department";
-import { type Locality } from "@ou-ca/common/api/entities/locality";
-import { type Town } from "@ou-ca/common/api/entities/town";
+import type { Department } from "@ou-ca/common/api/entities/department";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
+import type { Town } from "@ou-ca/common/api/entities/town";
 import { getLocalitiesResponse } from "@ou-ca/common/api/locality";
 import { getTownResponse, getTownsResponse } from "@ou-ca/common/api/town";
 import { altitudeServiceStatusAtom } from "@services/altitude/altitude-service";
@@ -22,7 +22,7 @@ import {
   inventoryLongitudeAtom,
 } from "../../inventoryFormAtoms";
 import { departmentIdAtom, townIdAtom } from "../../inventoryMapAtom";
-import { type InventoryFormState } from "./InventoryFormState";
+import type { InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormLocationProps = Pick<UseFormReturn<InventoryFormState>, "register" | "control"> & {
   defaultDepartment?: Department;

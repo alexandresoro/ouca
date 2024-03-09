@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import test from "node:test";
 import { areCoordinatesCustomized } from "./coordinates-helper.js";
-import { type CoordinatesSystemType } from "./coordinates-system.object.js";
+import type { CoordinatesSystemType } from "./coordinates-system.object.js";
 
 test("should correctly validate non-customized coordinated", () => {
   const lieudit = {

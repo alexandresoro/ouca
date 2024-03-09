@@ -1,10 +1,6 @@
-import {
-  type Department,
-  type DepartmentCreateInput,
-  type DepartmentFindManyInput,
-} from "@domain/department/department.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Result } from "neverthrow";
+import type { Department, DepartmentCreateInput, DepartmentFindManyInput } from "@domain/department/department.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Result } from "neverthrow";
 
 export type DepartmentRepository = {
   findDepartmentById: (id: number) => Promise<Department | null>;

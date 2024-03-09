@@ -1,4 +1,4 @@
-import { type Weather, type WeatherExtended } from "@ou-ca/common/api/entities/weather";
+import type { Weather, WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";

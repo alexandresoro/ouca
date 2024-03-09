@@ -2,12 +2,12 @@ import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { Worker } from "node:worker_threads";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { ImportErrorType } from "@ou-ca/common/import/import-error-types";
-import { type ImportStatus } from "@ou-ca/common/import/import-status";
+import type { ImportStatus } from "@ou-ca/common/import/import-status";
 import { ImportStatusEnum, OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
-import { type ImportType } from "@ou-ca/common/import/import-types";
-import { type OngoingValidationStats } from "@ou-ca/common/import/ongoing-validation-stats";
+import type { ImportType } from "@ou-ca/common/import/import-types";
+import type { OngoingValidationStats } from "@ou-ca/common/import/ongoing-validation-stats";
 import { stringify } from "csv-stringify/sync";
 import {
   IMPORT_COMPLETE,

@@ -1,4 +1,4 @@
-import { type Weather, type WeatherCreateInput } from "@domain/weather/weather.js";
+import type { Weather, WeatherCreateInput } from "@domain/weather/weather.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

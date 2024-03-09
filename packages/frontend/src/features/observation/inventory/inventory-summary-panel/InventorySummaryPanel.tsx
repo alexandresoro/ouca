@@ -1,7 +1,7 @@
-import { type InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { Calendar, Map as MapIcon, Sun, User } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import ItemWithAvatar from "../../../../components/base/ItemWithAvatar";
 import { getInventaireCoordinates } from "../../../../utils/coordinates-helper";

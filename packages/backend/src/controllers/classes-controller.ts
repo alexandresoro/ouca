@@ -1,4 +1,4 @@
-import { type SpeciesClass, type SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
+import type { SpeciesClass, SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
 import {
   getClassResponse,
   getClassesExtendedResponse,
@@ -7,9 +7,9 @@ import {
   upsertClassInput,
   upsertClassResponse,
 } from "@ou-ca/common/api/species-class";
-import { type FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 

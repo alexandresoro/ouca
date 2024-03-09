@@ -1,4 +1,4 @@
-import { type Settings } from "@domain/settings/settings.js";
+import type { Settings } from "@domain/settings/settings.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

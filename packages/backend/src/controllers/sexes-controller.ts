@@ -1,4 +1,4 @@
-import { type Sex, type SexExtended } from "@ou-ca/common/api/entities/sex";
+import type { Sex, SexExtended } from "@ou-ca/common/api/entities/sex";
 import {
   getSexResponse,
   getSexesExtendedResponse,
@@ -7,9 +7,9 @@ import {
   upsertSexInput,
   upsertSexResponse,
 } from "@ou-ca/common/api/sex";
-import { type FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 

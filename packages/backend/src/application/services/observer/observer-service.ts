@@ -1,10 +1,10 @@
-import { type AgeCreateInput } from "@domain/age/age.js";
-import { type ObserverFailureReason } from "@domain/observer/observer.js";
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
-import { type Observer, type ObserverSimple } from "@ou-ca/common/api/entities/observer";
-import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import type { AgeCreateInput } from "@domain/age/age.js";
+import type { ObserverFailureReason } from "@domain/observer/observer.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { ObserverRepository } from "@interfaces/observer-repository-interface.js";
+import type { Observer, ObserverSimple } from "@ou-ca/common/api/entities/observer";
+import type { ObserversSearchParams, UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Result, err, ok } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 

@@ -2,7 +2,7 @@ import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui
 import { Listbox } from "@headlessui/react";
 import { Check } from "@styled-icons/boxicons-regular";
 import { type FocusEventHandler, type ForwardedRef, type Key, forwardRef } from "react";
-import { type ConditionalKeys } from "type-fest";
+import type { ConditionalKeys } from "type-fest";
 import RequiredField from "../RequiredField";
 
 type SelectProps<T, K extends ConditionalKeys<T, Key>> = {

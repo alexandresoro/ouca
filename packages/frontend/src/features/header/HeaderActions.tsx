@@ -18,8 +18,8 @@ import {
   Sun,
 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
-import { type ParseKeys } from "i18next";
-import { type FunctionComponent } from "react";
+import type { ParseKeys } from "i18next";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 

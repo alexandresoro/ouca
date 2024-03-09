@@ -1,4 +1,4 @@
-import { type Locality, type LocalityCreateInput } from "@domain/locality/locality.js";
+import type { Locality, LocalityCreateInput } from "@domain/locality/locality.js";
 import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 

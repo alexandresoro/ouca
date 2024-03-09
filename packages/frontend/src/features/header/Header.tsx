@@ -1,4 +1,4 @@
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/img/logo.svg";
 import HeaderActions from "./HeaderActions";

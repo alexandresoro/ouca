@@ -1,7 +1,7 @@
 import { type User, userSchema } from "@domain/user/user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
-import { type SettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
+import type { SettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { logger } from "../../../utils/logger.js";
 
 const EXTERNAL_USER_INTERNAL_USER_MAPPING_CACHE_PREFIX = "externalUserInternalUserMapping";

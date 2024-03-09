@@ -1,4 +1,4 @@
-import { type FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback } from "fastify";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -15,7 +15,7 @@ import {
   generateObservateursExport,
   generateSexesExport,
 } from "../services/export-entites.js";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 
 const generateExportController: FastifyPluginCallback<{
   services: Services;

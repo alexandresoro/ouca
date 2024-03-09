@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef, type Key } from "react";
+import type { ComponentPropsWithRef, Key } from "react";
 import {
   type FieldPathByValue,
   type FieldValues,
@@ -7,7 +7,7 @@ import {
   type UseControllerProps,
   useController,
 } from "react-hook-form";
-import { type ConditionalKeys, type SetRequired } from "type-fest";
+import type { ConditionalKeys, SetRequired } from "type-fest";
 import AutocompleteMultiple from "../base/autocomplete/AutocompleteMultiple";
 
 type FormAutocompleteMultipleProps<TFieldValues extends FieldValues, T extends object> = SetRequired<

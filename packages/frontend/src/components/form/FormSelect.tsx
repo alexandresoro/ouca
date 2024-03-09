@@ -1,6 +1,6 @@
-import { type Key } from "react";
+import type { Key } from "react";
 import { type FieldValues, type Path, type PathValue, type UseControllerProps, useController } from "react-hook-form";
-import { type ConditionalKeys, type SetRequired } from "type-fest";
+import type { ConditionalKeys, SetRequired } from "type-fest";
 import Select from "../base/select/Select";
 
 type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>> = SetRequired<

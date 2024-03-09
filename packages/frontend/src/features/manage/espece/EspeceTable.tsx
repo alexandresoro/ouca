@@ -1,4 +1,4 @@
-import { type SpeciesExtended } from "@ou-ca/common/api/entities/species";
+import type { SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

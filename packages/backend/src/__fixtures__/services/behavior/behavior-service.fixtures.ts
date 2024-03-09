@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
-import { type Behavior } from "@ou-ca/common/api/entities/behavior";
+import type { UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { NICHEUR_CODES } from "@ou-ca/common/types/nicheur.model";
 import { Factory } from "fishery";
 

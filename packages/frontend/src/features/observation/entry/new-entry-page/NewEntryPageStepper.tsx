@@ -1,4 +1,4 @@
-import { type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { type NewEntryStep, STEPS } from "./new-entry-hash-step-mapper";
 

@@ -1,4 +1,4 @@
-import { type Environment, type EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
+import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import { type UpsertEnvironmentInput, upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";

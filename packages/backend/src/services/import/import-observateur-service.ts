@@ -1,6 +1,6 @@
-import { type ObserverCreateInput } from "@domain/observer/observer.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type ObserverSimple } from "@ou-ca/common/api/entities/observer";
+import type { ObserverCreateInput } from "@domain/observer/observer.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportObservateurService extends ImportEntiteAvecLibelleService {

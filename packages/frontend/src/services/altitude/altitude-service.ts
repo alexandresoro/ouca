@@ -1,4 +1,4 @@
-import { type CoordinatesWithAltitude } from "@typings/Coordinates";
+import type { CoordinatesWithAltitude } from "@typings/Coordinates";
 import { atom, getDefaultStore } from "jotai";
 import { LRUCache } from "lru-cache";
 import { getAltitudeForCoordinates } from "./providers/ign-alticodage-service";

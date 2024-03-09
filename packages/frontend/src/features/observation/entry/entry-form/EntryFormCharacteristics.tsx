@@ -1,7 +1,7 @@
 import { getAgesResponse } from "@ou-ca/common/api/age";
-import { type AgeSimple } from "@ou-ca/common/api/entities/age";
-import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type Sex } from "@ou-ca/common/api/entities/sex";
+import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
 import { type FunctionComponent, useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import TextInput from "../../../../components/base/TextInput";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
-import { type EntryFormState } from "./EntryFormState";
+import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormCharacteristicsProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {
   defaultNumber?: number;

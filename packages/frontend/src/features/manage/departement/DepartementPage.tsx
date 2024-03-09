@@ -1,5 +1,5 @@
 import { type UpsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
-import { type Department, type DepartmentExtended } from "@ou-ca/common/api/entities/department";
+import type { Department, DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";

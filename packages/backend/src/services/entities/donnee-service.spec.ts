@@ -1,16 +1,16 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type EntryNavigation } from "@ou-ca/common/api/entities/entry";
-import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
+import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
-import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
-import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
-import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
+import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
+import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
+import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import type { Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
+import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildDonneeService } from "./donnee-service.js";
 

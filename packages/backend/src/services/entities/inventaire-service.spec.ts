@@ -1,19 +1,16 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import { type Locality } from "@domain/locality/locality.js";
+import type { Locality } from "@domain/locality/locality.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
-import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
-import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
-import {
-  type Inventaire,
-  type InventaireCreateInput,
-} from "../../repositories/inventaire/inventaire-repository-types.js";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
+import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
+import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
+import type { Inventaire, InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
+import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import type { LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildInventaireService } from "./inventaire-service.js";
 

@@ -1,7 +1,7 @@
-import { type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
-import { type Behavior } from "@ou-ca/common/api/entities/behavior";
-import { type FunctionComponent } from "react";
-import { type SubmitHandler } from "react-hook-form";
+import type { UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import type { FunctionComponent } from "react";
+import type { SubmitHandler } from "react-hook-form";
 import ComportementEdit from "./ComportementEdit";
 
 type ComportementUpdateProps = {

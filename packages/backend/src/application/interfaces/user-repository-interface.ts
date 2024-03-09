@@ -1,4 +1,4 @@
-import { type User } from "@domain/user/user.js";
+import type { User } from "@domain/user/user.js";
 
 export type UserRepository = {
   getUserInfoById: (userId: string) => Promise<User | null>;

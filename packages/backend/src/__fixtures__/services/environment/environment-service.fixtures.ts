@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type Environment } from "@ou-ca/common/api/entities/environment";
-import { type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
+import type { UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { Factory } from "fishery";
 
 export const environmentServiceFactory = Factory.define<Environment>(() => {

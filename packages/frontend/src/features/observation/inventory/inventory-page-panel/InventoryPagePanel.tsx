@@ -1,6 +1,6 @@
 import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
-import { type InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import {
   ChevronLeft,

@@ -1,8 +1,8 @@
 import { observerCreateInputFactory, observerFactory } from "@fixtures/domain/observer/observer.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertObserverInputFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
-import { type ObserverRepository } from "@interfaces/observer-repository-interface.js";
-import { type ObserversSearchParams } from "@ou-ca/common/api/observer";
+import type { ObserverRepository } from "@interfaces/observer-repository-interface.js";
+import type { ObserversSearchParams } from "@ou-ca/common/api/observer";
 import { err, ok } from "neverthrow";
 import { mockVi } from "../../../utils/mock.js";
 import { buildObserverService } from "./observer-service.js";

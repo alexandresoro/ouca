@@ -1,6 +1,6 @@
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Weather, type WeatherCreateInput, type WeatherFindManyInput } from "@domain/weather/weather.js";
-import { type Result } from "neverthrow";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Weather, WeatherCreateInput, WeatherFindManyInput } from "@domain/weather/weather.js";
+import type { Result } from "neverthrow";
 
 export type WeatherRepository = {
   findWeatherById: (id: number) => Promise<Weather | null>;

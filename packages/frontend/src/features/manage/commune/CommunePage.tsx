@@ -1,4 +1,4 @@
-import { type Town, type TownExtended } from "@ou-ca/common/api/entities/town";
+import type { Town, TownExtended } from "@ou-ca/common/api/entities/town";
 import { type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";

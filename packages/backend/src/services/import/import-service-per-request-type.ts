@@ -15,7 +15,7 @@ import {
   IMPORT_SEXE,
   type ImportType,
 } from "@ou-ca/common/import/import-types";
-import { type Services } from "../services.js";
+import type { Services } from "../services.js";
 import { ImportAgeService } from "./import-age-service.js";
 import { ImportClasseService } from "./import-classe-service.js";
 import { ImportCommuneService } from "./import-commune-service.js";
@@ -29,7 +29,7 @@ import { ImportLieuxditService } from "./import-lieudit-service.js";
 import { ImportMeteoService } from "./import-meteo-service.js";
 import { ImportMilieuService } from "./import-milieu-service.js";
 import { ImportObservateurService } from "./import-observateur-service.js";
-import { type ImportService } from "./import-service.js";
+import type { ImportService } from "./import-service.js";
 import { ImportSexeService } from "./import-sexe-service.js";
 
 export const getNewImportServiceForRequestType = (requestType: ImportType, services: Services): ImportService => {

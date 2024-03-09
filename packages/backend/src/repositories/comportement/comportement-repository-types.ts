@@ -1,4 +1,4 @@
-import { type NicheurCode } from "@ou-ca/common/types/nicheur.model";
+import type { NicheurCode } from "@ou-ca/common/types/nicheur.model";
 
 export type ComportementCreateInput = {
   code: string;

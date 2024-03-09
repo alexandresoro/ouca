@@ -1,4 +1,4 @@
-import { type Notification } from "@typings/Notification";
+import type { Notification } from "@typings/Notification";
 import { createContext } from "react";
 
 export const SnackbarContext = createContext<{

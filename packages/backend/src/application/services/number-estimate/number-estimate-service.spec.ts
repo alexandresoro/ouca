@@ -4,10 +4,10 @@ import {
 } from "@fixtures/domain/number-estimate/number-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertNumberEstimateInputFactory } from "@fixtures/services/number-estimate/number-estimate-service.fixtures.js";
-import { type NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
-import { type NumberEstimatesSearchParams } from "@ou-ca/common/api/number-estimate";
+import type { NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
+import type { NumberEstimatesSearchParams } from "@ou-ca/common/api/number-estimate";
 import { err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildNumberEstimateService } from "./number-estimate-service.js";
 

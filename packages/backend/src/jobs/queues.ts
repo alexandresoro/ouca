@@ -1,6 +1,6 @@
-import { type Queue } from "bullmq";
-import { type Logger } from "pino";
-import { type Services } from "../services/services.js";
+import type { Queue } from "bullmq";
+import type { Logger } from "pino";
+import type { Services } from "../services/services.js";
 import { buildQueueGeoJSONRefresh } from "./geojson-queue.js";
 
 export type Queues = {

@@ -1,5 +1,5 @@
 import { type BehaviorsOrderBy, getBehaviorsExtendedResponse } from "@ou-ca/common/api/behavior";
-import { type BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
+import type { BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

@@ -1,4 +1,4 @@
-import { type Generated } from "kysely";
+import type { Generated } from "kysely";
 
 type Breeder = "possible" | "probable" | "certain";
 

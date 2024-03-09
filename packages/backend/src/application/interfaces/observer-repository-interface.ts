@@ -1,11 +1,11 @@
-import {
-  type Observer,
-  type ObserverCreateInput,
-  type ObserverFindManyInput,
-  type ObserverSimple,
+import type {
+  Observer,
+  ObserverCreateInput,
+  ObserverFindManyInput,
+  ObserverSimple,
 } from "@domain/observer/observer.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Result } from "neverthrow";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Result } from "neverthrow";
 
 export type ObserverRepository = {
   findObserverById: (id: number) => Promise<Observer | null>;

@@ -5,7 +5,7 @@ import {
   type UseControllerProps,
   useController,
 } from "react-hook-form";
-import { type SetRequired } from "type-fest";
+import type { SetRequired } from "type-fest";
 import Switch from "../base/Switch";
 
 type FormSwitchProps<TFieldValues extends FieldValues> = SetRequired<

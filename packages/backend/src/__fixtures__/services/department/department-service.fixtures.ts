@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type UpsertDepartmentInput } from "@ou-ca/common/api/department";
-import { type Department } from "@ou-ca/common/api/entities/department";
+import type { UpsertDepartmentInput } from "@ou-ca/common/api/department";
+import type { Department } from "@ou-ca/common/api/entities/department";
 import { Factory } from "fishery";
 
 export const departmentServiceFactory = Factory.define<Department>(() => {

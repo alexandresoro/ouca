@@ -1,4 +1,4 @@
-import { type RouteObject } from "react-router-dom";
+import type { RouteObject } from "react-router-dom";
 import { lazyComponent } from "./lazy-route";
 
 export const routesManage: RouteObject[] = [

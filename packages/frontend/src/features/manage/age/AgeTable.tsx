@@ -1,6 +1,6 @@
 import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
-import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { type Age, type AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";

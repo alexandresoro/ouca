@@ -1,4 +1,4 @@
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 
 export const canModifyEntity = (entity: { ownerId?: string | null } | null, user: LoggedUser | null): boolean => {
   if (!entity || !user) {

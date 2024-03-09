@@ -1,4 +1,4 @@
-import { type Sex, type SexExtended } from "@ou-ca/common/api/entities/sex";
+import type { Sex, SexExtended } from "@ou-ca/common/api/entities/sex";
 import { type UpsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";

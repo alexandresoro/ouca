@@ -1,4 +1,4 @@
-import { type Locality, type LocalityExtended } from "@ou-ca/common/api/entities/locality";
+import type { Locality, LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";

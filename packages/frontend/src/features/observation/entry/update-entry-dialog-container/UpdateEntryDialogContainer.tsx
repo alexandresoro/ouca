@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
-import { type Entry } from "@ou-ca/common/api/entities/entry";
-import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { type FunctionComponent } from "react";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
+import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import EntryForm from "../entry-form/EntryForm";
 

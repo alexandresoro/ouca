@@ -1,5 +1,5 @@
 import { canModifyEntity } from "@domain/entity-access/entity-access.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 
 type PaginationOptions = Partial<{
   pageNumber: number | null;

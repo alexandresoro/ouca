@@ -1,7 +1,7 @@
 import { CheckCircle, Error as ErrorIcon, InfoCircle, XCircle } from "@styled-icons/boxicons-regular";
-import { type AlertType } from "@typings/Notification";
+import type { AlertType } from "@typings/Notification";
 import { useAtomValue } from "jotai";
-import { type FunctionComponent, type ReactElement } from "react";
+import type { FunctionComponent, ReactElement } from "react";
 import { notificationsAtom } from "./notificationAtoms";
 
 const getAlertIcon = (type: AlertType): ReactElement => {

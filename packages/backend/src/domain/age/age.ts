@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { type CommonFailureReason } from "../shared/failure-reason.js";
-import { type SortOrder } from "../shared/sort-order.js";
+import type { CommonFailureReason } from "../shared/failure-reason.js";
+import type { SortOrder } from "../shared/sort-order.js";
 
 export type AgeFailureReason = CommonFailureReason;
 

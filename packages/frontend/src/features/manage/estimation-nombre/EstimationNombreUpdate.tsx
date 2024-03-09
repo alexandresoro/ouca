@@ -1,7 +1,7 @@
-import { type NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
-import { type FunctionComponent } from "react";
-import { type SubmitHandler } from "react-hook-form";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
+import type { UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import type { FunctionComponent } from "react";
+import type { SubmitHandler } from "react-hook-form";
 import EstimationNombreEdit from "./EstimationNombreEdit";
 
 type EstimationNombreProps = {

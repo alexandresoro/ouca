@@ -1,5 +1,5 @@
 import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimate";
-import { type DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
+import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { MagicWand } from "@styled-icons/boxicons-solid";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
@@ -10,7 +10,7 @@ import Autocomplete from "../../../../components/base/autocomplete/Autocomplete"
 import useApiQuery from "../../../../hooks/api/useApiQuery";
 import useApiFetch from "../../../../services/api/useApiFetch";
 import { capitalizeFirstLetter } from "../../../../utils/capitalize-first-letter";
-import { type EntryFormState } from "./EntryFormState";
+import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormDistanceRegroupmentProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {
   defaultDistanceEstimate?: DistanceEstimate;

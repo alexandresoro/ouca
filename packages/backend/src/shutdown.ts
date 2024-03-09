@@ -1,13 +1,13 @@
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import * as Sentry from "@sentry/node";
-import {
-  type FastifyInstance,
-  type RawReplyDefaultExpression,
-  type RawRequestDefaultExpression,
-  type RawServerDefault,
+import type {
+  FastifyInstance,
+  RawReplyDefaultExpression,
+  RawRequestDefaultExpression,
+  RawServerDefault,
 } from "fastify";
-import { type Logger } from "pino";
-import { type Services } from "./services/services.js";
+import type { Logger } from "pino";
+import type { Services } from "./services/services.js";
 import { logger } from "./utils/logger.js";
 
 // Handle shutdown request gracefully

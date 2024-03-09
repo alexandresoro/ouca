@@ -1,5 +1,5 @@
 import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
-import { type Behavior } from "@ou-ca/common/api/entities/behavior";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { type FunctionComponent, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import Autocomplete from "../../../../components/base/autocomplete/Autocomplete"
 import useApiQuery from "../../../../hooks/api/useApiQuery";
 import { findFirstFocusableElement } from "../../../../utils/dom/find-first-focusable-element";
 import EntryFormBehavior, { renderBehavior } from "./EntryFormBehavior";
-import { type EntryFormState } from "./EntryFormState";
+import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormBehaviorsProps = Pick<UseFormReturn<EntryFormState>, "control"> & {
   initialBehaviors?: Behavior[];

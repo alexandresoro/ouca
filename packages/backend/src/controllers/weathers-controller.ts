@@ -1,4 +1,4 @@
-import { type Weather, type WeatherExtended } from "@ou-ca/common/api/entities/weather";
+import type { Weather, WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import {
   getWeatherResponse,
   getWeathersExtendedResponse,
@@ -7,9 +7,9 @@ import {
   upsertWeatherInput,
   upsertWeatherResponse,
 } from "@ou-ca/common/api/weather";
-import { type FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { type Services } from "../services/services.js";
+import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 

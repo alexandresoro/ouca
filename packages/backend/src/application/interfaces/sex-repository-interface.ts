@@ -1,6 +1,6 @@
-import { type Sex, type SexCreateInput, type SexFindManyInput } from "@domain/sex/sex.js";
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import { type Result } from "neverthrow";
+import type { Sex, SexCreateInput, SexFindManyInput } from "@domain/sex/sex.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { Result } from "neverthrow";
 
 export type SexRepository = {
   findSexById: (id: number) => Promise<Sex | null>;

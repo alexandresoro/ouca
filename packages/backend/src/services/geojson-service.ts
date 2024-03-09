@@ -1,12 +1,12 @@
-import { type AccessFailureReason } from "@domain/shared/failure-reason.js";
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 // FIXME: https://github.com/Turfjs/turf/issues/2414
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
 import { type Result, err, ok } from "neverthrow";
-import { type LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
+import type { LieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import { logger } from "../utils/logger.js";
 
 const GEOJSON_DATA_REDIS_KEY = "geoJsonLocalities";

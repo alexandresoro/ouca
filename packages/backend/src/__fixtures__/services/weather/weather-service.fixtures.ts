@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { type Weather } from "@ou-ca/common/api/entities/weather";
-import { type UpsertWeatherInput } from "@ou-ca/common/api/weather";
+import type { Weather } from "@ou-ca/common/api/entities/weather";
+import type { UpsertWeatherInput } from "@ou-ca/common/api/weather";
 import { Factory } from "fishery";
 
 export const weatherServiceFactory = Factory.define<Weather>(() => {

@@ -1,4 +1,4 @@
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
 import {
   type SpeciesClass,
   type SpeciesClassCreateInput,

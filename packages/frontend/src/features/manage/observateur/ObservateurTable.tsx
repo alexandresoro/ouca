@@ -1,5 +1,5 @@
-import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { type Observer } from "@ou-ca/common/api/entities/observer";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { Observer } from "@ou-ca/common/api/entities/observer";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";

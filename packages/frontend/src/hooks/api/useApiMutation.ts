@@ -1,9 +1,9 @@
 import { apiUrlAtom } from "@services/api/useApiUrl";
 import { type MutationFunction, type UseMutationOptions, useMutation } from "@tanstack/react-query";
-import { type FetchErrorType } from "@utils/fetch-api";
+import type { FetchErrorType } from "@utils/fetch-api";
 import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
-import { type z } from "zod";
+import type { z } from "zod";
 
 type MutationParamsSchema<R> = {
   path?: string;

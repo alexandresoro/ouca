@@ -1,4 +1,4 @@
-import { type FunctionComponent, type ReactElement } from "react";
+import type { FunctionComponent, ReactElement } from "react";
 import TablePagination from "./TablePagination";
 
 type TableProps = {

@@ -1,7 +1,7 @@
 import { type IdentifierSqlToken, sql } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
 import { buildSearchCriteriaParameters } from "../search-criteria.js";
-import { type DonneeFindManyInput, type DonneeFindMatchingInput } from "./donnee-repository-types.js";
+import type { DonneeFindManyInput, DonneeFindMatchingInput } from "./donnee-repository-types.js";
 
 export const buildFindMatchingDonneeClause = (criteria: DonneeFindMatchingInput) => {
   if (!criteria) {

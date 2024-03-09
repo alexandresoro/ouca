@@ -1,10 +1,10 @@
-import { type EntityFailureReason } from "@domain/shared/failure-reason.js";
-import {
-  type SpeciesClass,
-  type SpeciesClassCreateInput,
-  type SpeciesClassFindManyInput,
+import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
+import type {
+  SpeciesClass,
+  SpeciesClassCreateInput,
+  SpeciesClassFindManyInput,
 } from "@domain/species-class/species-class.js";
-import { type Result } from "neverthrow";
+import type { Result } from "neverthrow";
 
 export type SpeciesClassRepository = {
   findSpeciesClassById: (id: number) => Promise<SpeciesClass | null>;

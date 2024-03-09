@@ -2,8 +2,8 @@ import { readFile } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
-import { type LoggedUser } from "@domain/user/logged-user.js";
-import { type ImportType } from "@ou-ca/common/import/import-types";
+import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { ImportType } from "@ou-ca/common/import/import-types";
 import {
   IMPORT_COMPLETE,
   IMPORT_FAILED,

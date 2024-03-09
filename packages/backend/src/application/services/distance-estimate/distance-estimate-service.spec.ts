@@ -1,11 +1,11 @@
-import { type LoggedUser } from "@domain/user/logged-user.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import { distanceEstimateFactory } from "@fixtures/domain/distance-estimate/distance-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDistanceEstimateInputFactory } from "@fixtures/services/distance-estimate/distance-estimate-service.fixtures.js";
-import { type DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
-import { type DistanceEstimatesSearchParams } from "@ou-ca/common/api/distance-estimate";
+import type { DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
+import type { DistanceEstimatesSearchParams } from "@ou-ca/common/api/distance-estimate";
 import { err, ok } from "neverthrow";
-import { type DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mockVi } from "../../../utils/mock.js";
 import { buildDistanceEstimateService } from "./distance-estimate-service.js";
 
