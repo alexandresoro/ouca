@@ -9,6 +9,7 @@
       },
       "correctness": {
         "noUnusedImports": "warn",
+        "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error"
       },
