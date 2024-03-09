@@ -35,8 +35,7 @@ COPY package.json pnpm-*.yaml ./
 COPY /packages/common/package.json packages/common/package.json
 COPY /packages/backend/package.json packages/backend/package.json
 
-RUN npm pkg delete scripts.prepare && \
-  pnpm i --frozen-lockfile
+RUN pnpm i --frozen-lockfile
 
 COPY --from=build /app/packages/common/dist/ packages/common/dist/
 COPY --from=build /app/packages/backend/dist/ packages/backend/dist/
