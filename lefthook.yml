@@ -1,0 +1,26 @@
+pre-commit:
+  commands:
+    eslint-frontend:
+      root: "packages/frontend/"
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: pnpm eslint {staged_files}
+    eslint-common:
+      root: "packages/common/"
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: pnpm eslint {staged_files}
+    eslint-backend:
+      root: "packages/backend/"
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: pnpm eslint {staged_files}
+    biome:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: pnpm biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    test-frontend:
+      root: "packages/frontend/"
+      run: pnpm test
+    test-common:
+      root: "packages/common/"
+      run: pnpm test
+    test-backend:
+      root: "packages/backend/"
+      run: pnpm test

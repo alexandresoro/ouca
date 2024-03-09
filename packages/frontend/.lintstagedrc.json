@@ -1,3 +1,0 @@
-{
-  "*.{ts,tsx}": ["vitest related --watch=false --passWithNoTests", "eslint", "biome ci"]
-}
