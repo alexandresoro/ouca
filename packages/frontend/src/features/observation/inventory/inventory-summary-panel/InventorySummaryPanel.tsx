@@ -1,6 +1,6 @@
 import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { Calendar, Map as MapIcon, Sun, User } from "@styled-icons/boxicons-regular";
-import { intlFormat, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import ItemWithAvatar from "../../../../components/base/ItemWithAvatar";
@@ -29,7 +29,7 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
 
       <ItemWithAvatar
         icon={<Calendar className="h-6" />}
-        primary={`${intlFormat(parseISO(inventory.date))} ${inventory.heure ?? ""}`}
+        primary={`${new Intl.DateTimeFormat().format(parseISO(inventory.date))} ${inventory.heure ?? ""}`}
         secondary={inventory.duree ? `${t("duration")}: ${inventory.duree}` : undefined}
       />
 

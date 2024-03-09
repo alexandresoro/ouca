@@ -1,4 +1,3 @@
-import { isAfter, isBefore } from "date-fns";
 import { z } from "zod";
 import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
 import { inventoryExtendedSchema } from "./entities/inventory.js";
@@ -47,7 +46,7 @@ export const upsertInventoryInput = z.object({
     .min(1)
     .refine((dateStr) => {
       const date = new Date(dateStr);
-      return isAfter(date, new Date(1990, 0, 1)) && isBefore(date, new Date(2100, 0, 1));
+      return date >= new Date(1990, 0, 1) && date < new Date(2100, 0, 1);
     }),
   time: z
     .string()

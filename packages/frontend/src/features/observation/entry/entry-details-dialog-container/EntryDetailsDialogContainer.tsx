@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { Link } from "@styled-icons/boxicons-regular";
-import { intlFormat, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventorySummaryPanel from "../../inventory/inventory-summary-panel/InventorySummaryPanel";
@@ -29,8 +29,8 @@ const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainer
         <div className="mb-2 text-[13px]">
           {t("observationDetails.mainSubtitle", {
             owner: entry.inventory.observer.libelle,
-            creationDate: intlFormat(parseISO(entry.inventory.date)),
-            updatedDate: intlFormat(parseISO(entry.inventory.date)),
+            creationDate: new Intl.DateTimeFormat().format(parseISO(entry.inventory.date)),
+            updatedDate: new Intl.DateTimeFormat().format(parseISO(entry.inventory.date)),
             inventoryId: entry.inventory.id,
             observationId: entry.id,
           })}
