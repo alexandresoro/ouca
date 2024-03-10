@@ -1,14 +1,20 @@
+import assert from "node:assert/strict";
+import test, { beforeEach, describe } from "node:test";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { createUserInputFactory } from "@fixtures/domain/user/user.fixtures.js";
 import type { UserRepository } from "@interfaces/user-repository-interface.js";
 import { err } from "neverthrow";
-import { mockVi } from "../../../utils/mock.js";
+import { mock } from "../../../utils/mock.js";
 import { buildUserService } from "./user-service.js";
 
-const userRepository = mockVi<UserRepository>();
+const userRepository = mock<UserRepository>();
 
 const userService = buildUserService({
   userRepository,
+});
+
+beforeEach(() => {
+  userRepository.deleteUserById.mock.resetCalls();
 });
 
 describe("User creation", () => {
@@ -17,7 +23,7 @@ describe("User creation", () => {
 
     await userService.createUser(signupData);
 
-    expect(userRepository.createUser).toHaveBeenCalledTimes(1);
+    assert.strictEqual(userRepository.createUser.mock.callCount(), 1);
   });
 });
 
@@ -27,8 +33,8 @@ describe("User deletion", () => {
 
     await userService.deleteUser(loggedUser.id, loggedUser);
 
-    expect(userRepository.deleteUserById).toHaveBeenCalledTimes(1);
-    expect(userRepository.deleteUserById).toHaveBeenLastCalledWith(loggedUser.id);
+    assert.strictEqual(userRepository.deleteUserById.mock.callCount(), 1);
+    assert.deepStrictEqual(userRepository.deleteUserById.mock.calls[0].arguments, [loggedUser.id]);
   });
 
   test("should be able delete to another user if admin", async () => {
@@ -37,12 +43,12 @@ describe("User deletion", () => {
       role: "admin",
     });
 
-    userRepository.deleteUserById.mockResolvedValueOnce(true);
+    userRepository.deleteUserById.mock.mockImplementationOnce(() => Promise.resolve(true));
 
     await userService.deleteUser("11", loggedUser);
 
-    expect(userRepository.deleteUserById).toHaveBeenCalledTimes(1);
-    expect(userRepository.deleteUserById).toHaveBeenLastCalledWith("11");
+    assert.strictEqual(userRepository.deleteUserById.mock.callCount(), 1);
+    assert.deepStrictEqual(userRepository.deleteUserById.mock.calls[0].arguments, ["11"]);
   });
 
   test("should not be allowed when deleting another user as non-admin", async () => {
@@ -53,7 +59,7 @@ describe("User deletion", () => {
 
     const deleteResult = await userService.deleteUser("11", loggedUser);
 
-    expect(deleteResult).toEqual(err("notAllowed"));
-    expect(userRepository.deleteUserById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(deleteResult, err("notAllowed"));
+    assert.strictEqual(userRepository.deleteUserById.mock.callCount(), 0);
   });
 });

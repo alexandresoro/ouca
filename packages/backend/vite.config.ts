@@ -12,11 +12,7 @@ export default defineConfig({
     },
   },
   test: {
-    env: {
-      OIDC_ISSUER: "",
-      OIDC_CLIENT_ID: "",
-      OIDC_CLIENT_SECRET: "",
-    },
+    exclude: [...defaultExclude, "**/*.test.*"],
     clearMocks: true,
     globals: true,
     coverage: {

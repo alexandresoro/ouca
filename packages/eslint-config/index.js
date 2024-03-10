@@ -15,6 +15,7 @@ module.exports = {
   },
   rules: {
     "import/no-unresolved": "error",
+    "@typescript-eslint/ban-types": "off", // Covered by Biome
     "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
     "@typescript-eslint/consistent-type-imports": ["warn", { fixStyle: "inline-type-imports" }],
     "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true, destructuredArrayIgnorePattern: "^_" }],

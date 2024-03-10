@@ -17,7 +17,7 @@
     "build": "pnpm run compile:tsc",
     "start": "tsx watch -r dotenv/config src/main.ts",
     "start:tsc": "pnpm run compile:tsc:dev && node -r dotenv/config dist/main",
-    "test": "vitest run",
+    "test": "vitest run && find ./src -name '*.test.ts' | tr '\\n' ' ' | xargs node --import tsx --test",
     "lint": "eslint .",
     "lint:ci": "eslint .",
     "typecheck": "tsc --build tsconfig.build.json",
