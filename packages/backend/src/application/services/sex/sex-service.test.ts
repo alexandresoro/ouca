@@ -1,3 +1,5 @@
+import assert from "node:assert/strict";
+import test, { describe, beforeEach } from "node:test";
 import { sexCreateInputFactory, sexFactory } from "@fixtures/domain/sex/sex.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSexInputFactory } from "@fixtures/services/sex/sex-service.fixtures.js";
@@ -5,15 +7,27 @@ import type { SexRepository } from "@interfaces/sex-repository-interface.js";
 import type { SexesSearchParams } from "@ou-ca/common/api/sex";
 import { err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { mockVi } from "../../../utils/mock.js";
+import { mock } from "../../../utils/mock.js";
 import { buildSexService } from "./sex-service.js";
 
-const sexRepository = mockVi<SexRepository>();
-const entryRepository = mockVi<DonneeRepository>();
+const sexRepository = mock<SexRepository>();
+const entryRepository = mock<DonneeRepository>();
 
 const sexService = buildSexService({
   sexRepository,
   entryRepository,
+});
+
+beforeEach(() => {
+  sexRepository.findSexById.mock.resetCalls();
+  sexRepository.findSexByEntryId.mock.resetCalls();
+  sexRepository.findSexes.mock.resetCalls();
+  sexRepository.getCount.mock.resetCalls();
+  sexRepository.updateSex.mock.resetCalls();
+  sexRepository.createSex.mock.resetCalls();
+  sexRepository.deleteSexById.mock.resetCalls();
+  sexRepository.createSexes.mock.resetCalls();
+  entryRepository.getCountBySexeId.mock.resetCalls();
 });
 
 describe("Find sex", () => {
@@ -21,29 +35,29 @@ describe("Find sex", () => {
     const sexData = sexFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.findSexById.mockResolvedValueOnce(sexData);
+    sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(sexData));
 
     await sexService.findSex(12, loggedUser);
 
-    expect(sexRepository.findSexById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexById).toHaveBeenLastCalledWith(12);
+    assert.strictEqual(sexRepository.findSexById.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.findSexById.mock.calls[0].arguments, [12]);
   });
 
   test("should handle sex not found", async () => {
-    sexRepository.findSexById.mockResolvedValueOnce(null);
+    sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
-    await expect(sexService.findSex(10, loggedUser)).resolves.toEqual(ok(null));
+    assert.deepStrictEqual(await sexService.findSex(10, loggedUser), ok(null));
 
-    expect(sexRepository.findSexById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexById).toHaveBeenLastCalledWith(10);
+    assert.strictEqual(sexRepository.findSexById.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.findSexById.mock.calls[0].arguments, [10]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await sexService.findSex(11, null);
 
-    expect(findResult).toEqual(err("notAllowed"));
-    expect(sexRepository.findSexById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(findResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.findSexById.mock.callCount(), 0);
   });
 });
 
@@ -53,14 +67,14 @@ describe("Data count per entity", () => {
 
     await sexService.getEntriesCountBySex("12", loggedUser);
 
-    expect(entryRepository.getCountBySexeId).toHaveBeenCalledTimes(1);
-    expect(entryRepository.getCountBySexeId).toHaveBeenLastCalledWith(12);
+    assert.strictEqual(entryRepository.getCountBySexeId.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.getCountBySexeId.mock.calls[0].arguments, [12]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesCountResult = await sexService.getEntriesCountBySex("12", null);
 
-    expect(entitiesCountResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
   });
 });
 
@@ -69,34 +83,36 @@ describe("Find sex by data ID", () => {
     const sexData = sexFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.findSexByEntryId.mockResolvedValueOnce(sexData);
+    sexRepository.findSexByEntryId.mock.mockImplementationOnce(() => Promise.resolve(sexData));
 
     const sexResult = await sexService.findSexOfEntryId("43", loggedUser);
 
-    expect(sexRepository.findSexByEntryId).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexByEntryId).toHaveBeenLastCalledWith(43);
-    expect(sexResult.isOk()).toBeTruthy();
-    expect(sexResult._unsafeUnwrap()?.id).toEqual(sexData.id);
+    assert.strictEqual(sexRepository.findSexByEntryId.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.findSexByEntryId.mock.calls[0].arguments, [43]);
+    assert.ok(sexResult.isOk());
+    assert.deepStrictEqual(sexResult._unsafeUnwrap()?.id, sexData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const findResult = await sexService.findSexOfEntryId("12", null);
 
-    expect(findResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 
 test("Find all sexes", async () => {
   const sexesData = sexFactory.buildList(3);
 
-  sexRepository.findSexes.mockResolvedValueOnce(sexesData);
+  sexRepository.findSexes.mock.mockImplementationOnce(() => Promise.resolve(sexesData));
 
   await sexService.findAllSexes();
 
-  expect(sexRepository.findSexes).toHaveBeenCalledTimes(1);
-  expect(sexRepository.findSexes).toHaveBeenLastCalledWith({
-    orderBy: "libelle",
-  });
+  assert.strictEqual(sexRepository.findSexes.mock.callCount(), 1);
+  assert.deepStrictEqual(sexRepository.findSexes.mock.calls[0].arguments, [
+    {
+      orderBy: "libelle",
+    },
+  ]);
 });
 
 describe("Entities paginated find by search criteria", () => {
@@ -104,12 +120,14 @@ describe("Entities paginated find by search criteria", () => {
     const sexesData = sexFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.findSexes.mockResolvedValueOnce(sexesData);
+    sexRepository.findSexes.mock.mockImplementationOnce(() => Promise.resolve(sexesData));
 
     await sexService.findPaginatedSexes(loggedUser, {});
 
-    expect(sexRepository.findSexes).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexes).toHaveBeenLastCalledWith({});
+    assert.strictEqual(sexRepository.findSexes.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.findSexes.mock.calls[0].arguments, [
+      { limit: undefined, offset: undefined, orderBy: undefined, q: undefined, sortOrder: undefined },
+    ]);
   });
 
   test("should handle params when retrieving paginated sexes", async () => {
@@ -124,24 +142,26 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    sexRepository.findSexes.mockResolvedValueOnce([sexesData[0]]);
+    sexRepository.findSexes.mock.mockImplementationOnce(() => Promise.resolve([sexesData[0]]));
 
     await sexService.findPaginatedSexes(loggedUser, searchParams);
 
-    expect(sexRepository.findSexes).toHaveBeenCalledTimes(1);
-    expect(sexRepository.findSexes).toHaveBeenLastCalledWith({
-      q: "Bob",
-      orderBy: "libelle",
-      sortOrder: "desc",
-      offset: 0,
-      limit: searchParams.pageSize,
-    });
+    assert.strictEqual(sexRepository.findSexes.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.findSexes.mock.calls[0].arguments, [
+      {
+        q: "Bob",
+        orderBy: "libelle",
+        sortOrder: "desc",
+        offset: 0,
+        limit: 10,
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesPaginatedResult = await sexService.findPaginatedSexes(null, {});
 
-    expect(entitiesPaginatedResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(entitiesPaginatedResult, err("notAllowed"));
   });
 });
 
@@ -151,8 +171,8 @@ describe("Entities count by search criteria", () => {
 
     await sexService.getSexesCount(loggedUser);
 
-    expect(sexRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(sexRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    assert.strictEqual(sexRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.getCount.mock.calls[0].arguments, [undefined]);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -160,14 +180,14 @@ describe("Entities count by search criteria", () => {
 
     await sexService.getSexesCount(loggedUser, "test");
 
-    expect(sexRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(sexRepository.getCount).toHaveBeenLastCalledWith("test");
+    assert.strictEqual(sexRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.getCount.mock.calls[0].arguments, ["test"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesCountResult = await sexService.getSexesCount(null);
 
-    expect(entitiesCountResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
   });
 });
 
@@ -177,12 +197,12 @@ describe("Update of a sex", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    sexRepository.updateSex.mockResolvedValueOnce(ok(sexFactory.build()));
+    sexRepository.updateSex.mock.mockImplementationOnce(() => Promise.resolve(ok(sexFactory.build())));
 
     await sexService.updateSex(12, sexData, loggedUser);
 
-    expect(sexRepository.updateSex).toHaveBeenCalledTimes(1);
-    expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
+    assert.strictEqual(sexRepository.updateSex.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.updateSex.mock.calls[0].arguments, [12, sexData]);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -194,13 +214,13 @@ describe("Update of a sex", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    sexRepository.findSexById.mockResolvedValueOnce(existingData);
-    sexRepository.updateSex.mockResolvedValueOnce(ok(sexFactory.build()));
+    sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    sexRepository.updateSex.mock.mockImplementationOnce(() => Promise.resolve(ok(sexFactory.build())));
 
     await sexService.updateSex(12, sexData, loggedUser);
 
-    expect(sexRepository.updateSex).toHaveBeenCalledTimes(1);
-    expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
+    assert.strictEqual(sexRepository.updateSex.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.updateSex.mock.calls[0].arguments, [12, sexData]);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -215,12 +235,12 @@ describe("Update of a sex", () => {
       role: "contributor",
     } as const;
 
-    sexRepository.findSexById.mockResolvedValueOnce(existingData);
+    sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
     const updateResult = await sexService.updateSex(12, sexData, user);
 
-    expect(updateResult).toEqual(err("notAllowed"));
-    expect(sexRepository.updateSex).not.toHaveBeenCalled();
+    assert.deepStrictEqual(updateResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.updateSex.mock.callCount(), 0);
   });
 
   test("should not be allowed when trying to update to a sex that exists", async () => {
@@ -228,13 +248,13 @@ describe("Update of a sex", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    sexRepository.updateSex.mockResolvedValueOnce(err("alreadyExists"));
+    sexRepository.updateSex.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     const updateResult = await sexService.updateSex(12, sexData, loggedUser);
 
-    expect(updateResult).toEqual(err("alreadyExists"));
-    expect(sexRepository.updateSex).toHaveBeenCalledTimes(1);
-    expect(sexRepository.updateSex).toHaveBeenLastCalledWith(12, sexData);
+    assert.deepStrictEqual(updateResult, err("alreadyExists"));
+    assert.strictEqual(sexRepository.updateSex.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.updateSex.mock.calls[0].arguments, [12, sexData]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -242,8 +262,8 @@ describe("Update of a sex", () => {
 
     const updateResult = await sexService.updateSex(12, sexData, null);
 
-    expect(updateResult).toEqual(err("notAllowed"));
-    expect(sexRepository.updateSex).not.toHaveBeenCalled();
+    assert.deepStrictEqual(updateResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.updateSex.mock.callCount(), 0);
   });
 });
 
@@ -253,15 +273,17 @@ describe("Creation of a sex", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.createSex.mockResolvedValueOnce(ok(sexFactory.build()));
+    sexRepository.createSex.mock.mockImplementationOnce(() => Promise.resolve(ok(sexFactory.build())));
 
     await sexService.createSex(sexData, loggedUser);
 
-    expect(sexRepository.createSex).toHaveBeenCalledTimes(1);
-    expect(sexRepository.createSex).toHaveBeenLastCalledWith({
-      ...sexData,
-      ownerId: loggedUser.id,
-    });
+    assert.strictEqual(sexRepository.createSex.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.createSex.mock.calls[0].arguments, [
+      {
+        ...sexData,
+        ownerId: loggedUser.id,
+      },
+    ]);
   });
 
   test("should not be allowed when trying to create a sex that already exists", async () => {
@@ -269,16 +291,18 @@ describe("Creation of a sex", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    sexRepository.createSex.mockResolvedValueOnce(err("alreadyExists"));
+    sexRepository.createSex.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     const createResult = await sexService.createSex(sexData, loggedUser);
 
-    expect(createResult).toEqual(err("alreadyExists"));
-    expect(sexRepository.createSex).toHaveBeenCalledTimes(1);
-    expect(sexRepository.createSex).toHaveBeenLastCalledWith({
-      ...sexData,
-      ownerId: loggedUser.id,
-    });
+    assert.deepStrictEqual(createResult, err("alreadyExists"));
+    assert.strictEqual(sexRepository.createSex.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.createSex.mock.calls[0].arguments, [
+      {
+        ...sexData,
+        ownerId: loggedUser.id,
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -286,8 +310,8 @@ describe("Creation of a sex", () => {
 
     const createResult = await sexService.createSex(sexData, null);
 
-    expect(createResult).toEqual(err("notAllowed"));
-    expect(sexRepository.createSex).not.toHaveBeenCalled();
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.createSex.mock.callCount(), 0);
   });
 });
 
@@ -302,12 +326,12 @@ describe("Deletion of a sex", () => {
       ownerId: loggedUser.id,
     });
 
-    sexRepository.findSexById.mockResolvedValueOnce(sex);
+    sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(sex));
 
     await sexService.deleteSex(11, loggedUser);
 
-    expect(sexRepository.deleteSexById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.deleteSexById).toHaveBeenLastCalledWith(11);
+    assert.strictEqual(sexRepository.deleteSexById.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.deleteSexById.mock.calls[0].arguments, [11]);
   });
 
   test("should handle the deletion of any sex if admin", async () => {
@@ -315,12 +339,12 @@ describe("Deletion of a sex", () => {
       role: "admin",
     });
 
-    sexRepository.findSexById.mockResolvedValueOnce(sexFactory.build());
+    sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(sexFactory.build()));
 
     await sexService.deleteSex(11, loggedUser);
 
-    expect(sexRepository.deleteSexById).toHaveBeenCalledTimes(1);
-    expect(sexRepository.deleteSexById).toHaveBeenLastCalledWith(11);
+    assert.strictEqual(sexRepository.deleteSexById.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.deleteSexById.mock.calls[0].arguments, [11]);
   });
 
   test("should not be allowed when deleting a non-owned sex as non-admin", async () => {
@@ -330,15 +354,15 @@ describe("Deletion of a sex", () => {
 
     const deleteResult = await sexService.deleteSex(11, loggedUser);
 
-    expect(deleteResult).toEqual(err("notAllowed"));
-    expect(sexRepository.deleteSexById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(deleteResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.deleteSexById.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await sexService.deleteSex(11, null);
 
-    expect(deleteResult).toEqual(err("notAllowed"));
-    expect(sexRepository.deleteSexById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(deleteResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.deleteSexById.mock.callCount(), 0);
   });
 });
 
@@ -347,17 +371,17 @@ test("Create multiple sexes", async () => {
 
   const loggedUser = loggedUserFactory.build();
 
-  sexRepository.createSexes.mockResolvedValueOnce([]);
+  sexRepository.createSexes.mock.mockImplementationOnce(() => Promise.resolve([]));
 
   await sexService.createSexes(sexesData, loggedUser);
 
-  expect(sexRepository.createSexes).toHaveBeenCalledTimes(1);
-  expect(sexRepository.createSexes).toHaveBeenLastCalledWith(
+  assert.strictEqual(sexRepository.createSexes.mock.callCount(), 1);
+  assert.deepStrictEqual(sexRepository.createSexes.mock.calls[0].arguments, [
     sexesData.map((sex) => {
       return {
         ...sex,
         ownerId: loggedUser.id,
       };
     }),
-  );
+  ]);
 });

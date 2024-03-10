@@ -1,3 +1,5 @@
+import assert from "node:assert/strict";
+import test, { describe, beforeEach } from "node:test";
 import { ageCreateInputFactory, ageFactory } from "@fixtures/domain/age/age.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertAgeInputFactory } from "@fixtures/services/age/age-service.fixtures.js";
@@ -5,15 +7,27 @@ import type { AgeRepository } from "@interfaces/age-repository-interface.js";
 import type { AgesSearchParams } from "@ou-ca/common/api/age";
 import { err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { mockVi } from "../../../utils/mock.js";
+import { mock } from "../../../utils/mock.js";
 import { buildAgeService } from "./age-service.js";
 
-const ageRepository = mockVi<AgeRepository>();
-const entryRepository = mockVi<DonneeRepository>();
+const ageRepository = mock<AgeRepository>();
+const entryRepository = mock<DonneeRepository>();
 
 const ageService = buildAgeService({
   ageRepository,
   entryRepository,
+});
+
+beforeEach(() => {
+  ageRepository.findAgeById.mock.resetCalls();
+  ageRepository.findAgeByEntryId.mock.resetCalls();
+  ageRepository.findAges.mock.resetCalls();
+  ageRepository.getCount.mock.resetCalls();
+  ageRepository.updateAge.mock.resetCalls();
+  ageRepository.createAge.mock.resetCalls();
+  ageRepository.deleteAgeById.mock.resetCalls();
+  ageRepository.createAges.mock.resetCalls();
+  entryRepository.getCountByAgeId.mock.resetCalls();
 });
 
 describe("Find age", () => {
@@ -21,29 +35,29 @@ describe("Find age", () => {
     const ageData = ageFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.findAgeById.mockResolvedValueOnce(ageData);
+    ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(ageData));
 
     await ageService.findAge(12, loggedUser);
 
-    expect(ageRepository.findAgeById).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAgeById).toHaveBeenLastCalledWith(12);
+    assert.strictEqual(ageRepository.findAgeById.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.findAgeById.mock.calls[0].arguments, [12]);
   });
 
   test("should handle age not found", async () => {
-    ageRepository.findAgeById.mockResolvedValueOnce(null);
+    ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
-    await expect(ageService.findAge(10, loggedUser)).resolves.toEqual(ok(null));
+    assert.deepStrictEqual(await ageService.findAge(10, loggedUser), ok(null));
 
-    expect(ageRepository.findAgeById).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAgeById).toHaveBeenLastCalledWith(10);
+    assert.strictEqual(ageRepository.findAgeById.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.findAgeById.mock.calls[0].arguments, [10]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await ageService.findAge(11, null);
 
-    expect(findResult).toEqual(err("notAllowed"));
-    expect(ageRepository.findAgeById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(findResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.findAgeById.mock.callCount(), 0);
   });
 });
 
@@ -53,14 +67,14 @@ describe("Data count per entity", () => {
 
     await ageService.getEntriesCountByAge("12", loggedUser);
 
-    expect(entryRepository.getCountByAgeId).toHaveBeenCalledTimes(1);
-    expect(entryRepository.getCountByAgeId).toHaveBeenLastCalledWith(12);
+    assert.strictEqual(entryRepository.getCountByAgeId.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.getCountByAgeId.mock.calls[0].arguments, [12]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesCountResult = await ageService.getEntriesCountByAge("12", null);
 
-    expect(entitiesCountResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
   });
 });
 
@@ -69,34 +83,36 @@ describe("Find age by data ID", () => {
     const ageData = ageFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.findAgeByEntryId.mockResolvedValueOnce(ageData);
+    ageRepository.findAgeByEntryId.mock.mockImplementationOnce(() => Promise.resolve(ageData));
 
     const ageResult = await ageService.findAgeOfEntryId("43", loggedUser);
 
-    expect(ageRepository.findAgeByEntryId).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAgeByEntryId).toHaveBeenLastCalledWith(43);
-    expect(ageResult.isOk()).toBeTruthy();
-    expect(ageResult._unsafeUnwrap()?.id).toEqual(ageData.id);
+    assert.strictEqual(ageRepository.findAgeByEntryId.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.findAgeByEntryId.mock.calls[0].arguments, [43]);
+    assert.ok(ageResult.isOk());
+    assert.strictEqual(ageResult._unsafeUnwrap()?.id, ageData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const findResult = await ageService.findAgeOfEntryId("12", null);
 
-    expect(findResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 
 test("Find all ages", async () => {
   const agesData = ageFactory.buildList(3);
 
-  ageRepository.findAges.mockResolvedValueOnce(agesData);
+  ageRepository.findAges.mock.mockImplementationOnce(() => Promise.resolve(agesData));
 
   await ageService.findAllAges();
 
-  expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
-  expect(ageRepository.findAges).toHaveBeenLastCalledWith({
-    orderBy: "libelle",
-  });
+  assert.strictEqual(ageRepository.findAges.mock.callCount(), 1);
+  assert.deepStrictEqual(ageRepository.findAges.mock.calls[0].arguments, [
+    {
+      orderBy: "libelle",
+    },
+  ]);
 });
 
 describe("Entities paginated find by search criteria", () => {
@@ -104,12 +120,20 @@ describe("Entities paginated find by search criteria", () => {
     const agesData = ageFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.findAges.mockResolvedValueOnce(agesData);
+    ageRepository.findAges.mock.mockImplementationOnce(() => Promise.resolve(agesData));
 
     await ageService.findPaginatedAges(loggedUser, {});
 
-    expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAges).toHaveBeenLastCalledWith({});
+    assert.strictEqual(ageRepository.findAges.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.findAges.mock.calls[0].arguments, [
+      {
+        limit: undefined,
+        offset: undefined,
+        orderBy: undefined,
+        q: undefined,
+        sortOrder: undefined,
+      },
+    ]);
   });
 
   test("should handle params when retrieving paginated ages", async () => {
@@ -124,24 +148,26 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    ageRepository.findAges.mockResolvedValueOnce([agesData[0]]);
+    ageRepository.findAges.mock.mockImplementationOnce(() => Promise.resolve([agesData[0]]));
 
     await ageService.findPaginatedAges(loggedUser, searchParams);
 
-    expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAges).toHaveBeenLastCalledWith({
-      q: "Bob",
-      orderBy: "libelle",
-      sortOrder: "desc",
-      offset: 0,
-      limit: searchParams.pageSize,
-    });
+    assert.strictEqual(ageRepository.findAges.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.findAges.mock.calls[0].arguments, [
+      {
+        q: "Bob",
+        orderBy: "libelle",
+        sortOrder: "desc",
+        offset: 0,
+        limit: searchParams.pageSize,
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesPaginatedResult = await ageService.findPaginatedAges(null, {});
 
-    expect(entitiesPaginatedResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(entitiesPaginatedResult, err("notAllowed"));
   });
 });
 
@@ -151,8 +177,8 @@ describe("Entities count by search criteria", () => {
 
     await ageService.getAgesCount(loggedUser);
 
-    expect(ageRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(ageRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    assert.strictEqual(ageRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.getCount.mock.calls[0].arguments, [undefined]);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -160,14 +186,14 @@ describe("Entities count by search criteria", () => {
 
     await ageService.getAgesCount(loggedUser, "test");
 
-    expect(ageRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(ageRepository.getCount).toHaveBeenLastCalledWith("test");
+    assert.strictEqual(ageRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.getCount.mock.calls[0].arguments, ["test"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesCountResult = await ageService.getAgesCount(null);
 
-    expect(entitiesCountResult).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
   });
 });
 
@@ -177,12 +203,12 @@ describe("Update of an age", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    ageRepository.updateAge.mockResolvedValueOnce(ok(ageFactory.build()));
+    ageRepository.updateAge.mock.mockImplementationOnce(() => Promise.resolve(ok(ageFactory.build())));
 
     await ageService.updateAge(12, ageData, loggedUser);
 
-    expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(12, ageData);
+    assert.strictEqual(ageRepository.updateAge.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.updateAge.mock.calls[0].arguments, [12, ageData]);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -194,13 +220,13 @@ describe("Update of an age", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    ageRepository.findAgeById.mockResolvedValueOnce(existingData);
-    ageRepository.updateAge.mockResolvedValueOnce(ok(ageFactory.build()));
+    ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    ageRepository.updateAge.mock.mockImplementationOnce(() => Promise.resolve(ok(ageFactory.build())));
 
     await ageService.updateAge(12, ageData, loggedUser);
 
-    expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(12, ageData);
+    assert.strictEqual(ageRepository.updateAge.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.updateAge.mock.calls[0].arguments, [12, ageData]);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -215,12 +241,12 @@ describe("Update of an age", () => {
       role: "contributor",
     } as const;
 
-    ageRepository.findAgeById.mockResolvedValueOnce(existingData);
+    ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
     const updateResult = await ageService.updateAge(12, ageData, user);
 
-    expect(updateResult).toEqual(err("notAllowed"));
-    expect(ageRepository.updateAge).not.toHaveBeenCalled();
+    assert.deepStrictEqual(updateResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.updateAge.mock.callCount(), 0);
   });
 
   test("should not be allowed when trying to update to an age that exists", async () => {
@@ -228,13 +254,13 @@ describe("Update of an age", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    ageRepository.updateAge.mockResolvedValueOnce(err("alreadyExists"));
+    ageRepository.updateAge.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     const updateResult = await ageService.updateAge(12, ageData, loggedUser);
 
-    expect(updateResult).toEqual(err("alreadyExists"));
-    expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(12, ageData);
+    assert.deepStrictEqual(updateResult, err("alreadyExists"));
+    assert.strictEqual(ageRepository.updateAge.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.updateAge.mock.calls[0].arguments, [12, ageData]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -242,8 +268,8 @@ describe("Update of an age", () => {
 
     const updateResult = await ageService.updateAge(12, ageData, null);
 
-    expect(updateResult).toEqual(err("notAllowed"));
-    expect(ageRepository.updateAge).not.toHaveBeenCalled();
+    assert.deepStrictEqual(updateResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.updateAge.mock.callCount(), 0);
   });
 });
 
@@ -253,15 +279,17 @@ describe("Creation of an age", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.createAge.mockResolvedValueOnce(ok(ageFactory.build()));
+    ageRepository.createAge.mock.mockImplementationOnce(() => Promise.resolve(ok(ageFactory.build())));
 
     await ageService.createAge(ageData, loggedUser);
 
-    expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.createAge).toHaveBeenLastCalledWith({
-      ...ageData,
-      ownerId: loggedUser.id,
-    });
+    assert.strictEqual(ageRepository.createAge.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.createAge.mock.calls[0].arguments, [
+      {
+        ...ageData,
+        ownerId: loggedUser.id,
+      },
+    ]);
   });
 
   test("should not be allowed when trying to create an age that already exists", async () => {
@@ -269,16 +297,18 @@ describe("Creation of an age", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    ageRepository.createAge.mockResolvedValueOnce(err("alreadyExists"));
+    ageRepository.createAge.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     const createResult = await ageService.createAge(ageData, loggedUser);
 
-    expect(createResult).toEqual(err("alreadyExists"));
-    expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.createAge).toHaveBeenLastCalledWith({
-      ...ageData,
-      ownerId: loggedUser.id,
-    });
+    assert.deepStrictEqual(createResult, err("alreadyExists"));
+    assert.strictEqual(ageRepository.createAge.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.createAge.mock.calls[0].arguments, [
+      {
+        ...ageData,
+        ownerId: loggedUser.id,
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -286,8 +316,8 @@ describe("Creation of an age", () => {
 
     const createResult = await ageService.createAge(ageData, null);
 
-    expect(createResult).toEqual(err("notAllowed"));
-    expect(ageRepository.createAge).not.toHaveBeenCalled();
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.createAge.mock.callCount(), 0);
   });
 });
 
@@ -300,12 +330,12 @@ describe("Deletion of an age", () => {
 
     const age = ageFactory.build({ ownerId: loggedUser.id });
 
-    ageRepository.findAgeById.mockResolvedValueOnce(age);
+    ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(age));
 
     await ageService.deleteAge(11, loggedUser);
 
-    expect(ageRepository.deleteAgeById).toHaveBeenCalledTimes(1);
-    expect(ageRepository.deleteAgeById).toHaveBeenLastCalledWith(11);
+    assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.deleteAgeById.mock.calls[0].arguments, [11]);
   });
 
   test("should handle the deletion of any age if admin", async () => {
@@ -313,12 +343,12 @@ describe("Deletion of an age", () => {
       role: "admin",
     });
 
-    ageRepository.findAgeById.mockResolvedValueOnce(ageFactory.build());
+    ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(ageFactory.build()));
 
     await ageService.deleteAge(11, loggedUser);
 
-    expect(ageRepository.deleteAgeById).toHaveBeenCalledTimes(1);
-    expect(ageRepository.deleteAgeById).toHaveBeenLastCalledWith(11);
+    assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.deleteAgeById.mock.calls[0].arguments, [11]);
   });
 
   test("should not be allowed when deleting a non-owned age as non-admin", async () => {
@@ -328,15 +358,15 @@ describe("Deletion of an age", () => {
 
     const deleteResult = await ageService.deleteAge(11, loggedUser);
 
-    expect(deleteResult).toEqual(err("notAllowed"));
-    expect(ageRepository.deleteAgeById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(deleteResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await ageService.deleteAge(11, null);
 
-    expect(deleteResult).toEqual(err("notAllowed"));
-    expect(ageRepository.deleteAgeById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(deleteResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 0);
   });
 });
 
@@ -345,17 +375,17 @@ test("Create multiple ages", async () => {
 
   const loggedUser = loggedUserFactory.build();
 
-  ageRepository.createAges.mockResolvedValueOnce([]);
+  ageRepository.createAges.mock.mockImplementationOnce(() => Promise.resolve([]));
 
   await ageService.createAges(agesData, loggedUser);
 
-  expect(ageRepository.createAges).toHaveBeenCalledTimes(1);
-  expect(ageRepository.createAges).toHaveBeenLastCalledWith(
+  assert.strictEqual(ageRepository.createAges.mock.callCount(), 1);
+  assert.deepStrictEqual(ageRepository.createAges.mock.calls[0].arguments, [
     agesData.map((age) => {
       return {
         ...age,
         ownerId: loggedUser.id,
       };
     }),
-  );
+  ]);
 });
