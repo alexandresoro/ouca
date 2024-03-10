@@ -1,3 +1,5 @@
+import assert from "node:assert/strict";
+import { describe, test } from "node:test";
 import { canModifyEntity } from "@domain/entity-access/entity-access.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 
@@ -5,7 +7,7 @@ describe("canModifyEntity", () => {
   test("should return correct status for non logged user", () => {
     const entity = {};
 
-    expect(canModifyEntity(entity, null)).toBe(false);
+    assert.strictEqual(canModifyEntity(entity, null), false);
   });
 
   test("should return correct status when no entity is provided", () => {
@@ -14,7 +16,7 @@ describe("canModifyEntity", () => {
       role: "admin",
     };
 
-    expect(canModifyEntity(null, user)).toBe(false);
+    assert.strictEqual(canModifyEntity(null, user), false);
   });
 
   test("should return correct status for non admin user and not owner", () => {
@@ -27,7 +29,7 @@ describe("canModifyEntity", () => {
       role: "contributor",
     };
 
-    expect(canModifyEntity(entity, user)).toBe(false);
+    assert.strictEqual(canModifyEntity(entity, user), false);
   });
 
   test("should return correct status for owner", () => {
@@ -40,7 +42,7 @@ describe("canModifyEntity", () => {
       role: "contributor",
     };
 
-    expect(canModifyEntity(entity, user)).toBe(true);
+    assert.ok(canModifyEntity(entity, user));
   });
 
   test("should return correct status for admin", () => {
@@ -53,15 +55,15 @@ describe("canModifyEntity", () => {
       role: "admin",
     };
 
-    expect(canModifyEntity(entity, user)).toBe(true);
+    assert.ok(canModifyEntity(entity, user));
   });
 
   test("should return correct status for non logged user and no entity owner", () => {
     const entity = {
       ownerId: null,
     };
-    canModifyEntity;
-    expect(canModifyEntity(entity, null)).toBe(false);
+
+    assert.strictEqual(canModifyEntity(entity, null), false);
   });
 
   test("should return correct status for non-admin and no entity owner", () => {
@@ -74,7 +76,7 @@ describe("canModifyEntity", () => {
       role: "contributor",
     };
 
-    expect(canModifyEntity(entity, user)).toBe(false);
+    assert.strictEqual(canModifyEntity(entity, user), false);
   });
 
   test("should return correct status for admin and no entity owner", () => {
@@ -87,6 +89,6 @@ describe("canModifyEntity", () => {
       role: "admin",
     };
 
-    expect(canModifyEntity(entity, user)).toBe(true);
+    assert.ok(canModifyEntity(entity, user));
   });
 });
