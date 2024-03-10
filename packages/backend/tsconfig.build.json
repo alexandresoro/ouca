@@ -3,6 +3,6 @@
   "compilerOptions": {
     "skipLibCheck": true
   },
-  "exclude": ["src/**/*.spec.ts", "src/__fixtures__/**/*"],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/__fixtures__/**/*"],
   "references": [{ "path": "../common/tsconfig.ref.json" }]
 }
