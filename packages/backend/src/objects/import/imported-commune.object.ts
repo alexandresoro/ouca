@@ -1,4 +1,4 @@
-import type { CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
+import type { TownCreateInput } from "@domain/town/town.js";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;
@@ -19,9 +19,9 @@ export class ImportedCommune {
     this.nom = communeTab[NOM_INDEX].trim();
   }
 
-  buildCommune = (departementId: string): Omit<CommuneCreateInput, "owner_id"> => {
+  buildCommune = (departmentId: string): Omit<TownCreateInput, "ownerId"> => {
     return {
-      departement_id: Number.parseInt(departementId),
+      departmentId,
       code: +this.code,
       nom: this.nom,
     };

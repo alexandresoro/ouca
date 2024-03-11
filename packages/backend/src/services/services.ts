@@ -8,6 +8,7 @@ import { buildObserverRepository } from "@infrastructure/repositories/observer/o
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
 import { buildSpeciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
+import { buildTownRepository } from "@infrastructure/repositories/town/town-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import type { DatabasePool } from "slonik";
@@ -31,9 +32,9 @@ import {
   type SpeciesClassService,
   buildSpeciesClassService,
 } from "../application/services/species-class/species-class-service.js";
+import { type TownService, buildTownService } from "../application/services/town/town-service.js";
 import { type UserService, buildUserService } from "../application/services/user/user-service.js";
 import { type WeatherService, buildWeatherService } from "../application/services/weather/weather-service.js";
-import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
 import { buildComportementRepository } from "../repositories/comportement/comportement-repository.js";
 import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository.js";
@@ -52,7 +53,6 @@ import { type EnvironmentService, buildEnvironmentService } from "./entities/env
 import { type InventaireService, buildInventaireService } from "./entities/inventaire-service.js";
 import { type LocalityService, buildLocalityService } from "./entities/locality/locality-service.js";
 import { type SpeciesService, buildSpeciesService } from "./entities/species/species-service.js";
-import { type TownService, buildTownService } from "./entities/town/town-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
@@ -104,7 +104,7 @@ export const buildServices = async (): Promise<Services> => {
   const settingsRepository = buildSettingsRepository();
   const sexRepository = buildSexRepository();
   const speciesRepository = buildEspeceRepository({ slonik });
-  const townRepository = buildCommuneRepository({ slonik });
+  const townRepository = buildTownRepository();
   const userRepository = buildUserRepository({ settingsRepository });
   const weatherRepository = buildWeatherRepository();
 
