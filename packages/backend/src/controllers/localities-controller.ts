@@ -18,7 +18,7 @@ export const enrichedLocality = async (
   locality: Locality,
   user: LoggedUser | null,
 ): Promise<Omit<LocalityExtended, "inventoriesCount" | "entriesCount">> => {
-  const town = await services.townService.findTownOfLocalityId(locality.id, user);
+  const town = (await services.townService.findTownOfLocalityId(locality.id, user))._unsafeUnwrap();
   const department = town
     ? (await services.departmentService.findDepartmentOfTownId(town.id, user))._unsafeUnwrap()
     : null;
@@ -75,7 +75,7 @@ const localitiesController: FastifyPluginCallback<{
       data = await Promise.all(
         localitiesData.map(async (localityData) => {
           // TODO look to optimize this request
-          const town = await townService.findTownOfLocalityId(localityData.id, req.user);
+          const town = (await townService.findTownOfLocalityId(localityData.id, req.user))._unsafeUnwrap();
           const department = town
             ? (await departmentService.findDepartmentOfTownId(town.id, req.user))._unsafeUnwrap()
             : null;

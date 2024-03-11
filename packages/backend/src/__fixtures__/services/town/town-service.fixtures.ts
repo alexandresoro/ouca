@@ -8,7 +8,7 @@ export const townServiceFactory = Factory.define<Town>(() => {
     id: faker.string.sample(),
     code: faker.number.int(),
     nom: faker.string.alpha(),
-    departmentId: faker.string.alphanumeric(),
+    departmentId: faker.string.alpha(),
     editable: faker.datatype.boolean(),
     departmentCode: faker.string.alphanumeric(),
     localitiesCount: faker.number.int(),
@@ -20,6 +20,6 @@ export const upsertTownInputFactory = Factory.define<UpsertTownInput>(() => {
   return {
     code: faker.number.int(),
     nom: faker.string.alpha(),
-    departmentId: faker.string.alphanumeric(),
+    departmentId: faker.string.alpha(),
   };
 });
