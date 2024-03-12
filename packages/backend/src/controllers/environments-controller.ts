@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import {
   getEnvironmentResponse,
@@ -9,7 +8,9 @@ import {
   upsertEnvironmentResponse,
 } from "@ou-ca/common/api/environment";
 import type { FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const environmentsController: FastifyPluginCallback<{
@@ -22,7 +23,20 @@ const environmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const environment = await environmentService.findEnvironment(req.params.id, req.user);
+    const environmentResult = await environmentService.findEnvironment(req.params.id, req.user);
+
+    if (environmentResult.isErr()) {
+      switch (environmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: environmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const environment = environmentResult.value;
+
     if (!environment) {
       return await reply.status(404).send();
     }
@@ -42,16 +56,30 @@ const environmentsController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [environmentsData, count] = await Promise.all([
-      environmentService.findPaginatedEnvironments(req.user, queryParams),
-      environmentService.getEnvironmentsCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await environmentService.findPaginatedEnvironments(req.user, queryParams),
+      await environmentService.getEnvironmentsCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [environmentsData, count] = paginatedResults.value;
 
     let data: Environment[] | EnvironmentExtended[] = environmentsData;
     if (extended) {
       data = await Promise.all(
         environmentsData.map(async (environmentData) => {
-          const entriesCount = await environmentService.getEntriesCountByEnvironment(environmentData.id, req.user);
+          const entriesCount = (
+            await environmentService.getEntriesCountByEnvironment(environmentData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...environmentData,
             entriesCount,
@@ -78,17 +106,22 @@ const environmentsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const environment = await environmentService.createEnvironment(input, req.user);
-      const response = upsertEnvironmentResponse.parse(environment);
+    const environmentResult = await environmentService.createEnvironment(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (environmentResult.isErr()) {
+      switch (environmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: environmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertEnvironmentResponse.parse(environmentResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -104,17 +137,22 @@ const environmentsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const environment = await environmentService.updateEnvironment(req.params.id, input, req.user);
-      const response = upsertEnvironmentResponse.parse(environment);
+    const environmentResult = await environmentService.updateEnvironment(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (environmentResult.isErr()) {
+      switch (environmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: environmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertEnvironmentResponse.parse(environmentResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -122,7 +160,19 @@ const environmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedEnvironment = await environmentService.deleteEnvironment(req.params.id, req.user);
+    const deletedEnvironmentResult = await environmentService.deleteEnvironment(req.params.id, req.user);
+
+    if (deletedEnvironmentResult.isErr()) {
+      switch (deletedEnvironmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedEnvironmentResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedEnvironment = deletedEnvironmentResult.value;
 
     if (!deletedEnvironment) {
       return await reply.status(404).send();

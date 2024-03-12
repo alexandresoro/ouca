@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import type { EnvironmentFailureReason } from "@domain/environment/environment.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import type { EnvironmentsSearchParams, UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
+import { type Result, err, ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import type { MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
 import type { MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
@@ -15,11 +16,16 @@ type EnvironmentServiceDependencies = {
 };
 
 export const buildEnvironmentService = ({ environmentRepository, entryRepository }: EnvironmentServiceDependencies) => {
-  const findEnvironment = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
-    validateAuthorization(loggedUser);
+  const findEnvironment = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Environment | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const environment = await environmentRepository.findMilieuById(id);
-    return enrichEntityWithEditableStatus(environment, loggedUser);
+    return ok(enrichEntityWithEditableStatus(environment, loggedUser));
   };
 
   const findEnvironmentIdsOfEntryId = async (entryId: string): Promise<string[]> => {
@@ -33,8 +39,10 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   const findEnvironmentsOfEntryId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null,
-  ): Promise<Environment[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Environment[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const environments = await environmentRepository.findMilieuxOfDonneeId(
       entryId ? Number.parseInt(entryId) : undefined,
@@ -44,13 +52,18 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
       return enrichEntityWithEditableStatus(environment, loggedUser);
     });
 
-    return [...enrichedEnvironments];
+    return ok([...enrichedEnvironments]);
   };
 
-  const getEntriesCountByEnvironment = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountByEnvironment = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByMilieuId(Number.parseInt(id));
+    return ok(await entryRepository.getCountByMilieuId(Number.parseInt(id)));
   };
 
   const findAllEnvironments = async (): Promise<Environment[]> => {
@@ -68,8 +81,10 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   const findPaginatedEnvironments = async (
     loggedUser: LoggedUser | null,
     options: EnvironmentsSearchParams,
-  ): Promise<Environment[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Environment[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -84,20 +99,27 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
       return enrichEntityWithEditableStatus(environment, loggedUser);
     });
 
-    return [...enrichedEnvironments];
+    return ok([...enrichedEnvironments]);
   };
 
-  const getEnvironmentsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEnvironmentsCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return environmentRepository.getCount(q);
+    return ok(await environmentRepository.getCount(q));
   };
 
   const createEnvironment = async (
     input: UpsertEnvironmentInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Environment> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Environment, EnvironmentFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdEnvironment = await environmentRepository.createMilieu({
@@ -105,10 +127,10 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdEnvironment, loggedUser);
+      return ok(enrichEntityWithEditableStatus(createdEnvironment, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -118,50 +140,57 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
     id: number,
     input: UpsertEnvironmentInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Environment> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Environment, EnvironmentFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await environmentRepository.findMilieuById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     try {
       const updatedEnvironment = await environmentRepository.updateMilieu(id, input);
 
-      return enrichEntityWithEditableStatus(updatedEnvironment, loggedUser);
+      return ok(enrichEntityWithEditableStatus(updatedEnvironment, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteEnvironment = async (id: number, loggedUser: LoggedUser | null): Promise<Environment | null> => {
-    validateAuthorization(loggedUser);
+  const deleteEnvironment = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Environment | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await environmentRepository.findMilieuById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedEnvironment = await environmentRepository.deleteMilieuById(id);
-    return enrichEntityWithEditableStatus(deletedEnvironment, loggedUser);
+    return ok(enrichEntityWithEditableStatus(deletedEnvironment, loggedUser));
   };
 
   const createEnvironments = async (
     environments: Omit<MilieuCreateInput[], "owner_id">,
     loggedUser: LoggedUser,
-  ): Promise<readonly Environment[]> => {
+  ): Promise<Environment[]> => {
     const createdEnvironments = await environmentRepository.createMilieux(
       environments.map((environment) => {
         return { ...environment, owner_id: loggedUser.id };
