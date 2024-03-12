@@ -10,6 +10,7 @@ import type { Redis } from "ioredis";
 import type { AgeService } from "../application/services/age/age-service.js";
 import type { DepartmentService } from "../application/services/department/department-service.js";
 import type { DistanceEstimateService } from "../application/services/distance-estimate/distance-estimate-service.js";
+import type { EnvironmentService } from "../application/services/environment/environment-service.js";
 import type { NumberEstimateService } from "../application/services/number-estimate/number-estimate-service.js";
 import type { ObserverService } from "../application/services/observer/observer-service.js";
 import type { SexService } from "../application/services/sex/sex-service.js";
@@ -19,7 +20,6 @@ import type { WeatherService } from "../application/services/weather/weather-ser
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import type { BehaviorService } from "./entities/behavior/behavior-service.js";
 import type { DonneeService } from "./entities/donnee-service.js";
-import type { EnvironmentService } from "./entities/environment/environment-service.js";
 import type { InventaireService } from "./entities/inventaire-service.js";
 import type { LocalityService } from "./entities/locality/locality-service.js";
 import type { SpeciesService } from "./entities/species/species-service.js";

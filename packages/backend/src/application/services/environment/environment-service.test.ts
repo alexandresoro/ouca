@@ -1,18 +1,16 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, test } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { environmentFactory } from "@fixtures/domain/environment/environment.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertEnvironmentInputFactory } from "@fixtures/services/environment/environment-service.fixtures.js";
+import type { EnvironmentRepository } from "@interfaces/environment-repository-interface.js";
 import type { EnvironmentsSearchParams } from "@ou-ca/common/api/environment";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildEnvironmentService } from "./environment-service.js";
 
-const environmentRepository = mock<MilieuRepository>();
+const environmentRepository = mock<EnvironmentRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const environmentService = buildEnvironmentService({
@@ -20,24 +18,15 @@ const environmentService = buildEnvironmentService({
   entryRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint",
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
-
 beforeEach(() => {
-  environmentRepository.findMilieuById.mock.resetCalls();
-  environmentRepository.findMilieux.mock.resetCalls();
-  environmentRepository.createMilieu.mock.resetCalls();
-  environmentRepository.createMilieux.mock.resetCalls();
-  environmentRepository.updateMilieu.mock.resetCalls();
-  environmentRepository.deleteMilieuById.mock.resetCalls();
+  environmentRepository.findEnvironmentById.mock.resetCalls();
+  environmentRepository.findEnvironments.mock.resetCalls();
+  environmentRepository.createEnvironment.mock.resetCalls();
+  environmentRepository.createEnvironments.mock.resetCalls();
+  environmentRepository.updateEnvironment.mock.resetCalls();
+  environmentRepository.deleteEnvironmentById.mock.resetCalls();
   environmentRepository.getCount.mock.resetCalls();
-  environmentRepository.findMilieuxOfDonneeId.mock.resetCalls();
+  environmentRepository.findEnvironmentsByEntryId.mock.resetCalls();
   entryRepository.getCountByMilieuId.mock.resetCalls();
 });
 
@@ -46,29 +35,29 @@ describe("Find environment", () => {
     const environmentData = environmentFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(environmentData));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(environmentData));
 
     await environmentService.findEnvironment(12, loggedUser);
 
-    assert.strictEqual(environmentRepository.findMilieuById.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.findMilieuById.mock.calls[0].arguments, [12]);
+    assert.strictEqual(environmentRepository.findEnvironmentById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironmentById.mock.calls[0].arguments, [12]);
   });
 
   test("should handle environment not found", async () => {
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(null));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
     assert.deepStrictEqual(await environmentService.findEnvironment(10, loggedUser), ok(null));
 
-    assert.strictEqual(environmentRepository.findMilieuById.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.findMilieuById.mock.calls[0].arguments, [10]);
+    assert.strictEqual(environmentRepository.findEnvironmentById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironmentById.mock.calls[0].arguments, [10]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await environmentService.findEnvironment(11, null);
 
     assert.deepStrictEqual(findResult, err("notAllowed"));
-    assert.strictEqual(environmentRepository.findMilieuById.mock.callCount(), 0);
+    assert.strictEqual(environmentRepository.findEnvironmentById.mock.callCount(), 0);
   });
 });
 
@@ -94,12 +83,14 @@ describe("Find environments by inventary ID", () => {
     const environmentsData = environmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    environmentRepository.findMilieuxOfDonneeId.mock.mockImplementationOnce(() => Promise.resolve(environmentsData));
+    environmentRepository.findEnvironmentsByEntryId.mock.mockImplementationOnce(() =>
+      Promise.resolve(environmentsData),
+    );
 
     const environmentsResult = await environmentService.findEnvironmentsOfEntryId("43", loggedUser);
 
-    assert.strictEqual(environmentRepository.findMilieuxOfDonneeId.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.findMilieuxOfDonneeId.mock.calls[0].arguments, [43]);
+    assert.strictEqual(environmentRepository.findEnvironmentsByEntryId.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironmentsByEntryId.mock.calls[0].arguments, ["43"]);
     assert.ok(environmentsResult.isOk());
     assert.strictEqual(environmentsResult._unsafeUnwrap().length, environmentsData.length);
   });
@@ -114,12 +105,12 @@ describe("Find environments by inventary ID", () => {
 test("Find all environments", async () => {
   const environmentsData = environmentFactory.buildList(3);
 
-  environmentRepository.findMilieux.mock.mockImplementationOnce(() => Promise.resolve(environmentsData));
+  environmentRepository.findEnvironments.mock.mockImplementationOnce(() => Promise.resolve(environmentsData));
 
   await environmentService.findAllEnvironments();
 
-  assert.strictEqual(environmentRepository.findMilieux.mock.callCount(), 1);
-  assert.deepStrictEqual(environmentRepository.findMilieux.mock.calls[0].arguments, [{ orderBy: "libelle" }]);
+  assert.strictEqual(environmentRepository.findEnvironments.mock.callCount(), 1);
+  assert.deepStrictEqual(environmentRepository.findEnvironments.mock.calls[0].arguments, [{ orderBy: "libelle" }]);
 });
 
 describe("Entities paginated find by search criteria", () => {
@@ -127,12 +118,12 @@ describe("Entities paginated find by search criteria", () => {
     const environmentsData = environmentFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    environmentRepository.findMilieux.mock.mockImplementationOnce(() => Promise.resolve(environmentsData));
+    environmentRepository.findEnvironments.mock.mockImplementationOnce(() => Promise.resolve(environmentsData));
 
     await environmentService.findPaginatedEnvironments(loggedUser, {});
 
-    assert.strictEqual(environmentRepository.findMilieux.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.findMilieux.mock.calls[0].arguments, [
+    assert.strictEqual(environmentRepository.findEnvironments.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironments.mock.calls[0].arguments, [
       {
         limit: undefined,
         offset: undefined,
@@ -155,12 +146,12 @@ describe("Entities paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    environmentRepository.findMilieux.mock.mockImplementationOnce(() => Promise.resolve([environmentsData[0]]));
+    environmentRepository.findEnvironments.mock.mockImplementationOnce(() => Promise.resolve([environmentsData[0]]));
 
     await environmentService.findPaginatedEnvironments(loggedUser, searchParams);
 
-    assert.strictEqual(environmentRepository.findMilieux.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.findMilieux.mock.calls[0].arguments, [
+    assert.strictEqual(environmentRepository.findEnvironments.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironments.mock.calls[0].arguments, [
       {
         q: "Bob",
         orderBy: "libelle",
@@ -210,10 +201,14 @@ describe("Update of an environment", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
+    environmentRepository.updateEnvironment.mock.mockImplementationOnce(() =>
+      Promise.resolve(ok(environmentFactory.build())),
+    );
+
     await environmentService.updateEnvironment(12, environmentData, loggedUser);
 
-    assert.strictEqual(environmentRepository.updateMilieu.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.updateMilieu.mock.calls[0].arguments, [12, environmentData]);
+    assert.strictEqual(environmentRepository.updateEnvironment.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.updateEnvironment.mock.calls[0].arguments, [12, environmentData]);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -225,12 +220,15 @@ describe("Update of an environment", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    environmentRepository.updateEnvironment.mock.mockImplementationOnce(() =>
+      Promise.resolve(ok(environmentFactory.build())),
+    );
 
     await environmentService.updateEnvironment(12, environmentData, loggedUser);
 
-    assert.strictEqual(environmentRepository.updateMilieu.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.updateMilieu.mock.calls[0].arguments, [12, environmentData]);
+    assert.strictEqual(environmentRepository.updateEnvironment.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.updateEnvironment.mock.calls[0].arguments, [12, environmentData]);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -245,12 +243,12 @@ describe("Update of an environment", () => {
       role: "contributor",
     } as const;
 
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
     const updateResult = await environmentService.updateEnvironment(12, environmentData, user);
 
     assert.deepStrictEqual(updateResult, err("notAllowed"));
-    assert.strictEqual(environmentRepository.updateMilieu.mock.callCount(), 0);
+    assert.strictEqual(environmentRepository.updateEnvironment.mock.callCount(), 0);
   });
 
   test("should not be allowed when trying to update to an environment that exists", async () => {
@@ -258,13 +256,13 @@ describe("Update of an environment", () => {
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    environmentRepository.updateMilieu.mock.mockImplementationOnce(uniqueConstraintFailed);
+    environmentRepository.updateEnvironment.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     const updateResult = await environmentService.updateEnvironment(12, environmentData, loggedUser);
 
     assert.deepStrictEqual(updateResult, err("alreadyExists"));
-    assert.strictEqual(environmentRepository.updateMilieu.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.updateMilieu.mock.calls[0].arguments, [12, environmentData]);
+    assert.strictEqual(environmentRepository.updateEnvironment.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.updateEnvironment.mock.calls[0].arguments, [12, environmentData]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -273,7 +271,7 @@ describe("Update of an environment", () => {
     const updateResult = await environmentService.updateEnvironment(12, environmentData, null);
 
     assert.deepStrictEqual(updateResult, err("notAllowed"));
-    assert.strictEqual(environmentRepository.updateMilieu.mock.callCount(), 0);
+    assert.strictEqual(environmentRepository.updateEnvironment.mock.callCount(), 0);
   });
 });
 
@@ -283,13 +281,17 @@ describe("Creation of an environment", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
+    environmentRepository.createEnvironment.mock.mockImplementationOnce(() =>
+      Promise.resolve(ok(environmentFactory.build())),
+    );
+
     await environmentService.createEnvironment(environmentData, loggedUser);
 
-    assert.strictEqual(environmentRepository.createMilieu.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.createMilieu.mock.calls[0].arguments, [
+    assert.strictEqual(environmentRepository.createEnvironment.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.createEnvironment.mock.calls[0].arguments, [
       {
         ...environmentData,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -299,16 +301,16 @@ describe("Creation of an environment", () => {
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    environmentRepository.createMilieu.mock.mockImplementationOnce(uniqueConstraintFailed);
+    environmentRepository.createEnvironment.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     const createResult = await environmentService.createEnvironment(environmentData, loggedUser);
 
     assert.deepStrictEqual(createResult, err("alreadyExists"));
-    assert.strictEqual(environmentRepository.createMilieu.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.createMilieu.mock.calls[0].arguments, [
+    assert.strictEqual(environmentRepository.createEnvironment.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.createEnvironment.mock.calls[0].arguments, [
       {
         ...environmentData,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -319,27 +321,27 @@ describe("Creation of an environment", () => {
     const createResult = await environmentService.createEnvironment(environmentData, null);
 
     assert.deepStrictEqual(createResult, err("notAllowed"));
-    assert.strictEqual(environmentRepository.createMilieu.mock.callCount(), 0);
+    assert.strictEqual(environmentRepository.createEnvironment.mock.callCount(), 0);
   });
 });
 
 describe("Deletion of an environment", () => {
   test("should handle the deletion of an owned environment", async () => {
-    const loggedUser: LoggedUser = {
+    const loggedUser = loggedUserFactory.build({
       id: "12",
       role: "contributor",
-    };
+    });
 
     const environment = environmentFactory.build({
       ownerId: loggedUser.id,
     });
 
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(environment));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(environment));
 
     await environmentService.deleteEnvironment(11, loggedUser);
 
-    assert.strictEqual(environmentRepository.deleteMilieuById.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.deleteMilieuById.mock.calls[0].arguments, [11]);
+    assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.deleteEnvironmentById.mock.calls[0].arguments, [11]);
   });
 
   test("hould handle the deletion of any environment if admin", async () => {
@@ -347,12 +349,14 @@ describe("Deletion of an environment", () => {
       role: "admin",
     });
 
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(environmentFactory.build()));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() =>
+      Promise.resolve(environmentFactory.build()),
+    );
 
     await environmentService.deleteEnvironment(11, loggedUser);
 
-    assert.strictEqual(environmentRepository.deleteMilieuById.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.deleteMilieuById.mock.calls[0].arguments, [11]);
+    assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.deleteEnvironmentById.mock.calls[0].arguments, [11]);
   });
 
   test("should not be allowed when deleting a non-owned environment as non-admin", async () => {
@@ -360,19 +364,21 @@ describe("Deletion of an environment", () => {
       role: "contributor",
     });
 
-    environmentRepository.findMilieuById.mock.mockImplementationOnce(() => Promise.resolve(environmentFactory.build()));
+    environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() =>
+      Promise.resolve(environmentFactory.build()),
+    );
 
     const deleteResult = await environmentService.deleteEnvironment(11, loggedUser);
 
     assert.deepStrictEqual(deleteResult, err("notAllowed"));
-    assert.strictEqual(environmentRepository.deleteMilieuById.mock.callCount(), 0);
+    assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await environmentService.deleteEnvironment(11, null);
 
     assert.deepStrictEqual(deleteResult, err("notAllowed"));
-    assert.strictEqual(environmentRepository.deleteMilieuById.mock.callCount(), 0);
+    assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 0);
   });
 });
 
@@ -381,16 +387,16 @@ test("Create multiple environments", async () => {
 
   const loggedUser = loggedUserFactory.build();
 
-  environmentRepository.createMilieux.mock.mockImplementationOnce(() => Promise.resolve([]));
+  environmentRepository.createEnvironments.mock.mockImplementationOnce(() => Promise.resolve([]));
 
   await environmentService.createEnvironments(environmentsData, loggedUser);
 
-  assert.strictEqual(environmentRepository.createMilieux.mock.callCount(), 1);
-  assert.deepStrictEqual(environmentRepository.createMilieux.mock.calls[0].arguments, [
+  assert.strictEqual(environmentRepository.createEnvironments.mock.callCount(), 1);
+  assert.deepStrictEqual(environmentRepository.createEnvironments.mock.calls[0].arguments, [
     environmentsData.map((environment) => {
       return {
         ...environment,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     }),
   ]);

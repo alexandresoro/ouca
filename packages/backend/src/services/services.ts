@@ -3,6 +3,7 @@ import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
 import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
+import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
 import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
@@ -21,6 +22,10 @@ import {
   type DistanceEstimateService,
   buildDistanceEstimateService,
 } from "../application/services/distance-estimate/distance-estimate-service.js";
+import {
+  type EnvironmentService,
+  buildEnvironmentService,
+} from "../application/services/environment/environment-service.js";
 import {
   type NumberEstimateService,
   buildNumberEstimateService,
@@ -44,12 +49,10 @@ import { buildInventaireAssocieRepository } from "../repositories/inventaire-ass
 import { buildInventaireMeteoRepository } from "../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { buildInventaireRepository } from "../repositories/inventaire/inventaire-repository.js";
 import { buildLieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
-import { buildMilieuRepository } from "../repositories/milieu/milieu-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { type BehaviorService, buildBehaviorService } from "./entities/behavior/behavior-service.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
-import { type EnvironmentService, buildEnvironmentService } from "./entities/environment/environment-service.js";
 import { type InventaireService, buildInventaireService } from "./entities/inventaire-service.js";
 import { type LocalityService, buildLocalityService } from "./entities/locality/locality-service.js";
 import { type SpeciesService, buildSpeciesService } from "./entities/species/species-service.js";
@@ -94,7 +97,7 @@ export const buildServices = async (): Promise<Services> => {
   const entryRepository = buildDonneeRepository({ slonik });
   const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
   const entryEnvironmentRepository = buildDonneeMilieuRepository({ slonik });
-  const environmentRepository = buildMilieuRepository({ slonik });
+  const environmentRepository = buildEnvironmentRepository();
   const inventoryRepository = buildInventaireRepository({ slonik });
   const inventoryAssociateRepository = buildInventaireAssocieRepository({ slonik });
   const inventoryWeatherRepository = buildInventaireMeteoRepository({ slonik });

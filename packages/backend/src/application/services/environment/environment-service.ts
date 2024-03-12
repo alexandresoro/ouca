@@ -1,17 +1,15 @@
-import type { EnvironmentFailureReason } from "@domain/environment/environment.js";
+import type { EnvironmentCreateInput, EnvironmentFailureReason } from "@domain/environment/environment.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { EnvironmentRepository } from "@interfaces/environment-repository-interface.js";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import type { EnvironmentsSearchParams, UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Result, err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { MilieuCreateInput } from "../../../repositories/milieu/milieu-repository-types.js";
-import type { MilieuRepository } from "../../../repositories/milieu/milieu-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type EnvironmentServiceDependencies = {
-  environmentRepository: MilieuRepository;
+  environmentRepository: EnvironmentRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -24,13 +22,13 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
       return err("notAllowed");
     }
 
-    const environment = await environmentRepository.findMilieuById(id);
+    const environment = await environmentRepository.findEnvironmentById(id);
     return ok(enrichEntityWithEditableStatus(environment, loggedUser));
   };
 
   const findEnvironmentIdsOfEntryId = async (entryId: string): Promise<string[]> => {
     const environmentIds = await environmentRepository
-      .findMilieuxOfDonneeId(Number.parseInt(entryId))
+      .findEnvironmentsByEntryId(entryId)
       .then((environments) => environments.map(({ id }) => id));
 
     return [...environmentIds];
@@ -44,9 +42,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
       return err("notAllowed");
     }
 
-    const environments = await environmentRepository.findMilieuxOfDonneeId(
-      entryId ? Number.parseInt(entryId) : undefined,
-    );
+    const environments = await environmentRepository.findEnvironmentsByEntryId(entryId);
 
     const enrichedEnvironments = environments.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);
@@ -67,7 +63,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
   };
 
   const findAllEnvironments = async (): Promise<Environment[]> => {
-    const environments = await environmentRepository.findMilieux({
+    const environments = await environmentRepository.findEnvironments({
       orderBy: "libelle",
     });
 
@@ -88,7 +84,7 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const environments = await environmentRepository.findMilieux({
+    const environments = await environmentRepository.findEnvironments({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -121,19 +117,14 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
       return err("notAllowed");
     }
 
-    try {
-      const createdEnvironment = await environmentRepository.createMilieu({
-        ...input,
-        owner_id: loggedUser.id,
-      });
+    const createdEnvironmentResult = await environmentRepository.createEnvironment({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdEnvironment, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdEnvironmentResult.map((createdEnvironment) => {
+      return enrichEntityWithEditableStatus(createdEnvironment, loggedUser);
+    });
   };
 
   const updateEnvironment = async (
@@ -147,23 +138,18 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await environmentRepository.findMilieuById(id);
+      const existingData = await environmentRepository.findEnvironmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updatedEnvironment = await environmentRepository.updateMilieu(id, input);
+    const updatedEnvironmentResult = await environmentRepository.updateEnvironment(id, input);
 
-      return ok(enrichEntityWithEditableStatus(updatedEnvironment, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updatedEnvironmentResult.map((updatedEnvironment) => {
+      return enrichEntityWithEditableStatus(updatedEnvironment, loggedUser);
+    });
   };
 
   const deleteEnvironment = async (
@@ -176,24 +162,24 @@ export const buildEnvironmentService = ({ environmentRepository, entryRepository
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await environmentRepository.findMilieuById(id);
+      const existingData = await environmentRepository.findEnvironmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedEnvironment = await environmentRepository.deleteMilieuById(id);
+    const deletedEnvironment = await environmentRepository.deleteEnvironmentById(id);
     return ok(enrichEntityWithEditableStatus(deletedEnvironment, loggedUser));
   };
 
   const createEnvironments = async (
-    environments: Omit<MilieuCreateInput[], "owner_id">,
+    environments: Omit<EnvironmentCreateInput[], "ownerId">,
     loggedUser: LoggedUser,
   ): Promise<Environment[]> => {
-    const createdEnvironments = await environmentRepository.createMilieux(
+    const createdEnvironments = await environmentRepository.createEnvironments(
       environments.map((environment) => {
-        return { ...environment, owner_id: loggedUser.id };
+        return { ...environment, ownerId: loggedUser.id };
       }),
     );
 
