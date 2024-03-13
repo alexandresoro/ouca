@@ -8,6 +8,7 @@ import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
 import type { Redis } from "ioredis";
 import type { AgeService } from "../application/services/age/age-service.js";
+import type { BehaviorService } from "../application/services/behavior/behavior-service.js";
 import type { DepartmentService } from "../application/services/department/department-service.js";
 import type { DistanceEstimateService } from "../application/services/distance-estimate/distance-estimate-service.js";
 import type { EnvironmentService } from "../application/services/environment/environment-service.js";
@@ -18,7 +19,6 @@ import type { SpeciesClassService } from "../application/services/species-class/
 import type { TownService } from "../application/services/town/town-service.js";
 import type { WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
-import type { BehaviorService } from "./entities/behavior/behavior-service.js";
 import type { DonneeService } from "./entities/donnee-service.js";
 import type { InventaireService } from "./entities/inventaire-service.js";
 import type { LocalityService } from "./entities/locality/locality-service.js";

@@ -15,6 +15,7 @@ import { buildUserRepository } from "@infrastructure/repositories/user/user-repo
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import type { DatabasePool } from "slonik";
 import { type AgeService, buildAgeService } from "../application/services/age/age-service.js";
+import { type BehaviorService, buildBehaviorService } from "../application/services/behavior/behavior-service.js";
 import {
   type DepartmentService,
   buildDepartmentService,
@@ -51,7 +52,6 @@ import { buildInventaireRepository } from "../repositories/inventaire/inventaire
 import { buildLieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
-import { type BehaviorService, buildBehaviorService } from "./entities/behavior/behavior-service.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
 import { type InventaireService, buildInventaireService } from "./entities/inventaire-service.js";
 import { type LocalityService, buildLocalityService } from "./entities/locality/locality-service.js";
