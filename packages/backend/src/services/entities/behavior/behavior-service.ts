@@ -1,17 +1,15 @@
-import type { BehaviorFailureReason } from "@domain/behavior/behavior.js";
+import type { BehaviorCreateInput, BehaviorFailureReason } from "@domain/behavior/behavior.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { BehaviorRepository } from "@interfaces/behavior-repository-interface.js";
 import type { BehaviorsSearchParams, UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { type Result, err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
-import type { ComportementCreateInput } from "../../../repositories/comportement/comportement-repository-types.js";
-import type { ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type BehaviorServiceDependencies = {
-  behaviorRepository: ComportementRepository;
+  behaviorRepository: BehaviorRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -24,13 +22,13 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
       return err("notAllowed");
     }
 
-    const behavior = await behaviorRepository.findComportementById(id);
+    const behavior = await behaviorRepository.findBehaviorById(id);
     return ok(enrichEntityWithEditableStatus(behavior, loggedUser));
   };
 
   const findBehaviorIdsOfEntryId = async (entryId: string): Promise<string[]> => {
     const behaviorIds = await behaviorRepository
-      .findComportementsOfDonneeId(Number.parseInt(entryId))
+      .findBehaviorsByEntryId(entryId)
       .then((behaviors) => behaviors.map(({ id }) => id));
 
     return [...behaviorIds];
@@ -44,9 +42,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
       return err("notAllowed");
     }
 
-    const behaviors = await behaviorRepository.findComportementsOfDonneeId(
-      entryId ? Number.parseInt(entryId) : undefined,
-    );
+    const behaviors = await behaviorRepository.findBehaviorsByEntryId(entryId);
 
     const enrichedBehaviors = behaviors.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, loggedUser);
@@ -67,7 +63,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
   };
 
   const findAllBehaviors = async (): Promise<Behavior[]> => {
-    const behaviors = await behaviorRepository.findComportements({
+    const behaviors = await behaviorRepository.findBehaviors({
       orderBy: "code",
     });
 
@@ -88,7 +84,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const behaviors = await behaviorRepository.findComportements({
+    const behaviors = await behaviorRepository.findBehaviors({
       q,
       ...getSqlPagination(pagination),
       orderBy: orderByField,
@@ -121,19 +117,14 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
       return err("notAllowed");
     }
 
-    try {
-      const createdBehavior = await behaviorRepository.createComportement({
-        ...input,
-        owner_id: loggedUser.id,
-      });
+    const createdBehaviorResult = await behaviorRepository.createBehavior({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(enrichEntityWithEditableStatus(createdBehavior, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdBehaviorResult.map((createdBehavior) => {
+      return enrichEntityWithEditableStatus(createdBehavior, loggedUser);
+    });
   };
 
   const updateBehavior = async (
@@ -147,23 +138,18 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await behaviorRepository.findComportementById(id);
+      const existingData = await behaviorRepository.findBehaviorById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updatedBehavior = await behaviorRepository.updateComportement(id, input);
+    const updatedBehaviorResult = await behaviorRepository.updateBehavior(id, input);
 
-      return ok(enrichEntityWithEditableStatus(updatedBehavior, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updatedBehaviorResult.map((updatedBehavior) => {
+      return enrichEntityWithEditableStatus(updatedBehavior, loggedUser);
+    });
   };
 
   const deleteBehavior = async (
@@ -176,24 +162,24 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await behaviorRepository.findComportementById(id);
+      const existingData = await behaviorRepository.findBehaviorById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedBehavior = await behaviorRepository.deleteComportementById(id);
+    const deletedBehavior = await behaviorRepository.deleteBehaviorById(id);
     return ok(enrichEntityWithEditableStatus(deletedBehavior, loggedUser));
   };
 
   const createBehaviors = async (
-    behaviors: Omit<ComportementCreateInput[], "owner_id">,
+    behaviors: Omit<BehaviorCreateInput[], "ownerId">,
     loggedUser: LoggedUser,
   ): Promise<readonly Behavior[]> => {
-    const createdBehaviors = await behaviorRepository.createComportements(
+    const createdBehaviors = await behaviorRepository.createBehaviors(
       behaviors.map((behavior) => {
-        return { ...behavior, owner_id: loggedUser.id };
+        return { ...behavior, ownerId: loggedUser.id };
       }),
     );
 

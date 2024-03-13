@@ -1,6 +1,7 @@
 import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
+import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
 import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
 import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
@@ -40,7 +41,6 @@ import {
 import { type TownService, buildTownService } from "../application/services/town/town-service.js";
 import { type UserService, buildUserService } from "../application/services/user/user-service.js";
 import { type WeatherService, buildWeatherService } from "../application/services/weather/weather-service.js";
-import { buildComportementRepository } from "../repositories/comportement/comportement-repository.js";
 import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
@@ -90,7 +90,7 @@ export const buildServices = async (): Promise<Services> => {
   logger.debug("Connection to database successful");
 
   const ageRepository = buildAgeRepository();
-  const behaviorRepository = buildComportementRepository({ slonik });
+  const behaviorRepository = buildBehaviorRepository();
   const classRepository = buildSpeciesClassRepository();
   const departmentRepository = buildDepartmentRepository();
   const distanceEstimateRepository = buildDistanceEstimateRepository();
