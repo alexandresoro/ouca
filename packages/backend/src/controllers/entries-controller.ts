@@ -20,7 +20,7 @@ import { enrichedInventory } from "./inventories-controller.js";
 const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser | null): Promise<GetEntryResponse> => {
   const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
     (await services.ageService.findAgeOfEntryId(entry.id, user))._unsafeUnwrap(),
-    services.behaviorService.findBehaviorsOfEntryId(entry.id, user),
+    (await services.behaviorService.findBehaviorsOfEntryId(entry.id, user))._unsafeUnwrap(),
     services.speciesService.findSpeciesOfEntryId(entry.id, user),
     (await services.distanceEstimateService.findDistanceEstimateOfEntryId(entry.id, user))._unsafeUnwrap(),
     (await services.numberEstimateService.findNumberEstimateOfEntryId(entry.id, user))._unsafeUnwrap(),

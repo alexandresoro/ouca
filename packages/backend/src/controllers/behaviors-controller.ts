@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getBehaviorResponse,
   getBehaviorsExtendedResponse,
@@ -9,7 +8,9 @@ import {
 } from "@ou-ca/common/api/behavior";
 import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import type { FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const behaviorsController: FastifyPluginCallback<{
@@ -22,7 +23,20 @@ const behaviorsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const behavior = await behaviorService.findBehavior(req.params.id, req.user);
+    const behaviorResult = await behaviorService.findBehavior(req.params.id, req.user);
+
+    if (behaviorResult.isErr()) {
+      switch (behaviorResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: behaviorResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const behavior = behaviorResult.value;
+
     if (!behavior) {
       return await reply.status(404).send();
     }
@@ -42,16 +56,30 @@ const behaviorsController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [behaviorsData, count] = await Promise.all([
-      behaviorService.findPaginatedBehaviors(req.user, queryParams),
-      behaviorService.getBehaviorsCount(req.user, queryParams.q),
+    const paginatedResults = Result.combine([
+      await behaviorService.findPaginatedBehaviors(req.user, queryParams),
+      await behaviorService.getBehaviorsCount(req.user, queryParams.q),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [behaviorsData, count] = paginatedResults.value;
 
     let data: Behavior[] | BehaviorExtended[] = behaviorsData;
     if (extended) {
       data = await Promise.all(
         behaviorsData.map(async (behaviorData) => {
-          const entriesCount = await behaviorService.getEntriesCountByBehavior(behaviorData.id, req.user);
+          const entriesCount = (
+            await behaviorService.getEntriesCountByBehavior(behaviorData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...behaviorData,
             entriesCount,
@@ -78,17 +106,22 @@ const behaviorsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const behavior = await behaviorService.createBehavior(input, req.user);
-      const response = upsertBehaviorResponse.parse(behavior);
+    const behaviorResult = await behaviorService.createBehavior(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (behaviorResult.isErr()) {
+      switch (behaviorResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: behaviorResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertBehaviorResponse.parse(behaviorResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -104,17 +137,22 @@ const behaviorsController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const behavior = await behaviorService.updateBehavior(req.params.id, input, req.user);
-      const response = upsertBehaviorResponse.parse(behavior);
+    const behaviorResult = await behaviorService.updateBehavior(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (behaviorResult.isErr()) {
+      switch (behaviorResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: behaviorResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertBehaviorResponse.parse(behaviorResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -122,7 +160,19 @@ const behaviorsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedBehavior = await behaviorService.deleteBehavior(req.params.id, req.user);
+    const deletedBehaviorResult = await behaviorService.deleteBehavior(req.params.id, req.user);
+
+    if (deletedBehaviorResult.isErr()) {
+      switch (deletedBehaviorResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedBehaviorResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedBehavior = deletedBehaviorResult.value;
 
     if (!deletedBehavior) {
       return await reply.status(404).send();

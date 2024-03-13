@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import type { BehaviorFailureReason } from "@domain/behavior/behavior.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { BehaviorsSearchParams, UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import { type Result, err, ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import type { ComportementCreateInput } from "../../../repositories/comportement/comportement-repository-types.js";
 import type { ComportementRepository } from "../../../repositories/comportement/comportement-repository.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
@@ -15,11 +16,16 @@ type BehaviorServiceDependencies = {
 };
 
 export const buildBehaviorService = ({ behaviorRepository, entryRepository }: BehaviorServiceDependencies) => {
-  const findBehavior = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior | null> => {
-    validateAuthorization(loggedUser);
+  const findBehavior = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Behavior | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const behavior = await behaviorRepository.findComportementById(id);
-    return enrichEntityWithEditableStatus(behavior, loggedUser);
+    return ok(enrichEntityWithEditableStatus(behavior, loggedUser));
   };
 
   const findBehaviorIdsOfEntryId = async (entryId: string): Promise<string[]> => {
@@ -33,8 +39,10 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
   const findBehaviorsOfEntryId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null,
-  ): Promise<Behavior[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Behavior[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const behaviors = await behaviorRepository.findComportementsOfDonneeId(
       entryId ? Number.parseInt(entryId) : undefined,
@@ -44,13 +52,18 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
       return enrichEntityWithEditableStatus(behavior, loggedUser);
     });
 
-    return [...enrichedBehaviors];
+    return ok([...enrichedBehaviors]);
   };
 
-  const getEntriesCountByBehavior = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountByBehavior = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByComportementId(Number.parseInt(id));
+    return ok(await entryRepository.getCountByComportementId(Number.parseInt(id)));
   };
 
   const findAllBehaviors = async (): Promise<Behavior[]> => {
@@ -68,8 +81,10 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
   const findPaginatedBehaviors = async (
     loggedUser: LoggedUser | null,
     options: BehaviorsSearchParams,
-  ): Promise<Behavior[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Behavior[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -84,17 +99,27 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
       return enrichEntityWithEditableStatus(behavior, loggedUser);
     });
 
-    return [...enrichedBehaviors];
+    return ok([...enrichedBehaviors]);
   };
 
-  const getBehaviorsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getBehaviorsCount = async (
+    loggedUser: LoggedUser | null,
+    q?: string | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return behaviorRepository.getCount(q);
+    return ok(await behaviorRepository.getCount(q));
   };
 
-  const createBehavior = async (input: UpsertBehaviorInput, loggedUser: LoggedUser | null): Promise<Behavior> => {
-    validateAuthorization(loggedUser);
+  const createBehavior = async (
+    input: UpsertBehaviorInput,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Behavior, BehaviorFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdBehavior = await behaviorRepository.createComportement({
@@ -102,10 +127,10 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdBehavior, loggedUser);
+      return ok(enrichEntityWithEditableStatus(createdBehavior, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -115,44 +140,51 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
     id: number,
     input: UpsertBehaviorInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Behavior> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Behavior, BehaviorFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await behaviorRepository.findComportementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     try {
       const updatedBehavior = await behaviorRepository.updateComportement(id, input);
 
-      return enrichEntityWithEditableStatus(updatedBehavior, loggedUser);
+      return ok(enrichEntityWithEditableStatus(updatedBehavior, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteBehavior = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior | null> => {
-    validateAuthorization(loggedUser);
+  const deleteBehavior = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Behavior | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await behaviorRepository.findComportementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedBehavior = await behaviorRepository.deleteComportementById(id);
-    return enrichEntityWithEditableStatus(deletedBehavior, loggedUser);
+    return ok(enrichEntityWithEditableStatus(deletedBehavior, loggedUser));
   };
 
   const createBehaviors = async (

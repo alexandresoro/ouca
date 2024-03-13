@@ -197,7 +197,7 @@ export const generateDonneesExport = async (
       const estimationNombre = (
         await numberEstimateService.findNumberEstimateOfEntryId(donnee?.id, loggedUser)
       )._unsafeUnwrap();
-      const comportements = await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser);
+      const comportements = (await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const milieux = (await environmentService.findEnvironmentsOfEntryId(donnee.id, loggedUser))._unsafeUnwrap();
 
       const nicheurStatus = getNicheurStatusToDisplay(comportements, "");
