@@ -1585,7 +1585,7 @@ packages:
     dependencies:
       '@babel/core': 7.24.0
       '@sentry/babel-plugin-component-annotate': 2.15.0
-      '@sentry/cli': 2.30.1
+      '@sentry/cli': 2.30.2
       dotenv: 16.4.5
       find-up: 5.0.0
       glob: 9.3.5
@@ -1596,16 +1596,16 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/cli-darwin@2.30.1:
-    resolution: {integrity: sha512-xEUGoplRON7QH6IlgYuqAlIb3Dz9dLIMDbZzT7XTOIeSep+BRhnupXqTL55ENcC22w8m91YyY9n9qG7/ZaRmNA==}
+  /@sentry/cli-darwin@2.30.2:
+    resolution: {integrity: sha512-lZkKXMt0HUAwLQuPpi/DM3CsdCCp+6B2cdur+8fAq7uARXTOsTKVDxv9pkuJHCgHUnguh8ittP5GMr0baTxmMg==}
     engines: {node: '>=10'}
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@sentry/cli-linux-arm64@2.30.1:
-    resolution: {integrity: sha512-Tx0EA6oEcAoW029Hv328aez3YgM5ixVumvytcOOWYHOjRzm8yK1v79DoNvFPVK1tmEmiobVZ2ZOTUK/Nqi/VTw==}
+  /@sentry/cli-linux-arm64@2.30.2:
+    resolution: {integrity: sha512-IWassuXggNhHOPCNrORNmd5SrAx5rU4XDlgOWBJr/ez7DvlPrr9EhV1xsdht6K4mPXhCGJq3rtRdCoWGJQW6Uw==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux, freebsd]
@@ -1613,8 +1613,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-arm@2.30.1:
-    resolution: {integrity: sha512-MGi+aBxiXWaoYndc3ObDt5NDbPV2n5CJF8fQ7uuQgZsMVwnDFGfD1O6bXjOoRlMTPs0PkinpKVVNbc5hIE7bWw==}
+  /@sentry/cli-linux-arm@2.30.2:
+    resolution: {integrity: sha512-H7hqiLpEL7w/EHdhuUGatwg9O080mdujq4/zS96buKIHXxZE6KqMXGtMVIAvTl1+z6BlBEnfvZGI19MPw3t/7w==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux, freebsd]
@@ -1622,8 +1622,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-i686@2.30.1:
-    resolution: {integrity: sha512-LyXpgAbQSS9XCQK431xEHMWTh9c53c3eOAv5S7BpqNZW8qryMPyNHL1TykWY+PJgXM8EWIo45IuPZ1Ppw9fYWg==}
+  /@sentry/cli-linux-i686@2.30.2:
+    resolution: {integrity: sha512-gZIq131M4TJTG1lX9uvpoaGWaEXCEfdDXrXu/z/YZmAKBcThpMYChodXmm8FB6X4xb0TPXzIFqdzlLdglFK46g==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [linux, freebsd]
@@ -1631,8 +1631,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-x64@2.30.1:
-    resolution: {integrity: sha512-8Ji5ZtJnpyKXfP0HQD9FKmd/fWns7NUoknCfNVrwpSlk7LydpiWNhMVCKiU/zkDS6kKZzqFTuK1DvLA7LmCV4w==}
+  /@sentry/cli-linux-x64@2.30.2:
+    resolution: {integrity: sha512-NmTAIl7aW9OHxwB4149sBfvCbTyK9T/CvBX38keaD2yIThet9gZ4koP49hBDxYF99aQX3E+LIAqWwnkV9W72Sw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux, freebsd]
@@ -1640,8 +1640,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-win32-i686@2.30.1:
-    resolution: {integrity: sha512-MBrYs2mX3jEF8ZOPf1L6CTL8Aooiyn6navFeqBOo9VovgT1NfJP3qBHs0YbHGCkvBNqHAdf7eA6caBHSLTwZBg==}
+  /@sentry/cli-win32-i686@2.30.2:
+    resolution: {integrity: sha512-SBR/Q3T6o+7uHwHNdjcG9GA3R++9w8oi778b95GuOC3dh0WOU6hXaKwQWe95ZcuSd2rKpouH7dhMjqqNM4HxOA==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [win32]
@@ -1649,8 +1649,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-win32-x64@2.30.1:
-    resolution: {integrity: sha512-Do/9U0e70heqVDFEnOFCXtid52uUEGYvlrLa6AU6nsO4KM2c2A+c4t3gfwckKDOs2VaRuCW9sgtYy0LGmUlc5w==}
+  /@sentry/cli-win32-x64@2.30.2:
+    resolution: {integrity: sha512-gF9wSZxzXFgakkC+uKVLAAYlbYj13e1gTsNm3gm+ODfpV+rbHwvbKoLfNsbVCFVCEZxIV2rXEP5WmTr0kiMvWQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
@@ -1658,8 +1658,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli@2.30.1:
-    resolution: {integrity: sha512-xa9FG83gCDlVPljp88zOqiUmmt3lYMYjunP8jyahVgsMH/Mxv8aRbgRc7sioWnvDRiPnZkZazCooMsqcWMOk7w==}
+  /@sentry/cli@2.30.2:
+    resolution: {integrity: sha512-jQ/RBJ3bZ4PFbfOsGq8EykygHHmXXPw+i6jqsnQfAPIeZoX+DsqpAZbYubQEZKekmQ8EVGFxGHzUVkd6hLVMbA==}
     engines: {node: '>= 10'}
     hasBin: true
     requiresBuild: true
@@ -1670,13 +1670,13 @@ packages:
       proxy-from-env: 1.1.0
       which: 2.0.2
     optionalDependencies:
-      '@sentry/cli-darwin': 2.30.1
-      '@sentry/cli-linux-arm': 2.30.1
-      '@sentry/cli-linux-arm64': 2.30.1
-      '@sentry/cli-linux-i686': 2.30.1
-      '@sentry/cli-linux-x64': 2.30.1
-      '@sentry/cli-win32-i686': 2.30.1
-      '@sentry/cli-win32-x64': 2.30.1
+      '@sentry/cli-darwin': 2.30.2
+      '@sentry/cli-linux-arm': 2.30.2
+      '@sentry/cli-linux-arm64': 2.30.2
+      '@sentry/cli-linux-i686': 2.30.2
+      '@sentry/cli-linux-x64': 2.30.2
+      '@sentry/cli-win32-i686': 2.30.2
+      '@sentry/cli-win32-x64': 2.30.2
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -2750,7 +2750,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001597
-      electron-to-chromium: 1.4.702
+      electron-to-chromium: 1.4.704
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
 
@@ -3268,8 +3268,8 @@ packages:
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  /electron-to-chromium@1.4.702:
-    resolution: {integrity: sha512-LYLXyEUsZ3nNSwiOWjI88N1PJUAMU2QphQSgGLVkFnb3FxZxNui2Vzi2PaKPgPWbsWbZstZnh6BMf/VQJamjiQ==}
+  /electron-to-chromium@1.4.704:
+    resolution: {integrity: sha512-OK01+86Qvby1V6cTiowVbhp25aX4DLZnwar+NocAOXdzKAByd+jq5156bmo4kHwevWMknznW18Y/Svfk2dU91A==}
 
   /emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -5677,11 +5677,11 @@ packages:
       postcss: ^8.2.14
     dependencies:
       postcss: 8.4.35
-      postcss-selector-parser: 6.0.15
+      postcss-selector-parser: 6.0.16
     dev: true
 
-  /postcss-selector-parser@6.0.15:
-    resolution: {integrity: sha512-rEYkQOMUCEMhsKbK66tbEU9QVIxbhN18YiniAwA7XQYTVBqrBy+P2p5JcdqsHgKM2zWylp8d7J6eszocfds5Sw==}
+  /postcss-selector-parser@6.0.16:
+    resolution: {integrity: sha512-A0RVJrX+IUkVZbW3ClroRWurercFhieevHB38sr2+l9eUClMqome3LmEmnhlNy+5Mr2EYN6B2Kaw9wYdd+VHiw==}
     engines: {node: '>=4'}
     dependencies:
       cssesc: 3.0.0
@@ -6670,7 +6670,7 @@ packages:
       postcss-js: 4.0.1(postcss@8.4.35)
       postcss-load-config: 4.0.2(postcss@8.4.35)
       postcss-nested: 6.0.1(postcss@8.4.35)
-      postcss-selector-parser: 6.0.15
+      postcss-selector-parser: 6.0.16
       resolve: 1.22.8
       sucrase: 3.35.0
     transitivePeerDependencies:
