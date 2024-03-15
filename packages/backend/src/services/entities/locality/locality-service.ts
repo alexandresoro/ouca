@@ -200,11 +200,8 @@ export const buildLocalityService = ({
   const createLocalities = async (localities: UpsertLocalityInput[], loggedUser: LoggedUser): Promise<Locality[]> => {
     const createdLocalities = await localityRepository.createLieuxdits(
       localities.map((locality) => {
-        const { townId, ...restLocality } = locality;
         return {
-          ...restLocality,
-          commune_id: Number.parseInt(townId),
-          coordinates_system: "gps",
+          ...reshapeInputLocalityUpsertData(locality),
           owner_id: loggedUser.id,
         };
       }),
