@@ -91,7 +91,7 @@ describe("Find weathers by inventary ID", () => {
     assert.strictEqual(weatherRepository.findWeathersByInventoryId.mock.callCount(), 1);
     assert.deepStrictEqual(weatherRepository.findWeathersByInventoryId.mock.calls[0].arguments, [43]);
     assert.ok(weathersResult.isOk());
-    assert.strictEqual(weathersResult._unsafeUnwrap().length, weathersData.length);
+    assert.strictEqual(weathersResult.value.length, weathersData.length);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

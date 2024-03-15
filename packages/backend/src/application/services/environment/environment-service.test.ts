@@ -92,7 +92,7 @@ describe("Find environments by inventary ID", () => {
     assert.strictEqual(environmentRepository.findEnvironmentsByEntryId.mock.callCount(), 1);
     assert.deepStrictEqual(environmentRepository.findEnvironmentsByEntryId.mock.calls[0].arguments, ["43"]);
     assert.ok(environmentsResult.isOk());
-    assert.strictEqual(environmentsResult._unsafeUnwrap().length, environmentsData.length);
+    assert.strictEqual(environmentsResult.value.length, environmentsData.length);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

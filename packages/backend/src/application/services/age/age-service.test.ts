@@ -90,7 +90,7 @@ describe("Find age by data ID", () => {
     assert.strictEqual(ageRepository.findAgeByEntryId.mock.callCount(), 1);
     assert.deepStrictEqual(ageRepository.findAgeByEntryId.mock.calls[0].arguments, [43]);
     assert.ok(ageResult.isOk());
-    assert.strictEqual(ageResult._unsafeUnwrap()?.id, ageData.id);
+    assert.strictEqual(ageResult.value?.id, ageData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

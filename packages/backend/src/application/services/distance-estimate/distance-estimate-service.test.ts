@@ -95,7 +95,7 @@ describe("Find distance estimate by data ID", () => {
     assert.strictEqual(distanceEstimateRepository.findDistanceEstimateByEntryId.mock.callCount(), 1);
     assert.deepStrictEqual(distanceEstimateRepository.findDistanceEstimateByEntryId.mock.calls[0].arguments, [43]);
     assert.ok(distanceEstimateResult.isOk());
-    assert.deepStrictEqual(distanceEstimateResult._unsafeUnwrap()?.id, distanceEstimateData.id);
+    assert.deepStrictEqual(distanceEstimateResult.value?.id, distanceEstimateData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

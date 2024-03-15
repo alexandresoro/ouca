@@ -135,7 +135,7 @@ describe("Find department by city ID", () => {
     assert.strictEqual(departmentRepository.findDepartmentByTownId.mock.callCount(), 1);
     assert.deepStrictEqual(departmentRepository.findDepartmentByTownId.mock.calls[0].arguments, [43]);
     assert.ok(departmentResult.isOk());
-    assert.strictEqual(departmentResult._unsafeUnwrap()?.id, "256");
+    assert.strictEqual(departmentResult.value?.id, "256");
   });
 
   test("should not be allowed when the requester is not logged", async () => {

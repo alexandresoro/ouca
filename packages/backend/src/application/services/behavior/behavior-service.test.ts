@@ -91,7 +91,7 @@ describe("Find behaviors by inventary ID", () => {
     assert.strictEqual(behaviorRepository.findBehaviorsByEntryId.mock.callCount(), 1);
     assert.deepStrictEqual(behaviorRepository.findBehaviorsByEntryId.mock.calls[0].arguments, ["43"]);
     assert.ok(behaviorsResult.isOk());
-    assert.strictEqual(behaviorsResult._unsafeUnwrap().length, behaviorsData.length);
+    assert.strictEqual(behaviorsResult.value.length, behaviorsData.length);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

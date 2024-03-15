@@ -112,7 +112,7 @@ describe("Find class by species ID", () => {
     assert.strictEqual(classRepository.findSpeciesClassBySpeciesId.mock.callCount(), 1);
     assert.deepStrictEqual(classRepository.findSpeciesClassBySpeciesId.mock.calls[0].arguments, [43]);
     assert.ok(speciesClassResult.isOk());
-    assert.strictEqual(speciesClassResult._unsafeUnwrap()?.id, classData.id);
+    assert.strictEqual(speciesClassResult.value?.id, classData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

@@ -97,7 +97,7 @@ describe("Find number estimate by data ID", () => {
     assert.strictEqual(numberEstimateRepository.findNumberEstimateByEntryId.mock.callCount(), 1);
     assert.deepStrictEqual(numberEstimateRepository.findNumberEstimateByEntryId.mock.calls[0].arguments, [43]);
     assert.ok(numberEstimateResult.isOk());
-    assert.strictEqual(numberEstimateResult._unsafeUnwrap()?.id, numberEstimateData.id);
+    assert.strictEqual(numberEstimateResult.value?.id, numberEstimateData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

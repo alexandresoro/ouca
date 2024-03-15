@@ -70,7 +70,7 @@ describe("Find observer by inventary ID", () => {
     assert.strictEqual(observerRepository.findObserverByInventoryId.mock.callCount(), 1);
     assert.deepStrictEqual(observerRepository.findObserverByInventoryId.mock.calls[0].arguments, [43]);
     assert.ok(observerResult.isOk());
-    assert.deepStrictEqual(observerResult._unsafeUnwrap()?.id, observerData.id);
+    assert.deepStrictEqual(observerResult.value?.id, observerData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -92,7 +92,7 @@ describe("Find associates by inventory ID", () => {
     assert.strictEqual(observerRepository.findAssociatesOfInventoryId.mock.callCount(), 1);
     assert.deepStrictEqual(observerRepository.findAssociatesOfInventoryId.mock.calls[0].arguments, [43]);
     assert.ok(associatesResult.isOk());
-    assert.deepStrictEqual(associatesResult._unsafeUnwrap().length, 3);
+    assert.deepStrictEqual(associatesResult.value.length, 3);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

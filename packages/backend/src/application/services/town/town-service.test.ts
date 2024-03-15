@@ -114,7 +114,7 @@ describe("Find city by locality ID", () => {
     assert.strictEqual(townRepository.findTownByLocalityId.mock.callCount(), 1);
     assert.deepStrictEqual(townRepository.findTownByLocalityId.mock.calls[0].arguments, ["43"]);
     assert.ok(townResult.isOk());
-    assert.strictEqual(townResult._unsafeUnwrap()?.id, cityData.id);
+    assert.strictEqual(townResult.value?.id, cityData.id);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
