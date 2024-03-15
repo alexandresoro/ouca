@@ -1,6 +1,4 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import type { LoggedUser } from "@domain/user/logged-user.js";
-import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import {
   getInventoriesQueryParamsSchema,
   getInventoriesResponse,
@@ -12,37 +10,9 @@ import {
 } from "@ou-ca/common/api/inventory";
 import type { FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
-import type { Inventaire } from "../repositories/inventaire/inventaire-repository-types.js";
 import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-import { enrichedLocality } from "./localities-controller.js";
-
-export const enrichedInventory = async (
-  services: Services,
-  inventory: Inventaire,
-  user: LoggedUser | null,
-): Promise<InventoryExtended> => {
-  const [observer, associates, locality, weathers] = await Promise.all([
-    (await services.observerService.findObserverOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
-    (await services.observerService.findAssociatesOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
-    services.localityService.findLocalityOfInventoryId(Number.parseInt(inventory.id), user),
-    (await services.weatherService.findWeathersOfInventoryId(Number.parseInt(inventory.id), user))._unsafeUnwrap(),
-  ]);
-
-  if (!observer || !locality) {
-    return Promise.reject("Missing data for enriched inventory");
-  }
-
-  const localityEnriched = await enrichedLocality(services, locality, user);
-
-  return {
-    ...inventory,
-    observer,
-    associates,
-    locality: localityEnriched,
-    weathers,
-  };
-};
+import { enrichedInventory } from "./inventories-enricher.js";
 
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
@@ -60,7 +30,7 @@ const inventoriesController: FastifyPluginCallback<{
     }
 
     try {
-      const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+      const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
       const response = getInventoryResponse.parse(inventoryEnriched);
       return await reply.send(response);
     } catch (e) {
@@ -106,14 +76,14 @@ const inventoriesController: FastifyPluginCallback<{
     ]);
 
     // TODO look to optimize this request
-    const enrichedInventories = await Promise.all(
+    const enrichedInventoriesResults = await Promise.all(
       inventoriesData.map(async (inventoryData) => {
         return enrichedInventory(services, inventoryData, req.user);
       }),
     );
 
     const response = getInventoriesResponse.parse({
-      data: enrichedInventories,
+      data: enrichedInventoriesResults.map((enrichedInventoryResult) => enrichedInventoryResult._unsafeUnwrap()),
       meta: getPaginationMetadata(count, queryParams),
     });
 
@@ -132,7 +102,7 @@ const inventoriesController: FastifyPluginCallback<{
     // eslint-disable-next-line no-useless-catch
     try {
       const inventory = await inventoryService.createInventaire(input, req.user);
-      const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+      const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
       const response = upsertInventoryResponse.parse(inventoryEnriched);
 
       return await reply.send(response);
@@ -159,7 +129,7 @@ const inventoriesController: FastifyPluginCallback<{
     // eslint-disable-next-line no-useless-catch
     try {
       const inventory = await inventoryService.updateInventaire(req.params.id, input, req.user);
-      const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+      const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
       const response = upsertInventoryResponse.parse(inventoryEnriched);
 
       return await reply.send(response);

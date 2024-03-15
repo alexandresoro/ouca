@@ -15,7 +15,7 @@ import { NotFoundError } from "slonik";
 import type { Donnee } from "../repositories/donnee/donnee-repository-types.js";
 import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-import { enrichedInventory } from "./inventories-controller.js";
+import { enrichedInventory } from "./inventories-enricher.js";
 
 const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser | null): Promise<GetEntryResponse> => {
   const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
@@ -106,7 +106,7 @@ const entriesController: FastifyPluginCallback<{
             return Promise.reject("No matching inventory found");
           }
 
-          const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+          const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
           return {
             ...enrichedEntryData,
             inventory: inventoryEnriched,

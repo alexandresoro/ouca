@@ -1,5 +1,5 @@
+import type { UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import type { CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
-import type { LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
 
 const DEPARTEMENT_INDEX = 0;
@@ -30,14 +30,13 @@ export class ImportedLieuDit {
     this.coordinatesSystem = coordinatesSystem;
   }
 
-  buildLieudit = (communeId: string): Omit<LieuditCreateInput, "owner_id"> => {
+  buildLieudit = (townId: string): UpsertLocalityInput => {
     return {
-      commune_id: Number.parseInt(communeId),
+      townId,
       nom: this.nom,
       altitude: +this.altitude,
       longitude: +this.longitude,
       latitude: +this.latitude,
-      coordinates_system: this.coordinatesSystem.code,
     };
   };
 

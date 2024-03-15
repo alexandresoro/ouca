@@ -1,5 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Locality, LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import {
   getLocalitiesExtendedResponse,
@@ -10,30 +8,10 @@ import {
   upsertLocalityResponse,
 } from "@ou-ca/common/api/locality";
 import type { FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-
-export const enrichedLocality = async (
-  services: Services,
-  locality: Locality,
-  user: LoggedUser | null,
-): Promise<Omit<LocalityExtended, "inventoriesCount" | "entriesCount">> => {
-  const town = (await services.townService.findTownOfLocalityId(locality.id, user))._unsafeUnwrap();
-  const department = town
-    ? (await services.departmentService.findDepartmentOfTownId(town.id, user))._unsafeUnwrap()
-    : null;
-
-  if (!town || !department) {
-    return Promise.reject("Missing data for enriched locality");
-  }
-
-  return {
-    ...locality,
-    townCode: town.code,
-    townName: town.nom,
-    departmentCode: department.code,
-  };
-};
 
 const localitiesController: FastifyPluginCallback<{
   services: Services;
@@ -45,7 +23,20 @@ const localitiesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const locality = await localityService.findLocality(req.params.id, req.user);
+    const localityResult = await localityService.findLocality(req.params.id, req.user);
+
+    if (localityResult.isErr()) {
+      switch (localityResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: localityResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const locality = localityResult.value;
+
     if (!locality) {
       return await reply.status(404).send();
     }
@@ -65,10 +56,22 @@ const localitiesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [localitiesData, count] = await Promise.all([
-      localityService.findPaginatedLocalities(req.user, queryParams),
-      localityService.getLocalitiesCount(req.user, queryParams),
+    const paginatedResults = Result.combine([
+      await localityService.findPaginatedLocalities(req.user, queryParams),
+      await localityService.getLocalitiesCount(req.user, queryParams),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [localitiesData, count] = paginatedResults.value;
 
     let data: Locality[] | LocalityExtended[] = localitiesData;
     if (extended) {
@@ -79,8 +82,12 @@ const localitiesController: FastifyPluginCallback<{
           const department = town
             ? (await departmentService.findDepartmentOfTownId(town.id, req.user))._unsafeUnwrap()
             : null;
-          const inventoriesCount = await localityService.getInventoriesCountByLocality(localityData.id, req.user);
-          const entriesCount = await localityService.getEntriesCountByLocality(localityData.id, req.user);
+          const inventoriesCount = (
+            await localityService.getInventoriesCountByLocality(localityData.id, req.user)
+          )._unsafeUnwrap();
+          const entriesCount = (
+            await localityService.getEntriesCountByLocality(localityData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...localityData,
             townCode: town?.code,
@@ -111,17 +118,22 @@ const localitiesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const locality = await localityService.createLocality(input, req.user);
-      const response = upsertLocalityResponse.parse(locality);
+    const localityCreateResult = await localityService.createLocality(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (localityCreateResult.isErr()) {
+      switch (localityCreateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: localityCreateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertLocalityResponse.parse(localityCreateResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -137,17 +149,22 @@ const localitiesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const locality = await localityService.updateLocality(req.params.id, input, req.user);
-      const response = upsertLocalityResponse.parse(locality);
+    const localityUpdateResult = await localityService.updateLocality(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (localityUpdateResult.isErr()) {
+      switch (localityUpdateResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: localityUpdateResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertLocalityResponse.parse(localityUpdateResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -155,7 +172,19 @@ const localitiesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedLocality = await localityService.deleteLocality(req.params.id, req.user);
+    const deletedLocalityResult = await localityService.deleteLocality(req.params.id, req.user);
+
+    if (deletedLocalityResult.isErr()) {
+      switch (deletedLocalityResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedLocalityResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedLocality = deletedLocalityResult.value;
 
     if (!deletedLocality) {
       return await reply.status(404).send();

@@ -1,15 +1,13 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import type { LocalityFailureReason } from "@domain/locality/locality.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { LocalitiesSearchParams, UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type Result, err, ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import type { InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
-import type {
-  LieuditCreateInput,
-  LieuditWithCommuneAndDepartementCode,
-} from "../../../repositories/lieudit/lieudit-repository-types.js";
+import type { LieuditWithCommuneAndDepartementCode } from "../../../repositories/lieudit/lieudit-repository-types.js";
 import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { getSqlPagination } from "../entities-utils.js";
 import { reshapeInputLocalityUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
@@ -25,33 +23,50 @@ export const buildLocalityService = ({
   inventoryRepository,
   entryRepository,
 }: LocalityServiceDependencies) => {
-  const findLocality = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
-    validateAuthorization(loggedUser);
+  const findLocality = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Locality | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const locality = await localityRepository.findLieuditById(id);
-    return reshapeLocalityRepositoryToApi(locality, loggedUser);
+    return ok(reshapeLocalityRepositoryToApi(locality, loggedUser));
   };
 
-  const getInventoriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getInventoriesCountByLocality = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return inventoryRepository.getCountByLocality(Number.parseInt(id));
+    return ok(await inventoryRepository.getCountByLocality(Number.parseInt(id)));
   };
 
-  const getEntriesCountByLocality = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountByLocality = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByLieuditId(Number.parseInt(id));
+    return ok(await entryRepository.getCountByLieuditId(Number.parseInt(id)));
   };
 
   const findLocalityOfInventoryId = async (
     inventoryId: number | undefined,
     loggedUser: LoggedUser | null,
-  ): Promise<Locality | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Locality | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const locality = await localityRepository.findLieuditByInventaireId(inventoryId);
-    return reshapeLocalityRepositoryToApi(locality, loggedUser);
+    return ok(reshapeLocalityRepositoryToApi(locality, loggedUser));
   };
 
   const findAllLocalities = async (): Promise<Locality[]> => {
@@ -69,8 +84,10 @@ export const buildLocalityService = ({
   const findPaginatedLocalities = async (
     loggedUser: LoggedUser | null,
     options: LocalitiesSearchParams,
-  ): Promise<Locality[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Locality[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, townId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
@@ -86,7 +103,7 @@ export const buildLocalityService = ({
       return reshapeLocalityRepositoryToApi(locality, loggedUser);
     });
 
-    return [...enrichedLocalities];
+    return ok([...enrichedLocalities]);
   };
 
   const findAllLocalitiesWithTownAndDepartment = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
@@ -98,14 +115,21 @@ export const buildLocalityService = ({
   const getLocalitiesCount = async (
     loggedUser: LoggedUser | null,
     { q, townId }: Pick<LocalitiesSearchParams, "q" | "townId">,
-  ): Promise<number> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return localityRepository.getCount(q, townId ? Number.parseInt(townId) : undefined);
+    return ok(await localityRepository.getCount(q, townId ? Number.parseInt(townId) : undefined));
   };
 
-  const createLocality = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Locality> => {
-    validateAuthorization(loggedUser);
+  const createLocality = async (
+    input: UpsertLocalityInput,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Locality, LocalityFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdLocality = await localityRepository.createLieudit({
@@ -113,10 +137,10 @@ export const buildLocalityService = ({
         owner_id: loggedUser.id,
       });
 
-      return reshapeLocalityRepositoryToApi(createdLocality, loggedUser);
+      return ok(reshapeLocalityRepositoryToApi(createdLocality, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -126,53 +150,63 @@ export const buildLocalityService = ({
     id: number,
     input: UpsertLocalityInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Locality> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Locality, LocalityFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await localityRepository.findLieuditById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     try {
       const updatedLocality = await localityRepository.updateLieudit(id, reshapeInputLocalityUpsertData(input));
 
-      return reshapeLocalityRepositoryToApi(updatedLocality, loggedUser);
+      return ok(reshapeLocalityRepositoryToApi(updatedLocality, loggedUser));
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteLocality = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
-    validateAuthorization(loggedUser);
+  const deleteLocality = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Locality | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await localityRepository.findLieuditById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
     const deletedLocality = await localityRepository.deleteLieuditById(id);
-    return reshapeLocalityRepositoryToApi(deletedLocality, loggedUser);
+    return ok(reshapeLocalityRepositoryToApi(deletedLocality, loggedUser));
   };
 
-  const createLocalities = async (
-    localities: Omit<LieuditCreateInput, "owner_id">[],
-    loggedUser: LoggedUser,
-  ): Promise<readonly Locality[]> => {
+  const createLocalities = async (localities: UpsertLocalityInput[], loggedUser: LoggedUser): Promise<Locality[]> => {
     const createdLocalities = await localityRepository.createLieuxdits(
       localities.map((locality) => {
-        return { ...locality, owner_id: loggedUser.id };
+        const { townId, ...restLocality } = locality;
+        return {
+          ...restLocality,
+          commune_id: Number.parseInt(townId),
+          coordinates_system: "gps",
+          owner_id: loggedUser.id,
+        };
       }),
     );
 

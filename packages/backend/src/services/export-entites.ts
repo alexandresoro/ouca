@@ -178,7 +178,9 @@ export const generateDonneesExport = async (
       const observateur = (
         await observerService.findObserverOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const lieudit = await localityService.findLocalityOfInventoryId(Number.parseInt(inventaire.id), loggedUser);
+      const lieudit = (
+        await localityService.findLocalityOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
+      )._unsafeUnwrap();
       const commune = (await townService.findTownOfLocalityId(lieudit?.id, loggedUser))._unsafeUnwrap();
       const departement = (await departmentService.findDepartmentOfTownId(commune?.id, loggedUser))._unsafeUnwrap();
       const associes = (
