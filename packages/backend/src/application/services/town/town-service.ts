@@ -1,17 +1,17 @@
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { TownCreateInput, TownFailureReason } from "@domain/town/town.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import type { TownsSearchParams, UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type TownServiceDependencies = {
   townRepository: TownRepository;
-  localityRepository: LieuditRepository;
+  localityRepository: LocalityRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -46,7 +46,7 @@ export const buildTownService = ({ townRepository, localityRepository, entryRepo
       return err("notAllowed");
     }
 
-    return ok(await localityRepository.getCountByCommuneId(Number.parseInt(id)));
+    return ok(await localityRepository.getCount(undefined, id));
   };
 
   const findTownOfLocalityId = async (

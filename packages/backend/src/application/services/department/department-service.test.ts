@@ -5,17 +5,17 @@ import { departmentFactory } from "@fixtures/domain/department/department.fixtur
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDepartmentInputFactory } from "@fixtures/services/department/department-service.fixtures.js";
 import type { DepartmentRepository } from "@interfaces/department-repository-interface.js";
+import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { DepartmentsSearchParams } from "@ou-ca/common/api/department";
 import { err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildDepartmentService } from "./department-service.js";
 
 const departmentRepository = mock<DepartmentRepository>();
 const townRepository = mock<TownRepository>();
-const localityRepository = mock<LieuditRepository>();
+const localityRepository = mock<LocalityRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const departmentService = buildDepartmentService({
@@ -35,7 +35,7 @@ beforeEach(() => {
   departmentRepository.getCount.mock.resetCalls();
   departmentRepository.findDepartmentByTownId.mock.resetCalls();
   townRepository.getCount.mock.resetCalls();
-  localityRepository.getCountByDepartementId.mock.resetCalls();
+  localityRepository.getCount.mock.resetCalls();
   entryRepository.getCountByDepartementId.mock.resetCalls();
 });
 
@@ -93,8 +93,8 @@ describe("Localities count per entity", () => {
 
     await departmentService.getLocalitiesCountByDepartment("12", loggedUser);
 
-    assert.strictEqual(localityRepository.getCountByDepartementId.mock.callCount(), 1);
-    assert.deepStrictEqual(localityRepository.getCountByDepartementId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(localityRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(localityRepository.getCount.mock.calls[0].arguments, [undefined, undefined, "12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

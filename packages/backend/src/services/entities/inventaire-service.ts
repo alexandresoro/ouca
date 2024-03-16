@@ -1,5 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { DatabasePool } from "slonik";
 import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
@@ -8,7 +9,6 @@ import type { InventaireAssocieRepository } from "../../repositories/inventaire-
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import type { Inventaire, InventaireFindManyInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
-import type { LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { logger } from "../../utils/logger.js";
 import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
@@ -19,7 +19,7 @@ type InventaireServiceDependencies = {
   inventoryAssociateRepository: InventaireAssocieRepository;
   inventoryWeatherRepository: InventaireMeteoRepository;
   entryRepository: DonneeRepository;
-  localityRepository: LieuditRepository;
+  localityRepository: LocalityRepository;
 };
 
 export const buildInventaireService = ({
@@ -96,7 +96,7 @@ export const buildInventaireService = ({
 
     const { associateIds, weatherIds } = input;
 
-    const locality = await localityRepository.findLieuditById(Number.parseInt(input.localityId));
+    const locality = await localityRepository.findLocalityById(Number.parseInt(input.localityId));
     if (!locality) {
       logger.warn(
         {
@@ -163,7 +163,7 @@ export const buildInventaireService = ({
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
     const { associateIds, weatherIds } = inputData;
 
-    const locality = await localityRepository.findLieuditById(Number.parseInt(input.localityId));
+    const locality = await localityRepository.findLocalityById(Number.parseInt(input.localityId));
     if (!locality) {
       logger.warn(
         {

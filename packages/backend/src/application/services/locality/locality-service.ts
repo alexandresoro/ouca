@@ -1,19 +1,17 @@
-import type { LocalityFailureReason } from "@domain/locality/locality.js";
+import type { Locality as LocalityDomain, LocalityFailureReason } from "@domain/locality/locality.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { LocalitiesSearchParams, UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Result, err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import type { InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
-import type { LieuditWithCommuneAndDepartementCode } from "../../../repositories/lieudit/lieudit-repository-types.js";
-import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
-import { getSqlPagination } from "../entities-utils.js";
-import { reshapeInputLocalityUpsertData, reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
+import { getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 
 type LocalityServiceDependencies = {
-  localityRepository: LieuditRepository;
+  localityRepository: LocalityRepository;
   inventoryRepository: InventaireRepository;
   entryRepository: DonneeRepository;
 };
@@ -31,7 +29,7 @@ export const buildLocalityService = ({
       return err("notAllowed");
     }
 
-    const locality = await localityRepository.findLieuditById(id);
+    const locality = await localityRepository.findLocalityById(id);
     return ok(reshapeLocalityRepositoryToApi(locality, loggedUser));
   };
 
@@ -58,19 +56,19 @@ export const buildLocalityService = ({
   };
 
   const findLocalityOfInventoryId = async (
-    inventoryId: number | undefined,
+    inventoryId: string | undefined,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Locality | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const locality = await localityRepository.findLieuditByInventaireId(inventoryId);
+    const locality = await localityRepository.findLocalityByInventoryId(inventoryId);
     return ok(reshapeLocalityRepositoryToApi(locality, loggedUser));
   };
 
   const findAllLocalities = async (): Promise<Locality[]> => {
-    const localities = await localityRepository.findLieuxdits({
+    const localities = await localityRepository.findLocalities({
       orderBy: "nom",
     });
 
@@ -91,10 +89,10 @@ export const buildLocalityService = ({
 
     const { q, townId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const localities = await localityRepository.findLieuxdits({
+    const localities = await localityRepository.findLocalities({
       q,
       ...getSqlPagination(pagination),
-      townId: townId ? Number.parseInt(townId) : undefined,
+      townId: townId,
       orderBy: orderByField,
       sortOrder,
     });
@@ -106,10 +104,14 @@ export const buildLocalityService = ({
     return ok([...enrichedLocalities]);
   };
 
-  const findAllLocalitiesWithTownAndDepartment = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
-    const localitiesWithTownAndDepartmentCode =
-      await localityRepository.findAllLieuxDitsWithCommuneAndDepartementCode();
-    return [...localitiesWithTownAndDepartmentCode];
+  const findAllLocalitiesWithTownAndDepartment = async (): Promise<
+    (LocalityDomain & {
+      townCode: number;
+      townName: string;
+      departmentCode: string;
+    })[]
+  > => {
+    return localityRepository.findAllLocalitiesWithTownAndDepartmentCode();
   };
 
   const getLocalitiesCount = async (
@@ -120,7 +122,7 @@ export const buildLocalityService = ({
       return err("notAllowed");
     }
 
-    return ok(await localityRepository.getCount(q, townId ? Number.parseInt(townId) : undefined));
+    return ok(await localityRepository.getCount(q, townId));
   };
 
   const createLocality = async (
@@ -131,19 +133,14 @@ export const buildLocalityService = ({
       return err("notAllowed");
     }
 
-    try {
-      const createdLocality = await localityRepository.createLieudit({
-        ...reshapeInputLocalityUpsertData(input),
-        owner_id: loggedUser.id,
-      });
+    const createdLocalityResult = await localityRepository.createLocality({
+      ...input,
+      ownerId: loggedUser.id,
+    });
 
-      return ok(reshapeLocalityRepositoryToApi(createdLocality, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return createdLocalityResult.map((createdLocality) => {
+      return reshapeLocalityRepositoryToApi(createdLocality, loggedUser);
+    });
   };
 
   const updateLocality = async (
@@ -157,23 +154,18 @@ export const buildLocalityService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await localityRepository.findLieuditById(id);
+      const existingData = await localityRepository.findLocalityById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updatedLocality = await localityRepository.updateLieudit(id, reshapeInputLocalityUpsertData(input));
+    const updatedLocalityResult = await localityRepository.updateLocality(id, input);
 
-      return ok(reshapeLocalityRepositoryToApi(updatedLocality, loggedUser));
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
-    }
+    return updatedLocalityResult.map((updatedLocality) => {
+      return reshapeLocalityRepositoryToApi(updatedLocality, loggedUser);
+    });
   };
 
   const deleteLocality = async (
@@ -186,23 +178,23 @@ export const buildLocalityService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await localityRepository.findLieuditById(id);
+      const existingData = await localityRepository.findLocalityById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    const deletedLocality = await localityRepository.deleteLieuditById(id);
+    const deletedLocality = await localityRepository.deleteLocalityById(id);
     return ok(reshapeLocalityRepositoryToApi(deletedLocality, loggedUser));
   };
 
   const createLocalities = async (localities: UpsertLocalityInput[], loggedUser: LoggedUser): Promise<Locality[]> => {
-    const createdLocalities = await localityRepository.createLieuxdits(
+    const createdLocalities = await localityRepository.createLocalities(
       localities.map((locality) => {
         return {
-          ...reshapeInputLocalityUpsertData(locality),
-          owner_id: loggedUser.id,
+          ...locality,
+          ownerId: loggedUser.id,
         };
       }),
     );

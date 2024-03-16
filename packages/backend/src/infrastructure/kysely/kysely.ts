@@ -51,6 +51,11 @@ export type Database = {
 
 const kyselyLogger = logger.child({ module: "kysely" });
 
+// https://github.com/brianc/node-postgres/issues/811
+// Parse NUMERIC as number, not string as we assume that they fit into JS number
+// eslint-disable-next-line import/no-named-as-default-member
+pg.types.setTypeParser(pg.types.builtins.NUMERIC, "text", Number.parseFloat);
+
 const dialect = new PostgresDialect({
   // eslint-disable-next-line import/no-named-as-default-member
   pool: new pg.Pool({

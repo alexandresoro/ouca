@@ -5,6 +5,7 @@ import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/b
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
 import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
 import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
+import { buildLocalityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
 import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
@@ -28,6 +29,7 @@ import {
   type EnvironmentService,
   buildEnvironmentService,
 } from "../application/services/environment/environment-service.js";
+import { type LocalityService, buildLocalityService } from "../application/services/locality/locality-service.js";
 import {
   type NumberEstimateService,
   buildNumberEstimateService,
@@ -49,12 +51,10 @@ import { buildEspeceRepository } from "../repositories/espece/espece-repository.
 import { buildInventaireAssocieRepository } from "../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { buildInventaireMeteoRepository } from "../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { buildInventaireRepository } from "../repositories/inventaire/inventaire-repository.js";
-import { buildLieuditRepository } from "../repositories/lieudit/lieudit-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
 import { type InventaireService, buildInventaireService } from "./entities/inventaire-service.js";
-import { type LocalityService, buildLocalityService } from "./entities/locality/locality-service.js";
 import { type SpeciesService, buildSpeciesService } from "./entities/species/species-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
@@ -101,7 +101,7 @@ export const buildServices = async (): Promise<Services> => {
   const inventoryRepository = buildInventaireRepository({ slonik });
   const inventoryAssociateRepository = buildInventaireAssocieRepository({ slonik });
   const inventoryWeatherRepository = buildInventaireMeteoRepository({ slonik });
-  const localityRepository = buildLieuditRepository({ slonik });
+  const localityRepository = buildLocalityRepository();
   const numberEstimateRepository = buildNumberEstimateRepository();
   const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();

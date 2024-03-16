@@ -12,6 +12,7 @@ import type { BehaviorService } from "../application/services/behavior/behavior-
 import type { DepartmentService } from "../application/services/department/department-service.js";
 import type { DistanceEstimateService } from "../application/services/distance-estimate/distance-estimate-service.js";
 import type { EnvironmentService } from "../application/services/environment/environment-service.js";
+import type { LocalityService } from "../application/services/locality/locality-service.js";
 import type { NumberEstimateService } from "../application/services/number-estimate/number-estimate-service.js";
 import type { ObserverService } from "../application/services/observer/observer-service.js";
 import type { SexService } from "../application/services/sex/sex-service.js";
@@ -21,7 +22,6 @@ import type { WeatherService } from "../application/services/weather/weather-ser
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import type { DonneeService } from "./entities/donnee-service.js";
 import type { InventaireService } from "./entities/inventaire-service.js";
-import type { LocalityService } from "./entities/locality/locality-service.js";
 import type { SpeciesService } from "./entities/species/species-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
@@ -178,9 +178,7 @@ export const generateDonneesExport = async (
       const observateur = (
         await observerService.findObserverOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const lieudit = (
-        await localityService.findLocalityOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
-      )._unsafeUnwrap();
+      const lieudit = (await localityService.findLocalityOfInventoryId(inventaire.id, loggedUser))._unsafeUnwrap();
       const commune = (await townService.findTownOfLocalityId(lieudit?.id, loggedUser))._unsafeUnwrap();
       const departement = (await departmentService.findDepartmentOfTownId(commune?.id, loggedUser))._unsafeUnwrap();
       const associes = (
@@ -309,9 +307,9 @@ export const generateLieuxDitsExport = async ({
 
   const objectsToExport = lieuxDits.map((lieudit) => {
     return {
-      Département: lieudit.departementCode,
-      "Code commune": lieudit.communeCode,
-      "Nom commune": lieudit.communeNom,
+      Département: lieudit.departmentCode,
+      "Code commune": lieudit.townCode,
+      "Nom commune": lieudit.townName,
       "Lieu-dit": lieudit.nom,
       Latitude: lieudit.latitude,
       Longitude: lieudit.longitude,

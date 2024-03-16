@@ -4,16 +4,16 @@ import type { LoggedUser } from "@domain/user/logged-user.js";
 import { townCreateInputFactory, townFactory } from "@fixtures/domain/town/town.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertTownInputFactory } from "@fixtures/services/town/town-service.fixtures.js";
+import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { TownsSearchParams } from "@ou-ca/common/api/town";
 import { err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildTownService } from "./town-service.js";
 
 const townRepository = mock<TownRepository>();
-const localityRepository = mock<LieuditRepository>();
+const localityRepository = mock<LocalityRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const townService = buildTownService({
@@ -32,7 +32,7 @@ beforeEach(() => {
   townRepository.getCount.mock.resetCalls();
   townRepository.findTownByLocalityId.mock.resetCalls();
   entryRepository.getCountByCommuneId.mock.resetCalls();
-  localityRepository.getCountByCommuneId.mock.resetCalls();
+  localityRepository.getCount.mock.resetCalls();
 });
 
 describe("Find city", () => {
@@ -72,8 +72,8 @@ describe("Localities count per entity", () => {
 
     await townService.getLocalitiesCountByTown("12", loggedUser);
 
-    assert.strictEqual(localityRepository.getCountByCommuneId.mock.callCount(), 1);
-    assert.deepStrictEqual(localityRepository.getCountByCommuneId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(localityRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(localityRepository.getCount.mock.calls[0].arguments, [undefined, "12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

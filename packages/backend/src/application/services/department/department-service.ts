@@ -2,18 +2,18 @@ import type { DepartmentCreateInput, DepartmentFailureReason } from "@domain/dep
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { DepartmentRepository } from "@interfaces/department-repository-interface.js";
+import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { DepartmentsSearchParams, UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { LieuditRepository } from "../../../repositories/lieudit/lieudit-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type DepartmentServiceDependencies = {
   departmentRepository: DepartmentRepository;
   townRepository: TownRepository;
-  localityRepository: LieuditRepository;
+  localityRepository: LocalityRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -54,7 +54,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    return ok(await localityRepository.getCountByDepartementId(Number.parseInt(id)));
+    return ok(await localityRepository.getCount(undefined, undefined, id));
   };
 
   const getTownsCountByDepartment = async (
