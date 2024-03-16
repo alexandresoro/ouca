@@ -41,6 +41,9 @@ type _MockProxy<T> = {
 
 type MockProxyVitest<T> = _MockProxy<T> & T;
 
+/**
+ * @deprecated Use `mock` instead
+ */
 export const mockVi = <T>(params?: Partial<T>): MockProxyVitest<T> & T => {
   const mocks: Record<string | symbol, MockVitest> = {};
 

@@ -4,7 +4,7 @@ import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
-import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
+import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
 import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
@@ -44,7 +44,7 @@ beforeEach(() => {
 
 describe("Find data", () => {
   test("should handle a matching data", async () => {
-    const dataData = mock<Donnee>();
+    const dataData = mockVe<Donnee>();
     const loggedUser = loggedUserFactory.build();
 
     entryRepository.findDonneeById.mockResolvedValueOnce(dataData);
@@ -72,7 +72,7 @@ describe("Find data", () => {
 });
 
 test("Find all datas", async () => {
-  const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
+  const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
 
   entryRepository.findDonnees.mockResolvedValueOnce(dataData);
 
@@ -83,7 +83,7 @@ test("Find all datas", async () => {
 
 describe("Data paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
+    const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
     const loggedUser = loggedUserFactory.build();
 
     entryRepository.findDonnees.mockResolvedValueOnce(dataData);
@@ -101,7 +101,7 @@ describe("Data paginated find by search criteria", () => {
   });
 
   test("should handle params when retrieving paginated data", async () => {
-    const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
+    const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: EntriesSearchParams = {
@@ -269,9 +269,9 @@ describe("Deletion of a data", () => {
       role: "admin",
     });
 
-    const matchingInventory = mock<Inventaire>({});
+    const matchingInventory = mockVe<Inventaire>({});
 
-    const deletedDonnee = mock<Donnee>({
+    const deletedDonnee = mockVe<Donnee>({
       id: "42",
     });
 
@@ -293,11 +293,11 @@ describe("Deletion of a data", () => {
         role: "contributor",
       });
 
-      const matchingInventory = mock<Inventaire>({
+      const matchingInventory = mockVe<Inventaire>({
         ownerId: loggedUser.id,
       });
 
-      const deletedDonnee = mock<Donnee>({
+      const deletedDonnee = mockVe<Donnee>({
         id: "42",
       });
 
@@ -318,7 +318,7 @@ describe("Deletion of a data", () => {
         role: "contributor",
       });
 
-      const deletedDonnee = mock<Donnee>({
+      const deletedDonnee = mockVe<Donnee>({
         id: "42",
       });
 
@@ -336,7 +336,7 @@ describe("Deletion of a data", () => {
       role: "contributor",
     });
 
-    inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(mock<Inventaire>());
+    inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(mockVe<Inventaire>());
 
     await expect(donneeService.deleteDonnee(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
@@ -350,7 +350,7 @@ describe("Deletion of a data", () => {
 
 describe("Update of a data", () => {
   test("should update existing data", async () => {
-    const dataData = mock<UpsertEntryInput>({
+    const dataData = mockVe<UpsertEntryInput>({
       behaviorIds: ["2", "3"],
       environmentIds: ["4", "5"],
     });
@@ -359,12 +359,12 @@ describe("Update of a data", () => {
 
     entryRepository.findExistingDonnee.mockResolvedValueOnce(null);
     entryRepository.createDonnee.mockResolvedValueOnce(
-      mock<Donnee>({
+      mockVe<Donnee>({
         id: "12",
       }),
     );
 
-    const reshapedInputData = mock<DonneeCreateInput>();
+    const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.updateDonnee("12", dataData, loggedUser);
@@ -390,12 +390,12 @@ describe("Update of a data", () => {
   });
 
   test("should not be allowed when trying to update to a different data that already exists", async () => {
-    const dataData = mock<UpsertEntryInput>();
+    const dataData = mockVe<UpsertEntryInput>();
 
     const loggedUser = loggedUserFactory.build();
 
     entryRepository.findExistingDonnee.mockResolvedValueOnce(
-      mock<Donnee>({
+      mockVe<Donnee>({
         id: "345",
       }),
     );
@@ -410,7 +410,7 @@ describe("Update of a data", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const dataData = mock<UpsertEntryInput>();
+    const dataData = mockVe<UpsertEntryInput>();
 
     await expect(donneeService.updateDonnee("12", dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(entryRepository.createDonnee).not.toHaveBeenCalled();
@@ -419,14 +419,14 @@ describe("Update of a data", () => {
 
 describe("Creation of a data", () => {
   test("should create new data without behaviors or environments", async () => {
-    const dataData = mock<UpsertEntryInput>({
+    const dataData = mockVe<UpsertEntryInput>({
       behaviorIds: [],
       environmentIds: [],
     });
 
     const loggedUser = loggedUserFactory.build();
 
-    const reshapedInputData = mock<DonneeCreateInput>();
+    const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.createDonnee(dataData, loggedUser);
@@ -438,17 +438,17 @@ describe("Creation of a data", () => {
   });
 
   test("should create new data with behaviors only", async () => {
-    const dataData = mock<UpsertEntryInput>({
+    const dataData = mockVe<UpsertEntryInput>({
       behaviorIds: ["2", "3"],
       environmentIds: [],
     });
 
     const loggedUser = loggedUserFactory.build();
 
-    const reshapedInputData = mock<DonneeCreateInput>();
+    const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
     entryRepository.createDonnee.mockResolvedValueOnce(
-      mock<Donnee>({
+      mockVe<Donnee>({
         id: "12",
       }),
     );
@@ -463,17 +463,17 @@ describe("Creation of a data", () => {
   });
 
   test("should create new data with environments only", async () => {
-    const dataData = mock<UpsertEntryInput>({
+    const dataData = mockVe<UpsertEntryInput>({
       behaviorIds: [],
       environmentIds: ["2", "3"],
     });
 
     const loggedUser = loggedUserFactory.build();
 
-    const reshapedInputData = mock<DonneeCreateInput>();
+    const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
     entryRepository.createDonnee.mockResolvedValueOnce(
-      mock<Donnee>({
+      mockVe<Donnee>({
         id: "12",
       }),
     );

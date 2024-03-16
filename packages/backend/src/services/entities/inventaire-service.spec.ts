@@ -1,11 +1,11 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import type { Locality } from "@domain/locality/locality.js";
+import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
-import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
+import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
@@ -46,7 +46,7 @@ beforeEach(() => {
 
 describe("Find inventary", () => {
   test("should handle a matching inventary", async () => {
-    const inventaryData = mock<Inventaire>();
+    const inventaryData = mockVe<Inventaire>();
     const loggedUser = loggedUserFactory.build();
 
     inventoryRepository.findInventaireById.mockResolvedValueOnce(inventaryData);
@@ -75,7 +75,7 @@ describe("Find inventary", () => {
 
 describe("Find inventary by data ID", () => {
   test("should handle inventary found", async () => {
-    const inventaryData = mock<Inventaire>();
+    const inventaryData = mockVe<Inventaire>();
     const loggedUser = loggedUserFactory.build();
 
     inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(inventaryData);
@@ -93,7 +93,7 @@ describe("Find inventary by data ID", () => {
 });
 
 test("Find all inventaries", async () => {
-  const inventariesData = [mock<Inventaire>(), mock<Inventaire>(), mock<Inventaire>()];
+  const inventariesData = [mockVe<Inventaire>(), mockVe<Inventaire>(), mockVe<Inventaire>()];
 
   inventoryRepository.findInventaires.mockResolvedValueOnce(inventariesData);
 
@@ -104,7 +104,7 @@ test("Find all inventaries", async () => {
 
 describe("Inventories paginated find by search criteria", () => {
   test("should handle params when retrieving paginated inventories", async () => {
-    const inventoriesData = [mock<Inventaire>(), mock<Inventaire>(), mock<Inventaire>()];
+    const inventoriesData = [mockVe<Inventaire>(), mockVe<Inventaire>(), mockVe<Inventaire>()];
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: InventoriesSearchParams = {
@@ -128,7 +128,7 @@ describe("Inventories paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(inventaireService.findPaginatedInventaires(null, mock<InventoriesSearchParams>())).rejects.toEqual(
+    await expect(inventaireService.findPaginatedInventaires(null, mockVe<InventoriesSearchParams>())).rejects.toEqual(
       new OucaError("OUCA0001"),
     );
   });
@@ -152,15 +152,15 @@ describe("Entities count by search criteria", () => {
 describe("Update of an inventory", () => {
   describe("to values already matching an existing inventory", () => {
     test("should return the correct state if no migration requested", async () => {
-      const inventoryData = mock<UpsertInventoryInput>({
+      const inventoryData = mockVe<UpsertInventoryInput>({
         migrateDonneesIfMatchesExistingInventaire: undefined,
       });
 
       const loggedUser = loggedUserFactory.build();
 
-      localityRepository.findLocalityById.mockResolvedValue(mock<Locality>());
+      localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
-        mock<Inventaire>({
+        mockVe<Inventaire>({
           id: "345",
         }),
       );
@@ -175,15 +175,15 @@ describe("Update of an inventory", () => {
     });
 
     test("should handle migration of existing data if requested", async () => {
-      const inventoryData = mock<UpsertInventoryInput>({
+      const inventoryData = mockVe<UpsertInventoryInput>({
         migrateDonneesIfMatchesExistingInventaire: true,
       });
 
       const loggedUser = loggedUserFactory.build();
 
-      localityRepository.findLocalityById.mockResolvedValue(mock<Locality>());
+      localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
-        mock<Inventaire>({
+        mockVe<Inventaire>({
           id: "345",
         }),
       );
@@ -198,7 +198,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mock<UpsertInventoryInput>();
+      const inventoryData = mockVe<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
         new OucaError("OUCA0001"),
@@ -209,22 +209,22 @@ describe("Update of an inventory", () => {
 
   describe("to values not matching an existing inventory", () => {
     test("should update an inventory", async () => {
-      const inventoryData = mock<UpsertInventoryInput>({
+      const inventoryData = mockVe<UpsertInventoryInput>({
         associateIds: ["2", "3"],
         weatherIds: ["4", "5"],
       });
 
       const loggedUser = loggedUserFactory.build();
 
-      localityRepository.findLocalityById.mockResolvedValue(mock<Locality>());
+      localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
       inventoryRepository.updateInventaire.mockResolvedValueOnce(
-        mock<Inventaire>({
+        mockVe<Inventaire>({
           id: "12",
         }),
       );
 
-      const reshapedInputData = mock<InventaireCreateInput>();
+      const reshapedInputData = mockVe<InventaireCreateInput>();
       reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.updateInventaire(12, inventoryData, loggedUser);
@@ -250,7 +250,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mock<UpsertInventoryInput>();
+      const inventoryData = mockVe<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
         new OucaError("OUCA0001"),
@@ -263,15 +263,15 @@ describe("Update of an inventory", () => {
 describe("Creation of an inventory", () => {
   describe("with values already matching an existing inventory", () => {
     test("should return the existing inventory", async () => {
-      const inventoryData = mock<UpsertInventoryInput>({
+      const inventoryData = mockVe<UpsertInventoryInput>({
         duration: null,
       });
 
       const loggedUser = loggedUserFactory.build();
 
-      localityRepository.findLocalityById.mockResolvedValue(mock<Locality>());
+      localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
-        mock<Inventaire>({
+        mockVe<Inventaire>({
           id: "345",
         }),
       );
@@ -284,7 +284,7 @@ describe("Creation of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mock<UpsertInventoryInput>();
+      const inventoryData = mockVe<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
@@ -293,7 +293,7 @@ describe("Creation of an inventory", () => {
 
   describe("with values not matching an existing inventory", () => {
     test("should create new inventory", async () => {
-      const inventoryData = mock<UpsertInventoryInput>({
+      const inventoryData = mockVe<UpsertInventoryInput>({
         associateIds: ["2", "3"],
         weatherIds: ["4", "5"],
         duration: null,
@@ -301,15 +301,15 @@ describe("Creation of an inventory", () => {
 
       const loggedUser = loggedUserFactory.build();
 
-      localityRepository.findLocalityById.mockResolvedValue(mock<Locality>());
+      localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
       inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
       inventoryRepository.createInventaire.mockResolvedValueOnce(
-        mock<Inventaire>({
+        mockVe<Inventaire>({
           id: "322",
         }),
       );
 
-      const reshapedInputData = mock<InventaireCreateInput>();
+      const reshapedInputData = mockVe<InventaireCreateInput>();
       reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.createInventaire(inventoryData, loggedUser);
@@ -324,7 +324,7 @@ describe("Creation of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mock<UpsertInventoryInput>();
+      const inventoryData = mockVe<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
@@ -338,7 +338,7 @@ describe("Deletion of an inventory", () => {
       role: "admin",
     });
 
-    const inventory = mock<Inventaire>({
+    const inventory = mockVe<Inventaire>({
       ownerId: loggedUser.id,
     });
 
@@ -358,7 +358,7 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    const inventory = mock<Inventaire>({
+    const inventory = mockVe<Inventaire>({
       ownerId: loggedUser.id,
     });
 
@@ -378,7 +378,7 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    const inventory = mock<Inventaire>({
+    const inventory = mockVe<Inventaire>({
       ownerId: loggedUser.id,
     });
 
@@ -395,7 +395,7 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(mock<Inventaire>());
+    inventoryRepository.findInventaireById.mockResolvedValueOnce(mockVe<Inventaire>());
 
     await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
