@@ -6,7 +6,7 @@ import { sql } from "kysely";
 import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 import { countSchema } from "../common.js";
-import { reshapeRawTown } from "./town-repository-reshape.js";
+import { reshapeRawTown, reshapeRawTownWithDepartmentCode } from "./town-repository-reshape.js";
 
 export const buildTownRepository = () => {
   const findTownById = async (id: number): Promise<Town | null> => {
@@ -186,8 +186,7 @@ export const buildTownRepository = () => {
             queryTown = queryTown
               .orderBy(sql`CAST(commune.code as VARCHAR) = ${q}`, "desc")
               .orderBy(sql`CAST(commune.code as VARCHAR) ilike ${`${q}%`}`, "desc")
-              .orderBy(sql`commune.nom ilike ${`${q}%`}`, "desc")
-              .orderBy("commune.nom", "asc");
+              .orderBy(sql`commune.nom ilike ${`${q}%`}`, "desc");
           }
 
           // Then two groups are finally sorted alphabetically in any case
@@ -250,7 +249,7 @@ export const buildTownRepository = () => {
           departmentCode: z.string(),
         }),
       )
-      .parse(townsWithDepartmentCode);
+      .parse(townsWithDepartmentCode.map((town) => reshapeRawTownWithDepartmentCode(town)));
   };
 
   const createTown = async (townInput: TownCreateInput): Promise<Result<Town, EntityFailureReason>> => {

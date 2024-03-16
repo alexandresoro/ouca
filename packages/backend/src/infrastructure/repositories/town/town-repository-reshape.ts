@@ -14,3 +14,12 @@ export const reshapeRawTown = (rawTown: RawTown): Town => {
     departmentId: departementId,
   };
 };
+
+export const reshapeRawTownWithDepartmentCode = (rawTown: RawTown & { departmentCode: string | null }) => {
+  const { departementId, ...restRawTown } = rawTown;
+
+  return {
+    ...restRawTown,
+    departmentId: departementId,
+  };
+};
