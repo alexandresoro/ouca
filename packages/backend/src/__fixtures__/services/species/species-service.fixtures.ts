@@ -19,7 +19,7 @@ export const speciesServiceFactory = Factory.define<Species>(() => {
 
 export const upsertSpeciesInputFactory = Factory.define<UpsertSpeciesInput>(() => {
   return {
-    classId: faker.string.sample(),
+    classId: faker.string.alpha(), // FIXME: should be an alphanumeric
     code: faker.string.alpha(),
     nomFrancais: faker.string.alpha(),
     nomLatin: faker.string.alpha(),
