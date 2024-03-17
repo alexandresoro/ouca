@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import type { EntryUpsertFailureReason } from "@domain/entry/entry.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type Result, err, ok } from "neverthrow";
 import type { DatabasePool } from "slonik";
-import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
@@ -28,10 +29,15 @@ export const buildDonneeService = ({
   entryBehaviorRepository,
   entryEnvironmentRepository,
 }: DonneeServiceDependencies) => {
-  const findDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee | null> => {
-    validateAuthorization(loggedUser);
+  const findDonnee = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Donnee | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.findDonneeById(id);
+    return ok(await entryRepository.findDonneeById(id));
   };
 
   // Be careful when calling it, it will retrieve a lot of data!
@@ -44,8 +50,10 @@ export const buildDonneeService = ({
   const findPaginatedDonnees = async (
     loggedUser: LoggedUser | null,
     options: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> & Partial<{ pageNumber: number; pageSize: number }>,
-  ): Promise<Donnee[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Donnee[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
@@ -61,19 +69,29 @@ export const buildDonneeService = ({
       sortOrder,
     });
 
-    return [...donnees];
+    return ok([...donnees]);
   };
 
-  const getDonneesCount = async (loggedUser: LoggedUser | null, options: EntriesSearchParams): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getDonneesCount = async (
+    loggedUser: LoggedUser | null,
+    options: EntriesSearchParams,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
-    return entryRepository.getCount(reshapedSearchCriteria);
+    return ok(await entryRepository.getCount(reshapedSearchCriteria));
   };
 
-  const findDonneeNavigationData = async (loggedUser: LoggedUser | null, entryId: string): Promise<EntryNavigation> => {
-    validateAuthorization(loggedUser);
+  const findDonneeNavigationData = async (
+    loggedUser: LoggedUser | null,
+    entryId: string,
+  ): Promise<Result<EntryNavigation, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const [previousEntryId, nextEntryId, index] = await Promise.all([
       entryRepository.findPreviousDonneeId(Number.parseInt(entryId)),
@@ -81,30 +99,41 @@ export const buildDonneeService = ({
       entryRepository.findDonneeIndex(Number.parseInt(entryId)),
     ]);
 
-    return {
+    return ok({
       index,
       previousEntryId: previousEntryId != null ? `${previousEntryId}` : null,
       nextEntryId: nextEntryId != null ? `${nextEntryId}` : null,
-    };
+    });
   };
 
-  const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<string | null> => {
-    validateAuthorization(loggedUser);
+  const findLastDonneeId = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const latestDonneeId = await entryRepository.findLatestDonneeId();
 
-    return latestDonneeId;
+    return ok(latestDonneeId);
   };
 
-  const findNextRegroupement = async (loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const findNextRegroupement = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const latestRegroupement = await entryRepository.findLatestRegroupement();
-    return (latestRegroupement ?? 0) + 1;
+    return ok((latestRegroupement ?? 0) + 1);
   };
 
-  const createDonnee = async (input: UpsertEntryInput, loggedUser: LoggedUser | null): Promise<Donnee> => {
-    validateAuthorization(loggedUser);
+  const createDonnee = async (
+    input: UpsertEntryInput,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Donnee, EntryUpsertFailureReason>> => {
+    if (!loggedUser) {
+      return err({ type: "notAllowed" });
+    }
 
     const { behaviorIds, environmentIds } = input;
 
@@ -117,9 +146,9 @@ export const buildDonneeService = ({
 
     if (existingDonnee) {
       // The donnee already exists so we return an error
-      throw new OucaError("OUCA0004", {
-        code: "OUCA0004",
-        message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
+      return err({
+        type: "similarEntryAlreadyExists",
+        correspondingEntryFound: `${existingDonnee.id}`,
       });
     }
 
@@ -148,11 +177,17 @@ export const buildDonneeService = ({
       return createdDonnee;
     });
 
-    return createdDonnee;
+    return ok(createdDonnee);
   };
 
-  const updateDonnee = async (id: string, input: UpsertEntryInput, loggedUser: LoggedUser | null): Promise<Donnee> => {
-    validateAuthorization(loggedUser);
+  const updateDonnee = async (
+    id: string,
+    input: UpsertEntryInput,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Donnee, EntryUpsertFailureReason>> => {
+    if (!loggedUser) {
+      return err({ type: "notAllowed" });
+    }
 
     const { behaviorIds, environmentIds } = input;
 
@@ -164,10 +199,9 @@ export const buildDonneeService = ({
     });
 
     if (existingDonnee && existingDonnee.id !== id) {
-      // The donnee already exists so we return an error
-      throw new OucaError("OUCA0004", {
-        code: "OUCA0004",
-        message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
+      return err({
+        type: "similarEntryAlreadyExists",
+        correspondingEntryFound: `${existingDonnee.id}`,
       });
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
@@ -201,28 +235,37 @@ export const buildDonneeService = ({
         return updatedDonnee;
       });
 
-      return updatedDonnee;
+      return ok(updatedDonnee);
     }
   };
 
-  const deleteDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee> => {
-    validateAuthorization(loggedUser);
+  const deleteDonnee = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Donnee, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    const deletedDonnee = await slonik.transaction(async (transactionConnection) => {
+    const deletedDonneeResult = await slonik.transaction(async (transactionConnection) => {
       // First get the corresponding inventaire
       const inventaire = await inventoryRepository.findInventaireByDonneeId(id, transactionConnection);
 
       if (loggedUser.role !== "admin" && inventaire?.ownerId !== loggedUser.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
 
       // Delete the actual donnee
       const deletedDonnee = await entryRepository.deleteDonneeById(id, transactionConnection);
 
-      return deletedDonnee;
+      return ok(deletedDonnee);
     });
 
-    return deletedDonnee;
+    if (deletedDonneeResult.isErr()) {
+      return err(deletedDonneeResult.error as AccessFailureReason);
+    }
+
+    return deletedDonneeResult;
   };
 
   return {

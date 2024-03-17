@@ -262,7 +262,7 @@ const inventoriesController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    return await reply.send({ id: deletedInventory });
+    return await reply.send({ id: deletedInventory.id });
   });
 
   done();

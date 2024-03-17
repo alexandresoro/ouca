@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { type Entry, type EntryExtended, entryNavigationSchema } from "@ou-ca/common/api/entities/entry";
 import {
   getEntriesExtendedResponse,
@@ -9,8 +8,9 @@ import {
   upsertEntryResponse,
 } from "@ou-ca/common/api/entry";
 import type { FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
+import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedEntry } from "./entries-enricher.js";
 import { enrichedInventory } from "./inventories-enricher.js";
@@ -25,18 +25,40 @@ const entriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const entry = await entryService.findDonnee(req.params.id, req.user);
+    const entryResult = await entryService.findDonnee(req.params.id, req.user);
+
+    if (entryResult.isErr()) {
+      switch (entryResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: entryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const entry = entryResult.value;
+
     if (!entry) {
       return await reply.status(404).send();
     }
 
-    try {
-      const entryEnriched = (await enrichedEntry(services, entry, req.user))._unsafeUnwrap();
-      const response = getEntryResponse.parse(entryEnriched);
-      return await reply.send(response);
-    } catch (e) {
-      return await reply.status(404).send();
+    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+
+    if (entryEnrichedResult.isErr()) {
+      switch (entryEnrichedResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "extendedDataNotFound":
+          return await reply.status(404).send();
+        default:
+          logger.error({ error: entryEnrichedResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
     }
+
+    const response = getEntryResponse.parse(entryEnrichedResult.value);
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {
@@ -50,17 +72,31 @@ const entriesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [entriesData, count] = await Promise.all([
-      entryService.findPaginatedDonnees(req.user, queryParams),
-      entryService.getDonneesCount(req.user, queryParams),
+    const paginatedResults = Result.combine([
+      await entryService.findPaginatedDonnees(req.user, queryParams),
+      await entryService.getDonneesCount(req.user, queryParams),
     ]);
 
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [entriesData, count] = paginatedResults.value;
+
     // TODO look to optimize this request
-    const enrichedEntries = await Promise.all(
+    const enrichedEntriesResults = await Promise.all(
       entriesData.map(async (entryData) => {
-        return (await enrichedEntry(services, entryData, req.user))._unsafeUnwrap();
+        return enrichedEntry(services, entryData, req.user);
       }),
     );
+
+    const enrichedEntries = enrichedEntriesResults.map((enrichedEntryResult) => enrichedEntryResult._unsafeUnwrap());
 
     let data: Entry[] | EntryExtended[] = enrichedEntries;
     if (extended) {
@@ -101,18 +137,42 @@ const entriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const entry = await entryService.createDonnee(input, req.user);
-      const entryEnriched = (await enrichedEntry(services, entry, req.user))._unsafeUnwrap();
-      const response = upsertEntryResponse.parse(entryEnriched);
+    const entryResult = await entryService.createDonnee(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (entryResult.isErr()) {
+      switch (entryResult.error.type) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "similarEntryAlreadyExists":
+          return await reply.status(409).send({
+            correspondingEntryFound: entryResult.error.correspondingEntryFound,
+          });
+        default:
+          logger.error({ error: entryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const entry = entryResult.value;
+
+    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+
+    if (entryEnrichedResult.isErr()) {
+      switch (entryEnrichedResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "extendedDataNotFound":
+          return await reply.status(404).send();
+        default:
+          logger.error({ error: entryEnrichedResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const entryEnriched = entryEnrichedResult.value;
+
+    const response = upsertEntryResponse.parse(entryEnriched);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -128,23 +188,58 @@ const entriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const entry = await entryService.updateDonnee(req.params.id, input, req.user);
-      const entryEnriched = (await enrichedEntry(services, entry, req.user))._unsafeUnwrap();
-      const response = upsertEntryResponse.parse(entryEnriched);
+    const entryResult = await entryService.updateDonnee(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (entryResult.isErr()) {
+      switch (entryResult.error.type) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "similarEntryAlreadyExists":
+          return await reply.status(409).send({
+            correspondingEntryFound: entryResult.error.correspondingEntryFound,
+          });
+        default:
+          logger.error({ error: entryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const entry = entryResult.value;
+
+    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+
+    if (entryEnrichedResult.isErr()) {
+      switch (entryEnrichedResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "extendedDataNotFound":
+          return await reply.status(404).send();
+        default:
+          logger.error({ error: entryEnrichedResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const entryEnriched = entryEnrichedResult.value;
+
+    const response = upsertEntryResponse.parse(entryEnriched);
+    return await reply.send(response);
   });
 
   fastify.get("/last", async (req, reply) => {
-    const id = await entryService.findLastDonneeId(req.user);
-    await reply.send({ id });
+    const idResult = await entryService.findLastDonneeId(req.user);
+
+    if (idResult.isErr()) {
+      switch (idResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: idResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    await reply.send({ id: idResult.value });
   });
 
   fastify.get<{
@@ -152,8 +247,19 @@ const entriesController: FastifyPluginCallback<{
       id: string;
     };
   }>("/:id/navigation", async (req, reply) => {
-    const navigation = await entryService.findDonneeNavigationData(req.user, req.params.id);
-    const response = entryNavigationSchema.parse(navigation);
+    const navigationResult = await entryService.findDonneeNavigationData(req.user, req.params.id);
+
+    if (navigationResult.isErr()) {
+      switch (navigationResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: navigationResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const response = entryNavigationSchema.parse(navigationResult.value);
 
     return await reply.send(response);
   });
@@ -163,20 +269,41 @@ const entriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await entryService.deleteDonnee(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
+    const deletedEntryResult = await entryService.deleteDonnee(req.params.id, req.user);
+
+    if (deletedEntryResult.isErr()) {
+      switch (deletedEntryResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedEntryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const deletedEntry = deletedEntryResult.value;
+
+    if (!deletedEntry) {
+      return await reply.status(404).send();
+    }
+
+    return await reply.send({ id: deletedEntry.id });
   });
 
   fastify.get("/next-regroupment", async (req, reply) => {
-    const id = await entryService.findNextRegroupement(req.user);
-    await reply.send({ id });
+    const idResult = await entryService.findNextRegroupement(req.user);
+
+    if (idResult.isErr()) {
+      switch (idResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: idResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    await reply.send({ id: idResult.value });
   });
 
   done();

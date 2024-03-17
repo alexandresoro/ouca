@@ -165,7 +165,7 @@ export const generateDonneesExport = async (
   const coordinatesSystem = GPS_COORDINATES;
   const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
 
-  const donnees = await entryService.findPaginatedDonnees(loggedUser, searchCriteria ?? {});
+  const donnees = (await entryService.findPaginatedDonnees(loggedUser, searchCriteria ?? {}))._unsafeUnwrap();
 
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {

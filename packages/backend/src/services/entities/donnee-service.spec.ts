@@ -1,7 +1,7 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type Result, err, ok } from "neverthrow";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
@@ -59,14 +59,15 @@ describe("Find data", () => {
     entryRepository.findDonneeById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(donneeService.findDonnee(10, loggedUser)).resolves.toEqual(null);
+    await expect(donneeService.findDonnee(10, loggedUser)).resolves.toEqual(ok(null));
 
     expect(entryRepository.findDonneeById).toHaveBeenCalledTimes(1);
     expect(entryRepository.findDonneeById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(donneeService.findDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.findDonnee(11, null)).toEqual(err("notAllowed"));
+
     expect(entryRepository.findDonneeById).not.toHaveBeenCalled();
   });
 });
@@ -131,12 +132,7 @@ describe("Data paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(
-      donneeService.findPaginatedDonnees(null, {
-        pageNumber: 1,
-        pageSize: 10,
-      }),
-    ).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.findPaginatedDonnees(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
   });
 });
 
@@ -173,12 +169,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(
-      donneeService.getDonneesCount(null, {
-        pageNumber: 1,
-        pageSize: 10,
-      }),
-    ).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.getDonneesCount(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
   });
 });
 
@@ -195,15 +186,17 @@ describe("Data navigation", () => {
     expect(entryRepository.findPreviousDonneeId).toHaveBeenCalledTimes(1);
     expect(entryRepository.findNextDonneeId).toHaveBeenCalledTimes(1);
     expect(entryRepository.findDonneeIndex).toHaveBeenCalledTimes(1);
-    expect(result).toEqual<EntryNavigation>({
-      index: 11,
-      previousEntryId: "3",
-      nextEntryId: "17",
-    });
+    expect(result).toEqual<Result<EntryNavigation, unknown>>(
+      ok({
+        index: 11,
+        previousEntryId: "3",
+        nextEntryId: "17",
+      }),
+    );
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(donneeService.findDonneeNavigationData(null, "12")).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.findDonneeNavigationData(null, "12")).toEqual(err("notAllowed"));
   });
 });
 
@@ -216,7 +209,7 @@ describe("Get latest data id", () => {
     const nextRegroupement = await donneeService.findLastDonneeId(loggedUser);
 
     expect(entryRepository.findLatestDonneeId).toHaveBeenCalledTimes(1);
-    expect(nextRegroupement).toEqual("18");
+    expect(nextRegroupement).toEqual(ok("18"));
   });
 
   test("should handle no existing data", async () => {
@@ -230,7 +223,7 @@ describe("Get latest data id", () => {
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(donneeService.findLastDonneeId(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.findLastDonneeId(null)).toEqual(err("notAllowed"));
     expect(entryRepository.findLatestDonneeId).not.toHaveBeenCalled();
   });
 });
@@ -244,7 +237,7 @@ describe("Get next group", () => {
     const nextRegroupement = await donneeService.findNextRegroupement(loggedUser);
 
     expect(entryRepository.findLatestRegroupement).toHaveBeenCalledTimes(1);
-    expect(nextRegroupement).toEqual(19);
+    expect(nextRegroupement).toEqual(ok(19));
   });
 
   test("should handle no existing group", async () => {
@@ -258,7 +251,7 @@ describe("Get next group", () => {
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(donneeService.findNextRegroupement(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.findNextRegroupement(null)).toEqual(err("notAllowed"));
     expect(entryRepository.findLatestRegroupement).not.toHaveBeenCalled();
   });
 });
@@ -283,7 +276,7 @@ describe("Deletion of a data", () => {
 
     expect(entryRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
-    expect(result).toEqual(deletedDonnee);
+    expect(result).toEqual(ok(deletedDonnee));
   });
 
   describe("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
@@ -309,7 +302,7 @@ describe("Deletion of a data", () => {
 
       expect(entryRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
       expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
-      expect(result).toEqual(deletedDonnee);
+      expect(result).toEqual(ok(deletedDonnee));
     });
 
     test("unless no matching inventory has been found", async () => {
@@ -325,7 +318,7 @@ describe("Deletion of a data", () => {
       inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(null);
       entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
 
-      await expect(donneeService.deleteDonnee(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+      expect(await donneeService.deleteDonnee(11, loggedUser)).toEqual(err("notAllowed"));
       expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
       expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
     });
@@ -338,12 +331,12 @@ describe("Deletion of a data", () => {
 
     inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(mockVe<Inventaire>());
 
-    await expect(donneeService.deleteDonnee(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.deleteDonnee(11, loggedUser)).toEqual(err("notAllowed"));
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(donneeService.deleteDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.deleteDonnee(11, null)).toEqual(err("notAllowed"));
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
 });
@@ -400,10 +393,10 @@ describe("Update of a data", () => {
       }),
     );
 
-    await expect(donneeService.updateDonnee("12", dataData, loggedUser)).rejects.toEqual(
-      new OucaError("OUCA0004", {
-        code: "OUCA0004",
-        message: "Cette donnée existe déjà (ID = 345).",
+    expect(await donneeService.updateDonnee("12", dataData, loggedUser)).toEqual(
+      err({
+        type: "similarEntryAlreadyExists",
+        correspondingEntryFound: "345",
       }),
     );
     expect(entryRepository.updateDonnee).not.toHaveBeenCalled();
@@ -412,7 +405,7 @@ describe("Update of a data", () => {
   test("should not be allowed when the requester is not logged", async () => {
     const dataData = mockVe<UpsertEntryInput>();
 
-    await expect(donneeService.updateDonnee("12", dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await donneeService.updateDonnee("12", dataData, null)).toEqual(err({ type: "notAllowed" }));
     expect(entryRepository.createDonnee).not.toHaveBeenCalled();
   });
 });
