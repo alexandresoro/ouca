@@ -165,10 +165,9 @@ describe("Update of an inventory", () => {
         }),
       );
 
-      await expect(inventaireService.updateInventaire(12, inventoryData, loggedUser)).rejects.toEqual({
-        inventaireExpectedToBeUpdated: 12,
-        correspondingInventaireFound: "345",
-      });
+      expect(await inventaireService.updateInventaire(12, inventoryData, loggedUser)).toEqual(
+        err({ type: "similarInventoryAlreadyExists", correspondingInventoryFound: "345" }),
+      );
 
       expect(entryRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
       expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
@@ -201,7 +200,7 @@ describe("Update of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err("notAllowed"));
+      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -251,7 +250,7 @@ describe("Update of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err("notAllowed"));
+      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });

@@ -198,13 +198,17 @@ const inventoriesController: FastifyPluginCallback<{
 
     const inventoryResult = await inventoryService.updateInventaire(req.params.id, input, req.user);
 
-    // TODO handle duplicate inventory
     if (inventoryResult.isErr()) {
-      switch (inventoryResult.error) {
+      switch (inventoryResult.error.type) {
         case "notAllowed":
           return await reply.status(403).send();
         case "requiredDataNotFound":
           return await reply.status(422).send();
+        case "similarInventoryAlreadyExists":
+          // TODO handle duplicate inventory on caller side
+          return await reply
+            .status(409)
+            .send({ correspondingInventoryFound: inventoryResult.error.correspondingInventoryFound });
         default:
           logger.error({ error: inventoryResult.error }, "Unexpected error");
           return await reply.status(500).send();

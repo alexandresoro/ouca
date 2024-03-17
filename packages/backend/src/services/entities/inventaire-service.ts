@@ -1,4 +1,8 @@
-import type { InventoryDeleteFailureReason, InventoryUpsertFailureReason } from "@domain/inventory/inventory.js";
+import type {
+  InventoryDeleteFailureReason,
+  InventoryUpdateFailureReason,
+  InventoryUpsertFailureReason,
+} from "@domain/inventory/inventory.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
@@ -177,9 +181,9 @@ export const buildInventaireService = ({
     id: number,
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Inventaire, InventoryUpsertFailureReason>> => {
+  ): Promise<Result<Inventaire, InventoryUpdateFailureReason>> => {
     if (!loggedUser) {
-      return err("notAllowed");
+      return err({ type: "notAllowed" });
     }
 
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
@@ -193,7 +197,7 @@ export const buildInventaireService = ({
         },
         `Corresponding locality for ID=${input.localityId} not found`,
       );
-      return err("requiredDataNotFound");
+      return err({ type: "requiredDataNotFound" });
     }
 
     // Check if an exact same inventaire already exists or not
@@ -216,12 +220,10 @@ export const buildInventaireService = ({
         // With this information, it is up to the caller to react accordingly
         // (e.g. ask all donnees from inventaire B to be moved to A),
         // but this is not up to this upsert method to take this initiave
-        const upsertInventaireFailureReason = {
-          inventaireExpectedToBeUpdated: id,
-          correspondingInventaireFound: existingInventaire.id,
-        };
-        // FIXME rework this to return a proper error type and let the caller handle this case
-        return Promise.reject(upsertInventaireFailureReason);
+        return err({
+          type: "similarInventoryAlreadyExists",
+          correspondingInventoryFound: existingInventaire.id,
+        });
       }
 
       // In that case, the user explicitely requested that the donnees of inventaire A
