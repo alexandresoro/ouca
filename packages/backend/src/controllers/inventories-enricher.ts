@@ -25,7 +25,7 @@ export const enrichedInventory = async (
   const [observer, associates, locality, weathers] = enrichedResult.value;
 
   if (!observer || !locality) {
-    return Promise.reject("Missing data for enriched inventory");
+    return err("extendedDataNotFound");
   }
 
   const localityEnrichedResult = await enrichedLocality(services, locality, user);

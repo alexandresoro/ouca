@@ -1,8 +1,6 @@
 import { OucaError } from "@domain/errors/ouca-error.js";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { type Entry, type EntryExtended, entryNavigationSchema } from "@ou-ca/common/api/entities/entry";
 import {
-  type GetEntryResponse,
   getEntriesExtendedResponse,
   getEntriesQueryParamsSchema,
   getEntriesResponse,
@@ -12,42 +10,10 @@ import {
 } from "@ou-ca/common/api/entry";
 import type { FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
-import type { Donnee } from "../repositories/donnee/donnee-repository-types.js";
 import type { Services } from "../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
+import { enrichedEntry } from "./entries-enricher.js";
 import { enrichedInventory } from "./inventories-enricher.js";
-
-const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser | null): Promise<GetEntryResponse> => {
-  const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
-    (await services.ageService.findAgeOfEntryId(entry.id, user))._unsafeUnwrap(),
-    (await services.behaviorService.findBehaviorsOfEntryId(entry.id, user))._unsafeUnwrap(),
-    services.speciesService.findSpeciesOfEntryId(entry.id, user),
-    (await services.distanceEstimateService.findDistanceEstimateOfEntryId(entry.id, user))._unsafeUnwrap(),
-    (await services.numberEstimateService.findNumberEstimateOfEntryId(entry.id, user))._unsafeUnwrap(),
-    (await services.environmentService.findEnvironmentsOfEntryId(entry.id, user))._unsafeUnwrap(),
-    (await services.sexService.findSexOfEntryId(entry.id, user))._unsafeUnwrap(),
-  ]);
-
-  if (!age || !species || !numberEstimate || !sex) {
-    return Promise.reject("Missing data for enriched entry");
-  }
-
-  return {
-    ...entry,
-    id: `${entry.id}`,
-    inventoryId: `${entry.inventaireId}`,
-    age,
-    behaviors,
-    species,
-    distanceEstimate,
-    numberEstimate,
-    environments,
-    sex,
-    comment: entry.commentaire,
-    number: entry.nombre,
-    regroupment: entry.regroupement,
-  };
-};
 
 const entriesController: FastifyPluginCallback<{
   services: Services;
@@ -65,7 +31,7 @@ const entriesController: FastifyPluginCallback<{
     }
 
     try {
-      const entryEnriched = await enrichedEntry(services, entry, req.user);
+      const entryEnriched = (await enrichedEntry(services, entry, req.user))._unsafeUnwrap();
       const response = getEntryResponse.parse(entryEnriched);
       return await reply.send(response);
     } catch (e) {
@@ -92,7 +58,7 @@ const entriesController: FastifyPluginCallback<{
     // TODO look to optimize this request
     const enrichedEntries = await Promise.all(
       entriesData.map(async (entryData) => {
-        return enrichedEntry(services, entryData, req.user);
+        return (await enrichedEntry(services, entryData, req.user))._unsafeUnwrap();
       }),
     );
 
@@ -135,7 +101,7 @@ const entriesController: FastifyPluginCallback<{
 
     try {
       const entry = await entryService.createDonnee(input, req.user);
-      const entryEnriched = await enrichedEntry(services, entry, req.user);
+      const entryEnriched = (await enrichedEntry(services, entry, req.user))._unsafeUnwrap();
       const response = upsertEntryResponse.parse(entryEnriched);
 
       return await reply.send(response);
@@ -162,7 +128,7 @@ const entriesController: FastifyPluginCallback<{
 
     try {
       const entry = await entryService.updateDonnee(req.params.id, input, req.user);
-      const entryEnriched = await enrichedEntry(services, entry, req.user);
+      const entryEnriched = (await enrichedEntry(services, entry, req.user))._unsafeUnwrap();
       const response = upsertEntryResponse.parse(entryEnriched);
 
       return await reply.send(response);

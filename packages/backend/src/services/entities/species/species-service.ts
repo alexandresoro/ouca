@@ -1,10 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
-import type { Species } from "@domain/species/species.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { Species, SpeciesFailureReason } from "@domain/species/species.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Species as SpeciesCommon } from "@ou-ca/common/api/entities/species";
 import type { SpeciesSearchParams, UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { Result, err, ok } from "neverthrow";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { validateAuthorization } from "../../../application/services/authorization/authorization-utils.js";
 import type { SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import type {
@@ -27,54 +27,79 @@ export const buildSpeciesService = ({
   entryRepository,
   classService,
 }: SpeciesServiceDependencies) => {
-  const enrichSpecies = async (species: Species, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
+  const enrichSpecies = async (
+    species: Species,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<SpeciesCommon, AccessFailureReason>> => {
     // TODO this can be called from import with loggedUser = null and will fail validation
     // Ideally, even import should have a user
-    const speciesClass = (await classService.findSpeciesClassOfSpecies(species.id, loggedUser))._unsafeUnwrap();
-    return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
+    const speciesClassResult = await classService.findSpeciesClassOfSpecies(species.id, loggedUser);
+
+    return speciesClassResult.map((speciesClass) => {
+      return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
+    });
   };
 
-  const findSpecies = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon | null> => {
-    validateAuthorization(loggedUser);
+  const enrichSpeciesMultiple = async (
+    species: Species[],
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
+    return Result.combine(
+      await Promise.all(
+        species.map(async (species) => {
+          return await enrichSpecies(species, loggedUser);
+        }),
+      ),
+    );
+  };
+
+  const findSpecies = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<SpeciesCommon | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const species = await speciesRepository.findEspeceById(id);
     if (!species) {
-      return null;
+      return ok(null);
     }
     return enrichSpecies(species, loggedUser);
   };
 
-  const getEntriesCountBySpecies = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getEntriesCountBySpecies = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return entryRepository.getCountByEspeceId(Number.parseInt(id));
+    return ok(await entryRepository.getCountByEspeceId(Number.parseInt(id)));
   };
 
   const findSpeciesOfEntryId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null,
-  ): Promise<SpeciesCommon | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SpeciesCommon | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const species = await speciesRepository.findEspeceByDonneeId(entryId ? Number.parseInt(entryId) : undefined);
     if (!species) {
-      return null;
+      return ok(null);
     }
     return enrichSpecies(species, loggedUser);
   };
 
-  const findAllSpecies = async (): Promise<SpeciesCommon[]> => {
+  const findAllSpecies = async (): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
     const species = await speciesRepository.findEspeces({
       orderBy: "code",
     });
 
-    const enrichedSpecies = await Promise.all(
-      species.map((species) => {
-        return enrichSpecies(species, null);
-      }),
-    );
-
-    return [...enrichedSpecies];
+    return enrichSpeciesMultiple([...species], null);
   };
 
   const findAllSpeciesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
@@ -85,8 +110,10 @@ export const buildSpeciesService = ({
   const findPaginatedSpecies = async (
     loggedUser: LoggedUser | null,
     options: SpeciesSearchParams,
-  ): Promise<SpeciesCommon[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
@@ -103,28 +130,34 @@ export const buildSpeciesService = ({
       sortOrder,
     });
 
-    const enrichedSpecies = await Promise.all(
-      species.map((species) => {
-        return enrichSpecies(species, loggedUser);
-      }),
-    );
-
-    return [...enrichedSpecies];
+    return enrichSpeciesMultiple([...species], loggedUser);
   };
 
-  const getSpeciesCount = async (loggedUser: LoggedUser | null, options: SpeciesSearchParams): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getSpeciesCount = async (
+    loggedUser: LoggedUser | null,
+    options: SpeciesSearchParams,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
-    return speciesRepository.getCount({
-      q: options.q,
-      searchCriteria: reshapedSearchCriteria,
-    });
+    return ok(
+      await speciesRepository.getCount({
+        q: options.q,
+        searchCriteria: reshapedSearchCriteria,
+      }),
+    );
   };
 
-  const createSpecies = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<SpeciesCommon> => {
-    validateAuthorization(loggedUser);
+  const createSpecies = async (
+    input: UpsertSpeciesInput,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<SpeciesCommon, SpeciesFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     try {
       const createdSpecies = await speciesRepository.createEspece({
@@ -135,7 +168,7 @@ export const buildSpeciesService = ({
       return enrichSpecies(createdSpecies, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
@@ -145,15 +178,17 @@ export const buildSpeciesService = ({
     id: number,
     input: UpsertSpeciesInput,
     loggedUser: LoggedUser | null,
-  ): Promise<SpeciesCommon> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<SpeciesCommon, SpeciesFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await speciesRepository.findEspeceById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
@@ -163,56 +198,61 @@ export const buildSpeciesService = ({
       return enrichSpecies(updatedSpecies, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
-        throw new OucaError("OUCA0004", e);
+        return err("alreadyExists");
       }
       throw e;
     }
   };
 
-  const deleteSpecies = async (id: number, loggedUser: LoggedUser | null): Promise<SpeciesCommon | null> => {
-    validateAuthorization(loggedUser);
+  const deleteSpecies = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<SpeciesCommon | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await speciesRepository.findEspeceById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
-    const speciesClass = (await classService.findSpeciesClassOfSpecies(`${id}`, loggedUser))._unsafeUnwrap();
+    const speciesClassResult = await classService.findSpeciesClassOfSpecies(`${id}`, loggedUser);
+
+    if (speciesClassResult.isErr()) {
+      return err(speciesClassResult.error);
+    }
+
+    const speciesClass = speciesClassResult.value;
 
     if (!speciesClass) {
-      return null;
+      return ok(null);
     }
 
     const deletedSpecies = await speciesRepository.deleteEspeceById(id);
 
     if (!deletedSpecies) {
-      return null;
+      return ok(null);
     }
 
-    return enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser);
+    return ok(enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser));
   };
 
   const createMultipleSpecies = async (
     species: Omit<EspeceCreateInput, "owner_id">[],
     loggedUser: LoggedUser,
-  ): Promise<readonly SpeciesCommon[]> => {
+  ): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
     const createdSpecies = await speciesRepository.createEspeces(
       species.map((species) => {
         return { ...species, owner_id: loggedUser.id };
       }),
     );
 
-    const enrichedCreatedSpecies = await Promise.all(
-      createdSpecies.map((species) => {
-        return enrichSpecies(species, loggedUser);
-      }),
-    );
-
-    return enrichedCreatedSpecies;
+    return enrichSpeciesMultiple([...createdSpecies], loggedUser);
   };
 
   return {

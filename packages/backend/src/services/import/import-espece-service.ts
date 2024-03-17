@@ -18,7 +18,7 @@ export class ImportEspeceService extends ImportService {
   protected init = async (): Promise<void> => {
     this.especesToInsert = [];
     this.classes = await this.services.classService.findAllSpeciesClasses();
-    this.especes = await this.services.speciesService.findAllSpecies();
+    this.especes = (await this.services.speciesService.findAllSpecies())._unsafeUnwrap();
   };
 
   protected validateAndPrepareEntity = (especeTab: string[]): string | null => {

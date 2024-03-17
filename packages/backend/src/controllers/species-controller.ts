@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import type { Species, SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import {
   getSpeciesExtendedResponse,
@@ -9,7 +8,9 @@ import {
   upsertSpeciesResponse,
 } from "@ou-ca/common/api/species";
 import type { FastifyPluginCallback } from "fastify";
+import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const speciesController: FastifyPluginCallback<{
@@ -22,7 +23,20 @@ const speciesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const species = await speciesService.findSpecies(req.params.id, req.user);
+    const speciesResult = await speciesService.findSpecies(req.params.id, req.user);
+
+    if (speciesResult.isErr()) {
+      switch (speciesResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: speciesResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const species = speciesResult.value;
+
     if (!species) {
       return await reply.status(404).send();
     }
@@ -42,10 +56,22 @@ const speciesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
-    const [speciesData, count] = await Promise.all([
-      speciesService.findPaginatedSpecies(req.user, queryParams),
-      speciesService.getSpeciesCount(req.user, queryParams),
+    const paginatedResults = Result.combine([
+      await speciesService.findPaginatedSpecies(req.user, queryParams),
+      await speciesService.getSpeciesCount(req.user, queryParams),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [speciesData, count] = paginatedResults.value;
 
     let data: Species[] | SpeciesExtended[] = speciesData;
     if (extended) {
@@ -55,7 +81,9 @@ const speciesController: FastifyPluginCallback<{
           const speciesClass = (
             await classService.findSpeciesClassOfSpecies(singleSpeciesData.id, req.user)
           )._unsafeUnwrap();
-          const entriesCount = await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, req.user);
+          const entriesCount = (
+            await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, req.user)
+          )._unsafeUnwrap();
           return {
             ...singleSpeciesData,
             speciesClassName: speciesClass?.libelle,
@@ -83,17 +111,22 @@ const speciesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const species = await speciesService.createSpecies(input, req.user);
-      const response = upsertSpeciesResponse.parse(species);
+    const speciesResult = await speciesService.createSpecies(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (speciesResult.isErr()) {
+      switch (speciesResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: speciesResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertSpeciesResponse.parse(speciesResult.value);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -109,17 +142,22 @@ const speciesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    try {
-      const species = await speciesService.updateSpecies(req.params.id, input, req.user);
-      const response = upsertSpeciesResponse.parse(species);
+    const speciesResult = await speciesService.updateSpecies(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      if (e instanceof OucaError && e.name === "OUCA0004") {
-        return await reply.status(409).send();
+    if (speciesResult.isErr()) {
+      switch (speciesResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "alreadyExists":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: speciesResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const response = upsertSpeciesResponse.parse(speciesResult.value);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -127,7 +165,19 @@ const speciesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedSpecies = await speciesService.deleteSpecies(req.params.id, req.user);
+    const deletedSpeciesResult = await speciesService.deleteSpecies(req.params.id, req.user);
+
+    if (deletedSpeciesResult.isErr()) {
+      switch (deletedSpeciesResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: deletedSpeciesResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const deletedSpecies = deletedSpeciesResult.value;
 
     if (!deletedSpecies) {
       return await reply.status(404).send();

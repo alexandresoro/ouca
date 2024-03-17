@@ -187,7 +187,7 @@ export const generateDonneesExport = async (
       const meteos = (
         await weatherService.findWeathersOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
       )._unsafeUnwrap();
-      const espece = await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser);
+      const espece = (await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const classe = (await classService.findSpeciesClassOfSpecies(espece?.id, loggedUser))._unsafeUnwrap();
       const age = (await ageService.findAgeOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
