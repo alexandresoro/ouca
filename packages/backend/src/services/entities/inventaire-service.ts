@@ -1,9 +1,10 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
+import type { InventoryDeleteFailureReason, InventoryUpsertFailureReason } from "@domain/inventory/inventory.js";
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type Result, err, ok } from "neverthrow";
 import type { DatabasePool } from "slonik";
-import { validateAuthorization } from "../../application/services/authorization/authorization-utils.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
@@ -30,12 +31,17 @@ export const buildInventaireService = ({
   entryRepository,
   localityRepository,
 }: InventaireServiceDependencies) => {
-  const findInventaire = async (id: number, loggedUser: LoggedUser | null): Promise<Inventaire | null> => {
-    validateAuthorization(loggedUser);
+  const findInventaire = async (
+    id: number,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Inventaire | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const inventaire = await inventoryRepository.findInventaireById(id);
 
-    return inventaire;
+    return ok(inventaire);
   };
 
   const findInventoryIndex = async (
@@ -45,18 +51,23 @@ export const buildInventaireService = ({
       sortOrder: NonNullable<InventaireFindManyInput["sortOrder"]>;
     },
     loggedUser: LoggedUser | null,
-  ): Promise<number | null> => {
-    validateAuthorization(loggedUser);
-    return inventoryRepository.findInventoryIndex(id, order);
+  ): Promise<Result<number | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    return ok(await inventoryRepository.findInventoryIndex(id, order));
   };
 
   const findInventaireOfDonneeId = async (
     entryId: string | undefined,
     loggedUser: LoggedUser | null,
-  ): Promise<Inventaire | null> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Inventaire | null, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return inventoryRepository.findInventaireByDonneeId(entryId ? Number.parseInt(entryId) : undefined);
+    return ok(await inventoryRepository.findInventaireByDonneeId(entryId ? Number.parseInt(entryId) : undefined));
   };
 
   const findAllInventaires = async (): Promise<Inventaire[]> => {
@@ -68,8 +79,10 @@ export const buildInventaireService = ({
   const findPaginatedInventaires = async (
     loggedUser: LoggedUser | null,
     options: InventoriesSearchParams,
-  ): Promise<Inventaire[]> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Inventaire[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { orderBy: orderByField, sortOrder, pageSize, pageNumber } = options;
 
@@ -82,17 +95,24 @@ export const buildInventaireService = ({
       sortOrder,
     });
 
-    return [...inventories];
+    return ok([...inventories]);
   };
 
-  const getInventairesCount = async (loggedUser: LoggedUser | null): Promise<number> => {
-    validateAuthorization(loggedUser);
+  const getInventairesCount = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
-    return inventoryRepository.getCount();
+    return ok(await inventoryRepository.getCount());
   };
 
-  const createInventaire = async (input: UpsertInventoryInput, loggedUser: LoggedUser | null): Promise<Inventaire> => {
-    validateAuthorization(loggedUser);
+  const createInventaire = async (
+    input: UpsertInventoryInput,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Inventaire, InventoryUpsertFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { associateIds, weatherIds } = input;
 
@@ -104,7 +124,7 @@ export const buildInventaireService = ({
         },
         `Corresponding locality for ID=${input.localityId} not found`,
       );
-      return Promise.reject("");
+      return err("requiredDataNotFound");
     }
 
     // Check if an exact same inventaire already exists or not
@@ -117,7 +137,7 @@ export const buildInventaireService = ({
     if (existingInventaire) {
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
-      return existingInventaire;
+      return ok(existingInventaire);
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventaire we wish to create does not have an equivalent existing one
@@ -149,7 +169,7 @@ export const buildInventaireService = ({
         return createdInventaire;
       });
 
-      return createdInventaire;
+      return ok(createdInventaire);
     }
   };
 
@@ -157,8 +177,10 @@ export const buildInventaireService = ({
     id: number,
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Inventaire> => {
-    validateAuthorization(loggedUser);
+  ): Promise<Result<Inventaire, InventoryUpsertFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
     const { associateIds, weatherIds } = inputData;
@@ -171,7 +193,7 @@ export const buildInventaireService = ({
         },
         `Corresponding locality for ID=${input.localityId} not found`,
       );
-      return Promise.reject("");
+      return err("requiredDataNotFound");
     }
 
     // Check if an exact same inventaire already exists or not
@@ -198,6 +220,7 @@ export const buildInventaireService = ({
           inventaireExpectedToBeUpdated: id,
           correspondingInventaireFound: existingInventaire.id,
         };
+        // FIXME rework this to return a proper error type and let the caller handle this case
         return Promise.reject(upsertInventaireFailureReason);
       }
 
@@ -216,7 +239,7 @@ export const buildInventaireService = ({
 
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
-      return existingInventaire;
+      return ok(existingInventaire);
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventaire we wish to update does not have an equivalent existing one
@@ -253,35 +276,44 @@ export const buildInventaireService = ({
         return updatedInventaire;
       });
 
-      return updatedInventaire;
+      return ok(updatedInventaire);
     }
   };
 
-  const deleteInventory = async (id: string, loggedUser: LoggedUser | null): Promise<Inventaire> => {
-    validateAuthorization(loggedUser);
+  const deleteInventory = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Inventaire, InventoryDeleteFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
 
     // Check that the user is allowed to modify the existing inventory
     if (loggedUser?.role !== "admin") {
       const existingInventory = await inventoryRepository.findInventaireById(Number.parseInt(id));
 
       if (existingInventory?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
+        return err("notAllowed");
       }
     }
 
-    const deletedInventory = await slonik.transaction(async (transactionConnection) => {
+    const deletedInventoryResult = await slonik.transaction(async (transactionConnection) => {
       const entriesOfInventory = await entryRepository.getCountByInventaireId(
         Number.parseInt(id),
         transactionConnection,
       );
 
       if (entriesOfInventory > 0) {
-        throw new OucaError("OUCA0005");
+        return err("inventoryStillInUse");
       }
-      return inventoryRepository.deleteInventaireById(Number.parseInt(id), transactionConnection);
+      return ok(await inventoryRepository.deleteInventaireById(Number.parseInt(id), transactionConnection));
     });
 
-    return deletedInventory;
+    if (deletedInventoryResult.isErr()) {
+      return err(deletedInventoryResult.error as InventoryDeleteFailureReason);
+    }
+
+    return deletedInventoryResult;
   };
 
   return {

@@ -169,7 +169,7 @@ export const generateDonneesExport = async (
 
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {
-      const inventaire = await inventoryService.findInventaireOfDonneeId(donnee.id, loggedUser);
+      const inventaire = (await inventoryService.findInventaireOfDonneeId(donnee.id, loggedUser))._unsafeUnwrap();
 
       if (!inventaire) {
         return Promise.reject("Should not happen");

@@ -1,8 +1,8 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { err, ok } from "neverthrow";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
@@ -61,14 +61,14 @@ describe("Find inventary", () => {
     inventoryRepository.findInventaireById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toEqual(null);
+    await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toEqual(ok(null));
 
     expect(inventoryRepository.findInventaireById).toHaveBeenCalledTimes(1);
     expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    await expect(inventaireService.findInventaire(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await inventaireService.findInventaire(11, null)).toEqual(err("notAllowed"));
     expect(inventoryRepository.findInventaireById).not.toHaveBeenCalled();
   });
 });
@@ -84,11 +84,11 @@ describe("Find inventary by data ID", () => {
 
     expect(inventoryRepository.findInventaireByDonneeId).toHaveBeenCalledTimes(1);
     expect(inventoryRepository.findInventaireByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(inventary).toEqual(inventaryData);
+    expect(inventary).toEqual(ok(inventaryData));
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(inventaireService.findInventaireOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await inventaireService.findInventaireOfDonneeId("12", null)).toEqual(err("notAllowed"));
   });
 });
 
@@ -128,8 +128,8 @@ describe("Inventories paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(inventaireService.findPaginatedInventaires(null, mockVe<InventoriesSearchParams>())).rejects.toEqual(
-      new OucaError("OUCA0001"),
+    expect(await inventaireService.findPaginatedInventaires(null, mockVe<InventoriesSearchParams>())).toEqual(
+      err("notAllowed"),
     );
   });
 });
@@ -145,7 +145,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(inventaireService.getInventairesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await inventaireService.getInventairesCount(null)).toEqual(err("notAllowed"));
   });
 });
 
@@ -194,15 +194,14 @@ describe("Update of an inventory", () => {
       expect(entryRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
       expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
       expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledWith(12, any());
-      expect(result.id).toEqual("345");
+      expect(result.isOk()).toBeTruthy();
+      expect(result._unsafeUnwrap().id).toEqual("345");
     });
 
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
-        new OucaError("OUCA0001"),
-      );
+      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err("notAllowed"));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -252,9 +251,7 @@ describe("Update of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
-        new OucaError("OUCA0001"),
-      );
+      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err("notAllowed"));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -280,13 +277,14 @@ describe("Creation of an inventory", () => {
 
       expect(entryRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
       expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
-      expect(result.id).toEqual("345");
+      expect(result.isOk()).toBeTruthy();
+      expect(result._unsafeUnwrap().id).toEqual("345");
     });
 
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      expect(await inventaireService.createInventaire(inventoryData, null)).toEqual(err("notAllowed"));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -326,7 +324,7 @@ describe("Creation of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      expect(await inventaireService.createInventaire(inventoryData, null)).toEqual(err("notAllowed"));
       expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -349,7 +347,7 @@ describe("Deletion of an inventory", () => {
     const result = await inventaireService.deleteInventory("11", loggedUser);
 
     expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(inventory);
+    expect(result).toEqual(ok(inventory));
   });
 
   test("when deletion of inventory is done by a non-admin owner", async () => {
@@ -369,7 +367,7 @@ describe("Deletion of an inventory", () => {
     const result = await inventaireService.deleteInventory("11", loggedUser);
 
     expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(inventory);
+    expect(result).toEqual(ok(inventory));
   });
 
   test("should not be allowed when trying to delete an inventory still used", async () => {
@@ -386,7 +384,7 @@ describe("Deletion of an inventory", () => {
     entryRepository.getCountByInventaireId.mockResolvedValueOnce(3);
     inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
 
-    await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0005"));
+    expect(await inventaireService.deleteInventory("11", loggedUser)).toEqual(err("inventoryStillInUse"));
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 
@@ -397,12 +395,12 @@ describe("Deletion of an inventory", () => {
 
     inventoryRepository.findInventaireById.mockResolvedValueOnce(mockVe<Inventaire>());
 
-    await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await inventaireService.deleteInventory("11", loggedUser)).toEqual(err("notAllowed"));
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    await expect(inventaireService.deleteInventory("11", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(await inventaireService.deleteInventory("11", null)).toEqual(err("notAllowed"));
     expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
   });
 });

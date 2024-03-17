@@ -304,7 +304,9 @@ export class ImportDonneeService extends ImportService {
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
-      const inventaire = await this.services.inventoryService.createInventaire(inputInventaire, loggedUser);
+      const inventaire = (
+        await this.services.inventoryService.createInventaire(inputInventaire, loggedUser)
+      )._unsafeUnwrap();
       inventoryId = `${inventaire.id}`;
 
       // Add the inventaire to the list

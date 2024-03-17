@@ -67,7 +67,9 @@ const entriesController: FastifyPluginCallback<{
       data = await Promise.all(
         enrichedEntries.map(async (enrichedEntryData) => {
           // TODO look to optimize this request
-          const inventory = await inventoryService.findInventaireOfDonneeId(enrichedEntryData.id, req.user);
+          const inventory = (
+            await inventoryService.findInventaireOfDonneeId(enrichedEntryData.id, req.user)
+          )._unsafeUnwrap();
           if (!inventory) {
             return Promise.reject("No matching inventory found");
           }

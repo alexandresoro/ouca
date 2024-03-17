@@ -1,4 +1,3 @@
-import { OucaError } from "@domain/errors/ouca-error.js";
 import {
   getInventoriesQueryParamsSchema,
   getInventoriesResponse,
@@ -9,8 +8,9 @@ import {
   upsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
 import type { FastifyPluginCallback } from "fastify";
-import { NotFoundError } from "slonik";
+import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
+import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedInventory } from "./inventories-enricher.js";
 
@@ -24,18 +24,40 @@ const inventoriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const inventory = await inventoryService.findInventaire(req.params.id, req.user);
+    const inventoryResult = await inventoryService.findInventaire(req.params.id, req.user);
+
+    if (inventoryResult.isErr()) {
+      switch (inventoryResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: inventoryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const inventory = inventoryResult.value;
+
     if (!inventory) {
       return await reply.status(404).send();
     }
 
-    try {
-      const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
-      const response = getInventoryResponse.parse(inventoryEnriched);
-      return await reply.send(response);
-    } catch (e) {
-      return await reply.status(404).send();
+    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
+
+    if (inventoryEnrichedResult.isErr()) {
+      switch (inventoryEnrichedResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "extendedDataNotFound":
+          return await reply.status(404).send();
+        default:
+          logger.error({ error: inventoryEnrichedResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
     }
+
+    const response = getInventoryResponse.parse(inventoryEnrichedResult.value);
+    return await reply.send(response);
   });
 
   fastify.get<{
@@ -49,11 +71,24 @@ const inventoriesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const inventoryIndex = await inventoryService.findInventoryIndex(
+    const inventoryIndexResult = await inventoryService.findInventoryIndex(
       req.params.id,
       parsedQueryParamsResult.data,
       req.user,
     );
+
+    if (inventoryIndexResult.isErr()) {
+      switch (inventoryIndexResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: inventoryIndexResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const inventoryIndex = inventoryIndexResult.value;
+
     if (inventoryIndex == null) {
       return await reply.status(404).send();
     }
@@ -70,10 +105,22 @@ const inventoriesController: FastifyPluginCallback<{
 
     const { data: queryParams } = parsedQueryParamsResult;
 
-    const [inventoriesData, count] = await Promise.all([
-      inventoryService.findPaginatedInventaires(req.user, queryParams),
-      inventoryService.getInventairesCount(req.user),
+    const paginatedResults = Result.combine([
+      await inventoryService.findPaginatedInventaires(req.user, queryParams),
+      await inventoryService.getInventairesCount(req.user),
     ]);
+
+    if (paginatedResults.isErr()) {
+      switch (paginatedResults.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: paginatedResults.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [inventoriesData, count] = paginatedResults.value;
 
     // TODO look to optimize this request
     const enrichedInventoriesResults = await Promise.all(
@@ -99,18 +146,41 @@ const inventoriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const inventory = await inventoryService.createInventaire(input, req.user);
-      const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
-      const response = upsertInventoryResponse.parse(inventoryEnriched);
+    const inventoryResult = await inventoryService.createInventaire(input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      // TODO handle duplicate inventory
-      // biome-ignore lint/complexity/noUselessCatch: <explanation>
-      throw e;
+    // TODO handle duplicate inventory
+    if (inventoryResult.isErr()) {
+      switch (inventoryResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "requiredDataNotFound":
+          return await reply.status(422).send();
+        default:
+          logger.error({ error: inventoryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
     }
+
+    const inventory = inventoryResult.value;
+
+    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
+
+    if (inventoryEnrichedResult.isErr()) {
+      switch (inventoryEnrichedResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "extendedDataNotFound":
+          return await reply.status(404).send();
+        default:
+          logger.error({ error: inventoryEnrichedResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const inventoryEnriched = inventoryEnrichedResult.value;
+
+    const response = upsertInventoryResponse.parse(inventoryEnriched);
+    return await reply.send(response);
   });
 
   fastify.put<{
@@ -126,18 +196,41 @@ const inventoriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const inventory = await inventoryService.updateInventaire(req.params.id, input, req.user);
-      const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
-      const response = upsertInventoryResponse.parse(inventoryEnriched);
+    const inventoryResult = await inventoryService.updateInventaire(req.params.id, input, req.user);
 
-      return await reply.send(response);
-    } catch (e) {
-      // TODO handle duplicate inventory
-      // biome-ignore lint/complexity/noUselessCatch: <explanation>
-      throw e;
+    // TODO handle duplicate inventory
+    if (inventoryResult.isErr()) {
+      switch (inventoryResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "requiredDataNotFound":
+          return await reply.status(422).send();
+        default:
+          logger.error({ error: inventoryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
     }
+
+    const inventory = inventoryResult.value;
+
+    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
+
+    if (inventoryEnrichedResult.isErr()) {
+      switch (inventoryEnrichedResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "extendedDataNotFound":
+          return await reply.status(404).send();
+        default:
+          logger.error({ error: inventoryEnrichedResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const inventoryEnriched = inventoryEnrichedResult.value;
+
+    const response = upsertInventoryResponse.parse(inventoryEnriched);
+    return await reply.send(response);
   });
 
   fastify.delete<{
@@ -145,21 +238,27 @@ const inventoriesController: FastifyPluginCallback<{
       id: string;
     };
   }>("/:id", async (req, reply) => {
-    try {
-      const { id: deletedId } = await inventoryService.deleteInventory(req.params.id, req.user);
-      return await reply.send({ id: deletedId });
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        return await reply.status(404).send();
-        // biome-ignore lint/style/noUselessElse: <explanation>
-      } else if (e instanceof OucaError && e.name === "OUCA0001") {
-        return await reply.status(403).send();
-        // biome-ignore lint/style/noUselessElse: <explanation>
-      } else if (e instanceof OucaError && e.name === "OUCA0005") {
-        return await reply.status(409).send("This inventory is still used by existing entries");
+    const deletedInventoryResult = await inventoryService.deleteInventory(req.params.id, req.user);
+
+    if (deletedInventoryResult.isErr()) {
+      switch (deletedInventoryResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        case "inventoryStillInUse":
+          return await reply.status(409).send();
+        default:
+          logger.error({ error: deletedInventoryResult.error }, "Unexpected error");
+          return await reply.status(500).send();
       }
-      throw e;
     }
+
+    const deletedInventory = deletedInventoryResult.value;
+
+    if (!deletedInventory) {
+      return await reply.status(404).send();
+    }
+
+    return await reply.send({ id: deletedInventory });
   });
 
   done();
