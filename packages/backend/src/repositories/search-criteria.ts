@@ -1,10 +1,10 @@
-import type { SearchCriteria } from "@domain/search/search-criteria.js";
+import type { LegacySearchCriteria } from "@domain/search/search-criteria.js";
 import type { SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { type IdentifierSqlToken, sql } from "slonik";
 
 export const reshapeSearchCriteria = (
   params: Omit<SpeciesSearchParams, "q" | "pageNumber" | "pageSize" | "orderBy" | "sortOrder">,
-): SearchCriteria | undefined => {
+): LegacySearchCriteria | undefined => {
   const {
     entryId,
     inventoryId,
@@ -68,7 +68,7 @@ export const reshapeSearchCriteria = (
   return areSearchCriteriaDefined ? reshapedSearchCriteria : undefined;
 };
 
-const getIdentifierForCriteria = (criteriaName: keyof SearchCriteria): IdentifierSqlToken => {
+const getIdentifierForCriteria = (criteriaName: keyof LegacySearchCriteria): IdentifierSqlToken => {
   switch (criteriaName) {
     case "ageIds":
       return sql.identifier(["donnee", "age_id"]);
@@ -125,7 +125,7 @@ const getIdentifierForCriteria = (criteriaName: keyof SearchCriteria): Identifie
   }
 };
 
-const getOperatorForCriteria = (criteriaName: keyof SearchCriteria) => {
+const getOperatorForCriteria = (criteriaName: keyof LegacySearchCriteria) => {
   switch (criteriaName) {
     case "comment":
       return sql.fragment`~*`;
@@ -138,10 +138,15 @@ const getOperatorForCriteria = (criteriaName: keyof SearchCriteria) => {
   }
 };
 
-export const buildSearchCriteriaParameters = (searchCriteria: SearchCriteria) => {
+export const buildSearchCriteriaParameters = (searchCriteria: LegacySearchCriteria) => {
   return Object.entries(searchCriteria)
     .filter(
-      (criteria): criteria is [keyof SearchCriteria, Exclude<SearchCriteria[keyof SearchCriteria], undefined>] => {
+      (
+        criteria,
+      ): criteria is [
+        keyof LegacySearchCriteria,
+        Exclude<LegacySearchCriteria[keyof LegacySearchCriteria], undefined>,
+      ] => {
         return criteria?.[1] !== undefined;
       },
     )

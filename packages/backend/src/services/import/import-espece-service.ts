@@ -1,15 +1,15 @@
+import type { SpeciesCreateInput } from "@domain/species/species.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { ImportedEspece } from "../../objects/import/imported-espece.object.js";
-import type { EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportEspeceService extends ImportService {
   private classes!: SpeciesClass[];
   private especes!: (Species | ImportedEspece)[];
 
-  private especesToInsert!: Omit<EspeceCreateInput, "owner_id">[];
+  private especesToInsert!: Omit<SpeciesCreateInput, "ownerId">[];
 
   protected getNumberOfColumns = (): number => {
     return 4;
@@ -62,7 +62,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Create and save the espece
-    const especeToSave = importedEspece.buildEspece(Number.parseInt(classe.id));
+    const especeToSave = importedEspece.buildEspece(classe.id);
 
     this.especesToInsert.push(especeToSave);
     this.especes.push(importedEspece);

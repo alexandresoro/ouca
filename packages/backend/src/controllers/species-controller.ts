@@ -82,7 +82,7 @@ const speciesController: FastifyPluginCallback<{
             await classService.findSpeciesClassOfSpecies(singleSpeciesData.id, req.user)
           )._unsafeUnwrap();
           const entriesCount = (
-            await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, req.user)
+            await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, queryParams, req.user)
           )._unsafeUnwrap();
           return {
             ...singleSpeciesData,

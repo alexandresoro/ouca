@@ -1,29 +1,26 @@
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
-import type { Species, SpeciesFailureReason } from "@domain/species/species.js";
+import type { Species, SpeciesCreateInput, SpeciesFailureReason } from "@domain/species/species.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { SpeciesRepository } from "@interfaces/species-repository-interface.js";
 import type { Species as SpeciesCommon } from "@ou-ca/common/api/entities/species";
 import type { SpeciesSearchParams, UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { Result, err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import type { SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type {
-  EspeceCreateInput,
-  EspeceWithClasseLibelle,
-} from "../../../repositories/espece/espece-repository-types.js";
 import type { EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { reshapeSearchCriteria } from "../../../repositories/search-criteria.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
-import { reshapeInputSpeciesUpsertData } from "./species-service-reshape.js";
 
 type SpeciesServiceDependencies = {
   classService: SpeciesClassService;
-  speciesRepository: EspeceRepository;
+  speciesRepository: SpeciesRepository;
+  speciesRepositoryLegacy: EspeceRepository;
   entryRepository: DonneeRepository;
 };
 
 export const buildSpeciesService = ({
   speciesRepository,
+  speciesRepositoryLegacy,
   entryRepository,
   classService,
 }: SpeciesServiceDependencies) => {
@@ -61,7 +58,7 @@ export const buildSpeciesService = ({
       return err("notAllowed");
     }
 
-    const species = await speciesRepository.findEspeceById(id);
+    const species = await speciesRepository.findSpeciesById(id);
     if (!species) {
       return ok(null);
     }
@@ -70,11 +67,15 @@ export const buildSpeciesService = ({
 
   const getEntriesCountBySpecies = async (
     id: string,
+    options: SpeciesSearchParams,
     loggedUser: LoggedUser | null,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
+
+    // FIXME: Add search criteria to the count query when migrating to the new repository
+    const { q, orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
     return ok(await entryRepository.getCountByEspeceId(Number.parseInt(id)));
   };
@@ -87,7 +88,7 @@ export const buildSpeciesService = ({
       return err("notAllowed");
     }
 
-    const species = await speciesRepository.findEspeceByDonneeId(entryId ? Number.parseInt(entryId) : undefined);
+    const species = await speciesRepository.findSpeciesByEntryId(entryId);
     if (!species) {
       return ok(null);
     }
@@ -95,16 +96,16 @@ export const buildSpeciesService = ({
   };
 
   const findAllSpecies = async (): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
-    const species = await speciesRepository.findEspeces({
+    const species = await speciesRepositoryLegacy.findEspeces({
       orderBy: "code",
     });
 
     return enrichSpeciesMultiple([...species], null);
   };
 
-  const findAllSpeciesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
-    const speciesWithClasses = await speciesRepository.findAllEspecesWithClasseLibelle();
-    return [...speciesWithClasses];
+  const findAllSpeciesWithClasses = async (): Promise<(Species & { classLabel: string })[]> => {
+    const speciesWithClasses = await speciesRepository.findAllSpeciesWithClassLabel();
+    return speciesWithClasses;
   };
 
   const findPaginatedSpecies = async (
@@ -119,7 +120,7 @@ export const buildSpeciesService = ({
 
     const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
-    const species = await speciesRepository.findEspeces({
+    const species = await speciesRepositoryLegacy.findEspeces({
       q,
       searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
@@ -144,7 +145,7 @@ export const buildSpeciesService = ({
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
     return ok(
-      await speciesRepository.getCount({
+      await speciesRepositoryLegacy.getCount({
         q: options.q,
         searchCriteria: reshapedSearchCriteria,
       }),
@@ -159,19 +160,16 @@ export const buildSpeciesService = ({
       return err("notAllowed");
     }
 
-    try {
-      const createdSpecies = await speciesRepository.createEspece({
-        ...reshapeInputSpeciesUpsertData(input),
-        owner_id: loggedUser?.id,
-      });
+    const createdSpeciesResult = await speciesRepository.createSpecies({
+      ...input,
+      ownerId: loggedUser?.id,
+    });
 
-      return enrichSpecies(createdSpecies, loggedUser);
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
+    if (createdSpeciesResult.isErr()) {
+      return err(createdSpeciesResult.error);
     }
+
+    return enrichSpecies(createdSpeciesResult.value, loggedUser);
   };
 
   const updateSpecies = async (
@@ -185,23 +183,20 @@ export const buildSpeciesService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await speciesRepository.findEspeceById(id);
+      const existingData = await speciesRepository.findSpeciesById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
     }
 
-    try {
-      const updatedSpecies = await speciesRepository.updateEspece(id, reshapeInputSpeciesUpsertData(input));
+    const updatedSpeciesResult = await speciesRepository.updateSpecies(id, input);
 
-      return enrichSpecies(updatedSpecies, loggedUser);
-    } catch (e) {
-      if (e instanceof UniqueIntegrityConstraintViolationError) {
-        return err("alreadyExists");
-      }
-      throw e;
+    if (updatedSpeciesResult.isErr()) {
+      return err(updatedSpeciesResult.error);
     }
+
+    return enrichSpecies(updatedSpeciesResult.value, loggedUser);
   };
 
   const deleteSpecies = async (
@@ -214,7 +209,7 @@ export const buildSpeciesService = ({
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await speciesRepository.findEspeceById(id);
+      const existingData = await speciesRepository.findSpeciesById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
@@ -233,7 +228,7 @@ export const buildSpeciesService = ({
       return ok(null);
     }
 
-    const deletedSpecies = await speciesRepository.deleteEspeceById(id);
+    const deletedSpecies = await speciesRepository.deleteSpeciesById(id);
 
     if (!deletedSpecies) {
       return ok(null);
@@ -243,16 +238,16 @@ export const buildSpeciesService = ({
   };
 
   const createMultipleSpecies = async (
-    species: Omit<EspeceCreateInput, "owner_id">[],
+    species: Omit<SpeciesCreateInput, "ownerId">[],
     loggedUser: LoggedUser,
   ): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
-    const createdSpecies = await speciesRepository.createEspeces(
+    const createdSpecies = await speciesRepository.createSpeciesMultiple(
       species.map((species) => {
-        return { ...species, owner_id: loggedUser.id };
+        return { ...species, ownerId: loggedUser.id };
       }),
     );
 
-    return enrichSpeciesMultiple([...createdSpecies], loggedUser);
+    return enrichSpeciesMultiple(createdSpecies, loggedUser);
   };
 
   return {

@@ -2,16 +2,16 @@ import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { SpeciesClassFailureReason } from "@domain/species-class/species-class.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { SpeciesClassRepository } from "@interfaces/species-class-repository-interface.js";
+import type { SpeciesRepository } from "@interfaces/species-repository-interface.js";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import type { ClassesSearchParams, UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
 
 type SpeciesClassServiceDependencies = {
   classRepository: SpeciesClassRepository;
-  speciesRepository: EspeceRepository;
+  speciesRepository: SpeciesRepository;
   entryRepository: DonneeRepository;
 };
 
@@ -40,7 +40,13 @@ export const buildSpeciesClassService = ({
       return err("notAllowed");
     }
 
-    return ok(await speciesRepository.getCountByClasseId(Number.parseInt(id)));
+    return ok(
+      await speciesRepository.getCount({
+        searchCriteria: {
+          classIds: [id],
+        },
+      }),
+    );
   };
 
   const getEntriesCountBySpeciesClass = async (

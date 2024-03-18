@@ -11,6 +11,7 @@ import { buildObserverRepository } from "@infrastructure/repositories/observer/o
 import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
 import { buildSpeciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
+import { buildSpeciesRepository } from "@infrastructure/repositories/species/species-repository.js";
 import { buildTownRepository } from "@infrastructure/repositories/town/town-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
@@ -106,7 +107,8 @@ export const buildServices = async (): Promise<Services> => {
   const observerRepository = buildObserverRepository();
   const settingsRepository = buildSettingsRepository();
   const sexRepository = buildSexRepository();
-  const speciesRepository = buildEspeceRepository({ slonik });
+  const speciesRepository = buildSpeciesRepository();
+  const speciesRepositoryLegacy = buildEspeceRepository({ slonik });
   const townRepository = buildTownRepository();
   const userRepository = buildUserRepository({ settingsRepository });
   const weatherRepository = buildWeatherRepository();
@@ -151,6 +153,7 @@ export const buildServices = async (): Promise<Services> => {
   const speciesService = buildSpeciesService({
     classService,
     speciesRepository,
+    speciesRepositoryLegacy,
     entryRepository,
   });
 

@@ -259,7 +259,7 @@ export const generateEspecesExport = async ({
 
   const objectsToExport = especes.map((espece) => {
     return {
-      Classe: espece.classeLibelle,
+      Classe: espece.classLabel,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
       "Nom scientifique": espece.nomLatin,

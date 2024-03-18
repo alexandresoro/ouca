@@ -2,47 +2,39 @@ import assert from "node:assert/strict";
 import { beforeEach, describe, test } from "node:test";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
-import { speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
+import { speciesCreateInputFactory, speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSpeciesInputFactory } from "@fixtures/services/species/species-service.fixtures.js";
+import type { SpeciesRepository } from "@interfaces/species-repository-interface.js";
 import type { SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { err, ok } from "neverthrow";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
 import type { SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { EspeceCreateInput } from "../../../repositories/espece/espece-repository-types.js";
 import type { EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildSpeciesService } from "./species-service.js";
 
 const classService = mock<SpeciesClassService>();
-const speciesRepository = mock<EspeceRepository>();
+const speciesRepository = mock<SpeciesRepository>();
+const speciesRepositoryLegacy = mock<EspeceRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const speciesService = buildSpeciesService({
   classService,
   speciesRepository,
+  speciesRepositoryLegacy,
   entryRepository,
 });
 
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint",
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
-
 beforeEach(() => {
-  speciesRepository.findEspeceById.mock.resetCalls();
-  speciesRepository.findEspeceByDonneeId.mock.resetCalls();
-  speciesRepository.findEspeces.mock.resetCalls();
-  speciesRepository.updateEspece.mock.resetCalls();
-  speciesRepository.createEspece.mock.resetCalls();
-  speciesRepository.deleteEspeceById.mock.resetCalls();
-  speciesRepository.createEspeces.mock.resetCalls();
-  speciesRepository.getCount.mock.resetCalls();
+  speciesRepository.findSpeciesById.mock.resetCalls();
+  speciesRepository.findSpeciesByEntryId.mock.resetCalls();
+  speciesRepositoryLegacy.findEspeces.mock.resetCalls();
+  speciesRepository.updateSpecies.mock.resetCalls();
+  speciesRepository.createSpecies.mock.resetCalls();
+  speciesRepository.deleteSpeciesById.mock.resetCalls();
+  speciesRepository.createSpeciesMultiple.mock.resetCalls();
+  speciesRepositoryLegacy.getCount.mock.resetCalls();
   entryRepository.getCountByEspeceId.mock.resetCalls();
   classService.findSpeciesClassOfSpecies.mock.resetCalls();
 });
@@ -57,29 +49,29 @@ describe("Find species", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
     await speciesService.findSpecies(12, loggedUser);
 
-    assert.strictEqual(speciesRepository.findEspeceById.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findEspeceById.mock.calls[0].arguments, [12]);
+    assert.strictEqual(speciesRepository.findSpeciesById.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.findSpeciesById.mock.calls[0].arguments, [12]);
   });
 
   test("should handle species not found", async () => {
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(null));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
     assert.deepStrictEqual(await speciesService.findSpecies(10, loggedUser), ok(null));
 
-    assert.strictEqual(speciesRepository.findEspeceById.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findEspeceById.mock.calls[0].arguments, [10]);
+    assert.strictEqual(speciesRepository.findSpeciesById.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.findSpeciesById.mock.calls[0].arguments, [10]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
     const findResult = await speciesService.findSpecies(11, null);
 
     assert.deepStrictEqual(findResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.findEspeceById.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.findSpeciesById.mock.callCount(), 0);
   });
 });
 
@@ -87,14 +79,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await speciesService.getEntriesCountBySpecies("12", loggedUser);
+    await speciesService.getEntriesCountBySpecies("12", {}, loggedUser);
 
     assert.strictEqual(entryRepository.getCountByEspeceId.mock.callCount(), 1);
     assert.deepStrictEqual(entryRepository.getCountByEspeceId.mock.calls[0].arguments, [12]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const entitiesCountResult = await speciesService.getEntriesCountBySpecies("12", null);
+    const entitiesCountResult = await speciesService.getEntriesCountBySpecies("12", {}, null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
     assert.strictEqual(entryRepository.getCountByEspeceId.mock.callCount(), 0);
@@ -113,12 +105,12 @@ describe("Find species by data ID", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepository.findEspeceByDonneeId.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
+    speciesRepository.findSpeciesByEntryId.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
     const speciesResult = await speciesService.findSpeciesOfEntryId("43", loggedUser);
 
-    assert.strictEqual(speciesRepository.findEspeceByDonneeId.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findEspeceByDonneeId.mock.calls[0].arguments, [43]);
+    assert.strictEqual(speciesRepository.findSpeciesByEntryId.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.findSpeciesByEntryId.mock.calls[0].arguments, ["43"]);
     assert.ok(speciesResult.isOk());
     assert.strictEqual(speciesResult.value?.id, "256");
   });
@@ -127,7 +119,7 @@ describe("Find species by data ID", () => {
     const findResult = await speciesService.findSpeciesOfEntryId("12", null);
 
     assert.deepStrictEqual(findResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.findEspeceByDonneeId.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.findSpeciesByEntryId.mock.callCount(), 0);
   });
 });
 
@@ -139,12 +131,12 @@ test("Find all species", async () => {
     Promise.resolve(ok({ ...speciesClass, editable: true })),
   );
 
-  speciesRepository.findEspeces.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
+  speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
   await speciesService.findAllSpecies();
 
-  assert.strictEqual(speciesRepository.findEspeces.mock.callCount(), 1);
-  assert.deepStrictEqual(speciesRepository.findEspeces.mock.calls[0].arguments, [
+  assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
+  assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
     {
       orderBy: "code",
     },
@@ -161,12 +153,12 @@ describe("Entities paginated find by search criteria", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepository.findEspeces.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
+    speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
     await speciesService.findPaginatedSpecies(loggedUser, {});
 
-    assert.strictEqual(speciesRepository.findEspeces.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findEspeces.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
       {
         limit: undefined,
         offset: undefined,
@@ -195,12 +187,12 @@ describe("Entities paginated find by search criteria", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepository.findEspeces.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
+    speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
 
     await speciesService.findPaginatedSpecies(loggedUser, searchParams);
 
-    assert.strictEqual(speciesRepository.findEspeces.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findEspeces.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
       {
         q: "Bob",
         orderBy: "code",
@@ -239,12 +231,12 @@ describe("Entities paginated find by search criteria", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepository.findEspeces.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
+    speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
 
     await speciesService.findPaginatedSpecies(loggedUser, searchParams);
 
-    assert.strictEqual(speciesRepository.findEspeces.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findEspeces.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
       {
         q: "Bob",
         searchCriteria: {
@@ -287,7 +279,7 @@ describe("Entities paginated find by search criteria", () => {
     const entitiesPaginatedResult = await speciesService.findPaginatedSpecies(null, {});
 
     assert.deepStrictEqual(entitiesPaginatedResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.findEspeces.mock.callCount(), 0);
+    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 0);
   });
 });
 
@@ -297,8 +289,8 @@ describe("Entities count by search criteria", () => {
 
     await speciesService.getSpeciesCount(loggedUser, {});
 
-    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
       {
         q: undefined,
         searchCriteria: undefined,
@@ -311,8 +303,8 @@ describe("Entities count by search criteria", () => {
 
     await speciesService.getSpeciesCount(loggedUser, { q: "test" });
 
-    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
       { q: "test", searchCriteria: undefined },
     ]);
   });
@@ -327,8 +319,8 @@ describe("Entities count by search criteria", () => {
       toDate: "2010-01-01",
     });
 
-    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
       {
         q: undefined,
         searchCriteria: {
@@ -374,8 +366,8 @@ describe("Entities count by search criteria", () => {
       toDate: "2010-01-01",
     });
 
-    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
       {
         q: "test",
         searchCriteria: {
@@ -414,14 +406,13 @@ describe("Entities count by search criteria", () => {
     const entitiesCountResult = await speciesService.getSpeciesCount(null, {});
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 0);
+    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 0);
   });
 });
 
 describe("Update of a species", () => {
   test("should be allowed when requested by an admin", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
-    const { classId, nomFrancais, nomLatin, ...restSpeciesData } = speciesData;
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
@@ -433,20 +424,12 @@ describe("Update of a species", () => {
     const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
-    speciesRepository.updateEspece.mock.mockImplementationOnce(() => Promise.resolve(species));
+    speciesRepository.updateSpecies.mock.mockImplementationOnce(() => Promise.resolve(ok(species)));
 
     await speciesService.updateSpecies(12, speciesData, loggedUser);
 
-    assert.strictEqual(speciesRepository.updateEspece.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.updateEspece.mock.calls[0].arguments, [
-      12,
-      {
-        ...restSpeciesData,
-        classe_id: Number.NaN,
-        nom_francais: nomFrancais,
-        nom_latin: nomLatin,
-      },
-    ]);
+    assert.strictEqual(speciesRepository.updateSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.updateSpecies.mock.calls[0].arguments, [12, speciesData]);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -455,7 +438,6 @@ describe("Update of a species", () => {
     });
 
     const speciesData = upsertSpeciesInputFactory.build();
-    const { classId, nomFrancais, nomLatin, ...restSpeciesData } = speciesData;
 
     const loggedUser = loggedUserFactory.build({ id: "notAdmin" });
 
@@ -464,25 +446,17 @@ describe("Update of a species", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
     const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
-    speciesRepository.updateEspece.mock.mockImplementationOnce(() => Promise.resolve(species));
+    speciesRepository.updateSpecies.mock.mockImplementationOnce(() => Promise.resolve(ok(species)));
 
     await speciesService.updateSpecies(12, speciesData, loggedUser);
 
-    assert.strictEqual(speciesRepository.updateEspece.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.updateEspece.mock.calls[0].arguments, [
-      12,
-      {
-        ...restSpeciesData,
-        classe_id: Number.NaN,
-        nom_francais: nomFrancais,
-        nom_latin: nomLatin,
-      },
-    ]);
+    assert.strictEqual(speciesRepository.updateSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.updateSpecies.mock.calls[0].arguments, [12, speciesData]);
   });
 
   test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
@@ -497,33 +471,24 @@ describe("Update of a species", () => {
       role: "contributor",
     } as const;
 
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(ok(existingData)));
 
     assert.deepStrictEqual(await speciesService.updateSpecies(12, speciesData, user), err("notAllowed"));
 
-    assert.strictEqual(speciesRepository.updateEspece.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.updateSpecies.mock.callCount(), 0);
   });
 
   test("should not be allowed when trying to update to a species that exists", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
-    const { classId, nomFrancais, nomLatin, ...restSpeciesData } = speciesData;
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
 
-    speciesRepository.updateEspece.mock.mockImplementationOnce(uniqueConstraintFailed);
+    speciesRepository.updateSpecies.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     assert.deepStrictEqual(await speciesService.updateSpecies(12, speciesData, loggedUser), err("alreadyExists"));
 
-    assert.strictEqual(speciesRepository.updateEspece.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.updateEspece.mock.calls[0].arguments, [
-      12,
-      {
-        ...restSpeciesData,
-        classe_id: Number.NaN,
-        nom_francais: nomFrancais,
-        nom_latin: nomLatin,
-      },
-    ]);
+    assert.strictEqual(speciesRepository.updateSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.updateSpecies.mock.calls[0].arguments, [12, speciesData]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -532,14 +497,13 @@ describe("Update of a species", () => {
     const updateResult = await speciesService.updateSpecies(12, speciesData, null);
 
     assert.deepStrictEqual(updateResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.updateEspece.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.updateSpecies.mock.callCount(), 0);
   });
 });
 
 describe("Creation of a species", () => {
   test("should create new species", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
-    const { classId, nomFrancais, nomLatin, ...restSpeciesData } = speciesData;
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
@@ -551,40 +515,33 @@ describe("Creation of a species", () => {
     const species = speciesFactory.build({
       ownerId: loggedUser.id,
     });
-    speciesRepository.createEspece.mock.mockImplementationOnce(() => Promise.resolve(species));
+    speciesRepository.createSpecies.mock.mockImplementationOnce(() => Promise.resolve(ok(species)));
 
     await speciesService.createSpecies(speciesData, loggedUser);
 
-    assert.strictEqual(speciesRepository.createEspece.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.createEspece.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.createSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.createSpecies.mock.calls[0].arguments, [
       {
-        ...restSpeciesData,
-        classe_id: Number.NaN,
-        nom_francais: nomFrancais,
-        nom_latin: nomLatin,
-        owner_id: loggedUser.id,
+        ...speciesData,
+        ownerId: loggedUser.id,
       },
     ]);
   });
 
   test("should not be allowed when trying to create a species that already exists", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
-    const { classId, nomFrancais, nomLatin, ...restSpeciesData } = speciesData;
 
     const loggedUser = loggedUserFactory.build({ id: "a" });
 
-    speciesRepository.createEspece.mock.mockImplementationOnce(uniqueConstraintFailed);
+    speciesRepository.createSpecies.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
     assert.deepStrictEqual(await speciesService.createSpecies(speciesData, loggedUser), err("alreadyExists"));
 
-    assert.strictEqual(speciesRepository.createEspece.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.createEspece.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.createSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.createSpecies.mock.calls[0].arguments, [
       {
-        ...restSpeciesData,
-        classe_id: Number.NaN,
-        nom_francais: nomFrancais,
-        nom_latin: nomLatin,
-        owner_id: loggedUser.id,
+        ...speciesData,
+        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -595,7 +552,7 @@ describe("Creation of a species", () => {
     const createResult = await speciesService.createSpecies(speciesData, null);
 
     assert.deepStrictEqual(createResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.createEspece.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.createSpecies.mock.callCount(), 0);
   });
 });
 
@@ -614,12 +571,12 @@ describe("Deletion of a species", () => {
     classService.findSpeciesClassOfSpecies.mock.mockImplementationOnce(() =>
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(species));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(species));
 
     await speciesService.deleteSpecies(11, loggedUser);
 
-    assert.strictEqual(speciesRepository.deleteEspeceById.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.deleteEspeceById.mock.calls[0].arguments, [11]);
+    assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.deleteSpeciesById.mock.calls[0].arguments, [11]);
   });
 
   test("should handle the deletion of any species if admin", async () => {
@@ -632,12 +589,12 @@ describe("Deletion of a species", () => {
     classService.findSpeciesClassOfSpecies.mock.mockImplementationOnce(() =>
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(speciesFactory.build()));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(speciesFactory.build()));
 
     await speciesService.deleteSpecies(11, loggedUser);
 
-    assert.strictEqual(speciesRepository.deleteEspeceById.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.deleteEspeceById.mock.calls[0].arguments, [11]);
+    assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.deleteSpeciesById.mock.calls[0].arguments, [11]);
   });
 
   test("should not be allowed when deleting a non-owned species as non-admin", async () => {
@@ -645,40 +602,36 @@ describe("Deletion of a species", () => {
       role: "contributor",
     });
 
-    speciesRepository.findEspeceById.mock.mockImplementationOnce(() => Promise.resolve(speciesFactory.build()));
+    speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(speciesFactory.build()));
 
     assert.deepStrictEqual(await speciesService.deleteSpecies(11, loggedUser), err("notAllowed"));
 
-    assert.strictEqual(speciesRepository.deleteEspeceById.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await speciesService.deleteSpecies(11, null);
 
     assert.deepStrictEqual(deleteResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.deleteEspeceById.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 0);
   });
 });
 
 test("Create multiple species", async () => {
-  const speciesData = [
-    mock<Omit<EspeceCreateInput, "owner_id">>(),
-    mock<Omit<EspeceCreateInput, "owner_id">>(),
-    mock<Omit<EspeceCreateInput, "owner_id">>(),
-  ];
+  const speciesData = speciesCreateInputFactory.buildList(3);
 
   const loggedUser = loggedUserFactory.build();
 
-  speciesRepository.createEspeces.mock.mockImplementationOnce(() => Promise.resolve([]));
+  speciesRepository.createSpeciesMultiple.mock.mockImplementationOnce(() => Promise.resolve([]));
 
   await speciesService.createMultipleSpecies(speciesData, loggedUser);
 
-  assert.strictEqual(speciesRepository.createEspeces.mock.callCount(), 1);
-  assert.deepStrictEqual(speciesRepository.createEspeces.mock.calls[0].arguments, [
+  assert.strictEqual(speciesRepository.createSpeciesMultiple.mock.callCount(), 1);
+  assert.deepStrictEqual(speciesRepository.createSpeciesMultiple.mock.calls[0].arguments, [
     speciesData.map((species) => {
       return {
         ...species,
-        owner_id: loggedUser.id,
+        ownerId: loggedUser.id,
       };
     }),
   ]);

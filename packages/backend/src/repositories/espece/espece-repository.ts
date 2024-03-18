@@ -1,85 +1,15 @@
-import { type Species, type SpeciesFindManyInput, speciesSchema } from "@domain/species/species.js";
+import { type LegacySpeciesFindManyInput, type Species, speciesSchema } from "@domain/species/species.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { type DatabasePool, sql } from "slonik";
 import { countSchema } from "../common.js";
-import {
-  buildPaginationFragment,
-  buildSortOrderFragment,
-  objectToKeyValueInsert,
-  objectToKeyValueSet,
-  objectsToKeyValueInsert,
-} from "../repository-helpers.js";
+import { buildPaginationFragment, buildSortOrderFragment } from "../repository-helpers.js";
 import { buildOrderByIdentifier, buildSearchEspeceClause } from "./espece-repository-helper.js";
-import {
-  type EspeceCreateInput,
-  type EspeceWithClasseLibelle,
-  especeWithClasseLibelleSchema,
-} from "./espece-repository-types.js";
 
 export type EspeceRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) => {
-  const findEspeceById = async (id: number): Promise<Species | null> => {
-    const query = sql.type(speciesSchema)`
-      SELECT 
-        espece.id::text,
-        espece.code,
-        espece.nom_francais,
-        espece.nom_latin,
-        espece.classe_id::text AS class_id,
-        espece.owner_id
-      FROM
-        basenaturaliste.espece
-      WHERE
-        id = ${id}
-    `;
-
-    return slonik.maybeOne(query);
-  };
-
-  const findEspeceByDonneeId = async (entryId: number | undefined): Promise<Species | null> => {
-    if (!entryId) {
-      return null;
-    }
-
-    const query = sql.type(speciesSchema)`
-      SELECT 
-        espece.id::text,
-        espece.code,
-        espece.nom_francais,
-        espece.nom_latin,
-        espece.classe_id::text AS class_id,
-        espece.owner_id
-      FROM
-        basenaturaliste.espece
-      LEFT JOIN basenaturaliste.donnee ON espece.id = donnee.espece_id
-      WHERE
-      donnee.id = ${entryId}
-    `;
-
-    return slonik.maybeOne(query);
-  };
-
-  const findAllEspecesWithClasseLibelle = async (): Promise<readonly EspeceWithClasseLibelle[]> => {
-    const query = sql.type(especeWithClasseLibelleSchema)`
-    SELECT 
-      espece.id::text,
-      espece.code,
-      espece.nom_francais,
-      espece.nom_latin,
-      espece.classe_id::text AS class_id,
-      espece.owner_id,
-      classe.libelle as classe_libelle
-    FROM
-      basenaturaliste.espece
-    LEFT JOIN basenaturaliste.classe ON espece.classe_id = classe.id
-  `;
-
-    return slonik.any(query);
-  };
-
   const findEspeces = async ({
     orderBy,
     sortOrder,
@@ -87,7 +17,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     searchCriteria,
     offset,
     limit,
-  }: SpeciesFindManyInput = {}): Promise<readonly Species[]> => {
+  }: LegacySpeciesFindManyInput = {}): Promise<readonly Species[]> => {
     const isSortByNomClasse = orderBy === "nomClasse";
     const isSortByNbDonnees = orderBy === "nbDonnees";
     // If no explicit order is requested and a query is provided, return the matches in the following order:
@@ -165,7 +95,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
   const getCount = async ({
     q,
     searchCriteria,
-  }: Pick<SpeciesFindManyInput, "q" | "searchCriteria">): Promise<number> => {
+  }: Pick<LegacySpeciesFindManyInput, "q" | "searchCriteria">): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
         COUNT(DISTINCT espece.id)
@@ -193,103 +123,9 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const createEspece = async (especeInput: EspeceCreateInput): Promise<Species> => {
-    const query = sql.type(speciesSchema)`
-      INSERT INTO
-        basenaturaliste.espece
-        ${objectToKeyValueInsert(especeInput)}
-      RETURNING
-        espece.id::text,
-        espece.code,
-        espece.nom_francais,
-        espece.nom_latin,
-        espece.classe_id::text AS class_id,
-        espece.owner_id
-    `;
-
-    return slonik.one(query);
-  };
-
-  const createEspeces = async (especeInputs: EspeceCreateInput[]): Promise<readonly Species[]> => {
-    const query = sql.type(speciesSchema)`
-      INSERT INTO
-        basenaturaliste.espece
-        ${objectsToKeyValueInsert(especeInputs)}
-      RETURNING
-        espece.id::text,
-        espece.code,
-        espece.nom_francais,
-        espece.nom_latin,
-        espece.classe_id::text AS class_id,
-        espece.owner_id
-    `;
-
-    return slonik.many(query);
-  };
-
-  const updateEspece = async (especeId: number, especeInput: EspeceCreateInput): Promise<Species> => {
-    const query = sql.type(speciesSchema)`
-      UPDATE
-        basenaturaliste.espece
-      SET
-        ${objectToKeyValueSet(especeInput)}
-      WHERE
-        id = ${especeId}
-      RETURNING
-        espece.id::text,
-        espece.code,
-        espece.nom_francais,
-        espece.nom_latin,
-        espece.classe_id::text AS class_id,
-        espece.owner_id
-    `;
-
-    return slonik.one(query);
-  };
-
-  const deleteEspeceById = async (especeId: number): Promise<Species | null> => {
-    const query = sql.type(speciesSchema)`
-      DELETE
-      FROM
-        basenaturaliste.espece
-      WHERE
-        id = ${especeId}
-      RETURNING
-        espece.id::text,
-        espece.code,
-        espece.nom_francais,
-        espece.nom_latin,
-        espece.classe_id::text AS class_id,
-        espece.owner_id
-    `;
-
-    return slonik.maybeOne(query);
-  };
-
-  const getCountByClasseId = async (classeId: number): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.espece
-      WHERE
-        espece.classe_id = ${classeId}
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
   return {
-    findEspeceById,
-    findEspeceByDonneeId,
-    findAllEspecesWithClasseLibelle,
     findEspeces,
     getCount,
-    createEspece,
-    createEspeces,
-    updateEspece,
-    deleteEspeceById,
-    getCountByClasseId,
   };
 };
 

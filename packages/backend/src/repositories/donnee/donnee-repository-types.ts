@@ -1,4 +1,4 @@
-import type { SearchCriteria } from "@domain/search/search-criteria.js";
+import type { LegacySearchCriteria } from "@domain/search/search-criteria.js";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { z } from "zod";
 import type { SortOrder } from "../common.js";
@@ -27,7 +27,7 @@ export const maxRegoupementSchema = z.object({
 });
 
 export type DonneeFindManyInput = Partial<{
-  searchCriteria: SearchCriteria | null | undefined;
+  searchCriteria: LegacySearchCriteria | null | undefined;
   orderBy:
     | "id"
     | "nombre"

@@ -5,15 +5,15 @@ import { speciesClassFactory } from "@fixtures/domain/species-class/species-clas
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSpeciesClassInputFactory } from "@fixtures/services/species-class/species-class-service.fixtures.js";
 import type { SpeciesClassRepository } from "@interfaces/species-class-repository-interface.js";
+import type { SpeciesRepository } from "@interfaces/species-repository-interface.js";
 import type { ClassesSearchParams } from "@ou-ca/common/api/species-class";
 import { err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildSpeciesClassService } from "./species-class-service.js";
 
 const classRepository = mock<SpeciesClassRepository>();
-const speciesRepository = mock<EspeceRepository>();
+const speciesRepository = mock<SpeciesRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const speciesClassService = buildSpeciesClassService({
@@ -31,7 +31,7 @@ beforeEach(() => {
   classRepository.deleteSpeciesClassById.mock.resetCalls();
   classRepository.createSpeciesClasses.mock.resetCalls();
   classRepository.findSpeciesClassBySpeciesId.mock.resetCalls();
-  speciesRepository.getCountByClasseId.mock.resetCalls();
+  speciesRepository.getCount.mock.resetCalls();
   entryRepository.getCountByClasseId.mock.resetCalls();
 });
 
@@ -72,8 +72,14 @@ describe("Species count per entity", () => {
 
     await speciesClassService.getSpeciesCountBySpeciesClass("12", loggedUser);
 
-    assert.strictEqual(speciesRepository.getCountByClasseId.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getCountByClasseId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
+      {
+        searchCriteria: {
+          classIds: ["12"],
+        },
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

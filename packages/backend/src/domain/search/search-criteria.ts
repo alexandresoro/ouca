@@ -1,7 +1,9 @@
 import type { BreederCode } from "../behavior/breeder.js";
 
-// FIXME: use string instead of number for ids
-export type SearchCriteria = {
+/**
+ * @deprecated
+ */
+export type LegacySearchCriteria = {
   entryId?: number;
   inventoryId?: number;
   observerIds?: number[];
@@ -28,4 +30,33 @@ export type SearchCriteria = {
   breeders?: BreederCode[];
   behaviorIds?: number[];
   environmentIds?: number[];
+};
+
+export type SearchCriteria = {
+  entryId?: string;
+  inventoryId?: string;
+  observerIds?: string[];
+  temperature?: number | null;
+  weatherIds?: string[];
+  associateIds?: string[];
+  time?: string;
+  duration?: string;
+  classIds?: string[];
+  speciesIds?: string[];
+  departmentIds?: string[];
+  townIds?: string[];
+  localityIds?: string[];
+  number?: number;
+  numberEstimateIds?: string[];
+  sexIds?: string[];
+  ageIds?: string[];
+  distance?: number | null;
+  distanceEstimateIds?: string[];
+  regroupment?: string;
+  fromDate?: string | null;
+  toDate?: string | null;
+  comment?: string;
+  breeders?: BreederCode[];
+  behaviorIds?: string[];
+  environmentIds?: string[];
 };

@@ -1,4 +1,4 @@
-import type { EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
+import type { SpeciesCreateInput } from "@domain/species/species.js";
 
 const CLASSE_INDEX = 0;
 const CODE_INDEX = 1;
@@ -22,12 +22,12 @@ export class ImportedEspece {
     this.nomLatin = especeTab[NOM_LATIN_INDEX].trim();
   }
 
-  buildEspece = (classeId: number): Omit<EspeceCreateInput, "owner_id"> => {
+  buildEspece = (classeId: string): Omit<SpeciesCreateInput, "ownerId"> => {
     return {
-      classe_id: classeId,
+      classId: classeId,
       code: this.code,
-      nom_francais: this.nomFrancais,
-      nom_latin: this.nomLatin,
+      nomFrancais: this.nomFrancais,
+      nomLatin: this.nomLatin,
     };
   };
 
