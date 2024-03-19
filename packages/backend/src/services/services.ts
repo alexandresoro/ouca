@@ -42,13 +42,13 @@ import {
   type SpeciesClassService,
   buildSpeciesClassService,
 } from "../application/services/species-class/species-class-service.js";
+import { type SpeciesService, buildSpeciesService } from "../application/services/species/species-service.js";
 import { type TownService, buildTownService } from "../application/services/town/town-service.js";
 import { type UserService, buildUserService } from "../application/services/user/user-service.js";
 import { type WeatherService, buildWeatherService } from "../application/services/weather/weather-service.js";
 import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
-import { buildEspeceRepository } from "../repositories/espece/espece-repository.js";
 import { buildInventaireAssocieRepository } from "../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { buildInventaireMeteoRepository } from "../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { buildInventaireRepository } from "../repositories/inventaire/inventaire-repository.js";
@@ -56,7 +56,6 @@ import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
 import { type InventaireService, buildInventaireService } from "./entities/inventaire-service.js";
-import { type SpeciesService, buildSpeciesService } from "./entities/species/species-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
@@ -108,7 +107,6 @@ export const buildServices = async (): Promise<Services> => {
   const settingsRepository = buildSettingsRepository();
   const sexRepository = buildSexRepository();
   const speciesRepository = buildSpeciesRepository();
-  const speciesRepositoryLegacy = buildEspeceRepository({ slonik });
   const townRepository = buildTownRepository();
   const userRepository = buildUserRepository({ settingsRepository });
   const weatherRepository = buildWeatherRepository();
@@ -153,7 +151,6 @@ export const buildServices = async (): Promise<Services> => {
   const speciesService = buildSpeciesService({
     classService,
     speciesRepository,
-    speciesRepositoryLegacy,
     entryRepository,
   });
 

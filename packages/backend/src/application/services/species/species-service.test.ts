@@ -10,31 +10,28 @@ import type { SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { err, ok } from "neverthrow";
 import type { SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { EspeceRepository } from "../../../repositories/espece/espece-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildSpeciesService } from "./species-service.js";
 
 const classService = mock<SpeciesClassService>();
 const speciesRepository = mock<SpeciesRepository>();
-const speciesRepositoryLegacy = mock<EspeceRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const speciesService = buildSpeciesService({
   classService,
   speciesRepository,
-  speciesRepositoryLegacy,
   entryRepository,
 });
 
 beforeEach(() => {
   speciesRepository.findSpeciesById.mock.resetCalls();
   speciesRepository.findSpeciesByEntryId.mock.resetCalls();
-  speciesRepositoryLegacy.findEspeces.mock.resetCalls();
+  speciesRepository.findSpecies.mock.resetCalls();
   speciesRepository.updateSpecies.mock.resetCalls();
   speciesRepository.createSpecies.mock.resetCalls();
   speciesRepository.deleteSpeciesById.mock.resetCalls();
   speciesRepository.createSpeciesMultiple.mock.resetCalls();
-  speciesRepositoryLegacy.getCount.mock.resetCalls();
+  speciesRepository.getCount.mock.resetCalls();
   entryRepository.getCountByEspeceId.mock.resetCalls();
   classService.findSpeciesClassOfSpecies.mock.resetCalls();
 });
@@ -131,12 +128,12 @@ test("Find all species", async () => {
     Promise.resolve(ok({ ...speciesClass, editable: true })),
   );
 
-  speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
+  speciesRepository.findSpecies.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
   await speciesService.findAllSpecies();
 
-  assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
-  assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
+  assert.strictEqual(speciesRepository.findSpecies.mock.callCount(), 1);
+  assert.deepStrictEqual(speciesRepository.findSpecies.mock.calls[0].arguments, [
     {
       orderBy: "code",
     },
@@ -153,19 +150,19 @@ describe("Entities paginated find by search criteria", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
+    speciesRepository.findSpecies.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
     await speciesService.findPaginatedSpecies(loggedUser, {});
 
-    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.findSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.findSpecies.mock.calls[0].arguments, [
       {
         limit: undefined,
         offset: undefined,
         orderBy: undefined,
         q: undefined,
         sortOrder: undefined,
-        searchCriteria: undefined,
+        searchCriteria: {},
       },
     ]);
   });
@@ -187,19 +184,19 @@ describe("Entities paginated find by search criteria", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
+    speciesRepository.findSpecies.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
 
     await speciesService.findPaginatedSpecies(loggedUser, searchParams);
 
-    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.findSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.findSpecies.mock.calls[0].arguments, [
       {
         q: "Bob",
         orderBy: "code",
         sortOrder: "desc",
         offset: 0,
         limit: searchParams.pageSize,
-        searchCriteria: undefined,
+        searchCriteria: {},
       },
     ]);
   });
@@ -231,41 +228,19 @@ describe("Entities paginated find by search criteria", () => {
       Promise.resolve(ok({ ...speciesClass, editable: true })),
     );
 
-    speciesRepositoryLegacy.findEspeces.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
+    speciesRepository.findSpecies.mock.mockImplementationOnce(() => Promise.resolve([speciesData[0]]));
 
     await speciesService.findPaginatedSpecies(loggedUser, searchParams);
 
-    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.findEspeces.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.findSpecies.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.findSpecies.mock.calls[0].arguments, [
       {
         q: "Bob",
         searchCriteria: {
-          ageIds: [12, 23],
-          associateIds: undefined,
-          behaviorIds: undefined,
-          breeders: undefined,
-          classIds: undefined,
-          comment: undefined,
-          departmentIds: undefined,
-          distance: undefined,
-          distanceEstimateIds: undefined,
-          duration: undefined,
-          entryId: undefined,
-          environmentIds: undefined,
-          fromDate: undefined,
-          inventoryId: undefined,
-          localityIds: undefined,
+          ageIds: ["12", "23"],
           number: undefined,
-          numberEstimateIds: undefined,
-          observerIds: undefined,
-          regroupment: undefined,
-          sexIds: undefined,
-          speciesIds: undefined,
-          temperature: undefined,
-          time: undefined,
           toDate: "2010-01-01",
-          townIds: [3, 6],
-          weatherIds: undefined,
+          townIds: ["3", "6"],
         },
         orderBy: "code",
         sortOrder: "desc",
@@ -279,7 +254,7 @@ describe("Entities paginated find by search criteria", () => {
     const entitiesPaginatedResult = await speciesService.findPaginatedSpecies(null, {});
 
     assert.deepStrictEqual(entitiesPaginatedResult, err("notAllowed"));
-    assert.strictEqual(speciesRepositoryLegacy.findEspeces.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.findSpecies.mock.callCount(), 0);
   });
 });
 
@@ -289,11 +264,11 @@ describe("Entities count by search criteria", () => {
 
     await speciesService.getSpeciesCount(loggedUser, {});
 
-    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
       {
         q: undefined,
-        searchCriteria: undefined,
+        searchCriteria: {},
       },
     ]);
   });
@@ -303,10 +278,8 @@ describe("Entities count by search criteria", () => {
 
     await speciesService.getSpeciesCount(loggedUser, { q: "test" });
 
-    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
-      { q: "test", searchCriteria: undefined },
-    ]);
+    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [{ q: "test", searchCriteria: {} }]);
   });
 
   test("should handle to be called with some donnee criteria provided", async () => {
@@ -319,37 +292,15 @@ describe("Entities count by search criteria", () => {
       toDate: "2010-01-01",
     });
 
-    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
       {
         q: undefined,
         searchCriteria: {
-          ageIds: [12, 23],
-          associateIds: undefined,
-          behaviorIds: undefined,
-          breeders: undefined,
-          classIds: undefined,
-          comment: undefined,
-          departmentIds: undefined,
-          distance: undefined,
-          distanceEstimateIds: undefined,
-          duration: undefined,
-          entryId: undefined,
-          environmentIds: undefined,
-          fromDate: undefined,
-          inventoryId: undefined,
-          localityIds: undefined,
+          ageIds: ["12", "23"],
           number: undefined,
-          numberEstimateIds: undefined,
-          observerIds: undefined,
-          regroupment: undefined,
-          sexIds: undefined,
-          speciesIds: undefined,
-          temperature: undefined,
-          time: undefined,
           toDate: "2010-01-01",
-          townIds: [3, 6],
-          weatherIds: undefined,
+          townIds: ["3", "6"],
         },
       },
     ]);
@@ -366,37 +317,15 @@ describe("Entities count by search criteria", () => {
       toDate: "2010-01-01",
     });
 
-    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepositoryLegacy.getCount.mock.calls[0].arguments, [
+    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
       {
         q: "test",
         searchCriteria: {
-          ageIds: [12, 23],
-          associateIds: undefined,
-          behaviorIds: undefined,
-          breeders: undefined,
-          classIds: undefined,
-          comment: undefined,
-          departmentIds: undefined,
-          distance: undefined,
-          distanceEstimateIds: undefined,
-          duration: undefined,
-          entryId: undefined,
-          environmentIds: undefined,
-          fromDate: undefined,
-          inventoryId: undefined,
-          localityIds: undefined,
+          ageIds: ["12", "23"],
           number: undefined,
-          numberEstimateIds: undefined,
-          observerIds: undefined,
-          regroupment: undefined,
-          sexIds: undefined,
-          speciesIds: undefined,
-          temperature: undefined,
-          time: undefined,
           toDate: "2010-01-01",
-          townIds: [3, 6],
-          weatherIds: undefined,
+          townIds: ["3", "6"],
         },
       },
     ]);
@@ -406,7 +335,7 @@ describe("Entities count by search criteria", () => {
     const entitiesCountResult = await speciesService.getSpeciesCount(null, {});
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-    assert.strictEqual(speciesRepositoryLegacy.getCount.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.getCount.mock.callCount(), 0);
   });
 });
 

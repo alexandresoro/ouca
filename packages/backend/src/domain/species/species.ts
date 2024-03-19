@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { LegacySearchCriteria, SearchCriteria } from "../search/search-criteria.js";
+import type { SearchCriteria } from "../search/search-criteria.js";
 import type { CommonFailureReason } from "../shared/failure-reason.js";
 import type { SortOrder } from "../shared/sort-order.js";
 
@@ -15,15 +15,6 @@ export const speciesSchema = z.object({
 });
 
 export type Species = z.infer<typeof speciesSchema>;
-
-export type LegacySpeciesFindManyInput = Partial<{
-  q: string | null | undefined;
-  searchCriteria: LegacySearchCriteria | null | undefined;
-  orderBy: "id" | "code" | "nomClasse" | "nomFrancais" | "nomLatin" | "nbDonnees" | null;
-  sortOrder: SortOrder;
-  offset: number | null;
-  limit: number | null;
-}>;
 
 export type SpeciesFindManyInput = Partial<{
   q: string | null | undefined;

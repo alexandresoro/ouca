@@ -17,12 +17,12 @@ import type { NumberEstimateService } from "../application/services/number-estim
 import type { ObserverService } from "../application/services/observer/observer-service.js";
 import type { SexService } from "../application/services/sex/sex-service.js";
 import type { SpeciesClassService } from "../application/services/species-class/species-class-service.js";
+import type { SpeciesService } from "../application/services/species/species-service.js";
 import type { TownService } from "../application/services/town/town-service.js";
 import type { WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import type { DonneeService } from "./entities/donnee-service.js";
 import type { InventaireService } from "./entities/inventaire-service.js";
-import type { SpeciesService } from "./entities/species/species-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 

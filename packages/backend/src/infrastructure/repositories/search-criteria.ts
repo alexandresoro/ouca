@@ -100,7 +100,7 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.regroupment != null) {
-      expressions.push(eb("donnee.regroupement", "=", Number.parseInt(searchCriteria.regroupment)));
+      expressions.push(eb("donnee.regroupement", "=", searchCriteria.regroupment));
     }
 
     if (searchCriteria.fromDate != null) {

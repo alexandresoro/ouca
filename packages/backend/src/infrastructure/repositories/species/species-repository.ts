@@ -118,8 +118,8 @@ export const buildSpeciesRepository = () => {
           querySpecies = querySpecies.where((eb) =>
             eb.or([
               eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
-              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
             ]),
           );
         }
@@ -130,7 +130,7 @@ export const buildSpeciesRepository = () => {
 
         querySpecies = querySpecies
           .groupBy("espece.id")
-          .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+          .orderBy((eb) => eb.fn.count("donnee.id").distinct(), sortOrder ?? undefined)
           .orderBy("espece.code asc");
 
         break;
@@ -161,8 +161,8 @@ export const buildSpeciesRepository = () => {
           querySpecies = querySpecies.where((eb) =>
             eb.or([
               eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
-              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
             ]),
           );
         }
@@ -171,7 +171,11 @@ export const buildSpeciesRepository = () => {
           querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
         }
 
-        querySpecies = querySpecies.orderBy("classe.libelle", sortOrder ?? undefined).orderBy("espece.code asc");
+        querySpecies = querySpecies
+          .groupBy("espece.id")
+          .groupBy("classe.libelle")
+          .orderBy("classe.libelle", sortOrder ?? undefined)
+          .orderBy("espece.code asc");
 
         break;
       default:
@@ -201,8 +205,8 @@ export const buildSpeciesRepository = () => {
           querySpecies = querySpecies.where((eb) =>
             eb.or([
               eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
-              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
             ]),
           );
         }
@@ -210,6 +214,8 @@ export const buildSpeciesRepository = () => {
         if (searchCriteria != null) {
           querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
         }
+
+        querySpecies = querySpecies.groupBy("espece.id");
 
         if (orderBy) {
           querySpecies = querySpecies.orderBy(orderBy, sortOrder ?? undefined);
@@ -265,8 +271,8 @@ export const buildSpeciesRepository = () => {
       query = query.where((eb) =>
         eb.or([
           eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-          eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
-          eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)}})`),
+          eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+          eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
         ]),
       );
     }
