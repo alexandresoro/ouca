@@ -124,8 +124,8 @@ importers:
         specifier: 20.11.28
         version: 20.11.28
       '@types/pg':
-        specifier: 8.11.2
-        version: 8.11.2
+        specifier: 8.11.3
+        version: 8.11.3
       '@vitest/coverage-v8':
         specifier: 1.4.0
         version: 1.4.0(vitest@1.4.0)
@@ -2094,8 +2094,8 @@ packages:
     resolution: {integrity: sha512-j3pOPiEcWZ34R6a6mN07mUkM4o4Lwf6hPNt8eilOeZhTFbxFXmKhvXl9Y28jotFPaI1bpPDJsbCprUoNke6OrA==}
     dev: false
 
-  /@types/pg@8.11.2:
-    resolution: {integrity: sha512-G2Mjygf2jFMU/9hCaTYxJrwdObdcnuQde1gndooZSOHsNSaCehAuwc7EIuSA34Do8Jx2yZ19KtvW8P0j4EuUXw==}
+  /@types/pg@8.11.3:
+    resolution: {integrity: sha512-xocw4LvpDcj/Ta7bN52tLZm34mso5SZ0Q8fVC0UtD8s85Itip3YHvBeYZhBmC0OThpdOujHsxXtRbEIRxqXPXg==}
     dependencies:
       '@types/node': 20.11.28
       pg-protocol: 1.6.0
@@ -6432,7 +6432,7 @@ packages:
     peerDependencies:
       zod: ^3
     dependencies:
-      '@types/pg': 8.11.2
+      '@types/pg': 8.11.3
       es6-error: 4.1.1
       get-stack-trace: 3.1.1
       iso8601-duration: 1.3.0
