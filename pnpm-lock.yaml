@@ -318,8 +318,8 @@ importers:
         specifier: workspace:*
         version: link:../eslint-config
       '@sentry/vite-plugin':
-        specifier: 2.15.0
-        version: 2.15.0
+        specifier: 2.16.0
+        version: 2.16.0
       '@tanstack/react-query-devtools':
         specifier: 4.29.25
         version: 4.29.25(@tanstack/react-query@4.29.25)(react-dom@18.2.0)(react@18.2.0)
@@ -1561,8 +1561,8 @@ packages:
       '@sentry/utils': 7.107.0
     dev: false
 
-  /@sentry/babel-plugin-component-annotate@2.15.0:
-    resolution: {integrity: sha512-4AaRN2E1iqOPlceDE5ae4thnq717reEQkqOslSWpJf7FmJ+oDrp2bWQhO82xcW8ZBBMbtkOGw2wmrScq5TnMxw==}
+  /@sentry/babel-plugin-component-annotate@2.16.0:
+    resolution: {integrity: sha512-+uy1qPkA5MSNgJ0L9ur/vNTydfdHwHnBX2RQ+0thsvkqf90fU788YjkkXwUiBBNuqNyI69JiOW6frixAWy7oUg==}
     engines: {node: '>= 14'}
     dev: true
 
@@ -1579,12 +1579,12 @@ packages:
       '@sentry/utils': 7.107.0
     dev: false
 
-  /@sentry/bundler-plugin-core@2.15.0:
-    resolution: {integrity: sha512-K6tEmo6ilUdR5uEQZ4P1uaXCvRoAeq5JsJAg7lRv0JSG5XG67jhoHu+mrpiDMB93FxbTgCQkPCT87Z0Bmqpmew==}
+  /@sentry/bundler-plugin-core@2.16.0:
+    resolution: {integrity: sha512-dhgIZsIR3L9KnE2OO5JJm6hPtStAjEPYKQsZzxRr69uVhd9xAvfXeXr0afKVNVEcIDksas6yMgHqwQ2wOXFIAg==}
     engines: {node: '>= 14'}
     dependencies:
       '@babel/core': 7.24.0
-      '@sentry/babel-plugin-component-annotate': 2.15.0
+      '@sentry/babel-plugin-component-annotate': 2.16.0
       '@sentry/cli': 2.30.2
       dotenv: 16.4.5
       find-up: 5.0.0
@@ -1753,11 +1753,11 @@ packages:
       '@sentry/types': 7.107.0
     dev: false
 
-  /@sentry/vite-plugin@2.15.0:
-    resolution: {integrity: sha512-Q1ML+6p0xBLEbk6pHnZoLs7gQctXrsyI/zzhEQsR/uyPIZIkrwSLcnZ6iCjSz570SvK9H0UVgp1bdLJK/Mpb7Q==}
+  /@sentry/vite-plugin@2.16.0:
+    resolution: {integrity: sha512-/7rFTpasql9fJ1KbruF0yDESKV/ojvOP9pL/qqwUffvA9iy9Bvw3kYzzyzd1YsiCiVBgftoCsFTKPcvL3A4rwQ==}
     engines: {node: '>= 14'}
     dependencies:
-      '@sentry/bundler-plugin-core': 2.15.0
+      '@sentry/bundler-plugin-core': 2.16.0
       unplugin: 1.0.1
     transitivePeerDependencies:
       - encoding
