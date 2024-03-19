@@ -6,7 +6,7 @@ import type { Weather } from "@ou-ca/common/api/entities/weather";
 import type { UpsertWeatherInput, WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type WeatherServiceDependencies = {
   weatherRepository: WeatherRepository;

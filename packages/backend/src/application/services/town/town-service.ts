@@ -7,7 +7,7 @@ import type { Town } from "@ou-ca/common/api/entities/town";
 import type { TownsSearchParams, UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type TownServiceDependencies = {
   townRepository: TownRepository;

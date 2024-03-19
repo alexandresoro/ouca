@@ -6,7 +6,7 @@ import type { BehaviorsSearchParams, UpsertBehaviorInput } from "@ou-ca/common/a
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type BehaviorServiceDependencies = {
   behaviorRepository: BehaviorRepository;

@@ -8,7 +8,7 @@ import type { DepartmentsSearchParams, UpsertDepartmentInput } from "@ou-ca/comm
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type DepartmentServiceDependencies = {
   departmentRepository: DepartmentRepository;

@@ -6,7 +6,7 @@ import type { Sex } from "@ou-ca/common/api/entities/sex";
 import type { SexesSearchParams, UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type SexServiceDependencies = {
   sexRepository: SexRepository;

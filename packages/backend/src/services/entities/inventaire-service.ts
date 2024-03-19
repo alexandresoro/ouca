@@ -9,13 +9,13 @@ import type { LocalityRepository } from "@interfaces/locality-repository-interfa
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Result, err, ok } from "neverthrow";
 import type { DatabasePool } from "slonik";
+import { getSqlPagination } from "../../application/services/entities-utils.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import type { Inventaire, InventaireFindManyInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
-import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
 
 type InventaireServiceDependencies = {

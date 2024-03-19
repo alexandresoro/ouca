@@ -6,7 +6,7 @@ import type { AgesSearchParams, UpsertAgeInput } from "@ou-ca/common/api/age";
 import type { AgeSimple } from "@ou-ca/common/api/entities/age";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type AgeServiceDependencies = {
   ageRepository: AgeRepository;

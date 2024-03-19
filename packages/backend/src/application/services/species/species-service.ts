@@ -6,7 +6,7 @@ import type { Species as SpeciesCommon } from "@ou-ca/common/api/entities/specie
 import type { SpeciesSearchParams, UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 import type { SpeciesClassService } from "../species-class/species-class-service.js";
 
 type SpeciesServiceDependencies = {

@@ -6,7 +6,7 @@ import type { ObserverRepository } from "@interfaces/observer-repository-interfa
 import type { Observer, ObserverSimple } from "@ou-ca/common/api/entities/observer";
 import type { ObserversSearchParams, UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type ObserverServiceDependencies = {
   observerRepository: ObserverRepository;

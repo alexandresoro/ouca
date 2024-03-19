@@ -7,7 +7,7 @@ import type { LocalitiesSearchParams, UpsertLocalityInput } from "@ou-ca/common/
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import type { InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
-import { getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 import { reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 
 type LocalityServiceDependencies = {

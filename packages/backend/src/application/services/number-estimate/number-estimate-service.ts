@@ -6,7 +6,7 @@ import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate"
 import type { NumberEstimatesSearchParams, UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Result, err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../../../services/entities/entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type NumberEstimateServiceDependencies = {
   numberEstimateRepository: NumberEstimateRepository;

@@ -5,6 +5,7 @@ import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
 import type { DatabasePool } from "slonik";
+import { getSqlPagination } from "../../application/services/entities-utils.js";
 import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
@@ -12,7 +13,6 @@ import type { DonneeRepository } from "../../repositories/donnee/donnee-reposito
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { reshapeInputEntryUpsertData } from "./donnee-service-reshape.js";
-import { getSqlPagination } from "./entities-utils.js";
 
 type DonneeServiceDependencies = {
   slonik: DatabasePool;
