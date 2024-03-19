@@ -1,5 +1,7 @@
+import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { err, ok } from "neverthrow";
@@ -11,10 +13,11 @@ import type { InventaireAssocieRepository } from "../../repositories/inventaire-
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import type { Inventaire, InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildInventaireService } from "./inventaire-service.js";
+import { mock, mockVi } from "../../utils/mock.js";
+import { buildInventoryService } from "./inventaire-service.js";
 
-const inventoryRepository = mockVi<InventaireRepository>();
+const inventoryRepository = mock<InventoryRepository>();
+const inventoryRepositoryLegacy = mockVi<InventaireRepository>();
 const inventoryAssociateRepository = mockVi<InventaireAssocieRepository>();
 const inventoryWeatherRepository = mockVi<InventaireMeteoRepository>();
 const entryRepository = mockVi<DonneeRepository>();
@@ -23,9 +26,10 @@ const slonik = createMockPool({
   query: vi.fn(),
 });
 
-const inventaireService = buildInventaireService({
+const inventaireService = buildInventoryService({
   slonik,
   inventoryRepository,
+  inventoryRepositoryLegacy,
   inventoryAssociateRepository,
   inventoryWeatherRepository,
   entryRepository,
@@ -42,64 +46,67 @@ vi.doMock("./inventaire-service-reshape.js", () => {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  inventoryRepository.findInventoryById.mock.resetCalls();
+  inventoryRepository.findInventoryByEntryId.mock.resetCalls();
+  inventoryRepository.deleteInventoryById.mock.resetCalls();
 });
 
-describe("Find inventary", () => {
-  test("should handle a matching inventary", async () => {
-    const inventaryData = mockVe<Inventaire>();
+describe("Find inventory", () => {
+  test("should handle a matching inventory", async () => {
+    const inventoryData = inventoryFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventaryData);
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventoryData));
 
-    await inventaireService.findInventaire(12, loggedUser);
+    await inventaireService.findInventory(12, loggedUser);
 
-    expect(inventoryRepository.findInventaireById).toHaveBeenCalledTimes(1);
-    expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(12);
+    expect(inventoryRepository.findInventoryById.mock.callCount()).toEqual(1);
+    expect(inventoryRepository.findInventoryById.mock.calls[0].arguments).toEqual([12]);
   });
 
-  test("should handle inventary not found", async () => {
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(null);
+  test("should handle inventory not found", async () => {
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
-    await expect(inventaireService.findInventaire(10, loggedUser)).resolves.toEqual(ok(null));
+    await expect(inventaireService.findInventory(10, loggedUser)).resolves.toEqual(ok(null));
 
-    expect(inventoryRepository.findInventaireById).toHaveBeenCalledTimes(1);
-    expect(inventoryRepository.findInventaireById).toHaveBeenLastCalledWith(10);
+    expect(inventoryRepository.findInventoryById.mock.callCount()).toEqual(1);
+    expect(inventoryRepository.findInventoryById.mock.calls[0].arguments).toEqual([10]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    expect(await inventaireService.findInventaire(11, null)).toEqual(err("notAllowed"));
-    expect(inventoryRepository.findInventaireById).not.toHaveBeenCalled();
+    expect(await inventaireService.findInventory(11, null)).toEqual(err("notAllowed"));
+    expect(inventoryRepository.findInventoryById.mock.callCount()).toEqual(0);
   });
 });
 
-describe("Find inventary by data ID", () => {
-  test("should handle inventary found", async () => {
-    const inventaryData = mockVe<Inventaire>();
+describe("Find inventory by data ID", () => {
+  test("should handle inventory found", async () => {
+    const inventoryData = inventoryFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(inventaryData);
+    inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(inventoryData));
 
-    const inventary = await inventaireService.findInventaireOfDonneeId("43", loggedUser);
+    const inventory = await inventaireService.findInventaireOfEntryId("43", loggedUser);
 
-    expect(inventoryRepository.findInventaireByDonneeId).toHaveBeenCalledTimes(1);
-    expect(inventoryRepository.findInventaireByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(inventary).toEqual(ok(inventaryData));
+    expect(inventoryRepository.findInventoryByEntryId.mock.callCount()).toEqual(1);
+    expect(inventoryRepository.findInventoryByEntryId.mock.calls[0].arguments).toEqual(["43"]);
+    expect(inventory).toEqual(ok(inventoryData));
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await inventaireService.findInventaireOfDonneeId("12", null)).toEqual(err("notAllowed"));
+    expect(await inventaireService.findInventaireOfEntryId("12", null)).toEqual(err("notAllowed"));
   });
 });
 
 test("Find all inventaries", async () => {
   const inventariesData = [mockVe<Inventaire>(), mockVe<Inventaire>(), mockVe<Inventaire>()];
 
-  inventoryRepository.findInventaires.mockResolvedValueOnce(inventariesData);
+  inventoryRepositoryLegacy.findInventaires.mockResolvedValueOnce(inventariesData);
 
-  await inventaireService.findAllInventaires();
+  await inventaireService.findAllInventories();
 
-  expect(inventoryRepository.findInventaires).toHaveBeenCalledTimes(1);
+  expect(inventoryRepositoryLegacy.findInventaires).toHaveBeenCalledTimes(1);
 });
 
 describe("Inventories paginated find by search criteria", () => {
@@ -114,12 +121,12 @@ describe("Inventories paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    inventoryRepository.findInventaires.mockResolvedValueOnce([inventoriesData[0]]);
+    inventoryRepositoryLegacy.findInventaires.mockResolvedValueOnce([inventoriesData[0]]);
 
-    await inventaireService.findPaginatedInventaires(loggedUser, searchParams);
+    await inventaireService.findPaginatedInventories(loggedUser, searchParams);
 
-    expect(inventoryRepository.findInventaires).toHaveBeenCalledTimes(1);
-    expect(inventoryRepository.findInventaires).toHaveBeenLastCalledWith({
+    expect(inventoryRepositoryLegacy.findInventaires).toHaveBeenCalledTimes(1);
+    expect(inventoryRepositoryLegacy.findInventaires).toHaveBeenLastCalledWith({
       orderBy: "creationDate",
       sortOrder: "desc",
       offset: 0,
@@ -128,7 +135,7 @@ describe("Inventories paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await inventaireService.findPaginatedInventaires(null, mockVe<InventoriesSearchParams>())).toEqual(
+    expect(await inventaireService.findPaginatedInventories(null, mockVe<InventoriesSearchParams>())).toEqual(
       err("notAllowed"),
     );
   });
@@ -138,14 +145,14 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await inventaireService.getInventairesCount(loggedUser);
+    await inventaireService.getInventoriesCount(loggedUser);
 
-    expect(inventoryRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(inventoryRepository.getCount).toHaveBeenLastCalledWith();
+    expect(inventoryRepositoryLegacy.getCount).toHaveBeenCalledTimes(1);
+    expect(inventoryRepositoryLegacy.getCount).toHaveBeenLastCalledWith();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await inventaireService.getInventairesCount(null)).toEqual(err("notAllowed"));
+    expect(await inventaireService.getInventoriesCount(null)).toEqual(err("notAllowed"));
   });
 });
 
@@ -159,18 +166,18 @@ describe("Update of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
-      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
+      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "345",
         }),
       );
 
-      expect(await inventaireService.updateInventaire(12, inventoryData, loggedUser)).toEqual(
+      expect(await inventaireService.updateInventory(12, inventoryData, loggedUser)).toEqual(
         err({ type: "similarInventoryAlreadyExists", correspondingInventoryFound: "345" }),
       );
 
       expect(entryRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
-      expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(0);
     });
 
     test("should handle migration of existing data if requested", async () => {
@@ -181,18 +188,18 @@ describe("Update of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
-      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
+      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "345",
         }),
       );
 
-      const result = await inventaireService.updateInventaire(12, inventoryData, loggedUser);
+      const result = await inventaireService.updateInventory(12, inventoryData, loggedUser);
 
       expect(entryRepository.updateAssociatedInventaire).toHaveBeenCalledTimes(1);
       expect(entryRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
-      expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
-      expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledWith(12, any());
+      expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(1);
+      expect(inventoryRepository.deleteInventoryById.mock.calls[0].arguments).toEqual(["12"]);
       expect(result.isOk()).toBeTruthy();
       expect(result._unsafeUnwrap().id).toEqual("345");
     });
@@ -200,8 +207,8 @@ describe("Update of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
-      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(await inventaireService.updateInventory(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
+      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 
@@ -215,8 +222,8 @@ describe("Update of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
-      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
-      inventoryRepository.updateInventaire.mockResolvedValueOnce(
+      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(null);
+      inventoryRepositoryLegacy.updateInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "12",
         }),
@@ -225,10 +232,10 @@ describe("Update of an inventory", () => {
       const reshapedInputData = mockVe<InventaireCreateInput>();
       reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
-      await inventaireService.updateInventaire(12, inventoryData, loggedUser);
+      await inventaireService.updateInventory(12, inventoryData, loggedUser);
 
-      expect(inventoryRepository.updateInventaire).toHaveBeenCalledTimes(1);
-      expect(inventoryRepository.updateInventaire).toHaveBeenLastCalledWith(12, any(), any());
+      expect(inventoryRepositoryLegacy.updateInventaire).toHaveBeenCalledTimes(1);
+      expect(inventoryRepositoryLegacy.updateInventaire).toHaveBeenLastCalledWith(12, any(), any());
       expect(inventoryAssociateRepository.deleteAssociesOfInventaireId).toHaveBeenCalledTimes(1);
       expect(inventoryAssociateRepository.deleteAssociesOfInventaireId).toHaveBeenLastCalledWith(12, any());
       expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
@@ -250,8 +257,8 @@ describe("Update of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      expect(await inventaireService.updateInventaire(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
-      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(await inventaireService.updateInventory(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
+      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 });
@@ -266,16 +273,16 @@ describe("Creation of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
-      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(
+      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "345",
         }),
       );
 
-      const result = await inventaireService.createInventaire(inventoryData, loggedUser);
+      const result = await inventaireService.createInventory(inventoryData, loggedUser);
 
       expect(entryRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
-      expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(0);
       expect(result.isOk()).toBeTruthy();
       expect(result._unsafeUnwrap().id).toEqual("345");
     });
@@ -283,8 +290,8 @@ describe("Creation of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      expect(await inventaireService.createInventaire(inventoryData, null)).toEqual(err("notAllowed"));
-      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(await inventaireService.createInventory(inventoryData, null)).toEqual(err("notAllowed"));
+      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 
@@ -299,8 +306,8 @@ describe("Creation of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mockResolvedValue(localityFactory.build());
-      inventoryRepository.findExistingInventaire.mockResolvedValueOnce(null);
-      inventoryRepository.createInventaire.mockResolvedValueOnce(
+      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(null);
+      inventoryRepositoryLegacy.createInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "322",
         }),
@@ -309,10 +316,10 @@ describe("Creation of an inventory", () => {
       const reshapedInputData = mockVe<InventaireCreateInput>();
       reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
-      await inventaireService.createInventaire(inventoryData, loggedUser);
+      await inventaireService.createInventory(inventoryData, loggedUser);
 
-      expect(inventoryRepository.createInventaire).toHaveBeenCalledTimes(1);
-      expect(inventoryRepository.createInventaire).toHaveBeenLastCalledWith(any(), any());
+      expect(inventoryRepositoryLegacy.createInventaire).toHaveBeenCalledTimes(1);
+      expect(inventoryRepositoryLegacy.createInventaire).toHaveBeenLastCalledWith(any(), any());
       expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
       // TODO investigate why this check is failing
       // expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(322, [2, 3], any());
@@ -323,8 +330,8 @@ describe("Creation of an inventory", () => {
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = mockVe<UpsertInventoryInput>();
 
-      expect(await inventaireService.createInventaire(inventoryData, null)).toEqual(err("notAllowed"));
-      expect(inventoryRepository.findExistingInventaire).not.toHaveBeenCalled();
+      expect(await inventaireService.createInventory(inventoryData, null)).toEqual(err("notAllowed"));
+      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
 });
@@ -335,17 +342,17 @@ describe("Deletion of an inventory", () => {
       role: "admin",
     });
 
-    const inventory = mockVe<Inventaire>({
+    const inventory = inventoryFactory.build({
       ownerId: loggedUser.id,
     });
 
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
     entryRepository.getCountByInventaireId.mockResolvedValueOnce(0);
-    inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.deleteInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
 
     const result = await inventaireService.deleteInventory("11", loggedUser);
 
-    expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(1);
     expect(result).toEqual(ok(inventory));
   });
 
@@ -355,17 +362,17 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    const inventory = mockVe<Inventaire>({
+    const inventory = inventoryFactory.build({
       ownerId: loggedUser.id,
     });
 
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
     entryRepository.getCountByInventaireId.mockResolvedValueOnce(0);
-    inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.deleteInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
 
     const result = await inventaireService.deleteInventory("11", loggedUser);
 
-    expect(inventoryRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+    expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(1);
     expect(result).toEqual(ok(inventory));
   });
 
@@ -375,16 +382,16 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    const inventory = mockVe<Inventaire>({
+    const inventory = inventoryFactory.build({
       ownerId: loggedUser.id,
     });
 
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
     entryRepository.getCountByInventaireId.mockResolvedValueOnce(3);
-    inventoryRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+    inventoryRepository.deleteInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
 
     expect(await inventaireService.deleteInventory("11", loggedUser)).toEqual(err("inventoryStillInUse"));
-    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(0);
   });
 
   test("should not be allowed when trying to delete an inventory belonging to a non-owned inventory", async () => {
@@ -392,14 +399,14 @@ describe("Deletion of an inventory", () => {
       role: "contributor",
     });
 
-    inventoryRepository.findInventaireById.mockResolvedValueOnce(mockVe<Inventaire>());
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventoryFactory.build()));
 
     expect(await inventaireService.deleteInventory("11", loggedUser)).toEqual(err("notAllowed"));
-    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     expect(await inventaireService.deleteInventory("11", null)).toEqual(err("notAllowed"));
-    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
+    expect(inventoryRepository.deleteInventoryById.mock.callCount()).toEqual(0);
   });
 });

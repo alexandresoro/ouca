@@ -5,6 +5,7 @@ import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/b
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
 import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
 import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
+import { buildInventoryRepository } from "@infrastructure/repositories/inventory/inventory-repository.js";
 import { buildLocalityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
 import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
@@ -55,7 +56,7 @@ import { buildInventaireRepository } from "../repositories/inventaire/inventaire
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
-import { type InventaireService, buildInventaireService } from "./entities/inventaire-service.js";
+import { type InventoryService, buildInventoryService } from "./entities/inventaire-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
@@ -69,7 +70,7 @@ export type Services = {
   distanceEstimateService: DistanceEstimateService;
   entryService: DonneeService;
   environmentService: EnvironmentService;
-  inventoryService: InventaireService;
+  inventoryService: InventoryService;
   localityService: LocalityService;
   numberEstimateService: NumberEstimateService;
   observerService: ObserverService;
@@ -98,7 +99,8 @@ export const buildServices = async (): Promise<Services> => {
   const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
   const entryEnvironmentRepository = buildDonneeMilieuRepository({ slonik });
   const environmentRepository = buildEnvironmentRepository();
-  const inventoryRepository = buildInventaireRepository({ slonik });
+  const inventoryRepository = buildInventoryRepository();
+  const inventoryRepositoryLegacy = buildInventaireRepository({ slonik });
   const inventoryAssociateRepository = buildInventaireAssocieRepository({ slonik });
   const inventoryWeatherRepository = buildInventaireMeteoRepository({ slonik });
   const localityRepository = buildLocalityRepository();
@@ -164,9 +166,10 @@ export const buildServices = async (): Promise<Services> => {
     entryRepository,
   });
 
-  const inventoryService = buildInventaireService({
+  const inventoryService = buildInventoryService({
     slonik,
     inventoryRepository,
+    inventoryRepositoryLegacy,
     inventoryAssociateRepository,
     inventoryWeatherRepository,
     entryRepository,
@@ -176,6 +179,7 @@ export const buildServices = async (): Promise<Services> => {
   const localityService = buildLocalityService({
     localityRepository,
     inventoryRepository,
+    inventoryRepositoryLegacy,
     entryRepository,
   });
 

@@ -12,7 +12,7 @@ import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-import { enrichedInventory } from "./inventories-enricher.js";
+import { enrichedInventaire, enrichedInventory } from "./inventories-enricher.js";
 
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
@@ -24,7 +24,7 @@ const inventoriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const inventoryResult = await inventoryService.findInventaire(req.params.id, req.user);
+    const inventoryResult = await inventoryService.findInventory(req.params.id, req.user);
 
     if (inventoryResult.isErr()) {
       switch (inventoryResult.error) {
@@ -106,8 +106,8 @@ const inventoriesController: FastifyPluginCallback<{
     const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await inventoryService.findPaginatedInventaires(req.user, queryParams),
-      await inventoryService.getInventairesCount(req.user),
+      await inventoryService.findPaginatedInventories(req.user, queryParams),
+      await inventoryService.getInventoriesCount(req.user),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -125,7 +125,7 @@ const inventoriesController: FastifyPluginCallback<{
     // TODO look to optimize this request
     const enrichedInventoriesResults = await Promise.all(
       inventoriesData.map(async (inventoryData) => {
-        return enrichedInventory(services, inventoryData, req.user);
+        return enrichedInventaire(services, inventoryData, req.user);
       }),
     );
 
@@ -146,7 +146,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const inventoryResult = await inventoryService.createInventaire(input, req.user);
+    const inventoryResult = await inventoryService.createInventory(input, req.user);
 
     // TODO handle duplicate inventory
     if (inventoryResult.isErr()) {
@@ -163,7 +163,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const inventory = inventoryResult.value;
 
-    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
+    const inventoryEnrichedResult = await enrichedInventaire(services, inventory, req.user);
 
     if (inventoryEnrichedResult.isErr()) {
       switch (inventoryEnrichedResult.error) {
@@ -196,7 +196,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const inventoryResult = await inventoryService.updateInventaire(req.params.id, input, req.user);
+    const inventoryResult = await inventoryService.updateInventory(req.params.id, input, req.user);
 
     if (inventoryResult.isErr()) {
       switch (inventoryResult.error.type) {
@@ -217,7 +217,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const inventory = inventoryResult.value;
 
-    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
+    const inventoryEnrichedResult = await enrichedInventaire(services, inventory, req.user);
 
     if (inventoryEnrichedResult.isErr()) {
       switch (inventoryEnrichedResult.error) {

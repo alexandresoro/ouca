@@ -1,10 +1,13 @@
 import type {
+  Inventory,
   InventoryDeleteFailureReason,
+  InventoryFindManyInput,
   InventoryUpdateFailureReason,
   InventoryUpsertFailureReason,
 } from "@domain/inventory/inventory.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Result, err, ok } from "neverthrow";
@@ -13,46 +16,48 @@ import { getSqlPagination } from "../../application/services/entities-utils.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
-import type { Inventaire, InventaireFindManyInput } from "../../repositories/inventaire/inventaire-repository-types.js";
+import type { Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
 import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
 
 type InventaireServiceDependencies = {
   slonik: DatabasePool;
-  inventoryRepository: InventaireRepository;
+  inventoryRepository: InventoryRepository;
+  inventoryRepositoryLegacy: InventaireRepository;
   inventoryAssociateRepository: InventaireAssocieRepository;
   inventoryWeatherRepository: InventaireMeteoRepository;
   entryRepository: DonneeRepository;
   localityRepository: LocalityRepository;
 };
 
-export const buildInventaireService = ({
+export const buildInventoryService = ({
   slonik,
   inventoryRepository,
+  inventoryRepositoryLegacy,
   inventoryAssociateRepository,
   inventoryWeatherRepository,
   entryRepository,
   localityRepository,
 }: InventaireServiceDependencies) => {
-  const findInventaire = async (
+  const findInventory = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Inventaire | null, AccessFailureReason>> => {
+  ): Promise<Result<Inventory | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const inventaire = await inventoryRepository.findInventaireById(id);
+    const inventory = await inventoryRepository.findInventoryById(id);
 
-    return ok(inventaire);
+    return ok(inventory);
   };
 
   const findInventoryIndex = async (
     id: number,
     order: {
-      orderBy: NonNullable<InventaireFindManyInput["orderBy"]>;
-      sortOrder: NonNullable<InventaireFindManyInput["sortOrder"]>;
+      orderBy: NonNullable<InventoryFindManyInput["orderBy"]>;
+      sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
     },
     loggedUser: LoggedUser | null,
   ): Promise<Result<number | null, AccessFailureReason>> => {
@@ -60,27 +65,27 @@ export const buildInventaireService = ({
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepository.findInventoryIndex(id, order));
+    return ok(await inventoryRepositoryLegacy.findInventoryIndex(id, order));
   };
 
-  const findInventaireOfDonneeId = async (
-    entryId: string | undefined,
+  const findInventaireOfEntryId = async (
+    entryId: string,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Inventaire | null, AccessFailureReason>> => {
+  ): Promise<Result<Inventory | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepository.findInventaireByDonneeId(entryId ? Number.parseInt(entryId) : undefined));
+    return ok(await inventoryRepository.findInventoryByEntryId(entryId));
   };
 
-  const findAllInventaires = async (): Promise<Inventaire[]> => {
-    const inventaires = await inventoryRepository.findInventaires();
+  const findAllInventories = async (): Promise<Inventaire[]> => {
+    const inventaires = await inventoryRepositoryLegacy.findInventaires();
 
     return [...inventaires];
   };
 
-  const findPaginatedInventaires = async (
+  const findPaginatedInventories = async (
     loggedUser: LoggedUser | null,
     options: InventoriesSearchParams,
   ): Promise<Result<Inventaire[], AccessFailureReason>> => {
@@ -90,7 +95,7 @@ export const buildInventaireService = ({
 
     const { orderBy: orderByField, sortOrder, pageSize, pageNumber } = options;
 
-    const inventories = await inventoryRepository.findInventaires({
+    const inventories = await inventoryRepositoryLegacy.findInventaires({
       ...getSqlPagination({
         pageNumber,
         pageSize,
@@ -102,15 +107,15 @@ export const buildInventaireService = ({
     return ok([...inventories]);
   };
 
-  const getInventairesCount = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
+  const getInventoriesCount = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepository.getCount());
+    return ok(await inventoryRepositoryLegacy.getCount());
   };
 
-  const createInventaire = async (
+  const createInventory = async (
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Inventaire, InventoryUpsertFailureReason>> => {
@@ -132,7 +137,7 @@ export const buildInventaireService = ({
     }
 
     // Check if an exact same inventaire already exists or not
-    const existingInventaire = await inventoryRepository.findExistingInventaire({
+    const existingInventaire = await inventoryRepositoryLegacy.findExistingInventaire({
       ...reshapeInputInventoryUpsertData(input, locality),
       associateIds,
       weatherIds,
@@ -149,7 +154,7 @@ export const buildInventaireService = ({
 
       // Create a new inventaire
       const createdInventaire = await slonik.transaction(async (transactionConnection) => {
-        const createdInventaire = await inventoryRepository.createInventaire(
+        const createdInventaire = await inventoryRepositoryLegacy.createInventaire(
           reshapeInputInventoryUpsertData(input, locality, loggedUser.id),
           transactionConnection,
         );
@@ -177,7 +182,7 @@ export const buildInventaireService = ({
     }
   };
 
-  const updateInventaire = async (
+  const updateInventory = async (
     id: number,
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
@@ -201,7 +206,7 @@ export const buildInventaireService = ({
     }
 
     // Check if an exact same inventaire already exists or not
-    const existingInventaire = await inventoryRepository.findExistingInventaire({
+    const existingInventaire = await inventoryRepositoryLegacy.findExistingInventaire({
       ...reshapeInputInventoryUpsertData(inputData, locality),
       associateIds,
       weatherIds,
@@ -236,7 +241,7 @@ export const buildInventaireService = ({
           Number.parseInt(existingInventaire.id),
           transactionConnection,
         );
-        await inventoryRepository.deleteInventaireById(id, transactionConnection);
+        await inventoryRepository.deleteInventoryById(`${id}`);
       });
 
       // We wished to create an inventaire but we already found one,
@@ -249,7 +254,7 @@ export const buildInventaireService = ({
 
       // Update an existing inventaire
       const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
-        const updatedInventaire = await inventoryRepository.updateInventaire(
+        const updatedInventaire = await inventoryRepositoryLegacy.updateInventaire(
           id,
           reshapeInputInventoryUpsertData(inputData, locality, loggedUser.id),
           transactionConnection,
@@ -285,14 +290,14 @@ export const buildInventaireService = ({
   const deleteInventory = async (
     id: string,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Inventaire, InventoryDeleteFailureReason>> => {
+  ): Promise<Result<Inventory | null, InventoryDeleteFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     // Check that the user is allowed to modify the existing inventory
     if (loggedUser?.role !== "admin") {
-      const existingInventory = await inventoryRepository.findInventaireById(Number.parseInt(id));
+      const existingInventory = await inventoryRepository.findInventoryById(Number.parseInt(id));
 
       if (existingInventory?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
@@ -308,7 +313,7 @@ export const buildInventaireService = ({
       if (entriesOfInventory > 0) {
         return err("inventoryStillInUse");
       }
-      return ok(await inventoryRepository.deleteInventaireById(Number.parseInt(id), transactionConnection));
+      return ok(await inventoryRepository.deleteInventoryById(id));
     });
 
     if (deletedInventoryResult.isErr()) {
@@ -319,16 +324,16 @@ export const buildInventaireService = ({
   };
 
   return {
-    findInventaire,
+    findInventory,
     findInventoryIndex,
-    findInventaireOfDonneeId,
-    findAllInventaires,
-    findPaginatedInventaires,
-    getInventairesCount,
-    createInventaire,
-    updateInventaire,
+    findInventaireOfEntryId,
+    findAllInventories,
+    findPaginatedInventories,
+    getInventoriesCount,
+    createInventory,
+    updateInventory,
     deleteInventory,
   };
 };
 
-export type InventaireService = ReturnType<typeof buildInventaireService>;
+export type InventoryService = ReturnType<typeof buildInventoryService>;

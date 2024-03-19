@@ -1,6 +1,7 @@
 import type { EntryUpsertFailureReason } from "@domain/entry/entry.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
@@ -10,13 +11,12 @@ import type { DonneeComportementRepository } from "../../repositories/donnee-com
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { reshapeInputEntryUpsertData } from "./donnee-service-reshape.js";
 
 type DonneeServiceDependencies = {
   slonik: DatabasePool;
-  inventoryRepository: InventaireRepository;
+  inventoryRepository: InventoryRepository;
   entryRepository: DonneeRepository;
   entryBehaviorRepository: DonneeComportementRepository;
   entryEnvironmentRepository: DonneeMilieuRepository;
@@ -240,23 +240,23 @@ export const buildDonneeService = ({
   };
 
   const deleteDonnee = async (
-    id: number,
+    id: string,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Donnee, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
+    // First get the corresponding inventaire
+    const inventaire = await inventoryRepository.findInventoryByEntryId(id);
+
+    if (loggedUser.role !== "admin" && inventaire?.ownerId !== loggedUser.id) {
+      return err("notAllowed");
+    }
+
     const deletedDonneeResult = await slonik.transaction(async (transactionConnection) => {
-      // First get the corresponding inventaire
-      const inventaire = await inventoryRepository.findInventaireByDonneeId(id, transactionConnection);
-
-      if (loggedUser.role !== "admin" && inventaire?.ownerId !== loggedUser.id) {
-        return err("notAllowed");
-      }
-
       // Delete the actual donnee
-      const deletedDonnee = await entryRepository.deleteDonneeById(id, transactionConnection);
+      const deletedDonnee = await entryRepository.deleteDonneeById(Number.parseInt(id), transactionConnection);
 
       return ok(deletedDonnee);
     });

@@ -1,6 +1,7 @@
 import type { Locality as LocalityDomain, LocalityFailureReason } from "@domain/locality/locality.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { LocalitiesSearchParams, UpsertLocalityInput } from "@ou-ca/common/api/locality";
@@ -12,13 +13,15 @@ import { reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 
 type LocalityServiceDependencies = {
   localityRepository: LocalityRepository;
-  inventoryRepository: InventaireRepository;
+  inventoryRepository: InventoryRepository;
+  inventoryRepositoryLegacy: InventaireRepository;
   entryRepository: DonneeRepository;
 };
 
 export const buildLocalityService = ({
   localityRepository,
   inventoryRepository,
+  inventoryRepositoryLegacy,
   entryRepository,
 }: LocalityServiceDependencies) => {
   const findLocality = async (
@@ -41,7 +44,7 @@ export const buildLocalityService = ({
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepository.getCountByLocality(Number.parseInt(id)));
+    return ok(await inventoryRepositoryLegacy.getCountByLocality(Number.parseInt(id)));
   };
 
   const getEntriesCountByLocality = async (

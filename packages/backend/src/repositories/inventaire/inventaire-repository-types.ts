@@ -1,7 +1,6 @@
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
-import type { SortOrder } from "../common.js";
 
 export const inventaireSchema = z.object({
   id: z.string(),
@@ -27,13 +26,6 @@ export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitud
     longitude: number;
   } | null;
 };
-
-export type InventaireFindManyInput = Partial<{
-  orderBy: "creationDate" | null;
-  sortOrder: SortOrder;
-  offset: number | null;
-  limit: number | null;
-}>;
 
 export type InventaireFindMatchingInput = InventaireCreateInput &
   Required<Pick<UpsertInventoryInput, "associateIds" | "weatherIds">>;

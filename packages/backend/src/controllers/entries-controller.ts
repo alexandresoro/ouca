@@ -104,7 +104,7 @@ const entriesController: FastifyPluginCallback<{
         enrichedEntries.map(async (enrichedEntryData) => {
           // TODO look to optimize this request
           const inventory = (
-            await inventoryService.findInventaireOfDonneeId(enrichedEntryData.id, req.user)
+            await inventoryService.findInventaireOfEntryId(enrichedEntryData.id, req.user)
           )._unsafeUnwrap();
           if (!inventory) {
             return Promise.reject("No matching inventory found");
@@ -266,10 +266,10 @@ const entriesController: FastifyPluginCallback<{
 
   fastify.delete<{
     Params: {
-      id: number;
+      id: string | number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedEntryResult = await entryService.deleteDonnee(req.params.id, req.user);
+    const deletedEntryResult = await entryService.deleteDonnee(`${req.params.id}`, req.user);
 
     if (deletedEntryResult.isErr()) {
       switch (deletedEntryResult.error) {

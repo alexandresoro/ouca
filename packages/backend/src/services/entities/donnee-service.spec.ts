@@ -1,4 +1,6 @@
+import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
@@ -9,15 +11,13 @@ import type { DonneeComportementRepository } from "../../repositories/donnee-com
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import type { Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
-import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { mockVi } from "../../utils/mock.js";
 import { buildDonneeService } from "./donnee-service.js";
 
 const entryRepository = mockVi<DonneeRepository>();
 const entryBehaviorRepository = mockVi<DonneeComportementRepository>();
 const entryEnvironmentRepository = mockVi<DonneeMilieuRepository>();
-const inventoryRepository = mockVi<InventaireRepository>();
+const inventoryRepository = mockVi<InventoryRepository>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
@@ -262,20 +262,19 @@ describe("Deletion of a data", () => {
       role: "admin",
     });
 
-    const matchingInventory = mockVe<Inventaire>({});
+    const matchingInventory = inventoryFactory.build();
 
     const deletedDonnee = mockVe<Donnee>({
       id: "42",
     });
 
-    inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
+    inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
     entryRepository.getCountByInventaireId.mockResolvedValueOnce(2);
     entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
 
-    const result = await donneeService.deleteDonnee(11, loggedUser);
+    const result = await donneeService.deleteDonnee("11", loggedUser);
 
     expect(entryRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
-    expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
     expect(result).toEqual(ok(deletedDonnee));
   });
 
@@ -286,7 +285,7 @@ describe("Deletion of a data", () => {
         role: "contributor",
       });
 
-      const matchingInventory = mockVe<Inventaire>({
+      const matchingInventory = inventoryFactory.build({
         ownerId: loggedUser.id,
       });
 
@@ -294,14 +293,13 @@ describe("Deletion of a data", () => {
         id: "42",
       });
 
-      inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
+      inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
       entryRepository.getCountByInventaireId.mockResolvedValueOnce(2);
       entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
 
-      const result = await donneeService.deleteDonnee(11, loggedUser);
+      const result = await donneeService.deleteDonnee("11", loggedUser);
 
       expect(entryRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
-      expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
       expect(result).toEqual(ok(deletedDonnee));
     });
 
@@ -315,12 +313,11 @@ describe("Deletion of a data", () => {
         id: "42",
       });
 
-      inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(null);
+      inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(null);
       entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
 
-      expect(await donneeService.deleteDonnee(11, loggedUser)).toEqual(err("notAllowed"));
+      expect(await donneeService.deleteDonnee("11", loggedUser)).toEqual(err("notAllowed"));
       expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
-      expect(inventoryRepository.deleteInventaireById).not.toHaveBeenCalled();
     });
   });
 
@@ -329,14 +326,14 @@ describe("Deletion of a data", () => {
       role: "contributor",
     });
 
-    inventoryRepository.findInventaireByDonneeId.mockResolvedValueOnce(mockVe<Inventaire>());
+    inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(inventoryFactory.build());
 
-    expect(await donneeService.deleteDonnee(11, loggedUser)).toEqual(err("notAllowed"));
+    expect(await donneeService.deleteDonnee("11", loggedUser)).toEqual(err("notAllowed"));
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await donneeService.deleteDonnee(11, null)).toEqual(err("notAllowed"));
+    expect(await donneeService.deleteDonnee("11", null)).toEqual(err("notAllowed"));
     expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
 });

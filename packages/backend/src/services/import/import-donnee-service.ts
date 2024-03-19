@@ -59,7 +59,7 @@ export class ImportDonneeService extends ImportService {
     this.estimationsDistance = await this.services.distanceEstimateService.findAllDistanceEstimates();
     this.comportements = await this.services.behaviorService.findAllBehaviors();
     this.milieux = await this.services.environmentService.findAllEnvironments();
-    this.inventaires = await this.services.inventoryService.findAllInventaires();
+    this.inventaires = await this.services.inventoryService.findAllInventories();
     this.existingDonnees = await this.services.entryService.findAllDonnees();
   };
 
@@ -305,7 +305,7 @@ export class ImportDonneeService extends ImportService {
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
       const inventaire = (
-        await this.services.inventoryService.createInventaire(inputInventaire, loggedUser)
+        await this.services.inventoryService.createInventory(inputInventaire, loggedUser)
       )._unsafeUnwrap();
       inventoryId = `${inventaire.id}`;
 
