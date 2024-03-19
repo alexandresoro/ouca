@@ -64,7 +64,7 @@
     "@faker-js/faker": "8.4.1",
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.8",
-    "@types/node": "20.11.28",
+    "@types/node": "20.11.30",
     "@types/pg": "8.11.3",
     "@vitest/coverage-v8": "1.4.0",
     "dotenv": "16.4.5",
