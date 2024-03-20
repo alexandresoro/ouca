@@ -1,6 +1,7 @@
-import { type Inventory, inventorySchema } from "@domain/inventory/inventory.js";
+import { type Inventory, type InventoryFindManyInput, inventorySchema } from "@domain/inventory/inventory.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql } from "kysely";
+import { z } from "zod";
 import { countSchema } from "../common.js";
 import { reshapeRawInventory } from "./inventory-repository-reshape.js";
 
@@ -52,6 +53,36 @@ export const buildInventoryRepository = () => {
     return inventoryResult ? inventorySchema.parse(reshapeRawInventory(inventoryResult)) : null;
   };
 
+  const findInventoryIndex = async (
+    id: string,
+    {
+      // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+      orderBy,
+      sortOrder,
+    }: {
+      orderBy: NonNullable<InventoryFindManyInput["orderBy"]>;
+      sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
+    },
+  ): Promise<number | null> => {
+    const orderByIdentifier = "date_creation";
+
+    const indexResult = await kysely
+      .selectFrom((eb) =>
+        eb
+          .selectFrom("inventaire")
+          .select([
+            "id",
+            sql`ROW_NUMBER() OVER ( ORDER BY ${sql.ref(orderByIdentifier)} ${sql.raw(sortOrder)} )`.as("index"),
+          ])
+          .as("result"),
+      )
+      .select("result.index")
+      .where("result.id", "=", Number.parseInt(id))
+      .executeTakeFirst();
+
+    return indexResult ? z.object({ index: z.coerce.number() }).parse(indexResult).index : null;
+  };
+
   const getCount = async (): Promise<number> => {
     const countResult = await kysely
       .selectFrom("inventaire")
@@ -97,6 +128,7 @@ export const buildInventoryRepository = () => {
   return {
     findInventoryById,
     findInventoryByEntryId,
+    findInventoryIndex,
     getCount,
     getCountByLocality,
     deleteInventoryById,

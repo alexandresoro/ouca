@@ -1,6 +1,5 @@
 import type { InventoryFindManyInput } from "@domain/inventory/inventory.js";
 import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
-import { z } from "zod";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
@@ -21,41 +20,6 @@ export type InventaireRepositoryDependencies = {
 };
 
 export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDependencies) => {
-  const findInventoryIndex = async (
-    id: number,
-    {
-      orderBy,
-      sortOrder,
-    }: {
-      orderBy: NonNullable<InventoryFindManyInput["orderBy"]>;
-      sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
-    },
-  ): Promise<number | null> => {
-    const query = sql.type(
-      z.object({
-        rowNumber: z.bigint().transform((v) => Number(v)),
-      }),
-    )`
-      SELECT
-	      row_number
-      FROM (
-	      SELECT
-		      id,
-		      ROW_NUMBER() OVER (
-            ${sql.fragment`ORDER BY ${buildOrderByIdentifier(orderBy)}`}${buildSortOrderFragment({
-              orderBy,
-              sortOrder,
-            })}
-          )
-	      FROM
-		      basenaturaliste.inventaire) AS rown
-      WHERE
-	      id = ${id}
-    `;
-
-    return slonik.maybeOneFirst(query);
-  };
-
   const findInventaires = async ({
     orderBy,
     sortOrder,
@@ -194,7 +158,6 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   };
 
   return {
-    findInventoryIndex,
     findInventaires,
     findExistingInventaire,
     createInventaire,

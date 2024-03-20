@@ -72,7 +72,7 @@ const inventoriesController: FastifyPluginCallback<{
     }
 
     const inventoryIndexResult = await inventoryService.findInventoryIndex(
-      req.params.id,
+      `${req.params.id}`,
       parsedQueryParamsResult.data,
       req.user,
     );

@@ -54,7 +54,7 @@ export const buildInventoryService = ({
   };
 
   const findInventoryIndex = async (
-    id: number,
+    id: string,
     order: {
       orderBy: NonNullable<InventoryFindManyInput["orderBy"]>;
       sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
@@ -65,7 +65,7 @@ export const buildInventoryService = ({
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepositoryLegacy.findInventoryIndex(id, order));
+    return ok(await inventoryRepository.findInventoryIndex(id, order));
   };
 
   const findInventoryOfEntryId = async (
