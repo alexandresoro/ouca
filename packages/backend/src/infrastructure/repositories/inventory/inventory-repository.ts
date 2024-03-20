@@ -1,7 +1,7 @@
 import { type Inventory, inventorySchema } from "@domain/inventory/inventory.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql } from "kysely";
-import { countSchema } from "../../../repositories/common.js";
+import { countSchema } from "../common.js";
 import { reshapeRawInventory } from "./inventory-repository-reshape.js";
 
 export const buildInventoryRepository = () => {
