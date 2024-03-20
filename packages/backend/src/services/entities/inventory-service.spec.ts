@@ -49,6 +49,8 @@ beforeEach(() => {
   inventoryRepository.findInventoryById.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
   inventoryRepository.deleteInventoryById.mock.resetCalls();
+  inventoryRepository.getCount.mock.resetCalls();
+  inventoryRepository.getCountByLocality.mock.resetCalls();
 });
 
 describe("Find inventory", () => {
@@ -147,8 +149,7 @@ describe("Entities count by search criteria", () => {
 
     await inventaireService.getInventoriesCount(loggedUser);
 
-    expect(inventoryRepositoryLegacy.getCount).toHaveBeenCalledTimes(1);
-    expect(inventoryRepositoryLegacy.getCount).toHaveBeenLastCalledWith();
+    expect(inventoryRepository.getCount.mock.callCount()).toEqual(1);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

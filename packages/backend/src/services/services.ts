@@ -179,7 +179,6 @@ export const buildServices = async (): Promise<Services> => {
   const localityService = buildLocalityService({
     localityRepository,
     inventoryRepository,
-    inventoryRepositoryLegacy,
     entryRepository,
   });
 

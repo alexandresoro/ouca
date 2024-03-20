@@ -1,6 +1,7 @@
 import { type Inventory, inventorySchema } from "@domain/inventory/inventory.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { sql } from "kysely";
+import { countSchema } from "../../../repositories/common.js";
 import { reshapeRawInventory } from "./inventory-repository-reshape.js";
 
 export const buildInventoryRepository = () => {
@@ -51,6 +52,25 @@ export const buildInventoryRepository = () => {
     return inventoryResult ? inventorySchema.parse(reshapeRawInventory(inventoryResult)) : null;
   };
 
+  const getCount = async (): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("inventaire")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
+  const getCountByLocality = async (localityId: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("inventaire")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .where("inventaire.lieuditId", "=", Number.parseInt(localityId))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const deleteInventoryById = async (inventoryId: string): Promise<Inventory | null> => {
     const deletedInventory = await kysely
       .deleteFrom("inventaire")
@@ -77,6 +97,8 @@ export const buildInventoryRepository = () => {
   return {
     findInventoryById,
     findInventoryByEntryId,
+    getCount,
+    getCountByLocality,
     deleteInventoryById,
   };
 };

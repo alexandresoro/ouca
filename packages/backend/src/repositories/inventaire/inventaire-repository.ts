@@ -1,7 +1,6 @@
 import type { InventoryFindManyInput } from "@domain/inventory/inventory.js";
 import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
-import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
@@ -94,30 +93,6 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     const rawInventories = await slonik.any(query);
 
     return rawInventories.map((inventory) => reshapeRawInventaire(inventory));
-  };
-
-  const getCount = async (): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.inventaire
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
-  const getCountByLocality = async (localityId: number): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.inventaire
-      WHERE
-        inventaire.lieudit_id = ${localityId}
-    `;
-
-    return slonik.oneFirst(query);
   };
 
   const findExistingInventaire = async (criteria: InventaireFindMatchingInput): Promise<Inventaire | null> => {
@@ -221,8 +196,6 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   return {
     findInventoryIndex,
     findInventaires,
-    getCount,
-    getCountByLocality,
     findExistingInventaire,
     createInventaire,
     updateInventaire,

@@ -112,7 +112,7 @@ export const buildInventoryService = ({
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepositoryLegacy.getCount());
+    return ok(await inventoryRepository.getCount());
   };
 
   const createInventory = async (

@@ -9,19 +9,16 @@ import type { LocalityRepository } from "@interfaces/locality-repository-interfa
 import type { LocalitiesSearchParams } from "@ou-ca/common/api/locality";
 import { err, ok } from "neverthrow";
 import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
-import type { InventaireRepository } from "../../../repositories/inventaire/inventaire-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildLocalityService } from "./locality-service.js";
 
 const localityRepository = mock<LocalityRepository>();
 const inventoryRepository = mock<InventoryRepository>();
-const inventoryRepositoryLegacy = mock<InventaireRepository>();
 const entryRepository = mock<DonneeRepository>();
 
 const localityService = buildLocalityService({
   localityRepository,
   inventoryRepository,
-  inventoryRepositoryLegacy,
   entryRepository,
 });
 
@@ -34,7 +31,7 @@ beforeEach(() => {
   localityRepository.createLocality.mock.resetCalls();
   localityRepository.deleteLocalityById.mock.resetCalls();
   localityRepository.createLocalities.mock.resetCalls();
-  inventoryRepositoryLegacy.getCountByLocality.mock.resetCalls();
+  inventoryRepository.getCountByLocality.mock.resetCalls();
   entryRepository.getCountByLieuditId.mock.resetCalls();
 });
 
@@ -75,8 +72,8 @@ describe("Inventory count per entity", () => {
 
     await localityService.getInventoriesCountByLocality("12", loggedUser);
 
-    assert.strictEqual(inventoryRepositoryLegacy.getCountByLocality.mock.callCount(), 1);
-    assert.deepStrictEqual(inventoryRepositoryLegacy.getCountByLocality.mock.calls[0].arguments, [12]);
+    assert.strictEqual(inventoryRepository.getCountByLocality.mock.callCount(), 1);
+    assert.deepStrictEqual(inventoryRepository.getCountByLocality.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
