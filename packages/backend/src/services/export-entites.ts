@@ -22,7 +22,7 @@ import type { TownService } from "../application/services/town/town-service.js";
 import type { WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import type { DonneeService } from "./entities/donnee-service.js";
-import type { InventoryService } from "./entities/inventaire-service.js";
+import type { InventoryService } from "./entities/inventory-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 
@@ -169,7 +169,7 @@ export const generateDonneesExport = async (
 
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {
-      const inventaire = (await inventoryService.findInventaireOfEntryId(donnee.id, loggedUser))._unsafeUnwrap();
+      const inventaire = (await inventoryService.findInventoryOfEntryId(donnee.id, loggedUser))._unsafeUnwrap();
 
       if (!inventaire) {
         return Promise.reject("Should not happen");

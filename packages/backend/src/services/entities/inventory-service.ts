@@ -19,9 +19,9 @@ import type { InventaireMeteoRepository } from "../../repositories/inventaire-me
 import type { Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
-import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
+import { reshapeInputInventoryUpsertData } from "./inventory-service-reshape.js";
 
-type InventaireServiceDependencies = {
+type InventoryServiceDependencies = {
   slonik: DatabasePool;
   inventoryRepository: InventoryRepository;
   inventoryRepositoryLegacy: InventaireRepository;
@@ -39,7 +39,7 @@ export const buildInventoryService = ({
   inventoryWeatherRepository,
   entryRepository,
   localityRepository,
-}: InventaireServiceDependencies) => {
+}: InventoryServiceDependencies) => {
   const findInventory = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -68,7 +68,7 @@ export const buildInventoryService = ({
     return ok(await inventoryRepositoryLegacy.findInventoryIndex(id, order));
   };
 
-  const findInventaireOfEntryId = async (
+  const findInventoryOfEntryId = async (
     entryId: string,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Inventory | null, AccessFailureReason>> => {
@@ -80,9 +80,9 @@ export const buildInventoryService = ({
   };
 
   const findAllInventories = async (): Promise<Inventaire[]> => {
-    const inventaires = await inventoryRepositoryLegacy.findInventaires();
+    const inventories = await inventoryRepositoryLegacy.findInventaires();
 
-    return [...inventaires];
+    return [...inventories];
   };
 
   const findPaginatedInventories = async (
@@ -136,24 +136,24 @@ export const buildInventoryService = ({
       return err("requiredDataNotFound");
     }
 
-    // Check if an exact same inventaire already exists or not
-    const existingInventaire = await inventoryRepositoryLegacy.findExistingInventaire({
+    // Check if an exact same inventory already exists or not
+    const existingInventory = await inventoryRepositoryLegacy.findExistingInventaire({
       ...reshapeInputInventoryUpsertData(input, locality),
       associateIds,
       weatherIds,
     });
 
-    if (existingInventaire) {
+    if (existingInventory) {
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(existingInventaire);
+      return ok(existingInventory);
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
-      // The inventaire we wish to create does not have an equivalent existing one
+      // The inventory we wish to create does not have an equivalent existing one
       // In that case, we proceed as a classic create
 
-      // Create a new inventaire
-      const createdInventaire = await slonik.transaction(async (transactionConnection) => {
+      // Create a new inventory
+      const createdInventory = await slonik.transaction(async (transactionConnection) => {
         const createdInventaire = await inventoryRepositoryLegacy.createInventaire(
           reshapeInputInventoryUpsertData(input, locality, loggedUser.id),
           transactionConnection,
@@ -178,7 +178,7 @@ export const buildInventoryService = ({
         return createdInventaire;
       });
 
-      return ok(createdInventaire);
+      return ok(createdInventory);
     }
   };
 
@@ -205,55 +205,55 @@ export const buildInventoryService = ({
       return err({ type: "requiredDataNotFound" });
     }
 
-    // Check if an exact same inventaire already exists or not
-    const existingInventaire = await inventoryRepositoryLegacy.findExistingInventaire({
+    // Check if an exact same inventory already exists or not
+    const existingInventory = await inventoryRepositoryLegacy.findExistingInventaire({
       ...reshapeInputInventoryUpsertData(inputData, locality),
       associateIds,
       weatherIds,
     });
 
-    if (existingInventaire) {
+    if (existingInventory) {
       // The inventaire we wish to upsert has already an existing equivalent
       // So now it depends on what we wished to do initially
 
       if (!migrateDonneesIfMatchesExistingInventaire) {
         // This is the tricky case
-        // We had an existing inventaire A that we expected to update
-        // Meanwhile we found that the new values correspond to another already inventaire B
-        // So we should not update inventaire A but we should provide as feedback that we did not update it
+        // We had an existing inventory A that we expected to update
+        // Meanwhile we found that the new values correspond to another already inventory B
+        // So we should not update inventory A but we should provide as feedback that we did not update it
         // because it is already corresponding to B.
         // With this information, it is up to the caller to react accordingly
-        // (e.g. ask all donnees from inventaire B to be moved to A),
+        // (e.g. ask all donnees from inventory B to be moved to A),
         // but this is not up to this upsert method to take this initiave
         return err({
           type: "similarInventoryAlreadyExists",
-          correspondingInventoryFound: existingInventaire.id,
+          correspondingInventoryFound: existingInventory.id,
         });
       }
 
-      // In that case, the user explicitely requested that the donnees of inventaire A
-      // should now be linked to inventaire B if matches
+      // In that case, the user explicitely requested that the donnees of inventory A
+      // should now be linked to inventory B if matches
 
-      // We update the inventaire ID for the donnees and we delete the duplicated inventaire
+      // We update the inventory ID for the donnees and we delete the duplicated inventory
       await slonik.transaction(async (transactionConnection) => {
         await entryRepository.updateAssociatedInventaire(
           id,
-          Number.parseInt(existingInventaire.id),
+          Number.parseInt(existingInventory.id),
           transactionConnection,
         );
         await inventoryRepository.deleteInventoryById(`${id}`);
       });
 
-      // We wished to create an inventaire but we already found one,
+      // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(existingInventaire);
+      return ok(existingInventory);
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
-      // The inventaire we wish to update does not have an equivalent existing one
+      // The inventory we wish to update does not have an equivalent existing one
       // In that case, we proceed as a classic update
 
-      // Update an existing inventaire
-      const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
+      // Update an existing inventory
+      const updatedInventory = await slonik.transaction(async (transactionConnection) => {
         const updatedInventaire = await inventoryRepositoryLegacy.updateInventaire(
           id,
           reshapeInputInventoryUpsertData(inputData, locality, loggedUser.id),
@@ -283,7 +283,7 @@ export const buildInventoryService = ({
         return updatedInventaire;
       });
 
-      return ok(updatedInventaire);
+      return ok(updatedInventory);
     }
   };
 
@@ -326,7 +326,7 @@ export const buildInventoryService = ({
   return {
     findInventory,
     findInventoryIndex,
-    findInventaireOfEntryId,
+    findInventoryOfEntryId,
     findAllInventories,
     findPaginatedInventories,
     getInventoriesCount,

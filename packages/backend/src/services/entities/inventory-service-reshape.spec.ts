@@ -1,7 +1,7 @@
 import type { Locality } from "@domain/locality/locality.js";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { mock } from "vitest-mock-extended";
-import { reshapeInputInventoryUpsertData } from "./inventaire-service-reshape.js";
+import { reshapeInputInventoryUpsertData } from "./inventory-service-reshape.js";
 
 describe("Reshape input inventory", () => {
   test("should handle when custom coordinates are provided", () => {

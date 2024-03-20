@@ -14,7 +14,7 @@ import type { InventaireMeteoRepository } from "../../repositories/inventaire-me
 import type { Inventaire, InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { mock, mockVi } from "../../utils/mock.js";
-import { buildInventoryService } from "./inventaire-service.js";
+import { buildInventoryService } from "./inventory-service.js";
 
 const inventoryRepository = mock<InventoryRepository>();
 const inventoryRepositoryLegacy = mockVi<InventaireRepository>();
@@ -87,7 +87,7 @@ describe("Find inventory by data ID", () => {
 
     inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(inventoryData));
 
-    const inventory = await inventaireService.findInventaireOfEntryId("43", loggedUser);
+    const inventory = await inventaireService.findInventoryOfEntryId("43", loggedUser);
 
     expect(inventoryRepository.findInventoryByEntryId.mock.callCount()).toEqual(1);
     expect(inventoryRepository.findInventoryByEntryId.mock.calls[0].arguments).toEqual(["43"]);
@@ -95,7 +95,7 @@ describe("Find inventory by data ID", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await inventaireService.findInventaireOfEntryId("12", null)).toEqual(err("notAllowed"));
+    expect(await inventaireService.findInventoryOfEntryId("12", null)).toEqual(err("notAllowed"));
   });
 });
 

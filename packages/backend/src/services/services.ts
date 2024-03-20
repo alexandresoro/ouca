@@ -56,7 +56,7 @@ import { buildInventaireRepository } from "../repositories/inventaire/inventaire
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
-import { type InventoryService, buildInventoryService } from "./entities/inventaire-service.js";
+import { type InventoryService, buildInventoryService } from "./entities/inventory-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
