@@ -1,8 +1,9 @@
+import type { Inventory } from "@domain/inventory/inventory.js";
 import type { Locality } from "@domain/locality/locality.js";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { getHumanFriendlyTimeFromMinutes } from "@ou-ca/common/utils/time-format-convert";
-import type { InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
+import type { Inventaire, InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 
 export const reshapeInputInventoryUpsertData = (
   inventory: UpsertInventoryInput,
@@ -54,5 +55,19 @@ export const reshapeInputInventoryUpsertData = (
     longitude: customLongitude,
     coordinates_system: coordinatesSystem,
     owner_id: ownerId,
+  };
+};
+
+export const reshapeInventaireToInventory = (inventaire: Inventaire): Inventory => {
+  const { observateurId, date, heure, duree, lieuditId, dateCreation, ...restInventaire } = inventaire;
+
+  return {
+    ...restInventaire,
+    observerId: observateurId.toString(),
+    date: new Date(date),
+    time: heure,
+    duration: duree,
+    localityId: lieuditId.toString(),
+    creationDate: new Date(dateCreation),
   };
 };

@@ -16,10 +16,9 @@ import { getSqlPagination } from "../../application/services/entities-utils.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
-import type { Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
-import { reshapeInputInventoryUpsertData } from "./inventory-service-reshape.js";
+import { reshapeInputInventoryUpsertData, reshapeInventaireToInventory } from "./inventory-service-reshape.js";
 
 type InventoryServiceDependencies = {
   slonik: DatabasePool;
@@ -79,23 +78,23 @@ export const buildInventoryService = ({
     return ok(await inventoryRepository.findInventoryByEntryId(entryId));
   };
 
-  const findAllInventories = async (): Promise<Inventaire[]> => {
-    const inventories = await inventoryRepositoryLegacy.findInventaires();
+  const findAllInventories = async (): Promise<Inventory[]> => {
+    const inventories = await inventoryRepository.findInventories({});
 
-    return [...inventories];
+    return inventories;
   };
 
   const findPaginatedInventories = async (
     loggedUser: LoggedUser | null,
     options: InventoriesSearchParams,
-  ): Promise<Result<Inventaire[], AccessFailureReason>> => {
+  ): Promise<Result<Inventory[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const { orderBy: orderByField, sortOrder, pageSize, pageNumber } = options;
 
-    const inventories = await inventoryRepositoryLegacy.findInventaires({
+    const inventories = await inventoryRepository.findInventories({
       ...getSqlPagination({
         pageNumber,
         pageSize,
@@ -104,7 +103,7 @@ export const buildInventoryService = ({
       sortOrder,
     });
 
-    return ok([...inventories]);
+    return ok(inventories);
   };
 
   const getInventoriesCount = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
@@ -118,7 +117,7 @@ export const buildInventoryService = ({
   const createInventory = async (
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Inventaire, InventoryUpsertFailureReason>> => {
+  ): Promise<Result<Inventory, InventoryUpsertFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -144,9 +143,9 @@ export const buildInventoryService = ({
     });
 
     if (existingInventory) {
-      // We wished to create an inventaire but we already found one,
+      // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(existingInventory);
+      return ok(reshapeInventaireToInventory(existingInventory));
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventory we wish to create does not have an equivalent existing one
@@ -178,7 +177,7 @@ export const buildInventoryService = ({
         return createdInventaire;
       });
 
-      return ok(createdInventory);
+      return ok(reshapeInventaireToInventory(createdInventory));
     }
   };
 
@@ -186,7 +185,7 @@ export const buildInventoryService = ({
     id: number,
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Inventaire, InventoryUpdateFailureReason>> => {
+  ): Promise<Result<Inventory, InventoryUpdateFailureReason>> => {
     if (!loggedUser) {
       return err({ type: "notAllowed" });
     }
@@ -246,7 +245,7 @@ export const buildInventoryService = ({
 
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(existingInventory);
+      return ok(reshapeInventaireToInventory(existingInventory));
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventory we wish to update does not have an equivalent existing one
@@ -283,7 +282,7 @@ export const buildInventoryService = ({
         return updatedInventaire;
       });
 
-      return ok(updatedInventory);
+      return ok(reshapeInventaireToInventory(updatedInventory));
     }
   };
 

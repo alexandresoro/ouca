@@ -12,7 +12,7 @@ import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-import { enrichedInventaire, enrichedInventory } from "./inventories-enricher.js";
+import { enrichedInventory } from "./inventories-enricher.js";
 
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
@@ -125,7 +125,7 @@ const inventoriesController: FastifyPluginCallback<{
     // TODO look to optimize this request
     const enrichedInventoriesResults = await Promise.all(
       inventoriesData.map(async (inventoryData) => {
-        return enrichedInventaire(services, inventoryData, req.user);
+        return enrichedInventory(services, inventoryData, req.user);
       }),
     );
 
@@ -163,7 +163,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const inventory = inventoryResult.value;
 
-    const inventoryEnrichedResult = await enrichedInventaire(services, inventory, req.user);
+    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
 
     if (inventoryEnrichedResult.isErr()) {
       switch (inventoryEnrichedResult.error) {
@@ -217,7 +217,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const inventory = inventoryResult.value;
 
-    const inventoryEnrichedResult = await enrichedInventaire(services, inventory, req.user);
+    const inventoryEnrichedResult = await enrichedInventory(services, inventory, req.user);
 
     if (inventoryEnrichedResult.isErr()) {
       switch (inventoryEnrichedResult.error) {

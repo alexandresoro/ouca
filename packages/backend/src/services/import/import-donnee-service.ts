@@ -1,3 +1,4 @@
+import type { Inventory } from "@domain/inventory/inventory.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { AgeSimple } from "@ou-ca/common/api/entities/age";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
@@ -17,7 +18,7 @@ import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coo
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
-import type { Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
+import { getDateOnlyAsLocalISOString } from "../../utils/time-utils.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
 
@@ -34,7 +35,7 @@ export class ImportDonneeService extends ImportService {
   private comportements!: Behavior[];
   private milieux!: Environment[];
   private meteos!: Weather[];
-  private inventaires: Inventaire[] = []; // The list of existing inventaires + the ones we created along with the validation
+  private inventaires: Inventory[] = []; // The list of existing inventories + the ones we created along with the validation
 
   private existingDonnees!: Donnee[];
 
@@ -225,11 +226,11 @@ export class ImportDonneeService extends ImportService {
     // Find if we already have an existing inventaire that matches the one from the current donnee
     const existingInventaire = this.inventaires.find(async (existingInventaire) => {
       return (
-        `${existingInventaire.observateurId}` === inputInventaire.observerId &&
-        existingInventaire.date === inputInventaire.date &&
-        existingInventaire.heure === inputInventaire.time &&
-        existingInventaire.duree === inputInventaire.duration &&
-        `${existingInventaire?.lieuditId}` === inputInventaire.localityId &&
+        `${existingInventaire.observerId}` === inputInventaire.observerId &&
+        getDateOnlyAsLocalISOString(existingInventaire.date) === inputInventaire.date &&
+        existingInventaire.time === inputInventaire.time &&
+        existingInventaire.duration === inputInventaire.duration &&
+        `${existingInventaire?.localityId}` === inputInventaire.localityId &&
         existingInventaire.customizedCoordinates?.altitude === inputInventaire.coordinates?.altitude &&
         existingInventaire.customizedCoordinates?.longitude === inputInventaire.coordinates?.longitude &&
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.coordinates?.latitude &&

@@ -10,6 +10,7 @@ export type InventoryRepository = {
       sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
     },
   ): Promise<number | null>;
+  findInventories({ orderBy, sortOrder, offset, limit }: InventoryFindManyInput): Promise<Inventory[]>;
   getCount(): Promise<number>;
   getCountByLocality(localityId: string): Promise<number>;
   deleteInventoryById(inventoryId: string): Promise<Inventory | null>;

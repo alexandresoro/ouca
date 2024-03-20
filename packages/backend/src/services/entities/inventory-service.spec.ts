@@ -48,6 +48,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   inventoryRepository.findInventoryById.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
+  inventoryRepository.findInventories.mock.resetCalls();
   inventoryRepository.deleteInventoryById.mock.resetCalls();
   inventoryRepository.getCount.mock.resetCalls();
   inventoryRepository.getCountByLocality.mock.resetCalls();
@@ -104,11 +105,11 @@ describe("Find inventory by data ID", () => {
 test("Find all inventaries", async () => {
   const inventariesData = [mockVe<Inventaire>(), mockVe<Inventaire>(), mockVe<Inventaire>()];
 
-  inventoryRepositoryLegacy.findInventaires.mockResolvedValueOnce(inventariesData);
+  inventoryRepository.findInventories.mock.mockImplementationOnce(() => Promise.resolve(inventariesData));
 
   await inventaireService.findAllInventories();
 
-  expect(inventoryRepositoryLegacy.findInventaires).toHaveBeenCalledTimes(1);
+  expect(inventoryRepository.findInventories.mock.callCount()).toEqual(1);
 });
 
 describe("Inventories paginated find by search criteria", () => {
@@ -123,17 +124,19 @@ describe("Inventories paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    inventoryRepositoryLegacy.findInventaires.mockResolvedValueOnce([inventoriesData[0]]);
+    inventoryRepository.findInventories.mock.mockImplementationOnce(() => Promise.resolve([inventoriesData[0]]));
 
     await inventaireService.findPaginatedInventories(loggedUser, searchParams);
 
-    expect(inventoryRepositoryLegacy.findInventaires).toHaveBeenCalledTimes(1);
-    expect(inventoryRepositoryLegacy.findInventaires).toHaveBeenLastCalledWith({
-      orderBy: "creationDate",
-      sortOrder: "desc",
-      offset: 0,
-      limit: searchParams.pageSize,
-    });
+    expect(inventoryRepository.findInventories.mock.callCount()).toEqual(1);
+    expect(inventoryRepository.findInventories.mock.calls[0].arguments).toEqual([
+      {
+        orderBy: "creationDate",
+        sortOrder: "desc",
+        offset: 0,
+        limit: searchParams.pageSize,
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

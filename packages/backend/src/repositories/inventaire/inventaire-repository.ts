@@ -1,12 +1,6 @@
-import type { InventoryFindManyInput } from "@domain/inventory/inventory.js";
 import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
-import {
-  buildPaginationFragment,
-  buildSortOrderFragment,
-  objectToKeyValueInsert,
-  objectToKeyValueSet,
-} from "../repository-helpers.js";
-import { buildFindMatchingInventaireClause, buildOrderByIdentifier } from "./inventaire-repository-helper.js";
+import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers.js";
+import { buildFindMatchingInventaireClause } from "./inventaire-repository-helper.js";
 import { reshapeRawInventaire } from "./inventaire-repository-reshape.js";
 import {
   type Inventaire,
@@ -20,45 +14,6 @@ export type InventaireRepositoryDependencies = {
 };
 
 export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDependencies) => {
-  const findInventaires = async ({
-    orderBy,
-    sortOrder,
-    offset,
-    limit,
-  }: InventoryFindManyInput = {}): Promise<readonly Inventaire[]> => {
-    const query = sql.type(inventaireSchema)`
-      SELECT 
-        inventaire.id::text,
-        inventaire.observateur_id,
-        inventaire.date,
-        inventaire.heure,
-        inventaire.duree,
-        inventaire.lieudit_id,
-        inventaire.altitude,
-        inventaire.longitude,
-        inventaire.latitude,
-        inventaire.temperature,
-        inventaire.date_creation,
-        inventaire.owner_id
-      FROM
-        basenaturaliste.inventaire
-      ${
-        orderBy
-          ? sql.fragment`
-      ORDER BY ${buildOrderByIdentifier(orderBy)}`
-          : sql.fragment`ORDER BY inventaire.id DESC`
-      }${buildSortOrderFragment({
-        orderBy,
-        sortOrder,
-      })}
-      ${buildPaginationFragment({ offset, limit })}
-    `;
-
-    const rawInventories = await slonik.any(query);
-
-    return rawInventories.map((inventory) => reshapeRawInventaire(inventory));
-  };
-
   const findExistingInventaire = async (criteria: InventaireFindMatchingInput): Promise<Inventaire | null> => {
     const { associateIds, weatherIds } = criteria;
 
@@ -158,7 +113,6 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   };
 
   return {
-    findInventaires,
     findExistingInventaire,
     createInventaire,
     updateInventaire,

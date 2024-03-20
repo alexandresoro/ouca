@@ -83,6 +83,47 @@ export const buildInventoryRepository = () => {
     return indexResult ? z.object({ index: z.coerce.number() }).parse(indexResult).index : null;
   };
 
+  const findInventories = async ({
+    orderBy,
+    sortOrder,
+    offset,
+    limit,
+  }: InventoryFindManyInput = {}): Promise<Inventory[]> => {
+    let queryInventories = kysely
+      .selectFrom("inventaire")
+      .select([
+        sql<string>`id::text`.as("id"),
+        sql<string>`observateur_id::text`.as("observateurId"),
+        "date",
+        "heure",
+        "duree",
+        sql<string>`lieudit_id::text`.as("lieuditId"),
+        "altitude",
+        "longitude",
+        "latitude",
+        "temperature",
+        "dateCreation",
+        "ownerId",
+      ]);
+
+    if (orderBy != null) {
+      const orderByIdentifier = "dateCreation";
+      queryInventories = queryInventories.orderBy(orderByIdentifier, sortOrder ?? undefined);
+    }
+
+    if (offset != null) {
+      queryInventories = queryInventories.offset(offset);
+    }
+
+    if (limit != null) {
+      queryInventories = queryInventories.limit(limit);
+    }
+
+    const rawInventories = await queryInventories.execute();
+
+    return z.array(inventorySchema).parse(rawInventories.map((rawInventory) => reshapeRawInventory(rawInventory)));
+  };
+
   const getCount = async (): Promise<number> => {
     const countResult = await kysely
       .selectFrom("inventaire")
@@ -129,6 +170,7 @@ export const buildInventoryRepository = () => {
     findInventoryById,
     findInventoryByEntryId,
     findInventoryIndex,
+    findInventories,
     getCount,
     getCountByLocality,
     deleteInventoryById,
