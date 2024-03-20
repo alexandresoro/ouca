@@ -53,6 +53,7 @@ export type InventoryFindManyInput = Partial<{
 
 export type InventoryCreateInput = {
   observerId: string;
+  associateIds: string[];
   date: string; // YYYY-MM-DD
   time?: string | null;
   duration?: string | null;
@@ -63,5 +64,6 @@ export type InventoryCreateInput = {
     latitude: number;
   } | null;
   temperature?: number | null;
+  weatherIds: string[];
   ownerId?: string | null;
 };

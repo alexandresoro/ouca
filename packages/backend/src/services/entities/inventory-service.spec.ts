@@ -103,7 +103,7 @@ describe("Find inventory by data ID", () => {
 });
 
 test("Find all inventaries", async () => {
-  const inventariesData = [mockVe<Inventaire>(), mockVe<Inventaire>(), mockVe<Inventaire>()];
+  const inventariesData = inventoryFactory.buildList(3);
 
   inventoryRepository.findInventories.mock.mockImplementationOnce(() => Promise.resolve(inventariesData));
 
@@ -114,7 +114,7 @@ test("Find all inventaries", async () => {
 
 describe("Inventories paginated find by search criteria", () => {
   test("should handle params when retrieving paginated inventories", async () => {
-    const inventoriesData = [mockVe<Inventaire>(), mockVe<Inventaire>(), mockVe<Inventaire>()];
+    const inventoriesData = inventoryFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: InventoriesSearchParams = {

@@ -24,6 +24,7 @@ export const inventoryFactory = Factory.define<Inventory>(() => {
 export const inventoryCreateInputFactory = Factory.define<InventoryCreateInput>(() => {
   return {
     observerId: faker.string.alphanumeric(),
+    associateIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     date: faker.date.recent().toISOString().split("T")[0],
     time: faker.string.alpha(),
     duration: faker.string.alpha(),
@@ -34,6 +35,7 @@ export const inventoryCreateInputFactory = Factory.define<InventoryCreateInput>(
       latitude: faker.number.float(),
     },
     temperature: faker.number.int(),
+    weatherIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     ownerId: faker.string.uuid(),
   };
 });

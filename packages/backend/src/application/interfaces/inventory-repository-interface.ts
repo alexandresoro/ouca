@@ -1,4 +1,4 @@
-import type { Inventory, InventoryFindManyInput } from "@domain/inventory/inventory.js";
+import type { Inventory, InventoryCreateInput, InventoryFindManyInput } from "@domain/inventory/inventory.js";
 
 export type InventoryRepository = {
   findInventoryById(id: number): Promise<Inventory | null>;
@@ -11,6 +11,7 @@ export type InventoryRepository = {
     },
   ): Promise<number | null>;
   findInventories({ orderBy, sortOrder, offset, limit }: InventoryFindManyInput): Promise<Inventory[]>;
+  findExistingInventory(criteria: InventoryCreateInput): Promise<Inventory | null>;
   getCount(): Promise<number>;
   getCountByLocality(localityId: string): Promise<number>;
   deleteInventoryById(inventoryId: string): Promise<Inventory | null>;

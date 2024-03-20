@@ -1,6 +1,11 @@
-import { type Inventory, type InventoryFindManyInput, inventorySchema } from "@domain/inventory/inventory.js";
+import {
+  type Inventory,
+  type InventoryCreateInput,
+  type InventoryFindManyInput,
+  inventorySchema,
+} from "@domain/inventory/inventory.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
-import { sql } from "kysely";
+import { type OperandExpression, type SqlBool, sql } from "kysely";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 import { reshapeRawInventory } from "./inventory-repository-reshape.js";
@@ -124,6 +129,73 @@ export const buildInventoryRepository = () => {
     return z.array(inventorySchema).parse(rawInventories.map((rawInventory) => reshapeRawInventory(rawInventory)));
   };
 
+  const findExistingInventory = async (criteria: InventoryCreateInput): Promise<Inventory | null> => {
+    const inventoryResult = await kysely
+      .selectFrom("inventaire")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+      .select([
+        sql<string>`inventaire.id::text`.as("id"),
+        sql<string>`inventaire.observateur_id::text`.as("observateurId"),
+        "inventaire.date",
+        "inventaire.heure",
+        "inventaire.duree",
+        sql<string>`inventaire.lieudit_id::text`.as("lieuditId"),
+        "inventaire.altitude",
+        "inventaire.longitude",
+        "inventaire.latitude",
+        "inventaire.temperature",
+        "inventaire.dateCreation",
+        "inventaire.ownerId",
+      ])
+      .where((eb) => {
+        const clause: OperandExpression<SqlBool>[] = [];
+
+        clause.push(eb("inventaire.observateurId", "=", Number.parseInt(criteria.observerId)));
+        clause.push(eb("inventaire.date", "=", new Date(criteria.date)));
+        clause.push(eb("inventaire.heure", "=", criteria.time ?? null));
+        clause.push(eb("inventaire.duree", "=", criteria.duration ?? null));
+        clause.push(eb("inventaire.lieuditId", "=", Number.parseInt(criteria.localityId)));
+        clause.push(eb("inventaire.altitude", "=", criteria.customizedCoordinates?.altitude ?? null));
+        clause.push(eb("inventaire.longitude", "=", criteria.customizedCoordinates?.longitude ?? null));
+        clause.push(eb("inventaire.latitude", "=", criteria.customizedCoordinates?.latitude ?? null));
+        clause.push(eb("inventaire.temperature", "=", criteria.temperature ?? null));
+
+        if (criteria.associateIds.length) {
+          clause.push(
+            eb(
+              "inventaire_associe.observateurId",
+              "in",
+              criteria.associateIds.map((associateId) => Number.parseInt(associateId)),
+            ),
+          );
+        }
+
+        if (criteria.weatherIds.length) {
+          clause.push(
+            eb(
+              "inventaire_meteo.meteoId",
+              "in",
+              criteria.weatherIds.map((weatherId) => Number.parseInt(weatherId)),
+            ),
+          );
+        }
+
+        return eb.and(clause);
+      })
+      .groupBy("inventaire.id")
+      .having((eb) =>
+        eb.and([
+          eb(eb.fn.count("inventaire_associe.observateurId").distinct(), "=", criteria.associateIds.length),
+          eb(eb.fn.count("inventaire_meteo.meteoId").distinct(), "=", criteria.weatherIds.length),
+        ]),
+      )
+      .limit(1)
+      .executeTakeFirst();
+
+    return inventoryResult ? inventorySchema.parse(reshapeRawInventory(inventoryResult)) : null;
+  };
+
   const getCount = async (): Promise<number> => {
     const countResult = await kysely
       .selectFrom("inventaire")
@@ -171,6 +243,7 @@ export const buildInventoryRepository = () => {
     findInventoryByEntryId,
     findInventoryIndex,
     findInventories,
+    findExistingInventory,
     getCount,
     getCountByLocality,
     deleteInventoryById,
