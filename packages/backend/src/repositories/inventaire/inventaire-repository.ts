@@ -120,22 +120,6 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return slonik.oneFirst(query);
   };
 
-  /**
-   * @deprecated
-   */
-  const getCountByObserver = async (observerId: number): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.inventaire
-      WHERE
-        inventaire.observateur_id = ${observerId}
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
   const findExistingInventaire = async (criteria: InventaireFindMatchingInput): Promise<Inventaire | null> => {
     const { associateIds, weatherIds } = criteria;
 
@@ -239,7 +223,6 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     findInventaires,
     getCount,
     getCountByLocality,
-    getCountByObserver,
     findExistingInventaire,
     createInventaire,
     updateInventaire,
