@@ -99,8 +99,8 @@ importers:
         specifier: 11.0.3
         version: 11.0.3
       slonik:
-        specifier: 37.2.0
-        version: 37.2.0(zod@3.22.4)
+        specifier: 37.3.1
+        version: 37.3.1(zod@3.22.4)
       umzug:
         specifier: 3.7.0
         version: 3.7.0(@types/node@20.11.30)
@@ -6673,8 +6673,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /slonik@37.2.0(zod@3.22.4):
-    resolution: {integrity: sha512-G4giLtT+PWrHJcjhNrYZpQmDNb4aehugP8IF6MYHAvP39ewGb+EdBaB94MUwPqU9+nu9aNEFLLpy1y2tyHNb4w==}
+  /slonik@37.3.1(zod@3.22.4):
+    resolution: {integrity: sha512-vidC0OleHqIrFt5gGWgwy4CUhE+dSo71/661g2MyQFNpT/ZyiBZ1BscGK8gLlw4K8xYTo4SL+POBBLp+X5wYsg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3
