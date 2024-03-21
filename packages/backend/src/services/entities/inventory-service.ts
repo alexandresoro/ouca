@@ -18,7 +18,7 @@ import type { InventaireAssocieRepository } from "../../repositories/inventaire-
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
-import { reshapeInputInventoryUpsertData, reshapeInventaireToInventory } from "./inventory-service-reshape.js";
+import { reshapeInputInventoryUpsertDataLegacy, reshapeInventaireToInventory } from "./inventory-service-reshape.js";
 
 type InventoryServiceDependencies = {
   slonik: DatabasePool;
@@ -137,7 +137,7 @@ export const buildInventoryService = ({
 
     // Check if an exact same inventory already exists or not
     const existingInventory = await inventoryRepositoryLegacy.findExistingInventaire({
-      ...reshapeInputInventoryUpsertData(input, locality),
+      ...reshapeInputInventoryUpsertDataLegacy(input, locality),
       associateIds,
       weatherIds,
     });
@@ -154,7 +154,7 @@ export const buildInventoryService = ({
       // Create a new inventory
       const createdInventory = await slonik.transaction(async (transactionConnection) => {
         const createdInventaire = await inventoryRepositoryLegacy.createInventaire(
-          reshapeInputInventoryUpsertData(input, locality, loggedUser.id),
+          reshapeInputInventoryUpsertDataLegacy(input, locality, loggedUser.id),
           transactionConnection,
         );
 
@@ -206,7 +206,7 @@ export const buildInventoryService = ({
 
     // Check if an exact same inventory already exists or not
     const existingInventory = await inventoryRepositoryLegacy.findExistingInventaire({
-      ...reshapeInputInventoryUpsertData(inputData, locality),
+      ...reshapeInputInventoryUpsertDataLegacy(inputData, locality),
       associateIds,
       weatherIds,
     });
@@ -255,7 +255,7 @@ export const buildInventoryService = ({
       const updatedInventory = await slonik.transaction(async (transactionConnection) => {
         const updatedInventaire = await inventoryRepositoryLegacy.updateInventaire(
           id,
-          reshapeInputInventoryUpsertData(inputData, locality, loggedUser.id),
+          reshapeInputInventoryUpsertDataLegacy(inputData, locality, loggedUser.id),
           transactionConnection,
         );
 

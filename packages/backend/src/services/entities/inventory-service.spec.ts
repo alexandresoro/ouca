@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { upsertInventoryInputFactory } from "@fixtures/services/inventory/inventory-service.fixtures.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
-import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import type { InventoriesSearchParams } from "@ou-ca/common/api/inventory";
 import { err, ok } from "neverthrow";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
@@ -143,7 +144,10 @@ describe("Inventories paginated find by search criteria", () => {
 
   test("should not be allowed when the requester is not logged", async () => {
     assert.deepStrictEqual(
-      await inventaireService.findPaginatedInventories(null, mockVe<InventoriesSearchParams>()),
+      await inventaireService.findPaginatedInventories(null, {
+        pageNumber: 1,
+        pageSize: 10,
+      }),
       err("notAllowed"),
     );
   });
@@ -166,7 +170,7 @@ describe("Entities count by search criteria", () => {
 describe("Update of an inventory", () => {
   describe("to values already matching an existing inventory", () => {
     test("should return the correct state if no migration requested", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>({
+      const inventoryData = upsertInventoryInputFactory.build({
         migrateDonneesIfMatchesExistingInventaire: undefined,
       });
 
@@ -189,7 +193,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should handle migration of existing data if requested", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>({
+      const inventoryData = upsertInventoryInputFactory.build({
         migrateDonneesIfMatchesExistingInventaire: true,
       });
 
@@ -213,7 +217,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>();
+      const inventoryData = upsertInventoryInputFactory.build();
 
       assert.deepStrictEqual(
         await inventaireService.updateInventory(12, inventoryData, null),
@@ -225,7 +229,7 @@ describe("Update of an inventory", () => {
 
   describe("to values not matching an existing inventory", () => {
     test("should update an inventory", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>({
+      const inventoryData = upsertInventoryInputFactory.build({
         associateIds: ["2", "3"],
         weatherIds: ["4", "5"],
       });
@@ -266,7 +270,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>();
+      const inventoryData = upsertInventoryInputFactory.build();
 
       expect(await inventaireService.updateInventory(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
       expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
@@ -277,7 +281,7 @@ describe("Update of an inventory", () => {
 describe("Creation of an inventory", () => {
   describe("with values already matching an existing inventory", () => {
     test("should return the existing inventory", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>({
+      const inventoryData = upsertInventoryInputFactory.build({
         duration: null,
       });
 
@@ -299,7 +303,7 @@ describe("Creation of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>();
+      const inventoryData = upsertInventoryInputFactory.build();
 
       assert.deepStrictEqual(await inventaireService.createInventory(inventoryData, null), err("notAllowed"));
       expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
@@ -308,7 +312,7 @@ describe("Creation of an inventory", () => {
 
   describe("with values not matching an existing inventory", () => {
     test("should create new inventory", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>({
+      const inventoryData = upsertInventoryInputFactory.build({
         associateIds: ["2", "3"],
         weatherIds: ["4", "5"],
         duration: null,
@@ -339,7 +343,7 @@ describe("Creation of an inventory", () => {
     });
 
     test("should not be allowed when the requester is not logged", async () => {
-      const inventoryData = mockVe<UpsertInventoryInput>();
+      const inventoryData = upsertInventoryInputFactory.build();
 
       assert.deepStrictEqual(await inventaireService.createInventory(inventoryData, null), err("notAllowed"));
       expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
