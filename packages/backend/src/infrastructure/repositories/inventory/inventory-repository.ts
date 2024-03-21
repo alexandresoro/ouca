@@ -169,13 +169,44 @@ export const buildInventoryRepository = () => {
 
         clause.push(eb("inventaire.observateurId", "=", Number.parseInt(criteria.observerId)));
         clause.push(eb("inventaire.date", "=", new Date(criteria.date)));
-        clause.push(eb("inventaire.heure", "=", criteria.time ?? null));
-        clause.push(eb("inventaire.duree", "=", criteria.duration ?? null));
+
+        if (criteria.time != null) {
+          clause.push(eb("inventaire.heure", "=", criteria.time));
+        } else {
+          clause.push(eb("inventaire.heure", "is", null));
+        }
+
+        if (criteria.duration != null) {
+          clause.push(eb("inventaire.duree", "=", criteria.duration));
+        } else {
+          clause.push(eb("inventaire.duree", "is", null));
+        }
+
         clause.push(eb("inventaire.lieuditId", "=", Number.parseInt(criteria.localityId)));
-        clause.push(eb("inventaire.altitude", "=", criteria.customizedCoordinates?.altitude ?? null));
-        clause.push(eb("inventaire.longitude", "=", criteria.customizedCoordinates?.longitude ?? null));
-        clause.push(eb("inventaire.latitude", "=", criteria.customizedCoordinates?.latitude ?? null));
-        clause.push(eb("inventaire.temperature", "=", criteria.temperature ?? null));
+
+        if (criteria.customizedCoordinates?.altitude != null) {
+          clause.push(eb("inventaire.altitude", "=", criteria.customizedCoordinates.altitude));
+        } else {
+          clause.push(eb("inventaire.altitude", "is", null));
+        }
+
+        if (criteria.customizedCoordinates?.longitude != null) {
+          clause.push(eb("inventaire.longitude", "=", criteria.customizedCoordinates.longitude));
+        } else {
+          clause.push(eb("inventaire.longitude", "is", null));
+        }
+
+        if (criteria.customizedCoordinates?.latitude != null) {
+          clause.push(eb("inventaire.latitude", "=", criteria.customizedCoordinates.latitude));
+        } else {
+          clause.push(eb("inventaire.latitude", "is", null));
+        }
+
+        if (criteria.temperature != null) {
+          clause.push(eb("inventaire.temperature", "=", criteria.temperature));
+        } else {
+          clause.push(eb("inventaire.temperature", "is", null));
+        }
 
         if (criteria.associateIds.length) {
           clause.push(

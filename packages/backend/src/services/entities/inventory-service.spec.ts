@@ -51,6 +51,7 @@ beforeEach(() => {
   inventoryRepository.findInventoryById.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
   inventoryRepository.findInventories.mock.resetCalls();
+  inventoryRepository.findExistingInventory.mock.resetCalls();
   inventoryRepository.deleteInventoryById.mock.resetCalls();
   inventoryRepository.getCount.mock.resetCalls();
   inventoryRepository.getCountByLocality.mock.resetCalls();
@@ -177,10 +178,8 @@ describe("Update of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
-      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(
-        mockVe<Inventaire>({
-          id: "345",
-        }),
+      inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() =>
+        Promise.resolve(inventoryFactory.build({ id: "345" })),
       );
 
       assert.deepStrictEqual(
@@ -200,10 +199,8 @@ describe("Update of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
-      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(
-        mockVe<Inventaire>({
-          id: "345",
-        }),
+      inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() =>
+        Promise.resolve(inventoryFactory.build({ id: "345" })),
       );
 
       const result = await inventaireService.updateInventory(12, inventoryData, loggedUser);
@@ -223,7 +220,7 @@ describe("Update of an inventory", () => {
         await inventaireService.updateInventory(12, inventoryData, null),
         err({ type: "notAllowed" }),
       );
-      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
+      assert.strictEqual(inventoryRepository.findExistingInventory.mock.callCount(), 0);
     });
   });
 
@@ -237,7 +234,7 @@ describe("Update of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
-      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(null);
+      inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() => Promise.resolve(null));
       inventoryRepositoryLegacy.updateInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "12",
@@ -273,7 +270,7 @@ describe("Update of an inventory", () => {
       const inventoryData = upsertInventoryInputFactory.build();
 
       expect(await inventaireService.updateInventory(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
-      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
+      assert.strictEqual(inventoryRepository.findExistingInventory.mock.callCount(), 0);
     });
   });
 });
@@ -288,10 +285,8 @@ describe("Creation of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
-      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(
-        mockVe<Inventaire>({
-          id: "345",
-        }),
+      inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() =>
+        Promise.resolve(inventoryFactory.build({ id: "345" })),
       );
 
       const result = await inventaireService.createInventory(inventoryData, loggedUser);
@@ -306,7 +301,7 @@ describe("Creation of an inventory", () => {
       const inventoryData = upsertInventoryInputFactory.build();
 
       assert.deepStrictEqual(await inventaireService.createInventory(inventoryData, null), err("notAllowed"));
-      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
+      assert.strictEqual(inventoryRepository.findExistingInventory.mock.callCount(), 0);
     });
   });
 
@@ -321,7 +316,7 @@ describe("Creation of an inventory", () => {
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
-      inventoryRepositoryLegacy.findExistingInventaire.mockResolvedValueOnce(null);
+      inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() => Promise.resolve(null));
       inventoryRepositoryLegacy.createInventaire.mockResolvedValueOnce(
         mockVe<Inventaire>({
           id: "322",
@@ -346,7 +341,7 @@ describe("Creation of an inventory", () => {
       const inventoryData = upsertInventoryInputFactory.build();
 
       assert.deepStrictEqual(await inventaireService.createInventory(inventoryData, null), err("notAllowed"));
-      expect(inventoryRepositoryLegacy.findExistingInventaire).not.toHaveBeenCalled();
+      assert.strictEqual(inventoryRepository.findExistingInventory.mock.callCount(), 0);
     });
   });
 });

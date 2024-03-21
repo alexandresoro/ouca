@@ -1,4 +1,3 @@
-import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
 
@@ -26,9 +25,6 @@ export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitud
     longitude: number;
   } | null;
 };
-
-export type InventaireFindMatchingInput = InventaireCreateInput &
-  Required<Pick<UpsertInventoryInput, "associateIds" | "weatherIds">>;
 
 export type InventaireCreateInput = {
   observateur_id: number;

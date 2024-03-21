@@ -18,7 +18,11 @@ import type { InventaireAssocieRepository } from "../../repositories/inventaire-
 import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
-import { reshapeInputInventoryUpsertDataLegacy, reshapeInventaireToInventory } from "./inventory-service-reshape.js";
+import {
+  reshapeInputInventoryUpsertData,
+  reshapeInputInventoryUpsertDataLegacy,
+  reshapeInventaireToInventory,
+} from "./inventory-service-reshape.js";
 
 type InventoryServiceDependencies = {
   slonik: DatabasePool;
@@ -136,49 +140,46 @@ export const buildInventoryService = ({
     }
 
     // Check if an exact same inventory already exists or not
-    const existingInventory = await inventoryRepositoryLegacy.findExistingInventaire({
-      ...reshapeInputInventoryUpsertDataLegacy(input, locality),
-      associateIds,
-      weatherIds,
-    });
+    const existingInventory = await inventoryRepository.findExistingInventory(
+      reshapeInputInventoryUpsertData(input, locality),
+    );
 
     if (existingInventory) {
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(reshapeInventaireToInventory(existingInventory, associateIds, weatherIds));
-      // biome-ignore lint/style/noUselessElse: <explanation>
-    } else {
-      // The inventory we wish to create does not have an equivalent existing one
-      // In that case, we proceed as a classic create
+      return ok(existingInventory);
+    }
 
-      // Create a new inventory
-      const createdInventory = await slonik.transaction(async (transactionConnection) => {
-        const createdInventaire = await inventoryRepositoryLegacy.createInventaire(
-          reshapeInputInventoryUpsertDataLegacy(input, locality, loggedUser.id),
+    // The inventory we wish to create does not have an equivalent existing one
+    // In that case, we proceed as a classic create
+
+    // Create a new inventory
+    const createdInventory = await slonik.transaction(async (transactionConnection) => {
+      const createdInventaire = await inventoryRepositoryLegacy.createInventaire(
+        reshapeInputInventoryUpsertDataLegacy(input, locality, loggedUser.id),
+        transactionConnection,
+      );
+
+      if (associateIds?.length) {
+        await inventoryAssociateRepository.insertInventaireWithAssocies(
+          Number.parseInt(createdInventaire.id),
+          associateIds.map((associateId) => Number.parseInt(associateId)),
           transactionConnection,
         );
+      }
 
-        if (associateIds?.length) {
-          await inventoryAssociateRepository.insertInventaireWithAssocies(
-            Number.parseInt(createdInventaire.id),
-            associateIds.map((associateId) => Number.parseInt(associateId)),
-            transactionConnection,
-          );
-        }
+      if (weatherIds?.length) {
+        await inventoryWeatherRepository.insertInventaireWithMeteos(
+          Number.parseInt(createdInventaire.id),
+          weatherIds.map((weatherId) => Number.parseInt(weatherId)),
+          transactionConnection,
+        );
+      }
 
-        if (weatherIds?.length) {
-          await inventoryWeatherRepository.insertInventaireWithMeteos(
-            Number.parseInt(createdInventaire.id),
-            weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-            transactionConnection,
-          );
-        }
+      return createdInventaire;
+    });
 
-        return createdInventaire;
-      });
-
-      return ok(reshapeInventaireToInventory(createdInventory, associateIds, weatherIds));
-    }
+    return ok(reshapeInventaireToInventory(createdInventory, associateIds, weatherIds));
   };
 
   const updateInventory = async (
@@ -205,11 +206,9 @@ export const buildInventoryService = ({
     }
 
     // Check if an exact same inventory already exists or not
-    const existingInventory = await inventoryRepositoryLegacy.findExistingInventaire({
-      ...reshapeInputInventoryUpsertDataLegacy(inputData, locality),
-      associateIds,
-      weatherIds,
-    });
+    const existingInventory = await inventoryRepository.findExistingInventory(
+      reshapeInputInventoryUpsertData(inputData, locality),
+    );
 
     if (existingInventory) {
       // The inventaire we wish to upsert has already an existing equivalent
@@ -245,45 +244,44 @@ export const buildInventoryService = ({
 
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(reshapeInventaireToInventory(existingInventory, associateIds, weatherIds));
-      // biome-ignore lint/style/noUselessElse: <explanation>
-    } else {
-      // The inventory we wish to update does not have an equivalent existing one
-      // In that case, we proceed as a classic update
+      return ok(existingInventory);
+    }
 
-      // Update an existing inventory
-      const updatedInventory = await slonik.transaction(async (transactionConnection) => {
-        const updatedInventaire = await inventoryRepositoryLegacy.updateInventaire(
+    // The inventory we wish to update does not have an equivalent existing one
+    // In that case, we proceed as a classic update
+
+    // Update an existing inventory
+    const updatedInventory = await slonik.transaction(async (transactionConnection) => {
+      const updatedInventaire = await inventoryRepositoryLegacy.updateInventaire(
+        id,
+        reshapeInputInventoryUpsertDataLegacy(inputData, locality, loggedUser.id),
+        transactionConnection,
+      );
+
+      await inventoryAssociateRepository.deleteAssociesOfInventaireId(id, transactionConnection);
+
+      if (associateIds?.length) {
+        await inventoryAssociateRepository.insertInventaireWithAssocies(
           id,
-          reshapeInputInventoryUpsertDataLegacy(inputData, locality, loggedUser.id),
+          associateIds.map((associateId) => Number.parseInt(associateId)),
           transactionConnection,
         );
+      }
 
-        await inventoryAssociateRepository.deleteAssociesOfInventaireId(id, transactionConnection);
+      await inventoryWeatherRepository.deleteMeteosOfInventaireId(id, transactionConnection);
 
-        if (associateIds?.length) {
-          await inventoryAssociateRepository.insertInventaireWithAssocies(
-            id,
-            associateIds.map((associateId) => Number.parseInt(associateId)),
-            transactionConnection,
-          );
-        }
+      if (weatherIds?.length) {
+        await inventoryWeatherRepository.insertInventaireWithMeteos(
+          id,
+          weatherIds.map((weatherId) => Number.parseInt(weatherId)),
+          transactionConnection,
+        );
+      }
 
-        await inventoryWeatherRepository.deleteMeteosOfInventaireId(id, transactionConnection);
+      return updatedInventaire;
+    });
 
-        if (weatherIds?.length) {
-          await inventoryWeatherRepository.insertInventaireWithMeteos(
-            id,
-            weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-            transactionConnection,
-          );
-        }
-
-        return updatedInventaire;
-      });
-
-      return ok(reshapeInventaireToInventory(updatedInventory, associateIds, weatherIds));
-    }
+    return ok(reshapeInventaireToInventory(updatedInventory, associateIds, weatherIds));
   };
 
   const deleteInventory = async (
