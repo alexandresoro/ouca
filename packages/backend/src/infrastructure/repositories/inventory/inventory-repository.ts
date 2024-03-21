@@ -262,6 +262,149 @@ export const buildInventoryRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const createInventory = async (inventoryInput: InventoryCreateInput): Promise<Inventory> => {
+    const createdInventory = await kysely.transaction().execute(async (trx) => {
+      const inventoryResult = await trx
+        .insertInto("inventaire")
+        .values({
+          observateurId: Number.parseInt(inventoryInput.observerId),
+          date: new Date(inventoryInput.date),
+          heure: inventoryInput.time,
+          duree: inventoryInput.duration,
+          lieuditId: Number.parseInt(inventoryInput.localityId),
+          altitude: inventoryInput.customizedCoordinates?.altitude,
+          longitude: inventoryInput.customizedCoordinates?.longitude,
+          latitude: inventoryInput.customizedCoordinates?.latitude,
+          temperature: inventoryInput.temperature,
+          dateCreation: new Date(),
+          ownerId: inventoryInput.ownerId,
+        })
+        .returning([
+          sql<string>`id::text`.as("id"),
+          sql<string>`observateur_id::text`.as("observateurId"),
+          "date",
+          "heure",
+          "duree",
+          sql<string>`lieudit_id::text`.as("lieuditId"),
+          "altitude",
+          "longitude",
+          "latitude",
+          "temperature",
+          "dateCreation",
+          "ownerId",
+        ])
+        .executeTakeFirstOrThrow();
+
+      let associateIdsResult: { observateurId: string }[] = [];
+      if (inventoryInput.associateIds.length) {
+        associateIdsResult = await trx
+          .insertInto("inventaire_associe")
+          .values(
+            inventoryInput.associateIds.map((associateId) => {
+              return { inventaireId: Number.parseInt(inventoryResult.id), observateurId: Number.parseInt(associateId) };
+            }),
+          )
+          .returning(sql<string>`inventaire_associe.observateur_id::text`.as("observateurId"))
+          .execute();
+      }
+
+      let weatherIdsResult: { meteoId: string }[] = [];
+      if (inventoryInput.weatherIds.length) {
+        weatherIdsResult = await trx
+          .insertInto("inventaire_meteo")
+          .values(
+            inventoryInput.weatherIds.map((weatherId) => {
+              return { inventaireId: Number.parseInt(inventoryResult.id), meteoId: Number.parseInt(weatherId) };
+            }),
+          )
+          .returning(sql<string>`inventaire_meteo.meteo_id::text`.as("meteoId"))
+          .execute();
+      }
+
+      return {
+        ...inventoryResult,
+        associateIds: associateIdsResult.map((associateId) => associateId.observateurId),
+        weatherIds: weatherIdsResult.map((weatherId) => weatherId.meteoId),
+      };
+    });
+
+    return inventorySchema.parse(reshapeRawInventory(createdInventory));
+  };
+
+  const updateInventory = async (inventoryId: string, inventoryInput: InventoryCreateInput): Promise<Inventory> => {
+    const updatedInventory = await kysely.transaction().execute(async (trx) => {
+      const inventoryResult = await trx
+        .updateTable("inventaire")
+        .set({
+          observateurId: Number.parseInt(inventoryInput.observerId),
+          date: new Date(inventoryInput.date),
+          heure: inventoryInput.time,
+          duree: inventoryInput.duration,
+          lieuditId: Number.parseInt(inventoryInput.localityId),
+          altitude: inventoryInput.customizedCoordinates?.altitude,
+          longitude: inventoryInput.customizedCoordinates?.longitude,
+          latitude: inventoryInput.customizedCoordinates?.latitude,
+          temperature: inventoryInput.temperature,
+          dateCreation: new Date(),
+          ownerId: inventoryInput.ownerId,
+        })
+        .where("id", "=", Number.parseInt(inventoryId))
+        .returning([
+          sql<string>`id::text`.as("id"),
+          sql<string>`observateur_id::text`.as("observateurId"),
+          "date",
+          "heure",
+          "duree",
+          sql<string>`lieudit_id::text`.as("lieuditId"),
+          "altitude",
+          "longitude",
+          "latitude",
+          "temperature",
+          "dateCreation",
+          "ownerId",
+        ])
+        .executeTakeFirstOrThrow();
+
+      await kysely.deleteFrom("inventaire_associe").where("inventaireId", "=", Number.parseInt(inventoryId)).execute();
+
+      let associateIdsResult: { observateurId: string }[] = [];
+      if (inventoryInput.associateIds.length) {
+        associateIdsResult = await trx
+          .insertInto("inventaire_associe")
+          .values(
+            inventoryInput.associateIds.map((associateId) => {
+              return { inventaireId: Number.parseInt(inventoryResult.id), observateurId: Number.parseInt(associateId) };
+            }),
+          )
+          .returning(sql<string>`inventaire_associe.observateur_id::text`.as("observateurId"))
+          .execute();
+      }
+
+      await kysely.deleteFrom("inventaire_meteo").where("inventaireId", "=", Number.parseInt(inventoryId)).execute();
+
+      let weatherIdsResult: { meteoId: string }[] = [];
+      if (inventoryInput.weatherIds.length) {
+        weatherIdsResult = await trx
+          .insertInto("inventaire_meteo")
+          .values(
+            inventoryInput.weatherIds.map((weatherId) => {
+              return { inventaireId: Number.parseInt(inventoryResult.id), meteoId: Number.parseInt(weatherId) };
+            }),
+          )
+          .returning(sql<string>`inventaire_meteo.meteo_id::text`.as("meteoId"))
+          .execute();
+      }
+
+      return {
+        ...inventoryResult,
+        associateIds: associateIdsResult.map((associateId) => associateId.observateurId),
+        weatherIds: weatherIdsResult.map((weatherId) => weatherId.meteoId),
+      };
+    });
+
+    return inventorySchema.parse(reshapeRawInventory(updatedInventory));
+  };
+
   const deleteInventoryById = async (inventoryId: string): Promise<Inventory | null> => {
     const associateIdsResult = await kysely
       .selectFrom("inventaire_associe")
@@ -313,6 +456,8 @@ export const buildInventoryRepository = () => {
     findExistingInventory,
     getCount,
     getCountByLocality,
+    createInventory,
+    updateInventory,
     deleteInventoryById,
   };
 };
