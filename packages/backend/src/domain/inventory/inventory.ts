@@ -26,6 +26,7 @@ export type InventoryDeleteFailureReason = InventoryFailureReason | "inventorySt
 export const inventorySchema = z.object({
   id: z.string(),
   observerId: z.string(),
+  associateIds: z.array(z.string()),
   date: z.date(), // YYYY-MM-DD
   time: z.string().nullable(),
   duration: z.string().nullable(),
@@ -38,6 +39,7 @@ export const inventorySchema = z.object({
     })
     .nullable(),
   temperature: z.number().nullable(),
+  weatherIds: z.array(z.string()),
   creationDate: z.date(),
   ownerId: z.string().uuid().nullable(),
 });

@@ -23,16 +23,15 @@ export const buildWeatherRepository = () => {
     return weatherResult ? weatherSchema.parse(weatherResult) : null;
   };
 
-  const findWeathersByInventoryId = async (inventoryId: number | undefined): Promise<Weather[]> => {
-    if (!inventoryId) {
-      return [];
-    }
-
+  const findWeathersById = async (ids: string[]): Promise<Weather[]> => {
     const weathersResult = await kysely
       .selectFrom("meteo")
-      .leftJoin("inventaire_meteo", "inventaire_meteo.meteoId", "meteo.id")
-      .select([sql<string>`basenaturaliste.meteo.id::text`.as("id"), "libelle", "ownerId"])
-      .where("inventaire_meteo.inventaireId", "=", inventoryId)
+      .select([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+      .where(
+        "meteo.id",
+        "in",
+        ids.map((id) => Number.parseInt(id)),
+      )
       .execute();
 
     return z.array(weatherSchema).parse(weathersResult);
@@ -165,7 +164,7 @@ export const buildWeatherRepository = () => {
 
   return {
     findWeatherById,
-    findWeathersByInventoryId,
+    findWeathersById,
     findWeathers,
     getCount,
     createWeather,

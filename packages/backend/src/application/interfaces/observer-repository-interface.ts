@@ -9,8 +9,7 @@ import type { Result } from "neverthrow";
 
 export type ObserverRepository = {
   findObserverById: (id: number) => Promise<Observer | null>;
-  findObserverByInventoryId: (inventoryId: number | undefined) => Promise<ObserverSimple | null>;
-  findAssociatesOfInventoryId: (inventoryId: number | undefined) => Promise<ObserverSimple[]>;
+  findObserversById: (ids: string[]) => Promise<Observer[]>;
   findObservers: ({
     orderBy,
     sortOrder,

@@ -4,7 +4,7 @@ import type { Result } from "neverthrow";
 
 export type WeatherRepository = {
   findWeatherById: (id: number) => Promise<Weather | null>;
-  findWeathersByInventoryId: (inventoryId: number | undefined) => Promise<Weather[]>;
+  findWeathersById: (ids: string[]) => Promise<Weather[]>;
   findWeathers: ({ orderBy, sortOrder, q, offset, limit }: WeatherFindManyInput) => Promise<readonly Weather[]>;
   getCount: (q?: string | null) => Promise<number>;
   createWeather: (weatherInput: WeatherCreateInput) => Promise<Result<Weather, EntityFailureReason>>;

@@ -14,9 +14,11 @@ export const buildInventoryRepository = () => {
   const findInventoryById = async (id: number): Promise<Inventory | null> => {
     const inventoryResult = await kysely
       .selectFrom("inventaire")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
       .select([
         sql<string>`id::text`.as("id"),
-        sql<string>`observateur_id::text`.as("observateurId"),
+        sql<string>`inventaire.observateur_id::text`.as("observateurId"),
         "date",
         "heure",
         "duree",
@@ -27,8 +29,11 @@ export const buildInventoryRepository = () => {
         "temperature",
         "dateCreation",
         "ownerId",
+        sql<string[]>`array_remove(array_agg(inventaire_associe.observateur_id::text), NULL)`.as("associateIds"),
+        sql<string[]>`array_remove(array_agg(inventaire_meteo.meteo_id::text), NULL)`.as("weatherIds"),
       ])
       .where("id", "=", id)
+      .groupBy("inventaire.id")
       .executeTakeFirst();
 
     return inventoryResult ? inventorySchema.parse(reshapeRawInventory(inventoryResult)) : null;
@@ -38,6 +43,8 @@ export const buildInventoryRepository = () => {
     const inventoryResult = await kysely
       .selectFrom("inventaire")
       .leftJoin("donnee", "inventaire.id", "donnee.inventaireId")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
       .select([
         sql<string>`inventaire.id::text`.as("id"),
         sql<string>`inventaire.observateur_id::text`.as("observateurId"),
@@ -51,8 +58,11 @@ export const buildInventoryRepository = () => {
         "inventaire.temperature",
         "inventaire.dateCreation",
         "inventaire.ownerId",
+        sql<string[]>`array_remove(array_agg(inventaire_associe.observateur_id::text), NULL)`.as("associateIds"),
+        sql<string[]>`array_remove(array_agg(inventaire_meteo.meteo_id::text), NULL)`.as("weatherIds"),
       ])
       .where("donnee.id", "=", Number.parseInt(entryId))
+      .groupBy("inventaire.id")
       .executeTakeFirst();
 
     return inventoryResult ? inventorySchema.parse(reshapeRawInventory(inventoryResult)) : null;
@@ -96,9 +106,11 @@ export const buildInventoryRepository = () => {
   }: InventoryFindManyInput = {}): Promise<Inventory[]> => {
     let queryInventories = kysely
       .selectFrom("inventaire")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
       .select([
         sql<string>`id::text`.as("id"),
-        sql<string>`observateur_id::text`.as("observateurId"),
+        sql<string>`inventaire.observateur_id::text`.as("observateurId"),
         "date",
         "heure",
         "duree",
@@ -109,6 +121,8 @@ export const buildInventoryRepository = () => {
         "temperature",
         "dateCreation",
         "ownerId",
+        sql<string[]>`array_remove(array_agg(inventaire_associe.observateur_id::text), NULL)`.as("associateIds"),
+        sql<string[]>`array_remove(array_agg(inventaire_meteo.meteo_id::text), NULL)`.as("weatherIds"),
       ]);
 
     if (orderBy != null) {
@@ -124,7 +138,7 @@ export const buildInventoryRepository = () => {
       queryInventories = queryInventories.limit(limit);
     }
 
-    const rawInventories = await queryInventories.execute();
+    const rawInventories = await queryInventories.groupBy("inventaire.id").execute();
 
     return z.array(inventorySchema).parse(rawInventories.map((rawInventory) => reshapeRawInventory(rawInventory)));
   };
@@ -147,6 +161,8 @@ export const buildInventoryRepository = () => {
         "inventaire.temperature",
         "inventaire.dateCreation",
         "inventaire.ownerId",
+        sql<string[]>`array_remove(array_agg(inventaire_associe.observateur_id::text), NULL)`.as("associateIds"),
+        sql<string[]>`array_remove(array_agg(inventaire_meteo.meteo_id::text), NULL)`.as("weatherIds"),
       ])
       .where((eb) => {
         const clause: OperandExpression<SqlBool>[] = [];
@@ -216,6 +232,18 @@ export const buildInventoryRepository = () => {
   };
 
   const deleteInventoryById = async (inventoryId: string): Promise<Inventory | null> => {
+    const associateIdsResult = await kysely
+      .selectFrom("inventaire_associe")
+      .select(sql<string>`observateur_id::text`.as("observateurId"))
+      .where("inventaireId", "=", Number.parseInt(inventoryId))
+      .execute();
+
+    const weatherIdsResult = await kysely
+      .selectFrom("inventaire_meteo")
+      .select(sql<string>`meteo_id::text`.as("meteoId"))
+      .where("inventaireId", "=", Number.parseInt(inventoryId))
+      .execute();
+
     const deletedInventory = await kysely
       .deleteFrom("inventaire")
       .where("id", "=", Number.parseInt(inventoryId))
@@ -235,7 +263,15 @@ export const buildInventoryRepository = () => {
       ])
       .executeTakeFirst();
 
-    return deletedInventory ? inventorySchema.parse(reshapeRawInventory(deletedInventory)) : null;
+    return deletedInventory
+      ? inventorySchema.parse(
+          reshapeRawInventory({
+            ...deletedInventory,
+            associateIds: associateIdsResult.map((associateId) => associateId.observateurId),
+            weatherIds: weatherIdsResult.map((weatherId) => weatherId.meteoId),
+          }),
+        )
+      : null;
   };
 
   return {

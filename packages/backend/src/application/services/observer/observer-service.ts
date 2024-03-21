@@ -25,41 +25,20 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
-  const findObserverOfInventoryId = async (
-    inventoryId: number | undefined,
+  const findObservers = async (
+    ids: string[],
     loggedUser: LoggedUser | null,
-  ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
+  ): Promise<Result<Observer[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const observer = await observerRepository.findObserverByInventoryId(inventoryId);
-    return ok(enrichEntityWithEditableStatus(observer, loggedUser));
-  };
-
-  const findAssociateIdsOfInventoryId = async (inventoryId: number): Promise<string[]> => {
-    const associesIds = await observerRepository
-      .findAssociatesOfInventoryId(inventoryId)
-      .then((associes) => associes.map(({ id }) => id));
-
-    return [...associesIds];
-  };
-
-  const findAssociatesOfInventoryId = async (
-    inventoryId: number | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
+    if (ids.length === 0) {
+      return ok([]);
     }
 
-    const associes = await observerRepository.findAssociatesOfInventoryId(inventoryId);
-
-    const enrichedAssociates = associes.map((associate) => {
-      return enrichEntityWithEditableStatus(associate, loggedUser);
-    });
-
-    return ok([...enrichedAssociates]);
+    const observers = await observerRepository.findObserversById(ids);
+    return ok(observers.map((observer) => enrichEntityWithEditableStatus(observer, loggedUser)));
   };
 
   const findAllObservers = async (): Promise<ObserverSimple[]> => {
@@ -194,9 +173,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   return {
     findObserver,
-    findObserverOfInventoryId,
-    findAssociatesOfInventoryId,
-    findAssociateIdsOfInventoryId,
+    findObservers,
     findAllObservers,
     findPaginatedObservers,
     getObserversCount,

@@ -145,7 +145,7 @@ export const buildInventoryService = ({
     if (existingInventory) {
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(reshapeInventaireToInventory(existingInventory));
+      return ok(reshapeInventaireToInventory(existingInventory, associateIds, weatherIds));
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventory we wish to create does not have an equivalent existing one
@@ -177,7 +177,7 @@ export const buildInventoryService = ({
         return createdInventaire;
       });
 
-      return ok(reshapeInventaireToInventory(createdInventory));
+      return ok(reshapeInventaireToInventory(createdInventory, associateIds, weatherIds));
     }
   };
 
@@ -245,7 +245,7 @@ export const buildInventoryService = ({
 
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
-      return ok(reshapeInventaireToInventory(existingInventory));
+      return ok(reshapeInventaireToInventory(existingInventory, associateIds, weatherIds));
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
       // The inventory we wish to update does not have an equivalent existing one
@@ -282,7 +282,7 @@ export const buildInventoryService = ({
         return updatedInventaire;
       });
 
-      return ok(reshapeInventaireToInventory(updatedInventory));
+      return ok(reshapeInventaireToInventory(updatedInventory, associateIds, weatherIds));
     }
   };
 

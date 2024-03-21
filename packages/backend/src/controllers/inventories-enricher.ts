@@ -13,10 +13,10 @@ export const enrichedInventory = async (
   user: LoggedUser | null,
 ): Promise<Result<InventoryExtended, AccessFailureReason | "extendedDataNotFound">> => {
   const enrichedResult = Result.combine([
-    await services.observerService.findObserverOfInventoryId(Number.parseInt(inventory.id), user),
-    await services.observerService.findAssociatesOfInventoryId(Number.parseInt(inventory.id), user),
-    await services.localityService.findLocalityOfInventoryId(inventory.id, user),
-    await services.weatherService.findWeathersOfInventoryId(Number.parseInt(inventory.id), user),
+    await services.observerService.findObserver(Number.parseInt(inventory.observerId), user),
+    await services.observerService.findObservers(inventory.associateIds, user),
+    await services.localityService.findLocality(Number.parseInt(inventory.localityId), user),
+    await services.weatherService.findWeathers(inventory.weatherIds, user),
   ]);
 
   if (enrichedResult.isErr()) {

@@ -224,7 +224,7 @@ export class ImportDonneeService extends ImportService {
     );
 
     // Find if we already have an existing inventaire that matches the one from the current donnee
-    const existingInventaire = this.inventaires.find(async (existingInventaire) => {
+    const existingInventaire = this.inventaires.find((existingInventaire) => {
       return (
         `${existingInventaire.observerId}` === inputInventaire.observerId &&
         getDateOnlyAsLocalISOString(existingInventaire.date) === inputInventaire.date &&
@@ -235,18 +235,8 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.customizedCoordinates?.longitude === inputInventaire.coordinates?.longitude &&
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.coordinates?.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
-        areSetsContainingSameValues(
-          new Set(
-            await this.services.observerService.findAssociateIdsOfInventoryId(Number.parseInt(existingInventaire.id)),
-          ),
-          new Set(inputInventaire.associateIds),
-        ) &&
-        areSetsContainingSameValues(
-          new Set(
-            await this.services.weatherService.findWeatherIdsOfInventoryId(Number.parseInt(existingInventaire.id)),
-          ),
-          new Set(inputInventaire.weatherIds),
-        )
+        areSetsContainingSameValues(new Set(existingInventaire.associateIds), new Set(inputInventaire.associateIds)) &&
+        areSetsContainingSameValues(new Set(existingInventaire.weatherIds), new Set(inputInventaire.weatherIds))
       );
     });
 

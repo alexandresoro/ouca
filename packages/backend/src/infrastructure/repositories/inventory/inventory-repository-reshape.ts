@@ -5,6 +5,9 @@ type RawInventory = Omit<InventoryRepository, "id" | "observateurId" | "lieuditI
   id: string;
   observateurId: string;
   lieuditId: string;
+} & {
+  associateIds: string[];
+  weatherIds: string[];
 };
 
 export const reshapeRawInventory = (rawInventory: RawInventory): Inventory => {

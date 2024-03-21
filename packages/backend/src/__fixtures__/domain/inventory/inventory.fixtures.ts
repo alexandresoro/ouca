@@ -6,6 +6,7 @@ export const inventoryFactory = Factory.define<Inventory>(() => {
   return {
     id: faker.string.uuid(),
     observerId: faker.string.alphanumeric(),
+    associateIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     date: faker.date.recent(),
     time: faker.string.alpha(),
     duration: faker.string.alpha(),
@@ -16,6 +17,7 @@ export const inventoryFactory = Factory.define<Inventory>(() => {
       latitude: faker.number.float(),
     },
     temperature: faker.number.int(),
+    weatherIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     creationDate: faker.date.recent(),
     ownerId: faker.string.uuid(),
   };

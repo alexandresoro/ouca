@@ -17,8 +17,7 @@ const observerService = buildObserverService({
 
 beforeEach(() => {
   observerRepository.findObserverById.mock.resetCalls();
-  observerRepository.findObserverByInventoryId.mock.resetCalls();
-  observerRepository.findAssociatesOfInventoryId.mock.resetCalls();
+  observerRepository.findObserversById.mock.resetCalls();
   observerRepository.findObservers.mock.resetCalls();
   observerRepository.createObserver.mock.resetCalls();
   observerRepository.createObservers.mock.resetCalls();
@@ -58,47 +57,45 @@ describe("Find observer", () => {
   });
 });
 
-describe("Find observer by inventary ID", () => {
-  test("should handle observer found", async () => {
-    const observerData = observerFactory.build();
+describe("Find observers by IDs", () => {
+  test("should handle observers found", async () => {
+    const observersData = observerFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    observerRepository.findObserverByInventoryId.mock.mockImplementationOnce(() => Promise.resolve(observerData));
+    observerRepository.findObserversById.mock.mockImplementationOnce(() => Promise.resolve(observersData));
 
-    const observerResult = await observerService.findObserverOfInventoryId(43, loggedUser);
+    await observerService.findObservers(["12", "13", "14"], loggedUser);
 
-    assert.strictEqual(observerRepository.findObserverByInventoryId.mock.callCount(), 1);
-    assert.deepStrictEqual(observerRepository.findObserverByInventoryId.mock.calls[0].arguments, [43]);
-    assert.ok(observerResult.isOk());
-    assert.deepStrictEqual(observerResult.value?.id, observerData.id);
+    assert.strictEqual(observerRepository.findObserversById.mock.callCount(), 1);
+    assert.deepStrictEqual(observerRepository.findObserversById.mock.calls[0].arguments, [["12", "13", "14"]]);
+  });
+
+  test("should handle no observers found", async () => {
+    const loggedUser = loggedUserFactory.build();
+
+    observerRepository.findObserversById.mock.mockImplementationOnce(() => Promise.resolve([]));
+
+    await observerService.findObservers(["12", "13", "14"], loggedUser);
+
+    assert.strictEqual(observerRepository.findObserversById.mock.callCount(), 1);
+    assert.deepStrictEqual(observerRepository.findObserversById.mock.calls[0].arguments, [["12", "13", "14"]]);
+  });
+
+  test("should handle no ids provided", async () => {
+    const loggedUser = loggedUserFactory.build();
+
+    const findResult = await observerService.findObservers([], loggedUser);
+
+    assert.ok(findResult.isOk());
+    assert.deepStrictEqual(findResult.value, []);
+    assert.strictEqual(observerRepository.findObserversById.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await observerService.findObserverOfInventoryId(12, null);
+    const findResult = await observerService.findObservers(["12", "13", "14"], null);
 
     assert.deepStrictEqual(findResult, err("notAllowed"));
-  });
-});
-
-describe("Find associates by inventory ID", () => {
-  test("should handle observer found", async () => {
-    const associatesData = observerFactory.buildList(3);
-    const loggedUser = loggedUserFactory.build();
-
-    observerRepository.findAssociatesOfInventoryId.mock.mockImplementationOnce(() => Promise.resolve(associatesData));
-
-    const associatesResult = await observerService.findAssociatesOfInventoryId(43, loggedUser);
-
-    assert.strictEqual(observerRepository.findAssociatesOfInventoryId.mock.callCount(), 1);
-    assert.deepStrictEqual(observerRepository.findAssociatesOfInventoryId.mock.calls[0].arguments, [43]);
-    assert.ok(associatesResult.isOk());
-    assert.deepStrictEqual(associatesResult.value.length, 3);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await observerService.findAssociatesOfInventoryId(12, null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
+    assert.strictEqual(observerRepository.findObserversById.mock.callCount(), 0);
   });
 });
 

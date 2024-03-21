@@ -58,16 +58,22 @@ export const reshapeInputInventoryUpsertData = (
   };
 };
 
-export const reshapeInventaireToInventory = (inventaire: Inventaire): Inventory => {
+export const reshapeInventaireToInventory = (
+  inventaire: Inventaire,
+  associateIds: string[],
+  weatherIds: string[],
+): Inventory => {
   const { observateurId, date, heure, duree, lieuditId, dateCreation, ...restInventaire } = inventaire;
 
   return {
     ...restInventaire,
     observerId: observateurId.toString(),
+    associateIds,
     date: new Date(date),
     time: heure,
     duration: duree,
     localityId: lieuditId.toString(),
+    weatherIds,
     creationDate: new Date(dateCreation),
   };
 };

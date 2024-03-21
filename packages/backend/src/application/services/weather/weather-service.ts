@@ -26,6 +26,22 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
     return ok(enrichEntityWithEditableStatus(weather, loggedUser));
   };
 
+  const findWeathers = async (
+    ids: string[],
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Weather[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    if (ids.length === 0) {
+      return ok([]);
+    }
+
+    const weathers = await weatherRepository.findWeathersById(ids);
+    return ok(weathers.map((weather) => enrichEntityWithEditableStatus(weather, loggedUser)));
+  };
+
   const getEntriesCountByWeather = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -35,31 +51,6 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
     }
 
     return ok(await entryRepository.getCountByMeteoId(Number.parseInt(id)));
-  };
-
-  const findWeathersOfInventoryId = async (
-    inventoryId: number | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<Weather[], AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const weathers = await weatherRepository.findWeathersByInventoryId(inventoryId);
-
-    const enrichedWeathers = weathers.map((weather) => {
-      return enrichEntityWithEditableStatus(weather, loggedUser);
-    });
-
-    return ok([...enrichedWeathers]);
-  };
-
-  const findWeatherIdsOfInventoryId = async (inventoryId: number): Promise<string[]> => {
-    const meteosIds = await weatherRepository
-      .findWeathersByInventoryId(inventoryId)
-      .then((weathers) => weathers.map(({ id }) => id));
-
-    return [...meteosIds];
   };
 
   const findAllWeathers = async (): Promise<Weather[]> => {
@@ -194,9 +185,8 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
 
   return {
     findWeather,
+    findWeathers,
     getEntriesCountByWeather,
-    findWeathersOfInventoryId,
-    findWeatherIdsOfInventoryId,
     findAllWeathers,
     findPaginatedWeathers,
     getWeathersCount,

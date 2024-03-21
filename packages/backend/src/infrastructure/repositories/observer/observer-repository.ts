@@ -31,34 +31,23 @@ export const buildObserverRepository = () => {
     return observerResult ? observerSchema.parse(observerResult) : null;
   };
 
-  const findObserverByInventoryId = async (inventoryId: number | undefined): Promise<ObserverSimple | null> => {
-    if (!inventoryId) {
-      return null;
-    }
-
-    const observerResult = await kysely
+  const findObserversById = async (ids: string[]): Promise<Observer[]> => {
+    const observersResult = await kysely
       .selectFrom("observateur")
       .leftJoin("inventaire", "inventaire.observateurId", "observateur.id")
+      .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
       .select([sql<string>`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"])
-      .where("inventaire.id", "=", inventoryId)
-      .executeTakeFirst();
-
-    return observerResult ? observerSimpleSchema.parse(observerResult) : null;
-  };
-
-  const findAssociatesOfInventoryId = async (inventoryId: number | undefined): Promise<ObserverSimple[]> => {
-    if (!inventoryId) {
-      return [];
-    }
-
-    const associatesResult = await kysely
-      .selectFrom("observateur")
-      .leftJoin("inventaire_associe", "inventaire_associe.observateurId", "observateur.id")
-      .select([sql<string>`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"])
-      .where("inventaire_associe.inventaireId", "=", inventoryId)
+      .select((eb) => eb.fn.count("inventaire.id").distinct().as("inventoriesCount"))
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("entriesCount"))
+      .where(
+        "observateur.id",
+        "in",
+        ids.map((id) => Number.parseInt(id)),
+      )
+      .groupBy("observateur.id")
       .execute();
 
-    return z.array(observerSimpleSchema).parse(associatesResult);
+    return z.array(observerSchema).parse(observersResult);
   };
 
   const findObservers = async ({
@@ -216,8 +205,7 @@ export const buildObserverRepository = () => {
 
   return {
     findObserverById,
-    findObserverByInventoryId,
-    findAssociatesOfInventoryId,
+    findObserversById,
     findObservers,
     getCount,
     createObserver,

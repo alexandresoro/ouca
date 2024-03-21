@@ -176,17 +176,13 @@ export const generateDonneesExport = async (
       }
 
       const observateur = (
-        await observerService.findObserverOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
+        await observerService.findObserver(Number.parseInt(inventaire.observerId), loggedUser)
       )._unsafeUnwrap();
       const lieudit = (await localityService.findLocalityOfInventoryId(inventaire.id, loggedUser))._unsafeUnwrap();
       const commune = (await townService.findTownOfLocalityId(lieudit?.id, loggedUser))._unsafeUnwrap();
       const departement = (await departmentService.findDepartmentOfTownId(commune?.id, loggedUser))._unsafeUnwrap();
-      const associes = (
-        await observerService.findAssociatesOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
-      )._unsafeUnwrap();
-      const meteos = (
-        await weatherService.findWeathersOfInventoryId(Number.parseInt(inventaire.id), loggedUser)
-      )._unsafeUnwrap();
+      const associes = (await observerService.findObservers(inventaire.associateIds, loggedUser))._unsafeUnwrap();
+      const meteos = (await weatherService.findWeathers(inventaire.weatherIds, loggedUser))._unsafeUnwrap();
       const espece = (await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
       const classe = (await classService.findSpeciesClassOfSpecies(espece?.id, loggedUser))._unsafeUnwrap();
       const age = (await ageService.findAgeOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
