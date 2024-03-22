@@ -86,7 +86,7 @@ export const reshapeInputInventoryUpsertData = (
     ...rest,
     duration: duration != null ? getHumanFriendlyTimeFromMinutes(duration) : null,
     customizedCoordinates,
-    ownerId,
+    ...(ownerId ? { ownerId } : {}),
   };
 };
 

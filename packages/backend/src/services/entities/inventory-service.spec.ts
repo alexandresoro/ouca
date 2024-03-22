@@ -52,6 +52,7 @@ beforeEach(() => {
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
   inventoryRepository.findInventories.mock.resetCalls();
   inventoryRepository.findExistingInventory.mock.resetCalls();
+  inventoryRepository.createInventory.mock.resetCalls();
   inventoryRepository.deleteInventoryById.mock.resetCalls();
   inventoryRepository.getCount.mock.resetCalls();
   inventoryRepository.getCountByLocality.mock.resetCalls();
@@ -312,15 +313,14 @@ describe("Creation of an inventory", () => {
         weatherIds: ["4", "5"],
         duration: null,
       });
+      const { coordinates, migrateDonneesIfMatchesExistingInventaire, ...restInventoryData } = inventoryData;
 
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
       inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() => Promise.resolve(null));
-      inventoryRepositoryLegacy.createInventaire.mockResolvedValueOnce(
-        mockVe<Inventaire>({
-          id: "322",
-        }),
+      inventoryRepository.createInventory.mock.mockImplementationOnce(() =>
+        Promise.resolve(inventoryFactory.build({ id: "322" })),
       );
 
       const reshapedInputData = mockVe<InventaireCreateInput>();
@@ -328,13 +328,14 @@ describe("Creation of an inventory", () => {
 
       await inventaireService.createInventory(inventoryData, loggedUser);
 
-      expect(inventoryRepositoryLegacy.createInventaire).toHaveBeenCalledTimes(1);
-      expect(inventoryRepositoryLegacy.createInventaire).toHaveBeenLastCalledWith(any(), any());
-      expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
-      // TODO investigate why this check is failing
-      // expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(322, [2, 3], any());
-      expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
-      // expect(nventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(322, [4, 5], any());
+      assert.strictEqual(inventoryRepository.createInventory.mock.callCount(), 1);
+      assert.deepStrictEqual(inventoryRepository.createInventory.mock.calls[0].arguments, [
+        {
+          ...restInventoryData,
+          customizedCoordinates: coordinates,
+          ownerId: loggedUser.id,
+        },
+      ]);
     });
 
     test("should not be allowed when the requester is not logged", async () => {

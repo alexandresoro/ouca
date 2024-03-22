@@ -126,8 +126,6 @@ export const buildInventoryService = ({
       return err("notAllowed");
     }
 
-    const { associateIds, weatherIds } = input;
-
     const locality = await localityRepository.findLocalityById(Number.parseInt(input.localityId));
     if (!locality) {
       logger.warn(
@@ -153,33 +151,12 @@ export const buildInventoryService = ({
     // The inventory we wish to create does not have an equivalent existing one
     // In that case, we proceed as a classic create
 
-    // Create a new inventory
-    const createdInventory = await slonik.transaction(async (transactionConnection) => {
-      const createdInventaire = await inventoryRepositoryLegacy.createInventaire(
-        reshapeInputInventoryUpsertDataLegacy(input, locality, loggedUser.id),
-        transactionConnection,
-      );
-
-      if (associateIds?.length) {
-        await inventoryAssociateRepository.insertInventaireWithAssocies(
-          Number.parseInt(createdInventaire.id),
-          associateIds.map((associateId) => Number.parseInt(associateId)),
-          transactionConnection,
-        );
-      }
-
-      if (weatherIds?.length) {
-        await inventoryWeatherRepository.insertInventaireWithMeteos(
-          Number.parseInt(createdInventaire.id),
-          weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-          transactionConnection,
-        );
-      }
-
-      return createdInventaire;
+    const createdInventory = await inventoryRepository.createInventory({
+      ...reshapeInputInventoryUpsertData(input, locality),
+      ownerId: loggedUser.id,
     });
 
-    return ok(reshapeInventaireToInventory(createdInventory, associateIds, weatherIds));
+    return ok(createdInventory);
   };
 
   const updateInventory = async (
