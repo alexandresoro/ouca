@@ -61,7 +61,7 @@ export class ImportDonneeService extends ImportService {
     this.comportements = await this.services.behaviorService.findAllBehaviors();
     this.milieux = await this.services.environmentService.findAllEnvironments();
     this.inventaires = await this.services.inventoryService.findAllInventories();
-    this.existingDonnees = await this.services.entryService.findAllDonnees();
+    this.existingDonnees = await this.services.entryService.findAllEntries();
   };
 
   protected validateAndPrepareEntity = async (donneeTab: string[], loggedUser: LoggedUser): Promise<string | null> => {
@@ -325,7 +325,7 @@ export class ImportDonneeService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     for (const inputDonnee of this.newDonnees) {
-      await this.services.entryService.createDonnee(inputDonnee, loggedUser);
+      await this.services.entryService.createEntry(inputDonnee, loggedUser);
     }
   };
 

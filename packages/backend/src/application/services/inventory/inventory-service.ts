@@ -7,6 +7,7 @@ import type {
 } from "@domain/inventory/inventory.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
@@ -18,13 +19,15 @@ import { reshapeInputInventoryUpsertData } from "./inventory-service-reshape.js"
 
 type InventoryServiceDependencies = {
   inventoryRepository: InventoryRepository;
-  entryRepository: DonneeRepository;
+  entryRepository: EntryRepository;
+  entryRepositoryLegacy: DonneeRepository;
   localityRepository: LocalityRepository;
 };
 
 export const buildInventoryService = ({
   inventoryRepository,
   entryRepository,
+  entryRepositoryLegacy,
   localityRepository,
 }: InventoryServiceDependencies) => {
   const findInventory = async (
@@ -193,7 +196,10 @@ export const buildInventoryService = ({
       // should now be linked to inventory B if matches
 
       // We update the inventory ID for the donnees and we delete the duplicated inventory
-      await entryRepository.updateAssociatedInventaire(Number.parseInt(id), Number.parseInt(existingInventory.id));
+      await entryRepositoryLegacy.updateAssociatedInventaire(
+        Number.parseInt(id),
+        Number.parseInt(existingInventory.id),
+      );
 
       await inventoryRepository.deleteInventoryById(`${id}`);
 

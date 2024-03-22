@@ -54,7 +54,7 @@ import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donne
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
-import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
+import { type EntryService, buildEntryService } from "./entities/entry-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
@@ -66,7 +66,7 @@ export type Services = {
   classService: SpeciesClassService;
   departmentService: DepartmentService;
   distanceEstimateService: DistanceEstimateService;
-  entryService: DonneeService;
+  entryService: EntryService;
   environmentService: EnvironmentService;
   inventoryService: InventoryService;
   localityService: LocalityService;
@@ -133,10 +133,11 @@ export const buildServices = async (): Promise<Services> => {
     localityRepository,
   });
 
-  const entryService = buildDonneeService({
+  const entryService = buildEntryService({
     slonik,
     inventoryRepository,
-    entryRepository: entryRepositoryLegacy,
+    entryRepository,
+    entryRepositoryLegacy,
     entryBehaviorRepository,
     entryEnvironmentRepository,
   });
@@ -156,7 +157,8 @@ export const buildServices = async (): Promise<Services> => {
 
   const inventoryService = buildInventoryService({
     inventoryRepository,
-    entryRepository: entryRepositoryLegacy,
+    entryRepository,
+    entryRepositoryLegacy,
     localityRepository,
   });
 

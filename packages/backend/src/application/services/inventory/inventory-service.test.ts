@@ -4,6 +4,7 @@ import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.
 import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertInventoryInputFactory } from "@fixtures/services/inventory/inventory-service.fixtures.js";
+import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams } from "@ou-ca/common/api/inventory";
@@ -14,12 +15,14 @@ import { mock } from "../../../utils/mock.js";
 import { buildInventoryService } from "./inventory-service.js";
 
 const inventoryRepository = mock<InventoryRepository>();
-const entryRepository = mock<DonneeRepository>();
+const entryRepository = mock<EntryRepository>();
+const entryRepositoryLegacy = mock<DonneeRepository>();
 const localityRepository = mock<LocalityRepository>();
 
 const inventaireService = buildInventoryService({
   inventoryRepository,
   entryRepository,
+  entryRepositoryLegacy,
   localityRepository,
 });
 
@@ -33,7 +36,7 @@ beforeEach(() => {
   inventoryRepository.deleteInventoryById.mock.resetCalls();
   inventoryRepository.getCount.mock.resetCalls();
   inventoryRepository.getCountByLocality.mock.resetCalls();
-  entryRepository.updateAssociatedInventaire.mock.resetCalls();
+  entryRepositoryLegacy.updateAssociatedInventaire.mock.resetCalls();
 });
 
 describe("Find inventory", () => {
@@ -165,7 +168,7 @@ describe("Update of an inventory", () => {
         err({ type: "similarInventoryAlreadyExists", correspondingInventoryFound: "345" }),
       );
 
-      assert.strictEqual(entryRepository.updateAssociatedInventaire.mock.callCount(), 0);
+      assert.strictEqual(entryRepositoryLegacy.updateAssociatedInventaire.mock.callCount(), 0);
       assert.strictEqual(inventoryRepository.deleteInventoryById.mock.callCount(), 0);
     });
 
@@ -183,8 +186,8 @@ describe("Update of an inventory", () => {
 
       const result = await inventaireService.updateInventory("12", inventoryData, loggedUser);
 
-      assert.strictEqual(entryRepository.updateAssociatedInventaire.mock.callCount(), 1);
-      assert.deepStrictEqual(entryRepository.updateAssociatedInventaire.mock.calls[0].arguments, [12, 345]);
+      assert.strictEqual(entryRepositoryLegacy.updateAssociatedInventaire.mock.callCount(), 1);
+      assert.deepStrictEqual(entryRepositoryLegacy.updateAssociatedInventaire.mock.calls[0].arguments, [12, 345]);
       assert.strictEqual(inventoryRepository.deleteInventoryById.mock.callCount(), 1);
       assert.deepStrictEqual(inventoryRepository.deleteInventoryById.mock.calls[0].arguments, ["12"]);
       assert.ok(result.isOk());
@@ -259,7 +262,7 @@ describe("Creation of an inventory", () => {
 
       const result = await inventaireService.createInventory(inventoryData, loggedUser);
 
-      assert.strictEqual(entryRepository.updateAssociatedInventaire.mock.callCount(), 0);
+      assert.strictEqual(entryRepositoryLegacy.updateAssociatedInventaire.mock.callCount(), 0);
       assert.strictEqual(inventoryRepository.deleteInventoryById.mock.callCount(), 0);
       assert.ok(result.isOk());
       assert.strictEqual(result.value.id, "345");

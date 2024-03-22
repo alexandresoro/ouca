@@ -1,5 +1,6 @@
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { err, ok } from "neverthrow";
@@ -10,10 +11,11 @@ import type { DonneeComportementRepository } from "../../repositories/donnee-com
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { mockVi } from "../../utils/mock.js";
-import { buildDonneeService } from "./donnee-service.js";
+import { mock, mockVi } from "../../utils/mock.js";
+import { buildEntryService } from "./entry-service.js";
 
-const entryRepository = mockVi<DonneeRepository>();
+const entryRepository = mock<EntryRepository>();
+const entryRepositoryLegacy = mockVi<DonneeRepository>();
 const entryBehaviorRepository = mockVi<DonneeComportementRepository>();
 const entryEnvironmentRepository = mockVi<DonneeMilieuRepository>();
 const inventoryRepository = mockVi<InventoryRepository>();
@@ -21,16 +23,17 @@ const slonik = createMockPool({
   query: vi.fn(),
 });
 
-const donneeService = buildDonneeService({
+const entryService = buildEntryService({
   slonik,
   inventoryRepository,
   entryRepository,
+  entryRepositoryLegacy,
   entryBehaviorRepository,
   entryEnvironmentRepository,
 });
 
 const reshapeInputEntryUpsertData = vi.fn<unknown[], DonneeCreateInput>();
-vi.doMock("./donnee-service-reshape.js", () => {
+vi.doMock("./entry-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputEntryUpsertData,
@@ -46,39 +49,39 @@ describe("Find data", () => {
     const dataData = mockVe<Donnee>();
     const loggedUser = loggedUserFactory.build();
 
-    entryRepository.findDonneeById.mockResolvedValueOnce(dataData);
+    entryRepositoryLegacy.findDonneeById.mockResolvedValueOnce(dataData);
 
-    await donneeService.findDonnee(12, loggedUser);
+    await entryService.findEntry(12, loggedUser);
 
-    expect(entryRepository.findDonneeById).toHaveBeenCalledTimes(1);
-    expect(entryRepository.findDonneeById).toHaveBeenLastCalledWith(12);
+    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle data not found", async () => {
-    entryRepository.findDonneeById.mockResolvedValueOnce(null);
+    entryRepositoryLegacy.findDonneeById.mockResolvedValueOnce(null);
     const loggedUser = loggedUserFactory.build();
 
-    await expect(donneeService.findDonnee(10, loggedUser)).resolves.toEqual(ok(null));
+    await expect(entryService.findEntry(10, loggedUser)).resolves.toEqual(ok(null));
 
-    expect(entryRepository.findDonneeById).toHaveBeenCalledTimes(1);
-    expect(entryRepository.findDonneeById).toHaveBeenLastCalledWith(10);
+    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenLastCalledWith(10);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    expect(await donneeService.findDonnee(11, null)).toEqual(err("notAllowed"));
+    expect(await entryService.findEntry(11, null)).toEqual(err("notAllowed"));
 
-    expect(entryRepository.findDonneeById).not.toHaveBeenCalled();
+    expect(entryRepositoryLegacy.findDonneeById).not.toHaveBeenCalled();
   });
 });
 
 test("Find all datas", async () => {
   const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
 
-  entryRepository.findDonnees.mockResolvedValueOnce(dataData);
+  entryRepositoryLegacy.findDonnees.mockResolvedValueOnce(dataData);
 
-  await donneeService.findAllDonnees();
+  await entryService.findAllEntries();
 
-  expect(entryRepository.findDonnees).toHaveBeenCalledTimes(1);
+  expect(entryRepositoryLegacy.findDonnees).toHaveBeenCalledTimes(1);
 });
 
 describe("Data paginated find by search criteria", () => {
@@ -86,15 +89,15 @@ describe("Data paginated find by search criteria", () => {
     const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
     const loggedUser = loggedUserFactory.build();
 
-    entryRepository.findDonnees.mockResolvedValueOnce(dataData);
+    entryRepositoryLegacy.findDonnees.mockResolvedValueOnce(dataData);
 
-    await donneeService.findPaginatedDonnees(loggedUser, {
+    await entryService.findPaginatedEntries(loggedUser, {
       pageNumber: 1,
       pageSize: 10,
     });
 
-    expect(entryRepository.findDonnees).toHaveBeenCalledTimes(1);
-    expect(entryRepository.findDonnees).toHaveBeenLastCalledWith({
+    expect(entryRepositoryLegacy.findDonnees).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.findDonnees).toHaveBeenLastCalledWith({
       offset: 0,
       limit: 10,
     });
@@ -113,12 +116,12 @@ describe("Data paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    entryRepository.findDonnees.mockResolvedValueOnce([dataData[0]]);
+    entryRepositoryLegacy.findDonnees.mockResolvedValueOnce([dataData[0]]);
 
-    await donneeService.findPaginatedDonnees(loggedUser, searchParams);
+    await entryService.findPaginatedEntries(loggedUser, searchParams);
 
-    expect(entryRepository.findDonnees).toHaveBeenCalledTimes(1);
-    expect(entryRepository.findDonnees).toHaveBeenLastCalledWith({
+    expect(entryRepositoryLegacy.findDonnees).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.findDonnees).toHaveBeenLastCalledWith({
       searchCriteria: {
         number: 12,
         breeders: ["certain", "probable"],
@@ -131,7 +134,7 @@ describe("Data paginated find by search criteria", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await donneeService.findPaginatedDonnees(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
+    expect(await entryService.findPaginatedEntries(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
   });
 });
 
@@ -139,13 +142,13 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    await donneeService.getDonneesCount(loggedUser, {
+    await entryService.getEntriesCount(loggedUser, {
       pageNumber: 1,
       pageSize: 10,
     });
 
-    expect(entryRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(entryRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(entryRepositoryLegacy.getCount).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -158,17 +161,17 @@ describe("Entities count by search criteria", () => {
       breeders: ["certain", "probable"],
     };
 
-    await donneeService.getDonneesCount(loggedUser, searchCriteria);
+    await entryService.getEntriesCount(loggedUser, searchCriteria);
 
-    expect(entryRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(entryRepository.getCount).toHaveBeenLastCalledWith({
+    expect(entryRepositoryLegacy.getCount).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.getCount).toHaveBeenLastCalledWith({
       number: 12,
       breeders: ["certain", "probable"],
     });
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await donneeService.getDonneesCount(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
+    expect(await entryService.getEntriesCount(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
   });
 });
 
@@ -176,27 +179,27 @@ describe("Get next group", () => {
   test("should handle existing groups", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    entryRepository.findLatestRegroupement.mockResolvedValueOnce(18);
+    entryRepositoryLegacy.findLatestRegroupement.mockResolvedValueOnce(18);
 
-    const nextRegroupement = await donneeService.findNextRegroupement(loggedUser);
+    const nextRegroupement = await entryService.findNextGrouping(loggedUser);
 
-    expect(entryRepository.findLatestRegroupement).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.findLatestRegroupement).toHaveBeenCalledTimes(1);
     expect(nextRegroupement).toEqual(ok(19));
   });
 
   test("should handle no existing group", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    entryRepository.findLatestRegroupement.mockResolvedValueOnce(null);
+    entryRepositoryLegacy.findLatestRegroupement.mockResolvedValueOnce(null);
 
-    await donneeService.findNextRegroupement(loggedUser);
+    await entryService.findNextGrouping(loggedUser);
 
-    expect(entryRepository.findLatestRegroupement).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.findLatestRegroupement).toHaveBeenCalledTimes(1);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    expect(await donneeService.findNextRegroupement(null)).toEqual(err("notAllowed"));
-    expect(entryRepository.findLatestRegroupement).not.toHaveBeenCalled();
+    expect(await entryService.findNextGrouping(null)).toEqual(err("notAllowed"));
+    expect(entryRepositoryLegacy.findLatestRegroupement).not.toHaveBeenCalled();
   });
 });
 
@@ -208,17 +211,17 @@ describe("Deletion of a data", () => {
 
     const matchingInventory = inventoryFactory.build();
 
-    const deletedDonnee = mockVe<Donnee>({
+    const deletedEntry = mockVe<Donnee>({
       id: "42",
     });
 
     inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
-    entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+    entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
 
-    const result = await donneeService.deleteDonnee("11", loggedUser);
+    const result = await entryService.deleteEntry("11", loggedUser);
 
-    expect(entryRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(ok(deletedDonnee));
+    expect(entryRepositoryLegacy.deleteDonneeById).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(ok(deletedEntry));
   });
 
   describe("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
@@ -232,17 +235,17 @@ describe("Deletion of a data", () => {
         ownerId: loggedUser.id,
       });
 
-      const deletedDonnee = mockVe<Donnee>({
+      const deletedEntry = mockVe<Donnee>({
         id: "42",
       });
 
       inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
-      entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+      entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
 
-      const result = await donneeService.deleteDonnee("11", loggedUser);
+      const result = await entryService.deleteEntry("11", loggedUser);
 
-      expect(entryRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(ok(deletedDonnee));
+      expect(entryRepositoryLegacy.deleteDonneeById).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(ok(deletedEntry));
     });
 
     test("unless no matching inventory has been found", async () => {
@@ -251,15 +254,15 @@ describe("Deletion of a data", () => {
         role: "contributor",
       });
 
-      const deletedDonnee = mockVe<Donnee>({
+      const deletedEntry = mockVe<Donnee>({
         id: "42",
       });
 
       inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(null);
-      entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+      entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
 
-      expect(await donneeService.deleteDonnee("11", loggedUser)).toEqual(err("notAllowed"));
-      expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
+      expect(await entryService.deleteEntry("11", loggedUser)).toEqual(err("notAllowed"));
+      expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
     });
   });
 
@@ -270,13 +273,13 @@ describe("Deletion of a data", () => {
 
     inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(inventoryFactory.build());
 
-    expect(await donneeService.deleteDonnee("11", loggedUser)).toEqual(err("notAllowed"));
-    expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
+    expect(await entryService.deleteEntry("11", loggedUser)).toEqual(err("notAllowed"));
+    expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await donneeService.deleteDonnee("11", null)).toEqual(err("notAllowed"));
-    expect(entryRepository.deleteDonneeById).not.toHaveBeenCalled();
+    expect(await entryService.deleteEntry("11", null)).toEqual(err("notAllowed"));
+    expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
   });
 });
 
@@ -289,8 +292,8 @@ describe("Update of a data", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    entryRepository.findExistingDonnee.mockResolvedValueOnce(null);
-    entryRepository.createDonnee.mockResolvedValueOnce(
+    entryRepositoryLegacy.findExistingDonnee.mockResolvedValueOnce(null);
+    entryRepositoryLegacy.createDonnee.mockResolvedValueOnce(
       mockVe<Donnee>({
         id: "12",
       }),
@@ -299,10 +302,10 @@ describe("Update of a data", () => {
     const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    await donneeService.updateDonnee("12", dataData, loggedUser);
+    await entryService.updateEntry("12", dataData, loggedUser);
 
-    expect(entryRepository.updateDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepository.updateDonnee).toHaveBeenLastCalledWith(12, any(), any());
+    expect(entryRepositoryLegacy.updateDonnee).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.updateDonnee).toHaveBeenLastCalledWith(12, any(), any());
     expect(entryBehaviorRepository.deleteComportementsOfDonneeId).toHaveBeenCalledTimes(1);
     expect(entryBehaviorRepository.deleteComportementsOfDonneeId).toHaveBeenLastCalledWith(12, any());
     expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
@@ -326,26 +329,26 @@ describe("Update of a data", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    entryRepository.findExistingDonnee.mockResolvedValueOnce(
+    entryRepositoryLegacy.findExistingDonnee.mockResolvedValueOnce(
       mockVe<Donnee>({
         id: "345",
       }),
     );
 
-    expect(await donneeService.updateDonnee("12", dataData, loggedUser)).toEqual(
+    expect(await entryService.updateEntry("12", dataData, loggedUser)).toEqual(
       err({
         type: "similarEntryAlreadyExists",
         correspondingEntryFound: "345",
       }),
     );
-    expect(entryRepository.updateDonnee).not.toHaveBeenCalled();
+    expect(entryRepositoryLegacy.updateDonnee).not.toHaveBeenCalled();
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const dataData = mockVe<UpsertEntryInput>();
 
-    expect(await donneeService.updateDonnee("12", dataData, null)).toEqual(err({ type: "notAllowed" }));
-    expect(entryRepository.createDonnee).not.toHaveBeenCalled();
+    expect(await entryService.updateEntry("12", dataData, null)).toEqual(err({ type: "notAllowed" }));
+    expect(entryRepositoryLegacy.createDonnee).not.toHaveBeenCalled();
   });
 });
 
@@ -361,10 +364,10 @@ describe("Creation of a data", () => {
     const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    await donneeService.createDonnee(dataData, loggedUser);
+    await entryService.createEntry(dataData, loggedUser);
 
-    expect(entryRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
+    expect(entryRepositoryLegacy.createDonnee).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(entryBehaviorRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
     expect(entryEnvironmentRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
   });
@@ -379,16 +382,16 @@ describe("Creation of a data", () => {
 
     const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
-    entryRepository.createDonnee.mockResolvedValueOnce(
+    entryRepositoryLegacy.createDonnee.mockResolvedValueOnce(
       mockVe<Donnee>({
         id: "12",
       }),
     );
 
-    await donneeService.createDonnee(dataData, loggedUser);
+    await entryService.createEntry(dataData, loggedUser);
 
-    expect(entryRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
+    expect(entryRepositoryLegacy.createDonnee).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
     expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(12, [2, 3], any());
     expect(entryEnvironmentRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
@@ -404,16 +407,16 @@ describe("Creation of a data", () => {
 
     const reshapedInputData = mockVe<DonneeCreateInput>();
     reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
-    entryRepository.createDonnee.mockResolvedValueOnce(
+    entryRepositoryLegacy.createDonnee.mockResolvedValueOnce(
       mockVe<Donnee>({
         id: "12",
       }),
     );
 
-    await donneeService.createDonnee(dataData, loggedUser);
+    await entryService.createEntry(dataData, loggedUser);
 
-    expect(entryRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
+    expect(entryRepositoryLegacy.createDonnee).toHaveBeenCalledTimes(1);
+    expect(entryRepositoryLegacy.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(entryBehaviorRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
     expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
     expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, [2, 3], any());

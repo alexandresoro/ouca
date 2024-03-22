@@ -25,7 +25,7 @@ const entriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const entryResult = await entryService.findDonnee(req.params.id, req.user);
+    const entryResult = await entryService.findEntry(req.params.id, req.user);
 
     if (entryResult.isErr()) {
       switch (entryResult.error) {
@@ -73,8 +73,8 @@ const entriesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await entryService.findPaginatedDonnees(req.user, queryParams),
-      await entryService.getDonneesCount(req.user, queryParams),
+      await entryService.findPaginatedEntries(req.user, queryParams),
+      await entryService.getEntriesCount(req.user, queryParams),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -137,7 +137,7 @@ const entriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const entryResult = await entryService.createDonnee(input, req.user);
+    const entryResult = await entryService.createEntry(input, req.user);
 
     if (entryResult.isErr()) {
       switch (entryResult.error.type) {
@@ -188,7 +188,7 @@ const entriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const entryResult = await entryService.updateDonnee(req.params.id, input, req.user);
+    const entryResult = await entryService.updateEntry(req.params.id, input, req.user);
 
     if (entryResult.isErr()) {
       switch (entryResult.error.type) {
@@ -231,7 +231,7 @@ const entriesController: FastifyPluginCallback<{
       id: string | number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedEntryResult = await entryService.deleteDonnee(`${req.params.id}`, req.user);
+    const deletedEntryResult = await entryService.deleteEntry(`${req.params.id}`, req.user);
 
     if (deletedEntryResult.isErr()) {
       switch (deletedEntryResult.error) {
@@ -253,7 +253,7 @@ const entriesController: FastifyPluginCallback<{
   });
 
   fastify.get("/next-regroupment", async (req, reply) => {
-    const idResult = await entryService.findNextRegroupement(req.user);
+    const idResult = await entryService.findNextGrouping(req.user);
 
     if (idResult.isErr()) {
       switch (idResult.error) {

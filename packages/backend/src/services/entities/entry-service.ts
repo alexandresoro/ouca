@@ -1,6 +1,7 @@
 import type { EntryUpsertFailureReason } from "@domain/entry/entry.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
@@ -11,24 +12,26 @@ import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/do
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { reshapeInputEntryUpsertDataLegacy } from "./donnee-service-reshape.js";
+import { reshapeInputEntryUpsertDataLegacy } from "./entry-service-reshape.js";
 
-type DonneeServiceDependencies = {
+type EntryServiceDependencies = {
   slonik: DatabasePool;
   inventoryRepository: InventoryRepository;
-  entryRepository: DonneeRepository;
+  entryRepository: EntryRepository;
+  entryRepositoryLegacy: DonneeRepository;
   entryBehaviorRepository: DonneeComportementRepository;
   entryEnvironmentRepository: DonneeMilieuRepository;
 };
 
-export const buildDonneeService = ({
+export const buildEntryService = ({
   slonik,
   inventoryRepository,
   entryRepository,
+  entryRepositoryLegacy,
   entryBehaviorRepository,
   entryEnvironmentRepository,
-}: DonneeServiceDependencies) => {
-  const findDonnee = async (
+}: EntryServiceDependencies) => {
+  const findEntry = async (
     id: number,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Donnee | null, AccessFailureReason>> => {
@@ -36,17 +39,17 @@ export const buildDonneeService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.findDonneeById(id));
+    return ok(await entryRepositoryLegacy.findDonneeById(id));
   };
 
   // Be careful when calling it, it will retrieve a lot of data!
-  const findAllDonnees = async (): Promise<Donnee[]> => {
-    const donnees = await entryRepository.findDonnees();
+  const findAllEntries = async (): Promise<Donnee[]> => {
+    const entries = await entryRepositoryLegacy.findDonnees();
 
-    return [...donnees];
+    return [...entries];
   };
 
-  const findPaginatedDonnees = async (
+  const findPaginatedEntries = async (
     loggedUser: LoggedUser | null,
     options: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> & Partial<{ pageNumber: number; pageSize: number }>,
   ): Promise<Result<Donnee[], AccessFailureReason>> => {
@@ -58,7 +61,7 @@ export const buildDonneeService = ({
 
     const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
-    const donnees = await entryRepository.findDonnees({
+    const entries = await entryRepositoryLegacy.findDonnees({
       searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
         pageNumber,
@@ -68,10 +71,10 @@ export const buildDonneeService = ({
       sortOrder,
     });
 
-    return ok([...donnees]);
+    return ok([...entries]);
   };
 
-  const getDonneesCount = async (
+  const getEntriesCount = async (
     loggedUser: LoggedUser | null,
     options: EntriesSearchParams,
   ): Promise<Result<number, AccessFailureReason>> => {
@@ -81,19 +84,19 @@ export const buildDonneeService = ({
 
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
-    return ok(await entryRepository.getCount(reshapedSearchCriteria));
+    return ok(await entryRepositoryLegacy.getCount(reshapedSearchCriteria));
   };
 
-  const findNextRegroupement = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
+  const findNextGrouping = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const latestRegroupement = await entryRepository.findLatestRegroupement();
+    const latestRegroupement = await entryRepositoryLegacy.findLatestRegroupement();
     return ok((latestRegroupement ?? 0) + 1);
   };
 
-  const createDonnee = async (
+  const createEntry = async (
     input: UpsertEntryInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Donnee, EntryUpsertFailureReason>> => {
@@ -103,23 +106,23 @@ export const buildDonneeService = ({
 
     const { behaviorIds, environmentIds } = input;
 
-    // Check if an exact same donnee already exists or not
-    const existingDonnee = await entryRepository.findExistingDonnee({
+    // Check if an exact same entry already exists or not
+    const existingEntry = await entryRepositoryLegacy.findExistingDonnee({
       ...reshapeInputEntryUpsertDataLegacy(input),
       behaviorIds,
       environmentIds,
     });
 
-    if (existingDonnee) {
-      // The donnee already exists so we return an error
+    if (existingEntry) {
+      // The entry already exists so we return an error
       return err({
         type: "similarEntryAlreadyExists",
-        correspondingEntryFound: `${existingDonnee.id}`,
+        correspondingEntryFound: `${existingEntry.id}`,
       });
     }
 
-    const createdDonnee = await slonik.transaction(async (transactionConnection) => {
-      const createdDonnee = await entryRepository.createDonnee(
+    const createdEntry = await slonik.transaction(async (transactionConnection) => {
+      const createdDonnee = await entryRepositoryLegacy.createDonnee(
         reshapeInputEntryUpsertDataLegacy(input),
         transactionConnection,
       );
@@ -143,10 +146,10 @@ export const buildDonneeService = ({
       return createdDonnee;
     });
 
-    return ok(createdDonnee);
+    return ok(createdEntry);
   };
 
-  const updateDonnee = async (
+  const updateEntry = async (
     id: string,
     input: UpsertEntryInput,
     loggedUser: LoggedUser | null,
@@ -157,22 +160,22 @@ export const buildDonneeService = ({
 
     const { behaviorIds, environmentIds } = input;
 
-    // Check if an exact same donnee already exists or not
-    const existingDonnee = await entryRepository.findExistingDonnee({
+    // Check if an exact same entry already exists or not
+    const existingEntry = await entryRepositoryLegacy.findExistingDonnee({
       ...reshapeInputEntryUpsertDataLegacy(input),
       behaviorIds,
       environmentIds,
     });
 
-    if (existingDonnee && existingDonnee.id !== id) {
+    if (existingEntry && existingEntry.id !== id) {
       return err({
         type: "similarEntryAlreadyExists",
-        correspondingEntryFound: `${existingDonnee.id}`,
+        correspondingEntryFound: `${existingEntry.id}`,
       });
       // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
-      const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
-        const updatedDonnee = await entryRepository.updateDonnee(
+      const updatedEntry = await slonik.transaction(async (transactionConnection) => {
+        const updatedDonnee = await entryRepositoryLegacy.updateDonnee(
           Number.parseInt(id),
           reshapeInputEntryUpsertDataLegacy(input),
           transactionConnection,
@@ -201,11 +204,11 @@ export const buildDonneeService = ({
         return updatedDonnee;
       });
 
-      return ok(updatedDonnee);
+      return ok(updatedEntry);
     }
   };
 
-  const deleteDonnee = async (
+  const deleteEntry = async (
     id: string,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Donnee, AccessFailureReason>> => {
@@ -220,30 +223,30 @@ export const buildDonneeService = ({
       return err("notAllowed");
     }
 
-    const deletedDonneeResult = await slonik.transaction(async (transactionConnection) => {
-      // Delete the actual donnee
-      const deletedDonnee = await entryRepository.deleteDonneeById(Number.parseInt(id), transactionConnection);
+    const deletedEntryResult = await slonik.transaction(async (transactionConnection) => {
+      // Delete the actual entry
+      const deletedEntry = await entryRepositoryLegacy.deleteDonneeById(Number.parseInt(id), transactionConnection);
 
-      return ok(deletedDonnee);
+      return ok(deletedEntry);
     });
 
-    if (deletedDonneeResult.isErr()) {
-      return err(deletedDonneeResult.error as AccessFailureReason);
+    if (deletedEntryResult.isErr()) {
+      return err(deletedEntryResult.error as AccessFailureReason);
     }
 
-    return deletedDonneeResult;
+    return deletedEntryResult;
   };
 
   return {
-    findDonnee,
-    findAllDonnees,
-    findPaginatedDonnees,
-    getDonneesCount,
-    findNextRegroupement,
-    createDonnee,
-    updateDonnee,
-    deleteDonnee,
+    findEntry,
+    findAllEntries,
+    findPaginatedEntries,
+    getEntriesCount,
+    findNextGrouping,
+    createEntry,
+    updateEntry,
+    deleteEntry,
   };
 };
 
-export type DonneeService = ReturnType<typeof buildDonneeService>;
+export type EntryService = ReturnType<typeof buildEntryService>;

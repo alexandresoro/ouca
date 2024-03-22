@@ -22,7 +22,7 @@ import type { SpeciesService } from "../application/services/species/species-ser
 import type { TownService } from "../application/services/town/town-service.js";
 import type { WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
-import type { DonneeService } from "./entities/donnee-service.js";
+import type { EntryService } from "./entities/entry-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 
@@ -147,7 +147,7 @@ export const generateDonneesExport = async (
     townService: TownService;
     behaviorService: BehaviorService;
     departmentService: DepartmentService;
-    entryService: DonneeService;
+    entryService: EntryService;
     speciesService: SpeciesService;
     distanceEstimateService: DistanceEstimateService;
     numberEstimateService: NumberEstimateService;
@@ -165,7 +165,7 @@ export const generateDonneesExport = async (
   const coordinatesSystem = GPS_COORDINATES;
   const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
 
-  const donnees = (await entryService.findPaginatedDonnees(loggedUser, searchCriteria ?? {}))._unsafeUnwrap();
+  const donnees = (await entryService.findPaginatedEntries(loggedUser, searchCriteria ?? {}))._unsafeUnwrap();
 
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {
