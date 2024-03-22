@@ -92,7 +92,7 @@ export const buildEntryService = ({
       return err("notAllowed");
     }
 
-    const latestRegroupement = await entryRepositoryLegacy.findLatestRegroupement();
+    const latestRegroupement = await entryRepository.findLatestGrouping();
     return ok((latestRegroupement ?? 0) + 1);
   };
 

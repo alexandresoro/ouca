@@ -29,13 +29,6 @@ export type Donnee = z.infer<typeof donneeSchema>;
 /**
  * @deprecated
  */
-export const maxRegoupementSchema = z.object({
-  max: z.number().nullable(),
-});
-
-/**
- * @deprecated
- */
 export type DonneeFindManyInput = Partial<{
   searchCriteria: LegacySearchCriteria | null | undefined;
   orderBy:

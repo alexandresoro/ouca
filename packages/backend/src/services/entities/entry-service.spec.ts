@@ -42,6 +42,7 @@ vi.doMock("./entry-service-reshape.js", () => {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  entryRepository.findLatestGrouping.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
 });
 
@@ -180,27 +181,30 @@ describe("Get next group", () => {
   test("should handle existing groups", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    entryRepositoryLegacy.findLatestRegroupement.mockResolvedValueOnce(18);
+    entryRepository.findLatestGrouping.mock.mockImplementationOnce(() => Promise.resolve(18));
 
     const nextRegroupement = await entryService.findNextGrouping(loggedUser);
 
-    expect(entryRepositoryLegacy.findLatestRegroupement).toHaveBeenCalledTimes(1);
-    expect(nextRegroupement).toEqual(ok(19));
+    assert.strictEqual(entryRepository.findLatestGrouping.mock.callCount(), 1);
+    assert.deepStrictEqual(nextRegroupement, ok(19));
   });
 
   test("should handle no existing group", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    entryRepositoryLegacy.findLatestRegroupement.mockResolvedValueOnce(null);
+    entryRepository.findLatestGrouping.mock.mockImplementationOnce(() => Promise.resolve(null));
 
-    await entryService.findNextGrouping(loggedUser);
+    const nextRegroupement = await entryService.findNextGrouping(loggedUser);
 
-    expect(entryRepositoryLegacy.findLatestRegroupement).toHaveBeenCalledTimes(1);
+    assert.strictEqual(entryRepository.findLatestGrouping.mock.callCount(), 1);
+    assert.deepStrictEqual(nextRegroupement, ok(1));
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    expect(await entryService.findNextGrouping(null)).toEqual(err("notAllowed"));
-    expect(entryRepositoryLegacy.findLatestRegroupement).not.toHaveBeenCalled();
+    const result = await entryService.findNextGrouping(null);
+
+    assert.deepStrictEqual(result, err("notAllowed"));
+    assert.strictEqual(entryRepository.findLatestGrouping.mock.callCount(), 0);
   });
 });
 

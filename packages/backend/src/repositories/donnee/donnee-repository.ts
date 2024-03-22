@@ -18,7 +18,6 @@ import {
   type DonneeFindManyInput,
   type DonneeFindMatchingInput,
   donneeSchema,
-  maxRegoupementSchema,
 } from "./donnee-repository-types.js";
 
 export type DonneeRepositoryDependencies = {
@@ -188,17 +187,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const findLatestRegroupement = async (): Promise<number | null> => {
-    const query = sql.type(maxRegoupementSchema)`
-      SELECT 
-        MAX(regroupement) 
-      FROM 
-        basenaturaliste.donnee
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
   const createDonnee = async (
     donneeInput: DonneeCreateInput,
     transaction?: DatabaseTransactionConnection,
@@ -327,10 +315,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
      * @deprecated
      */
     getCount,
-    /**
-     * @deprecated
-     */
-    findLatestRegroupement,
     /**
      * @deprecated
      */

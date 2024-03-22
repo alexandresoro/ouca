@@ -1,2 +1,3 @@
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-export type EntryRepository = {};
+export type EntryRepository = {
+  findLatestGrouping: () => Promise<number | null>;
+};
