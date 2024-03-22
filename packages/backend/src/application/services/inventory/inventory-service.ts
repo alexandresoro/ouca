@@ -11,9 +11,9 @@ import type { InventoryRepository } from "@interfaces/inventory-repository-inter
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Result, err, ok } from "neverthrow";
-import { getSqlPagination } from "../../application/services/entities-utils.js";
-import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { logger } from "../../utils/logger.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { logger } from "../../../utils/logger.js";
+import { getSqlPagination } from "../entities-utils.js";
 import { reshapeInputInventoryUpsertData } from "./inventory-service-reshape.js";
 
 type InventoryServiceDependencies = {

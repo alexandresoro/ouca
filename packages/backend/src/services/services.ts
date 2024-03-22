@@ -31,6 +31,7 @@ import {
   type EnvironmentService,
   buildEnvironmentService,
 } from "../application/services/environment/environment-service.js";
+import { type InventoryService, buildInventoryService } from "../application/services/inventory/inventory-service.js";
 import { type LocalityService, buildLocalityService } from "../application/services/locality/locality-service.js";
 import {
   type NumberEstimateService,
@@ -53,7 +54,6 @@ import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
 import { type DonneeService, buildDonneeService } from "./entities/donnee-service.js";
-import { type InventoryService, buildInventoryService } from "./entities/inventory-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";

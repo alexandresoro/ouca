@@ -9,8 +9,8 @@ import type { LocalityRepository } from "@interfaces/locality-repository-interfa
 import type { InventoriesSearchParams } from "@ou-ca/common/api/inventory";
 import { getHumanFriendlyTimeFromMinutes } from "@ou-ca/common/utils/time-format-convert";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { mock } from "../../utils/mock.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { mock } from "../../../utils/mock.js";
 import { buildInventoryService } from "./inventory-service.js";
 
 const inventoryRepository = mock<InventoryRepository>();

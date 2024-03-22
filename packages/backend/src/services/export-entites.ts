@@ -12,6 +12,7 @@ import type { BehaviorService } from "../application/services/behavior/behavior-
 import type { DepartmentService } from "../application/services/department/department-service.js";
 import type { DistanceEstimateService } from "../application/services/distance-estimate/distance-estimate-service.js";
 import type { EnvironmentService } from "../application/services/environment/environment-service.js";
+import type { InventoryService } from "../application/services/inventory/inventory-service.js";
 import type { LocalityService } from "../application/services/locality/locality-service.js";
 import type { NumberEstimateService } from "../application/services/number-estimate/number-estimate-service.js";
 import type { ObserverService } from "../application/services/observer/observer-service.js";
@@ -22,7 +23,6 @@ import type { TownService } from "../application/services/town/town-service.js";
 import type { WeatherService } from "../application/services/weather/weather-service.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import type { DonneeService } from "./entities/donnee-service.js";
-import type { InventoryService } from "./entities/inventory-service.js";
 
 export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 
