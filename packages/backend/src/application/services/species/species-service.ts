@@ -64,7 +64,6 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
       return err("notAllowed");
     }
 
-    // FIXME: Add search criteria to the count query when migrating to the new repository
     const { q, orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
     return ok(await speciesRepository.getEntriesCountById(id, searchCriteria));
