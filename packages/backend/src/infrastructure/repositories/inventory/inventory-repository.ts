@@ -144,7 +144,7 @@ export const buildInventoryRepository = () => {
   };
 
   const findExistingInventory = async (criteria: InventoryCreateInput): Promise<Inventory | null> => {
-    const inventoryResult = await kysely
+    const inventoryResultWithoutLinks = await kysely
       .selectFrom("inventaire")
       .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
       .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
@@ -208,39 +208,27 @@ export const buildInventoryRepository = () => {
           clause.push(eb("inventaire.temperature", "is", null));
         }
 
-        if (criteria.associateIds.length) {
-          clause.push(
-            eb(
-              "inventaire_associe.observateurId",
-              "in",
-              criteria.associateIds.map((associateId) => Number.parseInt(associateId)),
-            ),
-          );
-        }
-
-        if (criteria.weatherIds.length) {
-          clause.push(
-            eb(
-              "inventaire_meteo.meteoId",
-              "in",
-              criteria.weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-            ),
-          );
-        }
-
         return eb.and(clause);
       })
       .groupBy("inventaire.id")
-      .having((eb) =>
-        eb.and([
-          eb(eb.fn.count("inventaire_associe.observateurId").distinct(), "=", criteria.associateIds.length),
-          eb(eb.fn.count("inventaire_meteo.meteoId").distinct(), "=", criteria.weatherIds.length),
-        ]),
-      )
-      .limit(1)
-      .executeTakeFirst();
+      .execute();
 
-    return inventoryResult ? inventorySchema.parse(reshapeRawInventory(inventoryResult)) : null;
+    if (inventoryResultWithoutLinks.length === 0) {
+      return null;
+    }
+
+    const inventoryResult = inventoryResultWithoutLinks.filter((inventory) => {
+      return (
+        new Set(inventory.associateIds) === new Set(criteria.associateIds) &&
+        new Set(inventory.weatherIds) === new Set(criteria.weatherIds)
+      );
+    });
+
+    if (inventoryResult.length === 0) {
+      return null;
+    }
+
+    return inventorySchema.parse(reshapeRawInventory(inventoryResult[0]));
   };
 
   const getCount = async (): Promise<number> => {
