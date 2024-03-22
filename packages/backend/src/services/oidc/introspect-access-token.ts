@@ -25,8 +25,7 @@ const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
   });
   const responseBody = await response.json();
 
-  // FIXME: remove those logs when we understand and reproduce the introspection parse error
-  logger.debug(
+  logger.trace(
     {
       status: response.status,
       jsonBody: responseBody,
