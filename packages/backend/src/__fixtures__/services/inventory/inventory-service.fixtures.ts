@@ -7,7 +7,7 @@ export const upsertInventoryInputFactory = Factory.define<UpsertInventoryInput>(
     observerId: faker.string.alphanumeric(),
     associateIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     date: faker.date.recent().toISOString().split("T")[0],
-    time: faker.helpers.fromRegExp(/([01]?[0-9]|2[0-3]):[0-5][0-9]/),
+    time: faker.helpers.fromRegExp(/[01]?[0-9]:[0-5][0-9]/),
     duration: faker.number.int({ max: 5999 }),
     localityId: faker.string.alphanumeric(),
     coordinates: {

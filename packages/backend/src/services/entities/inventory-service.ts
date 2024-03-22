@@ -11,35 +11,19 @@ import type { InventoryRepository } from "@interfaces/inventory-repository-inter
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams, UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Result, err, ok } from "neverthrow";
-import type { DatabasePool } from "slonik";
 import { getSqlPagination } from "../../application/services/entities-utils.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
-import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
-import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { logger } from "../../utils/logger.js";
-import {
-  reshapeInputInventoryUpsertData,
-  reshapeInputInventoryUpsertDataLegacy,
-  reshapeInventaireToInventory,
-} from "./inventory-service-reshape.js";
+import { reshapeInputInventoryUpsertData } from "./inventory-service-reshape.js";
 
 type InventoryServiceDependencies = {
-  slonik: DatabasePool;
   inventoryRepository: InventoryRepository;
-  inventoryRepositoryLegacy: InventaireRepository;
-  inventoryAssociateRepository: InventaireAssocieRepository;
-  inventoryWeatherRepository: InventaireMeteoRepository;
   entryRepository: DonneeRepository;
   localityRepository: LocalityRepository;
 };
 
 export const buildInventoryService = ({
-  slonik,
   inventoryRepository,
-  inventoryRepositoryLegacy,
-  inventoryAssociateRepository,
-  inventoryWeatherRepository,
   entryRepository,
   localityRepository,
 }: InventoryServiceDependencies) => {
@@ -160,7 +144,7 @@ export const buildInventoryService = ({
   };
 
   const updateInventory = async (
-    id: number,
+    id: string,
     input: UpsertInventoryInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Inventory, InventoryUpdateFailureReason>> => {
@@ -169,7 +153,6 @@ export const buildInventoryService = ({
     }
 
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
-    const { associateIds, weatherIds } = inputData;
 
     const locality = await localityRepository.findLocalityById(Number.parseInt(input.localityId));
     if (!locality) {
@@ -188,7 +171,7 @@ export const buildInventoryService = ({
     );
 
     if (existingInventory) {
-      // The inventaire we wish to upsert has already an existing equivalent
+      // The inventory we wish to upsert has already an existing equivalent
       // So now it depends on what we wished to do initially
 
       if (!migrateDonneesIfMatchesExistingInventaire) {
@@ -210,14 +193,9 @@ export const buildInventoryService = ({
       // should now be linked to inventory B if matches
 
       // We update the inventory ID for the donnees and we delete the duplicated inventory
-      await slonik.transaction(async (transactionConnection) => {
-        await entryRepository.updateAssociatedInventaire(
-          id,
-          Number.parseInt(existingInventory.id),
-          transactionConnection,
-        );
-        await inventoryRepository.deleteInventoryById(`${id}`);
-      });
+      await entryRepository.updateAssociatedInventaire(Number.parseInt(id), Number.parseInt(existingInventory.id));
+
+      await inventoryRepository.deleteInventoryById(`${id}`);
 
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
@@ -228,37 +206,12 @@ export const buildInventoryService = ({
     // In that case, we proceed as a classic update
 
     // Update an existing inventory
-    const updatedInventory = await slonik.transaction(async (transactionConnection) => {
-      const updatedInventaire = await inventoryRepositoryLegacy.updateInventaire(
-        id,
-        reshapeInputInventoryUpsertDataLegacy(inputData, locality, loggedUser.id),
-        transactionConnection,
-      );
+    const updatedInventory = await inventoryRepository.updateInventory(
+      id,
+      reshapeInputInventoryUpsertData(inputData, locality),
+    );
 
-      await inventoryAssociateRepository.deleteAssociesOfInventaireId(id, transactionConnection);
-
-      if (associateIds?.length) {
-        await inventoryAssociateRepository.insertInventaireWithAssocies(
-          id,
-          associateIds.map((associateId) => Number.parseInt(associateId)),
-          transactionConnection,
-        );
-      }
-
-      await inventoryWeatherRepository.deleteMeteosOfInventaireId(id, transactionConnection);
-
-      if (weatherIds?.length) {
-        await inventoryWeatherRepository.insertInventaireWithMeteos(
-          id,
-          weatherIds.map((weatherId) => Number.parseInt(weatherId)),
-          transactionConnection,
-        );
-      }
-
-      return updatedInventaire;
-    });
-
-    return ok(reshapeInventaireToInventory(updatedInventory, associateIds, weatherIds));
+    return ok(updatedInventory);
   };
 
   const deleteInventory = async (
@@ -278,23 +231,15 @@ export const buildInventoryService = ({
       }
     }
 
-    const deletedInventoryResult = await slonik.transaction(async (transactionConnection) => {
-      const entriesOfInventory = await entryRepository.getCountByInventaireId(
-        Number.parseInt(id),
-        transactionConnection,
-      );
+    const entriesOfInventory = await entryRepository.getCountByInventaireId(Number.parseInt(id));
 
-      if (entriesOfInventory > 0) {
-        return err("inventoryStillInUse");
-      }
-      return ok(await inventoryRepository.deleteInventoryById(id));
-    });
-
-    if (deletedInventoryResult.isErr()) {
-      return err(deletedInventoryResult.error as InventoryDeleteFailureReason);
+    if (entriesOfInventory > 0) {
+      return err("inventoryStillInUse");
     }
 
-    return deletedInventoryResult;
+    const deletedInventoryResult = await inventoryRepository.deleteInventoryById(id);
+
+    return ok(deletedInventoryResult);
   };
 
   return {

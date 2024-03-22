@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { beforeEach, describe, test } from "node:test";
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { localityFactory } from "@fixtures/domain/locality/locality.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
@@ -6,52 +7,28 @@ import { upsertInventoryInputFactory } from "@fixtures/services/inventory/invent
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { InventoriesSearchParams } from "@ou-ca/common/api/inventory";
+import { getHumanFriendlyTimeFromMinutes } from "@ou-ca/common/utils/time-format-convert";
 import { err, ok } from "neverthrow";
-import { createMockPool } from "slonik";
-import { vi } from "vitest";
-import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import type { InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
-import type { InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
-import type { Inventaire, InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
-import type { InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
-import { mock, mockVi } from "../../utils/mock.js";
+import { mock } from "../../utils/mock.js";
 import { buildInventoryService } from "./inventory-service.js";
 
 const inventoryRepository = mock<InventoryRepository>();
-const inventoryRepositoryLegacy = mockVi<InventaireRepository>();
-const inventoryAssociateRepository = mockVi<InventaireAssocieRepository>();
-const inventoryWeatherRepository = mockVi<InventaireMeteoRepository>();
 const entryRepository = mock<DonneeRepository>();
 const localityRepository = mock<LocalityRepository>();
-const slonik = createMockPool({
-  query: vi.fn(),
-});
 
 const inventaireService = buildInventoryService({
-  slonik,
   inventoryRepository,
-  inventoryRepositoryLegacy,
-  inventoryAssociateRepository,
-  inventoryWeatherRepository,
   entryRepository,
   localityRepository,
 });
 
-const reshapeInputInventoryUpsertData = vi.fn();
-vi.doMock("./inventaire-service-reshape.js", () => {
-  return {
-    __esModule: true,
-    reshapeInputInventoryUpsertData,
-  };
-});
-
 beforeEach(() => {
-  vi.resetAllMocks();
   inventoryRepository.findInventoryById.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
   inventoryRepository.findInventories.mock.resetCalls();
   inventoryRepository.findExistingInventory.mock.resetCalls();
+  inventoryRepository.updateInventory.mock.resetCalls();
   inventoryRepository.createInventory.mock.resetCalls();
   inventoryRepository.deleteInventoryById.mock.resetCalls();
   inventoryRepository.getCount.mock.resetCalls();
@@ -78,8 +55,8 @@ describe("Find inventory", () => {
 
     assert.deepStrictEqual(await inventaireService.findInventory(10, loggedUser), ok(null));
 
-    expect(inventoryRepository.findInventoryById.mock.callCount()).toEqual(1);
-    expect(inventoryRepository.findInventoryById.mock.calls[0].arguments).toEqual([10]);
+    assert.strictEqual(inventoryRepository.findInventoryById.mock.callCount(), 1);
+    assert.deepStrictEqual(inventoryRepository.findInventoryById.mock.calls[0].arguments, [10]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
@@ -184,7 +161,7 @@ describe("Update of an inventory", () => {
       );
 
       assert.deepStrictEqual(
-        await inventaireService.updateInventory(12, inventoryData, loggedUser),
+        await inventaireService.updateInventory("12", inventoryData, loggedUser),
         err({ type: "similarInventoryAlreadyExists", correspondingInventoryFound: "345" }),
       );
 
@@ -204,10 +181,10 @@ describe("Update of an inventory", () => {
         Promise.resolve(inventoryFactory.build({ id: "345" })),
       );
 
-      const result = await inventaireService.updateInventory(12, inventoryData, loggedUser);
+      const result = await inventaireService.updateInventory("12", inventoryData, loggedUser);
 
       assert.strictEqual(entryRepository.updateAssociatedInventaire.mock.callCount(), 1);
-      expect(entryRepository.updateAssociatedInventaire.mock.calls[0].arguments).toEqual([12, 345, any()]);
+      assert.deepStrictEqual(entryRepository.updateAssociatedInventaire.mock.calls[0].arguments, [12, 345]);
       assert.strictEqual(inventoryRepository.deleteInventoryById.mock.callCount(), 1);
       assert.deepStrictEqual(inventoryRepository.deleteInventoryById.mock.calls[0].arguments, ["12"]);
       assert.ok(result.isOk());
@@ -218,7 +195,7 @@ describe("Update of an inventory", () => {
       const inventoryData = upsertInventoryInputFactory.build();
 
       assert.deepStrictEqual(
-        await inventaireService.updateInventory(12, inventoryData, null),
+        await inventaireService.updateInventory("12", inventoryData, null),
         err({ type: "notAllowed" }),
       );
       assert.strictEqual(inventoryRepository.findExistingInventory.mock.callCount(), 0);
@@ -231,46 +208,36 @@ describe("Update of an inventory", () => {
         associateIds: ["2", "3"],
         weatherIds: ["4", "5"],
       });
+      const { coordinates, duration, migrateDonneesIfMatchesExistingInventaire, ...restInventoryData } = inventoryData;
 
       const loggedUser = loggedUserFactory.build();
 
       localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
       inventoryRepository.findExistingInventory.mock.mockImplementationOnce(() => Promise.resolve(null));
-      inventoryRepositoryLegacy.updateInventaire.mockResolvedValueOnce(
-        mockVe<Inventaire>({
-          id: "12",
-        }),
+      inventoryRepository.updateInventory.mock.mockImplementationOnce(() =>
+        Promise.resolve(inventoryFactory.build({ id: "12" })),
       );
 
-      const reshapedInputData = mockVe<InventaireCreateInput>();
-      reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
+      await inventaireService.updateInventory("12", inventoryData, loggedUser);
 
-      await inventaireService.updateInventory(12, inventoryData, loggedUser);
-
-      expect(inventoryRepositoryLegacy.updateInventaire).toHaveBeenCalledTimes(1);
-      expect(inventoryRepositoryLegacy.updateInventaire).toHaveBeenLastCalledWith(12, any(), any());
-      expect(inventoryAssociateRepository.deleteAssociesOfInventaireId).toHaveBeenCalledTimes(1);
-      expect(inventoryAssociateRepository.deleteAssociesOfInventaireId).toHaveBeenLastCalledWith(12, any());
-      expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
-      expect(inventoryAssociateRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(
-        anyNumber(),
-        expect.arrayContaining([2, 3]),
-        anyObject(),
-      );
-      expect(inventoryWeatherRepository.deleteMeteosOfInventaireId).toHaveBeenCalledTimes(1);
-      expect(inventoryWeatherRepository.deleteMeteosOfInventaireId).toHaveBeenLastCalledWith(12, any());
-      expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
-      expect(inventoryWeatherRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(
-        anyNumber(),
-        expect.arrayContaining([4, 5]),
-        anyObject(),
-      );
+      assert.strictEqual(inventoryRepository.updateInventory.mock.callCount(), 1);
+      assert.deepStrictEqual(inventoryRepository.updateInventory.mock.calls[0].arguments, [
+        "12",
+        {
+          ...restInventoryData,
+          duration: duration ? getHumanFriendlyTimeFromMinutes(duration) : null,
+          customizedCoordinates: coordinates,
+        },
+      ]);
     });
 
     test("should not be allowed when the requester is not logged", async () => {
       const inventoryData = upsertInventoryInputFactory.build();
 
-      expect(await inventaireService.updateInventory(12, inventoryData, null)).toEqual(err({ type: "notAllowed" }));
+      assert.deepStrictEqual(
+        await inventaireService.updateInventory("12", inventoryData, null),
+        err({ type: "notAllowed" }),
+      );
       assert.strictEqual(inventoryRepository.findExistingInventory.mock.callCount(), 0);
     });
   });
@@ -322,9 +289,6 @@ describe("Creation of an inventory", () => {
       inventoryRepository.createInventory.mock.mockImplementationOnce(() =>
         Promise.resolve(inventoryFactory.build({ id: "322" })),
       );
-
-      const reshapedInputData = mockVe<InventaireCreateInput>();
-      reshapeInputInventoryUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.createInventory(inventoryData, loggedUser);
 

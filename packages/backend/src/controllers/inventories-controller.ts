@@ -196,7 +196,7 @@ const inventoriesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const inventoryResult = await inventoryService.updateInventory(req.params.id, input, req.user);
+    const inventoryResult = await inventoryService.updateInventory(`${req.params.id}`, input, req.user);
 
     if (inventoryResult.isErr()) {
       switch (inventoryResult.error.type) {
