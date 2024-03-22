@@ -103,6 +103,16 @@ export const buildNumberEstimateRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .where("estimationNombreId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createNumberEstimate = async (
     numberEstimateInput: NumberEstimateCreateInput,
   ): Promise<Result<NumberEstimate, EntityFailureReason>> => {
@@ -174,6 +184,7 @@ export const buildNumberEstimateRepository = () => {
     findNumberEstimateByEntryId,
     findNumberEstimates,
     getCount,
+    getEntriesCountById,
     createNumberEstimate,
     createNumberEstimates,
     updateNumberEstimate,

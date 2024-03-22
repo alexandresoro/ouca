@@ -7,6 +7,7 @@ export type DepartmentRepository = {
   findDepartmentByTownId: (townId: number | undefined) => Promise<Department | null>;
   findDepartments: ({ orderBy, sortOrder, q, offset, limit }: DepartmentFindManyInput) => Promise<Department[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createDepartment: (departmentInput: DepartmentCreateInput) => Promise<Result<Department, EntityFailureReason>>;
   createDepartments: (departmentInputs: DepartmentCreateInput[]) => Promise<Department[]>;
   updateDepartment: (

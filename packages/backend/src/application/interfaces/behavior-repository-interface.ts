@@ -7,6 +7,7 @@ export type BehaviorRepository = {
   findBehaviorsByEntryId: (entryId: string | undefined) => Promise<Behavior[]>;
   findBehaviors: ({ orderBy, sortOrder, q, offset, limit }: BehaviorFindManyInput) => Promise<Behavior[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createBehavior: (behaviorInput: BehaviorCreateInput) => Promise<Result<Behavior, EntityFailureReason>>;
   createBehaviors: (behaviorInputs: BehaviorCreateInput[]) => Promise<Behavior[]>;
   updateBehavior: (

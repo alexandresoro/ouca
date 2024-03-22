@@ -137,6 +137,17 @@ export const buildSpeciesClassRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .leftJoin("espece", "espece.id", "donnee.especeId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+      .where("espece.classeId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createSpeciesClass = async (
     speciesClassInput: SpeciesClassCreateInput,
   ): Promise<Result<SpeciesClass, EntityFailureReason>> => {
@@ -203,6 +214,7 @@ export const buildSpeciesClassRepository = () => {
     findSpeciesClassBySpeciesId,
     findSpeciesClasses,
     getCount,
+    getEntriesCountById,
     createSpeciesClass,
     createSpeciesClasses,
     updateSpeciesClass,

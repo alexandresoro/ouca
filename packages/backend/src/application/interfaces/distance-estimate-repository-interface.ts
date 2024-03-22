@@ -17,6 +17,7 @@ export type DistanceEstimateRepository = {
     limit,
   }: DistanceEstimateFindManyInput) => Promise<DistanceEstimate[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createDistanceEstimate: (
     distanceEstimateInput: DistanceEstimateCreateInput,
   ) => Promise<Result<DistanceEstimate, EntityFailureReason>>;

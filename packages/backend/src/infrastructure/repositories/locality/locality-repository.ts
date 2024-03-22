@@ -229,6 +229,17 @@ export const buildLocalityRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+      .where("inventaire.lieuditId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const findAllLocalitiesWithTownAndDepartmentCode = async (): Promise<
     (Locality & {
       townCode: number;
@@ -398,6 +409,7 @@ export const buildLocalityRepository = () => {
     findLocalityByInventoryId,
     findLocalities,
     getCount,
+    getEntriesCountById,
     findAllLocalitiesWithTownAndDepartmentCode,
     createLocality,
     createLocalities,

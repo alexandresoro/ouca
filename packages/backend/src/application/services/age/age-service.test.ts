@@ -6,16 +6,13 @@ import { upsertAgeInputFactory } from "@fixtures/services/age/age-service.fixtur
 import type { AgeRepository } from "@interfaces/age-repository-interface.js";
 import type { AgesSearchParams } from "@ou-ca/common/api/age";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildAgeService } from "./age-service.js";
 
 const ageRepository = mock<AgeRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const ageService = buildAgeService({
   ageRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -23,11 +20,11 @@ beforeEach(() => {
   ageRepository.findAgeByEntryId.mock.resetCalls();
   ageRepository.findAges.mock.resetCalls();
   ageRepository.getCount.mock.resetCalls();
+  ageRepository.getEntriesCountById.mock.resetCalls();
   ageRepository.updateAge.mock.resetCalls();
   ageRepository.createAge.mock.resetCalls();
   ageRepository.deleteAgeById.mock.resetCalls();
   ageRepository.createAges.mock.resetCalls();
-  entryRepository.getCountByAgeId.mock.resetCalls();
 });
 
 describe("Find age", () => {
@@ -67,8 +64,8 @@ describe("Data count per entity", () => {
 
     await ageService.getEntriesCountByAge("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByAgeId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByAgeId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(ageRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(ageRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

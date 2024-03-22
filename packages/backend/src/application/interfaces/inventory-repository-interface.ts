@@ -13,6 +13,7 @@ export type InventoryRepository = {
   findInventories({ orderBy, sortOrder, offset, limit }: InventoryFindManyInput): Promise<Inventory[]>;
   findExistingInventory(criteria: InventoryCreateInput): Promise<Inventory | null>;
   getCount(): Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   getCountByLocality(localityId: string): Promise<number>;
   createInventory(inventoryInput: InventoryCreateInput): Promise<Inventory>;
   updateInventory(inventoryId: string, inventoryInput: InventoryCreateInput): Promise<Inventory>;

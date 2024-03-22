@@ -91,6 +91,16 @@ export const buildAgeRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .where("ageId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createAge = async (ageInput: AgeCreateInput): Promise<Result<Age, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -152,6 +162,7 @@ export const buildAgeRepository = () => {
     findAgeByEntryId,
     findAges,
     getCount,
+    getEntriesCountById,
     createAge,
     createAges,
     updateAge,

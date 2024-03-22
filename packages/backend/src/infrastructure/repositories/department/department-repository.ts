@@ -155,6 +155,19 @@ export const buildDepartmentRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
+      .leftJoin("lieudit", "lieudit.id", "inventaire.lieuditId")
+      .leftJoin("commune", "commune.id", "lieudit.communeId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+      .where("commune.departementId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createDepartment = async (
     departmentInput: DepartmentCreateInput,
   ): Promise<Result<Department, EntityFailureReason>> => {
@@ -221,6 +234,7 @@ export const buildDepartmentRepository = () => {
     findDepartmentByTownId,
     findDepartments,
     getCount,
+    getEntriesCountById,
     createDepartment,
     createDepartments,
     updateDepartment,

@@ -7,6 +7,7 @@ export type AgeRepository = {
   findAgeByEntryId: (entryId: number | undefined) => Promise<Age | null>;
   findAges: ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput) => Promise<readonly Age[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createAge: (ageInput: AgeCreateInput) => Promise<Result<Age, EntityFailureReason>>;
   createAges: (ageInputs: AgeCreateInput[]) => Promise<Age[]>;
   updateAge: (ageId: number, ageInput: AgeCreateInput) => Promise<Result<Age, EntityFailureReason>>;

@@ -121,6 +121,16 @@ export const buildEnvironmentRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee_milieu")
+      .select((eb) => eb.fn.count("donnee_milieu.donneeId").distinct().as("count"))
+      .where("milieuId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createEnvironment = async (
     environmentInput: EnvironmentCreateInput,
   ): Promise<Result<Environment, EntityFailureReason>> => {
@@ -190,6 +200,7 @@ export const buildEnvironmentRepository = () => {
     findEnvironmentsByEntryId,
     findEnvironments,
     getCount,
+    getEntriesCountById,
     createEnvironment,
     createEnvironments,
     updateEnvironment,

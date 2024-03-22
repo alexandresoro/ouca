@@ -240,6 +240,16 @@ export const buildInventoryRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .where("inventaireId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const getCountByLocality = async (localityId: string): Promise<number> => {
     const countResult = await kysely
       .selectFrom("inventaire")
@@ -443,6 +453,7 @@ export const buildInventoryRepository = () => {
     findInventories,
     findExistingInventory,
     getCount,
+    getEntriesCountById,
     getCountByLocality,
     createInventory,
     updateInventory,

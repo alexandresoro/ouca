@@ -8,6 +8,7 @@ export type LocalityRepository = {
   findLocalityByInventoryId: (inventoryId: string | undefined) => Promise<Locality | null>;
   findLocalities: ({ townId, orderBy, sortOrder, q, offset, limit }: LocalityFindManyInput) => Promise<Locality[]>;
   getCount: (q?: string | null, townId?: string | null, departmentId?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   findAllLocalitiesWithTownAndDepartmentCode: () => Promise<
     (Locality & {
       townCode: number;

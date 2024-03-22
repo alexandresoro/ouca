@@ -7,6 +7,7 @@ export type EnvironmentRepository = {
   findEnvironmentsByEntryId: (entryId: string | undefined) => Promise<Environment[]>;
   findEnvironments: ({ orderBy, sortOrder, q, offset, limit }: EnvironmentFindManyInput) => Promise<Environment[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createEnvironment: (environmentInput: EnvironmentCreateInput) => Promise<Result<Environment, EntityFailureReason>>;
   createEnvironments: (environmentInputs: EnvironmentCreateInput[]) => Promise<Environment[]>;
   updateEnvironment: (

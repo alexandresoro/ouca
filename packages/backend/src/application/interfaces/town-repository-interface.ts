@@ -7,6 +7,7 @@ export type TownRepository = {
   findTownByLocalityId: (localityId: string | undefined) => Promise<Town | null>;
   findTowns: ({ departmentId, orderBy, sortOrder, q, offset, limit }: TownFindManyInput) => Promise<Town[]>;
   getCount: (q?: string | null, departmentId?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   findAllTownsWithDepartmentCode: () => Promise<(Town & { departmentCode: string })[]>;
   createTown: (townInput: TownCreateInput) => Promise<Result<Town, EntityFailureReason>>;
   createTowns: (townInputs: TownCreateInput[]) => Promise<Town[]>;

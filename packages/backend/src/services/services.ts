@@ -111,7 +111,6 @@ export const buildServices = async (): Promise<Services> => {
 
   const ageService = buildAgeService({
     ageRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const classService = buildSpeciesClassService({
@@ -128,7 +127,6 @@ export const buildServices = async (): Promise<Services> => {
 
   const behaviorService = buildBehaviorService({
     behaviorRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const departmentService = buildDepartmentService({

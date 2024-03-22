@@ -111,6 +111,16 @@ export const buildDistanceEstimateRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .where("estimationDistanceId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createDistanceEstimate = async (
     distanceEstimateInput: DistanceEstimateCreateInput,
   ): Promise<Result<DistanceEstimate, EntityFailureReason>> => {
@@ -179,6 +189,7 @@ export const buildDistanceEstimateRepository = () => {
     findDistanceEstimateByEntryId,
     findDistanceEstimates,
     getCount,
+    getEntriesCountById,
     createDistanceEstimate,
     createDistanceEstimates,
     updateDistanceEstimate,

@@ -7,16 +7,13 @@ import { upsertBehaviorInputFactory } from "@fixtures/services/behavior/behavior
 import type { BehaviorRepository } from "@interfaces/behavior-repository-interface.js";
 import type { BehaviorsSearchParams } from "@ou-ca/common/api/behavior";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildBehaviorService } from "./behavior-service.js";
 
 const behaviorRepository = mock<BehaviorRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const behaviorService = buildBehaviorService({
   behaviorRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -27,8 +24,8 @@ beforeEach(() => {
   behaviorRepository.updateBehavior.mock.resetCalls();
   behaviorRepository.deleteBehaviorById.mock.resetCalls();
   behaviorRepository.getCount.mock.resetCalls();
+  behaviorRepository.getEntriesCountById.mock.resetCalls();
   behaviorRepository.findBehaviorsByEntryId.mock.resetCalls();
-  entryRepository.getCountByComportementId.mock.resetCalls();
 });
 
 describe("Find behavior", () => {
@@ -68,8 +65,8 @@ describe("Data count per entity", () => {
 
     await behaviorService.getEntriesCountByBehavior("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByComportementId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByComportementId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(behaviorRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(behaviorRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

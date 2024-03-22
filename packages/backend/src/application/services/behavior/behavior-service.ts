@@ -5,15 +5,13 @@ import type { BehaviorRepository } from "@interfaces/behavior-repository-interfa
 import type { BehaviorsSearchParams, UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type BehaviorServiceDependencies = {
   behaviorRepository: BehaviorRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildBehaviorService = ({ behaviorRepository, entryRepository }: BehaviorServiceDependencies) => {
+export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDependencies) => {
   const findBehavior = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -59,7 +57,7 @@ export const buildBehaviorService = ({ behaviorRepository, entryRepository }: Be
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByComportementId(Number.parseInt(id)));
+    return ok(await behaviorRepository.getEntriesCountById(id));
   };
 
   const findAllBehaviors = async (): Promise<Behavior[]> => {

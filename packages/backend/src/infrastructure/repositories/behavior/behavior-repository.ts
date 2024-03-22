@@ -134,6 +134,16 @@ export const buildBehaviorRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee_comportement")
+      .select((eb) => eb.fn.count("donnee_comportement.donneeId").distinct().as("count"))
+      .where("comportementId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createBehavior = async (behaviorInput: BehaviorCreateInput): Promise<Result<Behavior, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -204,6 +214,7 @@ export const buildBehaviorRepository = () => {
     findBehaviorsByEntryId,
     findBehaviors,
     getCount,
+    getEntriesCountById,
     createBehavior,
     createBehaviors,
     updateBehavior,

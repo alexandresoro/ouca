@@ -17,6 +17,7 @@ export type NumberEstimateRepository = {
     limit,
   }: NumberEstimateFindManyInput) => Promise<NumberEstimate[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createNumberEstimate: (
     numberEstimateInput: NumberEstimateCreateInput,
   ) => Promise<Result<NumberEstimate, EntityFailureReason>>;

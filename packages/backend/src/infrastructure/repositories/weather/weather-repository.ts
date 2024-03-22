@@ -103,6 +103,18 @@ export const buildWeatherRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+      .where("inventaire_meteo.meteoId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createWeather = async (weatherInput: WeatherCreateInput): Promise<Result<Weather, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -167,6 +179,7 @@ export const buildWeatherRepository = () => {
     findWeathersById,
     findWeathers,
     getCount,
+    getEntriesCountById,
     createWeather,
     createWeathers,
     updateWeather,

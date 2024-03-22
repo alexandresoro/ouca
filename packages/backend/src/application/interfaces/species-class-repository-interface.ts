@@ -11,6 +11,7 @@ export type SpeciesClassRepository = {
   findSpeciesClassBySpeciesId: (speciesId: number | undefined) => Promise<SpeciesClass | null>;
   findSpeciesClasses: ({ orderBy, sortOrder, q, offset, limit }: SpeciesClassFindManyInput) => Promise<SpeciesClass[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createSpeciesClass: (
     speciesClassInput: SpeciesClassCreateInput,
   ) => Promise<Result<SpeciesClass, EntityFailureReason>>;

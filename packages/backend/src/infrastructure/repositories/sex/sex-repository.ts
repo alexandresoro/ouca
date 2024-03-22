@@ -97,6 +97,16 @@ export const buildSexRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .select((eb) => eb.fn.countAll().as("count"))
+      .where("sexeId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createSex = async (sexInput: SexCreateInput): Promise<Result<Sex, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -158,6 +168,7 @@ export const buildSexRepository = () => {
     findSexByEntryId,
     findSexes,
     getCount,
+    getEntriesCountById,
     createSex,
     createSexes,
     updateSex,

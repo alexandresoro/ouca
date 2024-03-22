@@ -1,3 +1,4 @@
+import type { SearchCriteria } from "@domain/search/search-criteria.js";
 import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
 import {
   type Species,
@@ -286,6 +287,30 @@ export const buildSpeciesRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string, searchCriteria?: SearchCriteria | null): Promise<number> => {
+    let query = kysely
+      .selectFrom("donnee")
+      .leftJoin("espece", "espece.id", "donnee.especeId")
+      .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+      .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+      .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+      .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
+      .leftJoin("lieudit", "lieudit.id", "inventaire.lieuditId")
+      .leftJoin("commune", "commune.id", "lieudit.communeId")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+      .where("donnee.especeId", "=", Number.parseInt(id));
+
+    if (searchCriteria != null) {
+      query = query.where(withSearchCriteria(searchCriteria));
+    }
+
+    const countResult = await query.executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const createSpecies = async (speciesInput: SpeciesCreateInput): Promise<Result<Species, EntityFailureReason>> => {
     return fromPromise(
       kysely
@@ -389,6 +414,7 @@ export const buildSpeciesRepository = () => {
     findAllSpeciesWithClassLabel,
     findSpecies,
     getCount,
+    getEntriesCountById,
     createSpecies,
     createSpeciesMultiple,
     updateSpecies,

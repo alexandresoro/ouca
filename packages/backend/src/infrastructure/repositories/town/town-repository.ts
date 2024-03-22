@@ -229,6 +229,18 @@ export const buildTownRepository = () => {
     return countSchema.parse(countResult).count;
   };
 
+  const getEntriesCountById = async (id: string): Promise<number> => {
+    const countResult = await kysely
+      .selectFrom("donnee")
+      .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
+      .leftJoin("lieudit", "lieudit.id", "inventaire.lieuditId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+      .where("lieudit.communeId", "=", Number.parseInt(id))
+      .executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
+  };
+
   const findAllTownsWithDepartmentCode = async (): Promise<(Town & { departmentCode: string })[]> => {
     const townsWithDepartmentCode = await kysely
       .selectFrom("commune")
@@ -346,6 +358,7 @@ export const buildTownRepository = () => {
     findTownByLocalityId,
     findTowns,
     getCount,
+    getEntriesCountById,
     findAllTownsWithDepartmentCode,
     createTown,
     createTowns,

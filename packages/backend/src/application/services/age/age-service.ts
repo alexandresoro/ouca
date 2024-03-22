@@ -5,15 +5,13 @@ import type { AgeRepository } from "@interfaces/age-repository-interface.js";
 import type { AgesSearchParams, UpsertAgeInput } from "@ou-ca/common/api/age";
 import type { AgeSimple } from "@ou-ca/common/api/entities/age";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type AgeServiceDependencies = {
   ageRepository: AgeRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDependencies) => {
+export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const findAge = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -46,7 +44,7 @@ export const buildAgeService = ({ ageRepository, entryRepository }: AgeServiceDe
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByAgeId(Number.parseInt(id)));
+    return ok(await ageRepository.getEntriesCountById(id));
   };
 
   const findAllAges = async (): Promise<AgeSimple[]> => {

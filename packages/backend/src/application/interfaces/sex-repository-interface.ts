@@ -7,6 +7,7 @@ export type SexRepository = {
   findSexByEntryId: (entryId: number | undefined) => Promise<Sex | null>;
   findSexes: ({ orderBy, sortOrder, q, offset, limit }: SexFindManyInput) => Promise<readonly Sex[]>;
   getCount: (q?: string | null) => Promise<number>;
+  getEntriesCountById: (id: string) => Promise<number>;
   createSex: (sexInput: SexCreateInput) => Promise<Result<Sex, EntityFailureReason>>;
   createSexes: (sexInputs: SexCreateInput[]) => Promise<Sex[]>;
   updateSex: (sexId: number, sexInput: SexCreateInput) => Promise<Result<Sex, EntityFailureReason>>;
