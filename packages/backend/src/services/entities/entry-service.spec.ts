@@ -18,7 +18,7 @@ const entryRepository = mock<EntryRepository>();
 const entryRepositoryLegacy = mockVi<DonneeRepository>();
 const entryBehaviorRepository = mockVi<DonneeComportementRepository>();
 const entryEnvironmentRepository = mockVi<DonneeMilieuRepository>();
-const inventoryRepository = mockVi<InventoryRepository>();
+const inventoryRepository = mock<InventoryRepository>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
@@ -42,6 +42,7 @@ vi.doMock("./entry-service-reshape.js", () => {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  inventoryRepository.findInventoryByEntryId.mock.resetCalls();
 });
 
 describe("Find data", () => {
@@ -215,7 +216,7 @@ describe("Deletion of a data", () => {
       id: "42",
     });
 
-    inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
+    inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(matchingInventory));
     entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
 
     const result = await entryService.deleteEntry("11", loggedUser);
@@ -239,7 +240,7 @@ describe("Deletion of a data", () => {
         id: "42",
       });
 
-      inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
+      inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(matchingInventory));
       entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
 
       const result = await entryService.deleteEntry("11", loggedUser);
@@ -258,7 +259,7 @@ describe("Deletion of a data", () => {
         id: "42",
       });
 
-      inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(null);
+      inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(null));
       entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
 
       expect(await entryService.deleteEntry("11", loggedUser)).toEqual(err("notAllowed"));
@@ -271,7 +272,9 @@ describe("Deletion of a data", () => {
       role: "contributor",
     });
 
-    inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(inventoryFactory.build());
+    inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() =>
+      Promise.resolve(inventoryFactory.build()),
+    );
 
     expect(await entryService.deleteEntry("11", loggedUser)).toEqual(err("notAllowed"));
     expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
