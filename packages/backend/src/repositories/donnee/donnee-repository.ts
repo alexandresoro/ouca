@@ -550,24 +550,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  /**
-   * @deprecated
-   */
-  const getCountByObservateurId = async (observateurId: number): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.donnee
-      LEFT JOIN
-        basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
-      WHERE
-        inventaire.observateur_id = ${observateurId}
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
   const getCountBySexeId = async (sexeId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -714,7 +696,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     getCountByLieuditId,
     getCountByMeteoId,
     getCountByMilieuId,
-    getCountByObservateurId,
     getCountBySexeId,
     createDonnee,
     updateDonnee,
