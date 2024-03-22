@@ -2,7 +2,6 @@ import type { EntryUpsertFailureReason } from "@domain/entry/entry.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
-import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
 import type { DatabasePool } from "slonik";
@@ -83,39 +82,6 @@ export const buildDonneeService = ({
     const reshapedSearchCriteria = reshapeSearchCriteria(options);
 
     return ok(await entryRepository.getCount(reshapedSearchCriteria));
-  };
-
-  const findDonneeNavigationData = async (
-    loggedUser: LoggedUser | null,
-    entryId: string,
-  ): Promise<Result<EntryNavigation, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const [previousEntryId, nextEntryId, index] = await Promise.all([
-      entryRepository.findPreviousDonneeId(Number.parseInt(entryId)),
-      entryRepository.findNextDonneeId(Number.parseInt(entryId)),
-      entryRepository.findDonneeIndex(Number.parseInt(entryId)),
-    ]);
-
-    return ok({
-      index,
-      previousEntryId: previousEntryId != null ? `${previousEntryId}` : null,
-      nextEntryId: nextEntryId != null ? `${nextEntryId}` : null,
-    });
-  };
-
-  const findLastDonneeId = async (
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<string | null, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const latestDonneeId = await entryRepository.findLatestDonneeId();
-
-    return ok(latestDonneeId);
   };
 
   const findNextRegroupement = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
@@ -273,8 +239,6 @@ export const buildDonneeService = ({
     findAllDonnees,
     findPaginatedDonnees,
     getDonneesCount,
-    findDonneeNavigationData,
-    findLastDonneeId,
     findNextRegroupement,
     createDonnee,
     updateDonnee,

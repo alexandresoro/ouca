@@ -31,11 +31,3 @@ export const entryExtendedSchema = entrySchema.extend({
 });
 
 export type EntryExtended = z.infer<typeof entryExtendedSchema>;
-
-export const entryNavigationSchema = z.object({
-  previousEntryId: z.string().nullable(),
-  nextEntryId: z.string().nullable(),
-  index: z.number(),
-});
-
-export type EntryNavigation = z.infer<typeof entryNavigationSchema>;

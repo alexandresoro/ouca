@@ -1,4 +1,4 @@
-import { type Entry, type EntryExtended, entryNavigationSchema } from "@ou-ca/common/api/entities/entry";
+import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
 import {
   getEntriesExtendedResponse,
   getEntriesQueryParamsSchema,
@@ -223,44 +223,6 @@ const entriesController: FastifyPluginCallback<{
     const entryEnriched = entryEnrichedResult.value;
 
     const response = upsertEntryResponse.parse(entryEnriched);
-    return await reply.send(response);
-  });
-
-  fastify.get("/last", async (req, reply) => {
-    const idResult = await entryService.findLastDonneeId(req.user);
-
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
-      }
-    }
-
-    await reply.send({ id: idResult.value });
-  });
-
-  fastify.get<{
-    Params: {
-      id: string;
-    };
-  }>("/:id/navigation", async (req, reply) => {
-    const navigationResult = await entryService.findDonneeNavigationData(req.user, req.params.id);
-
-    if (navigationResult.isErr()) {
-      switch (navigationResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        default:
-          logger.error({ error: navigationResult.error }, "Unexpected error");
-          return await reply.status(500).send();
-      }
-    }
-
-    const response = entryNavigationSchema.parse(navigationResult.value);
-
     return await reply.send(response);
   });
 

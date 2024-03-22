@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
 import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
-import { entryExtendedSchema, entryNavigationSchema, entrySchema } from "./entities/entry.js";
+import { entryExtendedSchema, entrySchema } from "./entities/entry.js";
 
 /**
  * `GET` `/entry/:id`
@@ -77,19 +77,3 @@ export type UpsertEntryInput = z.infer<typeof upsertEntryInput>;
 export const upsertEntryResponse = entrySchema;
 
 export type UpsertEntryResponse = z.infer<typeof upsertEntryResponse>;
-
-/**
- * `GET` `/entry/:id/navigation` Get navigation relative to the given entry
- */
-export const getEntryNavigationResponse = entryNavigationSchema;
-
-export type GetEntryNavigationResponse = z.infer<typeof getEntryNavigationResponse>;
-
-/**
- * `GET` `/entry/last`
- */
-export const getEntryLastResponse = z.object({
-  id: z.string().nullable(),
-});
-
-export type GetEntryLastResponse = z.infer<typeof getEntryLastResponse>;

@@ -18,7 +18,6 @@ import {
   type DonneeFindManyInput,
   type DonneeFindMatchingInput,
   donneeSchema,
-  idSchema,
   maxRegoupementSchema,
 } from "./donnee-repository-types.js";
 
@@ -165,160 +164,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findPreviousDonneeId = async (id: number): Promise<number | null> => {
-    return await slonik.transaction(async (transaction) => {
-      const currentInventaire = sql.type(
-        z.object({
-          id: z.number(),
-          date: z.string(),
-          heure: z.string().nullable(),
-        }),
-      )`
-        SELECT
-	        id,
-          date, 
-          heure
-        FROM
-	        basenaturaliste.inventaire
-        WHERE
-          id = (
-            SELECT
-              inventaire_id
-            FROM
-              basenaturaliste.donnee
-            WHERE
-              id = ${id} 
-          )
-      `;
-
-      const { date, heure } = await transaction.one(currentInventaire);
-
-      const previousDonneeQuery = sql.type(z.object({ id: z.number() }))`
-        SELECT
-	        donnee.id
-        FROM
-	        basenaturaliste.donnee
-        LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
-        WHERE
-          (
-            inventaire."date" < ${date}
-            ${
-              heure
-                ? sql.fragment`
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire."heure" < ${heure}
-              )
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire."heure" = ${heure}
-                AND donnee.id < ${id}
-              )
-            `
-                : sql.fragment`
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire."heure" IS NULL
-                AND donnee.id < ${id}
-              )
-            `
-            }
-          )
-          AND donnee.id != ${id}
-        ORDER BY inventaire.date DESC, inventaire.heure DESC NULLS LAST, inventaire.id DESC, donnee.date_creation DESC, donnee.id DESC
-        LIMIT 1
-      `;
-
-      return slonik.maybeOneFirst(previousDonneeQuery);
-    });
-  };
-
-  const findNextDonneeId = async (id: number): Promise<number | null> => {
-    return await slonik.transaction(async (transaction) => {
-      const currentInventaire = sql.type(
-        z.object({
-          id: z.number(),
-          date: z.string(),
-          heure: z.string().nullable(),
-        }),
-      )`
-        SELECT
-	        id,
-          date, 
-          heure
-        FROM
-	        basenaturaliste.inventaire
-        WHERE
-          id = (
-            SELECT
-              inventaire_id
-            FROM
-              basenaturaliste.donnee
-            WHERE
-              id = ${id} 
-          )
-      `;
-
-      const { date, heure } = await transaction.one(currentInventaire);
-
-      const nextDonneeQuery = sql.type(z.object({ id: z.number() }))`
-        SELECT
-	        donnee.id
-        FROM
-	        basenaturaliste.donnee
-        LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
-        WHERE
-          (
-            inventaire."date" > ${date}
-            ${
-              heure
-                ? sql.fragment`
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire.heure > ${heure}
-              )
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire.heure = ${heure}
-                AND donnee.id > ${id}        
-              )
-            
-            `
-                : sql.fragment`
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire.heure IS NOT NULL
-              )
-              OR (
-                inventaire."date" = ${date}
-                AND inventaire.heure IS NULL
-                AND donnee.id > ${id}        
-              )
-            `
-            }
-          )
-          AND donnee.id != ${id}
-        ORDER BY inventaire.date ASC, inventaire.heure ASC NULLS FIRST, inventaire.id ASC, donnee.date_creation ASC, donnee.id ASC
-        LIMIT 1
-      `;
-
-      return slonik.maybeOneFirst(nextDonneeQuery);
-    });
-  };
-
-  const findDonneeIndex = async (id: number): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.donnee
-      WHERE
-        id <= ${id}
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
   const getCount = async (searchCriteria: DonneeFindManyInput["searchCriteria"] = {}): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT
@@ -338,28 +183,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     `;
 
     return slonik.oneFirst(query);
-  };
-
-  const findLatestDonneeId = async (): Promise<string | null> => {
-    const query = sql.type(idSchema)`
-      SELECT
-	      id::text
-      FROM
-	      basenaturaliste.donnee
-      WHERE
-	      donnee.inventaire_id = (
-		      SELECT
-			      inventaire.id
-		      FROM
-			      basenaturaliste.inventaire
-		      ORDER BY date DESC, heure DESC NULLS LAST
-		      LIMIT 1
-        )
-      ORDER BY date_creation DESC
-      LIMIT 1
-    `;
-
-    return slonik.maybeOneFirst(query);
   };
 
   const findLatestRegroupement = async (): Promise<number | null> => {
@@ -504,11 +327,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     findDonneeById,
     findDonnees,
     findExistingDonnee,
-    findPreviousDonneeId,
-    findNextDonneeId,
-    findDonneeIndex,
     getCount,
-    findLatestDonneeId,
     findLatestRegroupement,
     getCountByInventaireId,
     createDonnee,

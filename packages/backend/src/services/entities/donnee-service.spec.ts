@@ -1,9 +1,8 @@
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
-import type { EntryNavigation } from "@ou-ca/common/api/entities/entry";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { type Result, err, ok } from "neverthrow";
+import { err, ok } from "neverthrow";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
@@ -170,61 +169,6 @@ describe("Entities count by search criteria", () => {
 
   test("should not be allowed when the requester is not logged", async () => {
     expect(await donneeService.getDonneesCount(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
-  });
-});
-
-describe("Data navigation", () => {
-  test("should call the correct info", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    entryRepository.findPreviousDonneeId.mockResolvedValueOnce(3);
-    entryRepository.findNextDonneeId.mockResolvedValueOnce(17);
-    entryRepository.findDonneeIndex.mockResolvedValueOnce(11);
-
-    const result = await donneeService.findDonneeNavigationData(loggedUser, "12");
-
-    expect(entryRepository.findPreviousDonneeId).toHaveBeenCalledTimes(1);
-    expect(entryRepository.findNextDonneeId).toHaveBeenCalledTimes(1);
-    expect(entryRepository.findDonneeIndex).toHaveBeenCalledTimes(1);
-    expect(result).toEqual<Result<EntryNavigation, unknown>>(
-      ok({
-        index: 11,
-        previousEntryId: "3",
-        nextEntryId: "17",
-      }),
-    );
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    expect(await donneeService.findDonneeNavigationData(null, "12")).toEqual(err("notAllowed"));
-  });
-});
-
-describe("Get latest data id", () => {
-  test("should handle existing data", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    entryRepository.findLatestDonneeId.mockResolvedValueOnce("18");
-
-    const nextRegroupement = await donneeService.findLastDonneeId(loggedUser);
-
-    expect(entryRepository.findLatestDonneeId).toHaveBeenCalledTimes(1);
-    expect(nextRegroupement).toEqual(ok("18"));
-  });
-
-  test("should handle no existing data", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    entryRepository.findLatestDonneeId.mockResolvedValueOnce(null);
-
-    await donneeService.findLastDonneeId(loggedUser);
-
-    expect(entryRepository.findLatestDonneeId).toHaveBeenCalledTimes(1);
-  });
-
-  test("should not be allowed when the no login details are provided", async () => {
-    expect(await donneeService.findLastDonneeId(null)).toEqual(err("notAllowed"));
-    expect(entryRepository.findLatestDonneeId).not.toHaveBeenCalled();
   });
 });
 
