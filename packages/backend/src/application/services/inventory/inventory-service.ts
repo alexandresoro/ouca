@@ -201,7 +201,7 @@ export const buildInventoryService = ({
         Number.parseInt(existingInventory.id),
       );
 
-      await inventoryRepository.deleteInventoryById(`${id}`);
+      await inventoryRepository.deleteInventoryById(id);
 
       // We wished to create an inventory but we already found one,
       // so we won't create anything and simply return the existing one
