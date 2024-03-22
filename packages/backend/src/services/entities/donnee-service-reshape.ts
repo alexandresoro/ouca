@@ -1,7 +1,8 @@
+import type { EntryCreateInput } from "@domain/entry/entry.js";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 
-export const reshapeInputEntryUpsertData = (data: UpsertEntryInput): DonneeCreateInput => {
+export const reshapeInputEntryUpsertDataLegacy = (data: UpsertEntryInput): DonneeCreateInput => {
   const {
     ageId,
     speciesId,
@@ -25,5 +26,13 @@ export const reshapeInputEntryUpsertData = (data: UpsertEntryInput): DonneeCreat
     distance,
     regroupement: regroupment,
     commentaire: comment,
+  };
+};
+
+export const reshapeInputEntryUpsertData = (data: UpsertEntryInput): EntryCreateInput => {
+  const { regroupment, ...restEntry } = data;
+  return {
+    ...restEntry,
+    grouping: regroupment,
   };
 };

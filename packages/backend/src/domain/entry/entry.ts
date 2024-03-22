@@ -30,3 +30,18 @@ export const entrySchema = z.object({
 });
 
 export type Entry = z.infer<typeof entrySchema>;
+
+export type EntryCreateInput = {
+  inventoryId: string;
+  speciesId: string;
+  sexId: string;
+  ageId: string;
+  numberEstimateId: string;
+  number?: number | null;
+  distanceEstimateId?: string | null;
+  distance?: number | null;
+  behaviorIds: string[];
+  environmentIds: string[];
+  comment?: string | null;
+  grouping?: number | null;
+};
