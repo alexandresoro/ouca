@@ -4,6 +4,9 @@ import type { Result } from "neverthrow";
 
 export type AgeRepository = {
   findAgeById: (id: number) => Promise<Age | null>;
+  /**
+   * @deprecated
+   */
   findAgeByEntryId: (entryId: number | undefined) => Promise<Age | null>;
   findAges: ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput) => Promise<readonly Age[]>;
   getCount: (q?: string | null) => Promise<number>;

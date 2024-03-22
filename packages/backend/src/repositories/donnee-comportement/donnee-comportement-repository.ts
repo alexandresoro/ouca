@@ -6,6 +6,9 @@ export type SexeRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
+/**
+ * @deprecated
+ */
 export const buildDonneeComportementRepository = ({ slonik }: SexeRepositoryDependencies) => {
   const deleteComportementsOfDonneeId = async (
     entryId: number,
@@ -50,9 +53,18 @@ export const buildDonneeComportementRepository = ({ slonik }: SexeRepositoryDepe
   };
 
   return {
+    /**
+     * @deprecated
+     */
     deleteComportementsOfDonneeId,
+    /**
+     * @deprecated
+     */
     insertDonneeWithComportements,
   };
 };
 
+/**
+ * @deprecated
+ */
 export type DonneeComportementRepository = ReturnType<typeof buildDonneeComportementRepository>;

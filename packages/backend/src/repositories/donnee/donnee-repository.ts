@@ -25,6 +25,9 @@ export type DonneeRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
+/**
+ * @deprecated
+ */
 export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) => {
   const findDonneeById = async (id: number): Promise<Donnee | null> => {
     const query = sql.type(donneeSchema)`
@@ -308,16 +311,46 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   return {
+    /**
+     * @deprecated
+     */
     findDonneeById,
+    /**
+     * @deprecated
+     */
     findDonnees,
+    /**
+     * @deprecated
+     */
     findExistingDonnee,
+    /**
+     * @deprecated
+     */
     getCount,
+    /**
+     * @deprecated
+     */
     findLatestRegroupement,
+    /**
+     * @deprecated
+     */
     createDonnee,
+    /**
+     * @deprecated
+     */
     updateDonnee,
+    /**
+     * @deprecated
+     */
     deleteDonneeById,
+    /**
+     * @deprecated
+     */
     updateAssociatedInventaire,
   };
 };
 
+/**
+ * @deprecated
+ */
 export type DonneeRepository = ReturnType<typeof buildDonneeRepository>;

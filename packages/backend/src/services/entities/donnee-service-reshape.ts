@@ -2,6 +2,9 @@ import type { EntryCreateInput } from "@domain/entry/entry.js";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 
+/**
+ * @deprecated
+ */
 export const reshapeInputEntryUpsertDataLegacy = (data: UpsertEntryInput): DonneeCreateInput => {
   const {
     ageId,

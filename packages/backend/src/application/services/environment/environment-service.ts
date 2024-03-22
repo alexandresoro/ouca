@@ -24,6 +24,22 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     return ok(enrichEntityWithEditableStatus(environment, loggedUser));
   };
 
+  const findEnvironments = async (
+    ids: string[],
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<Environment[], AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    if (ids.length === 0) {
+      return ok([]);
+    }
+
+    const environments = await environmentRepository.findEnvironmentsById(ids);
+    return ok(environments.map((environment) => enrichEntityWithEditableStatus(environment, loggedUser)));
+  };
+
   const findEnvironmentIdsOfEntryId = async (entryId: string): Promise<string[]> => {
     const environmentIds = await environmentRepository
       .findEnvironmentsByEntryId(entryId)
@@ -190,7 +206,14 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
 
   return {
     findEnvironment,
+    findEnvironments,
+    /**
+     * @deprecated
+     */
     findEnvironmentIdsOfEntryId,
+    /**
+     * @deprecated
+     */
     findEnvironmentsOfEntryId,
     getEntriesCountByEnvironment,
     findAllEnvironments,

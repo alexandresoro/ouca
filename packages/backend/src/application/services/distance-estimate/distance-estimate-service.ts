@@ -179,6 +179,9 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
 
   return {
     findDistanceEstimate,
+    /**
+     * @deprecated
+     */
     findDistanceEstimateOfEntryId,
     getEntriesCountByDistanceEstimate,
     findAllDistanceEstimates,

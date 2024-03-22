@@ -12,7 +12,7 @@ import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-import { enrichedEntry } from "./entries-enricher.js";
+import { enrichedEntryLegacy } from "./entries-enricher.js";
 import { enrichedInventory } from "./inventories-enricher.js";
 
 const entriesController: FastifyPluginCallback<{
@@ -43,7 +43,7 @@ const entriesController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+    const entryEnrichedResult = await enrichedEntryLegacy(services, entry, req.user);
 
     if (entryEnrichedResult.isErr()) {
       switch (entryEnrichedResult.error) {
@@ -92,7 +92,7 @@ const entriesController: FastifyPluginCallback<{
     // TODO look to optimize this request
     const enrichedEntriesResults = await Promise.all(
       entriesData.map(async (entryData) => {
-        return enrichedEntry(services, entryData, req.user);
+        return enrichedEntryLegacy(services, entryData, req.user);
       }),
     );
 
@@ -155,7 +155,7 @@ const entriesController: FastifyPluginCallback<{
 
     const entry = entryResult.value;
 
-    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+    const entryEnrichedResult = await enrichedEntryLegacy(services, entry, req.user);
 
     if (entryEnrichedResult.isErr()) {
       switch (entryEnrichedResult.error) {
@@ -206,7 +206,7 @@ const entriesController: FastifyPluginCallback<{
 
     const entry = entryResult.value;
 
-    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+    const entryEnrichedResult = await enrichedEntryLegacy(services, entry, req.user);
 
     if (entryEnrichedResult.isErr()) {
       switch (entryEnrichedResult.error) {

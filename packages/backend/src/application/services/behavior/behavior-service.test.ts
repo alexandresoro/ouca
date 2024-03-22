@@ -18,6 +18,7 @@ const behaviorService = buildBehaviorService({
 
 beforeEach(() => {
   behaviorRepository.findBehaviorById.mock.resetCalls();
+  behaviorRepository.findBehaviorsById.mock.resetCalls();
   behaviorRepository.findBehaviors.mock.resetCalls();
   behaviorRepository.createBehavior.mock.resetCalls();
   behaviorRepository.createBehaviors.mock.resetCalls();
@@ -56,6 +57,47 @@ describe("Find behavior", () => {
 
     assert.deepStrictEqual(findResult, err("notAllowed"));
     assert.strictEqual(behaviorRepository.findBehaviorById.mock.callCount(), 0);
+  });
+});
+
+describe("Find behaviors by IDs", () => {
+  test("should handle a matching behavior", async () => {
+    const behaviorsData = behaviorFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
+
+    behaviorRepository.findBehaviorsById.mock.mockImplementationOnce(() => Promise.resolve(behaviorsData));
+
+    await behaviorService.findBehaviors(["12", "13", "14"], loggedUser);
+
+    assert.strictEqual(behaviorRepository.findBehaviorsById.mock.callCount(), 1);
+    assert.deepStrictEqual(behaviorRepository.findBehaviorsById.mock.calls[0].arguments, [["12", "13", "14"]]);
+  });
+
+  test("should handle behavior not found", async () => {
+    behaviorRepository.findBehaviorsById.mock.mockImplementationOnce(() => Promise.resolve([]));
+    const loggedUser = loggedUserFactory.build();
+
+    assert.deepStrictEqual(await behaviorService.findBehaviors(["10", "11"], loggedUser), ok([]));
+
+    assert.strictEqual(behaviorRepository.findBehaviorsById.mock.callCount(), 1);
+    assert.deepStrictEqual(behaviorRepository.findBehaviorsById.mock.calls[0].arguments, [["10", "11"]]);
+  });
+
+  test("should handle no ids provided", async () => {
+    const loggedUser = loggedUserFactory.build();
+
+    const findResult = await behaviorService.findBehaviors([], loggedUser);
+
+    assert.ok(findResult.isOk());
+    assert.deepStrictEqual(findResult.value, []);
+    assert.strictEqual(behaviorRepository.findBehaviorsById.mock.callCount(), 0);
+  });
+
+  test("should not be allowed when the no login details are provided", async () => {
+    const findResult = await behaviorService.findBehaviors(["11", "12"], null);
+
+    assert.deepStrictEqual(findResult, err("notAllowed"));
+    assert.strictEqual(behaviorRepository.findBehaviorsById.mock.callCount(), 0);
   });
 });
 

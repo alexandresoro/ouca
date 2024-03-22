@@ -177,6 +177,9 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
 
   return {
     findAge,
+    /**
+     * @deprecated
+     */
     findAgeOfEntryId,
     getEntriesCountByAge,
     findAllAges,

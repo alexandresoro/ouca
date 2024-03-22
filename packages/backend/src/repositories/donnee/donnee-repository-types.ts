@@ -3,6 +3,9 @@ import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { z } from "zod";
 import type { SortOrder } from "../common.js";
 
+/**
+ * @deprecated
+ */
 export const donneeSchema = z.object({
   id: z.string(),
   inventaireId: z.string(),
@@ -18,12 +21,21 @@ export const donneeSchema = z.object({
   dateCreation: z.number(), // timestamp
 });
 
+/**
+ * @deprecated
+ */
 export type Donnee = z.infer<typeof donneeSchema>;
 
+/**
+ * @deprecated
+ */
 export const maxRegoupementSchema = z.object({
   max: z.number().nullable(),
 });
 
+/**
+ * @deprecated
+ */
 export type DonneeFindManyInput = Partial<{
   searchCriteria: LegacySearchCriteria | null | undefined;
   orderBy:
@@ -47,9 +59,15 @@ export type DonneeFindManyInput = Partial<{
   limit: number | null;
 }>;
 
+/**
+ * @deprecated
+ */
 export type DonneeFindMatchingInput = DonneeCreateInput &
   Required<Pick<UpsertEntryInput, "behaviorIds" | "environmentIds">>;
 
+/**
+ * @deprecated
+ */
 export type DonneeCreateInput = {
   inventaire_id: number;
   espece_id: number;

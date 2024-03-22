@@ -3,6 +3,9 @@ import { buildAndClause } from "../repository-helpers.js";
 import { buildSearchCriteriaParameters } from "../search-criteria.js";
 import type { DonneeFindManyInput, DonneeFindMatchingInput } from "./donnee-repository-types.js";
 
+/**
+ * @deprecated
+ */
 export const buildFindMatchingDonneeClause = (criteria: DonneeFindMatchingInput) => {
   if (!criteria) {
     return sql.fragment``;
@@ -37,6 +40,9 @@ export const buildFindMatchingDonneeClause = (criteria: DonneeFindMatchingInput)
   return sql.fragment`WHERE ${builtClause}`;
 };
 
+/**
+ * @deprecated
+ */
 export const buildSearchCriteriaClause = (searchCriteria: DonneeFindManyInput["searchCriteria"]) => {
   if (!searchCriteria) {
     return sql.fragment``;
@@ -53,6 +59,9 @@ export const buildSearchCriteriaClause = (searchCriteria: DonneeFindManyInput["s
   return sql.fragment`WHERE ${builtClause}`;
 };
 
+/**
+ * @deprecated
+ */
 export const buildOrderByIdentifier = (orderBy: NonNullable<DonneeFindManyInput["orderBy"]>): IdentifierSqlToken => {
   switch (orderBy) {
     case "id":

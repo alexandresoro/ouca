@@ -178,6 +178,9 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
 
   return {
     findNumberEstimate,
+    /**
+     * @deprecated
+     */
     findNumberEstimateOfEntryId,
     getEntriesCountByNumberEstimate,
     findAllNumberEstimates,

@@ -177,6 +177,9 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
 
   return {
     findSex,
+    /**
+     * @deprecated
+     */
     findSexOfEntryId,
     getEntriesCountBySex,
     findAllSexes,

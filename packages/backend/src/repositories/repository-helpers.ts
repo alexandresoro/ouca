@@ -7,6 +7,9 @@ import {
 } from "slonik";
 import type { SortOrder } from "./common.js";
 
+/**
+ * @deprecated
+ */
 export const objectToKeyValueSet = (
   obj: Record<string, string | number | boolean | undefined | null>,
 ): ListSqlToken => {
@@ -20,6 +23,9 @@ export const objectToKeyValueSet = (
   );
 };
 
+/**
+ * @deprecated
+ */
 export const objectToKeyValueInsert = (
   obj: Record<string, string | number | boolean | undefined | null>,
 ): SqlFragment => {
@@ -44,6 +50,9 @@ export const objectToKeyValueInsert = (
   `;
 };
 
+/**
+ * @deprecated
+ */
 export const objectsToKeyValueInsert = <T extends string>(
   objects: Partial<Record<T, string | number | boolean | undefined | null>>[],
 ): SqlFragment => {
@@ -81,6 +90,9 @@ export const objectsToKeyValueInsert = <T extends string>(
   `;
 };
 
+/**
+ * @deprecated
+ */
 export const buildAndClause = (
   conditions:
     | readonly (readonly [
@@ -126,6 +138,9 @@ export const buildAndClause = (
   return sql.join(conditionsFragments, sql.fragment` AND `);
 };
 
+/**
+ * @deprecated
+ */
 export const buildSortOrderFragment = ({
   orderBy,
   sortOrder,
@@ -140,6 +155,9 @@ export const buildSortOrderFragment = ({
   return sortOrder === "asc" ? sql.fragment` ASC` : sql.fragment` DESC`;
 };
 
+/**
+ * @deprecated
+ */
 export const buildPaginationFragment = ({
   offset,
   limit,

@@ -8,6 +8,9 @@ import type { Result } from "neverthrow";
 
 export type DistanceEstimateRepository = {
   findDistanceEstimateById: (id: number) => Promise<DistanceEstimate | null>;
+  /**
+   * @deprecated
+   */
   findDistanceEstimateByEntryId: (entryId: number | undefined) => Promise<DistanceEstimate | null>;
   findDistanceEstimates: ({
     orderBy,

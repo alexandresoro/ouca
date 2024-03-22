@@ -23,6 +23,20 @@ export const buildEnvironmentRepository = () => {
     return environmentResult ? environmentSchema.parse(environmentResult) : null;
   };
 
+  const findEnvironmentsById = async (ids: string[]): Promise<Environment[]> => {
+    const environmentsResult = await kysely
+      .selectFrom("milieu")
+      .select([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
+      .where(
+        "milieu.id",
+        "in",
+        ids.map((id) => Number.parseInt(id)),
+      )
+      .execute();
+
+    return z.array(environmentSchema).parse(environmentsResult);
+  };
+
   const findEnvironmentsByEntryId = async (entryId: string | undefined): Promise<Environment[]> => {
     if (!entryId) {
       return [];
@@ -197,6 +211,7 @@ export const buildEnvironmentRepository = () => {
 
   return {
     findEnvironmentById,
+    findEnvironmentsById,
     findEnvironmentsByEntryId,
     findEnvironments,
     getCount,

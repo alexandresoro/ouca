@@ -17,6 +17,7 @@ const environmentService = buildEnvironmentService({
 
 beforeEach(() => {
   environmentRepository.findEnvironmentById.mock.resetCalls();
+  environmentRepository.findEnvironmentsById.mock.resetCalls();
   environmentRepository.findEnvironments.mock.resetCalls();
   environmentRepository.createEnvironment.mock.resetCalls();
   environmentRepository.createEnvironments.mock.resetCalls();
@@ -55,6 +56,47 @@ describe("Find environment", () => {
 
     assert.deepStrictEqual(findResult, err("notAllowed"));
     assert.strictEqual(environmentRepository.findEnvironmentById.mock.callCount(), 0);
+  });
+});
+
+describe("Find environments by IDs", () => {
+  test("should handle a matching environment", async () => {
+    const environmentsData = environmentFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
+
+    environmentRepository.findEnvironmentsById.mock.mockImplementationOnce(() => Promise.resolve(environmentsData));
+
+    await environmentService.findEnvironments(["12", "13", "14"], loggedUser);
+
+    assert.strictEqual(environmentRepository.findEnvironmentsById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironmentsById.mock.calls[0].arguments, [["12", "13", "14"]]);
+  });
+
+  test("should handle environment not found", async () => {
+    environmentRepository.findEnvironmentsById.mock.mockImplementationOnce(() => Promise.resolve([]));
+    const loggedUser = loggedUserFactory.build();
+
+    assert.deepStrictEqual(await environmentService.findEnvironments(["10", "11"], loggedUser), ok([]));
+
+    assert.strictEqual(environmentRepository.findEnvironmentsById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.findEnvironmentsById.mock.calls[0].arguments, [["10", "11"]]);
+  });
+
+  test("should handle no ids provided", async () => {
+    const loggedUser = loggedUserFactory.build();
+
+    const findResult = await environmentService.findEnvironments([], loggedUser);
+
+    assert.ok(findResult.isOk());
+    assert.deepStrictEqual(findResult.value, []);
+    assert.strictEqual(environmentRepository.findEnvironmentsById.mock.callCount(), 0);
+  });
+
+  test("should not be allowed when the no login details are provided", async () => {
+    const findResult = await environmentService.findEnvironments(["11", "12"], null);
+
+    assert.deepStrictEqual(findResult, err("notAllowed"));
+    assert.strictEqual(environmentRepository.findEnvironmentsById.mock.callCount(), 0);
   });
 });
 

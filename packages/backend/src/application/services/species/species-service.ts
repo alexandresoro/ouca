@@ -240,6 +240,9 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
   return {
     findSpecies,
     getEntriesCountBySpecies,
+    /**
+     * @deprecated
+     */
     findSpeciesOfEntryId,
     findAllSpecies,
     findAllSpeciesWithClasses,

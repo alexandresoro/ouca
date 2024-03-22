@@ -2,6 +2,9 @@ import type { LegacySearchCriteria } from "@domain/search/search-criteria.js";
 import type { SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { type IdentifierSqlToken, sql } from "slonik";
 
+/**
+ * @deprecated
+ */
 export const reshapeSearchCriteria = (
   params: Omit<SpeciesSearchParams, "q" | "pageNumber" | "pageSize" | "orderBy" | "sortOrder">,
 ): LegacySearchCriteria | undefined => {
@@ -138,6 +141,9 @@ const getOperatorForCriteria = (criteriaName: keyof LegacySearchCriteria) => {
   }
 };
 
+/**
+ * @deprecated
+ */
 export const buildSearchCriteriaParameters = (searchCriteria: LegacySearchCriteria) => {
   return Object.entries(searchCriteria)
     .filter(

@@ -4,6 +4,10 @@ import type { Result } from "neverthrow";
 
 export type BehaviorRepository = {
   findBehaviorById: (id: number) => Promise<Behavior | null>;
+  findBehaviorsById: (ids: string[]) => Promise<Behavior[]>;
+  /**
+   * @deprecated
+   */
   findBehaviorsByEntryId: (entryId: string | undefined) => Promise<Behavior[]>;
   findBehaviors: ({ orderBy, sortOrder, q, offset, limit }: BehaviorFindManyInput) => Promise<Behavior[]>;
   getCount: (q?: string | null) => Promise<number>;

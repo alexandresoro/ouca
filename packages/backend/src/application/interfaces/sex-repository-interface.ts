@@ -4,6 +4,9 @@ import type { Result } from "neverthrow";
 
 export type SexRepository = {
   findSexById: (id: number) => Promise<Sex | null>;
+  /**
+   * @deprecated
+   */
   findSexByEntryId: (entryId: number | undefined) => Promise<Sex | null>;
   findSexes: ({ orderBy, sortOrder, q, offset, limit }: SexFindManyInput) => Promise<readonly Sex[]>;
   getCount: (q?: string | null) => Promise<number>;
