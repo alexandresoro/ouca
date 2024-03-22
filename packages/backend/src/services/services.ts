@@ -4,6 +4,7 @@ import { buildAgeRepository } from "@infrastructure/repositories/age/age-reposit
 import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
 import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
+import { buildEntryRepository } from "@infrastructure/repositories/entry/entry-repository.js";
 import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
 import { buildInventoryRepository } from "@infrastructure/repositories/inventory/inventory-repository.js";
 import { buildLocalityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
@@ -92,7 +93,8 @@ export const buildServices = async (): Promise<Services> => {
   const classRepository = buildSpeciesClassRepository();
   const departmentRepository = buildDepartmentRepository();
   const distanceEstimateRepository = buildDistanceEstimateRepository();
-  const entryRepository = buildDonneeRepository({ slonik });
+  const entryRepository = buildEntryRepository();
+  const entryRepositoryLegacy = buildDonneeRepository({ slonik });
   const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
   const entryEnvironmentRepository = buildDonneeMilieuRepository({ slonik });
   const environmentRepository = buildEnvironmentRepository();
@@ -109,37 +111,37 @@ export const buildServices = async (): Promise<Services> => {
 
   const ageService = buildAgeService({
     ageRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const classService = buildSpeciesClassService({
     classRepository,
     speciesRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const townService = buildTownService({
     townRepository,
     localityRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const behaviorService = buildBehaviorService({
     behaviorRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const departmentService = buildDepartmentService({
     departmentRepository,
     townRepository,
     localityRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const entryService = buildDonneeService({
     slonik,
     inventoryRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
     entryBehaviorRepository,
     entryEnvironmentRepository,
   });
@@ -147,39 +149,39 @@ export const buildServices = async (): Promise<Services> => {
   const speciesService = buildSpeciesService({
     classService,
     speciesRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const distanceEstimateService = buildDistanceEstimateService({
     distanceEstimateRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const numberEstimateService = buildNumberEstimateService({
     numberEstimateRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const inventoryService = buildInventoryService({
     inventoryRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
     localityRepository,
   });
 
   const localityService = buildLocalityService({
     localityRepository,
     inventoryRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const weatherService = buildWeatherService({
     weatherRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const environmentService = buildEnvironmentService({
     environmentRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const observerService = buildObserverService({
@@ -188,7 +190,7 @@ export const buildServices = async (): Promise<Services> => {
 
   const sexService = buildSexService({
     sexRepository,
-    entryRepository,
+    entryRepository: entryRepositoryLegacy,
   });
 
   const userService = buildUserService({
