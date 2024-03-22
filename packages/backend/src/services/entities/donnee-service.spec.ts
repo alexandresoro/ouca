@@ -213,7 +213,6 @@ describe("Deletion of a data", () => {
     });
 
     inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
-    entryRepository.getCountByInventaireId.mockResolvedValueOnce(2);
     entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
 
     const result = await donneeService.deleteDonnee("11", loggedUser);
@@ -238,7 +237,6 @@ describe("Deletion of a data", () => {
       });
 
       inventoryRepository.findInventoryByEntryId.mockResolvedValueOnce(matchingInventory);
-      entryRepository.getCountByInventaireId.mockResolvedValueOnce(2);
       entryRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
 
       const result = await donneeService.deleteDonnee("11", loggedUser);

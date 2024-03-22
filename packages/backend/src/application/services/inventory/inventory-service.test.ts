@@ -322,7 +322,7 @@ describe("Deletion of an inventory", () => {
     });
 
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
-    entryRepository.getCountByInventaireId.mock.mockImplementationOnce(() => Promise.resolve(0));
+    inventoryRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(0));
     inventoryRepository.deleteInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
 
     const result = await inventaireService.deleteInventory("11", loggedUser);
@@ -342,7 +342,7 @@ describe("Deletion of an inventory", () => {
     });
 
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
-    entryRepository.getCountByInventaireId.mock.mockImplementationOnce(() => Promise.resolve(0));
+    inventoryRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(0));
     inventoryRepository.deleteInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
 
     const result = await inventaireService.deleteInventory("11", loggedUser);

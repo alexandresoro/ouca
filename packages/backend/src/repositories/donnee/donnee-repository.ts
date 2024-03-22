@@ -196,22 +196,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const getCountByInventaireId = async (
-    inventoryId: number,
-    transaction?: DatabaseTransactionConnection,
-  ): Promise<number> => {
-    const query = sql.type(countSchema)`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.donnee
-      WHERE
-        donnee.inventaire_id = ${inventoryId}
-    `;
-
-    return (transaction ?? slonik).oneFirst(query);
-  };
-
   const createDonnee = async (
     donneeInput: DonneeCreateInput,
     transaction?: DatabaseTransactionConnection,
@@ -329,7 +313,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     findExistingDonnee,
     getCount,
     findLatestRegroupement,
-    getCountByInventaireId,
     createDonnee,
     updateDonnee,
     deleteDonneeById,
