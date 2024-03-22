@@ -362,7 +362,7 @@ describe("Deletion of an inventory", () => {
     });
 
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
-    entryRepository.getCountByInventaireId.mock.mockImplementationOnce(() => Promise.resolve(3));
+    inventoryRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(3));
     inventoryRepository.deleteInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
 
     assert.deepStrictEqual(await inventaireService.deleteInventory("11", loggedUser), err("inventoryStillInUse"));

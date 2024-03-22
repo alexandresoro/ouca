@@ -6,16 +6,13 @@ import { upsertSexInputFactory } from "@fixtures/services/sex/sex-service.fixtur
 import type { SexRepository } from "@interfaces/sex-repository-interface.js";
 import type { SexesSearchParams } from "@ou-ca/common/api/sex";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildSexService } from "./sex-service.js";
 
 const sexRepository = mock<SexRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const sexService = buildSexService({
   sexRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -23,11 +20,11 @@ beforeEach(() => {
   sexRepository.findSexByEntryId.mock.resetCalls();
   sexRepository.findSexes.mock.resetCalls();
   sexRepository.getCount.mock.resetCalls();
+  sexRepository.getEntriesCountById.mock.resetCalls();
   sexRepository.updateSex.mock.resetCalls();
   sexRepository.createSex.mock.resetCalls();
   sexRepository.deleteSexById.mock.resetCalls();
   sexRepository.createSexes.mock.resetCalls();
-  entryRepository.getCountBySexeId.mock.resetCalls();
 });
 
 describe("Find sex", () => {
@@ -67,8 +64,8 @@ describe("Data count per entity", () => {
 
     await sexService.getEntriesCountBySex("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountBySexeId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountBySexeId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(sexRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(sexRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

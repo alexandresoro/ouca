@@ -6,16 +6,13 @@ import { upsertEnvironmentInputFactory } from "@fixtures/services/environment/en
 import type { EnvironmentRepository } from "@interfaces/environment-repository-interface.js";
 import type { EnvironmentsSearchParams } from "@ou-ca/common/api/environment";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildEnvironmentService } from "./environment-service.js";
 
 const environmentRepository = mock<EnvironmentRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const environmentService = buildEnvironmentService({
   environmentRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -26,8 +23,8 @@ beforeEach(() => {
   environmentRepository.updateEnvironment.mock.resetCalls();
   environmentRepository.deleteEnvironmentById.mock.resetCalls();
   environmentRepository.getCount.mock.resetCalls();
+  environmentRepository.getEntriesCountById.mock.resetCalls();
   environmentRepository.findEnvironmentsByEntryId.mock.resetCalls();
-  entryRepository.getCountByMilieuId.mock.resetCalls();
 });
 
 describe("Find environment", () => {
@@ -67,8 +64,8 @@ describe("Data count per entity", () => {
 
     await environmentService.getEntriesCountByEnvironment("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByMilieuId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByMilieuId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(environmentRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(environmentRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

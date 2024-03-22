@@ -231,7 +231,7 @@ export const buildInventoryService = ({
       }
     }
 
-    const entriesOfInventory = await entryRepository.getCountByInventaireId(Number.parseInt(id));
+    const entriesOfInventory = await inventoryRepository.getEntriesCountById(id);
 
     if (entriesOfInventory > 0) {
       return err("inventoryStillInUse");

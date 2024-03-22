@@ -8,18 +8,15 @@ import type { InventoryRepository } from "@interfaces/inventory-repository-inter
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 import type { LocalitiesSearchParams } from "@ou-ca/common/api/locality";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildLocalityService } from "./locality-service.js";
 
 const localityRepository = mock<LocalityRepository>();
 const inventoryRepository = mock<InventoryRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const localityService = buildLocalityService({
   localityRepository,
   inventoryRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -27,12 +24,12 @@ beforeEach(() => {
   localityRepository.findLocalityByInventoryId.mock.resetCalls();
   localityRepository.findLocalities.mock.resetCalls();
   localityRepository.getCount.mock.resetCalls();
+  localityRepository.getEntriesCountById.mock.resetCalls();
   localityRepository.updateLocality.mock.resetCalls();
   localityRepository.createLocality.mock.resetCalls();
   localityRepository.deleteLocalityById.mock.resetCalls();
   localityRepository.createLocalities.mock.resetCalls();
   inventoryRepository.getCountByLocality.mock.resetCalls();
-  entryRepository.getCountByLieuditId.mock.resetCalls();
 });
 
 describe("Find locality", () => {
@@ -89,8 +86,8 @@ describe("Data count per entity", () => {
 
     await localityService.getEntriesCountByLocality("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByLieuditId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByLieuditId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(localityRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(localityRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

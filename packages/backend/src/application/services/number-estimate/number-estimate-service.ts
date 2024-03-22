@@ -5,18 +5,13 @@ import type { NumberEstimateRepository } from "@interfaces/number-estimate-repos
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { NumberEstimatesSearchParams, UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type NumberEstimateServiceDependencies = {
   numberEstimateRepository: NumberEstimateRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildNumberEstimateService = ({
-  numberEstimateRepository,
-  entryRepository,
-}: NumberEstimateServiceDependencies) => {
+export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberEstimateServiceDependencies) => {
   const findNumberEstimate = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -51,7 +46,7 @@ export const buildNumberEstimateService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByEstimationNombreId(Number.parseInt(id)));
+    return ok(await numberEstimateRepository.getEntriesCountById(id));
   };
 
   const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {

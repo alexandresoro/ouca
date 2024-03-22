@@ -9,16 +9,13 @@ import { upsertNumberEstimateInputFactory } from "@fixtures/services/number-esti
 import type { NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
 import type { NumberEstimatesSearchParams } from "@ou-ca/common/api/number-estimate";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildNumberEstimateService } from "./number-estimate-service.js";
 
 const numberEstimateRepository = mock<NumberEstimateRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const numberEstimateService = buildNumberEstimateService({
   numberEstimateRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -29,8 +26,8 @@ beforeEach(() => {
   numberEstimateRepository.updateNumberEstimate.mock.resetCalls();
   numberEstimateRepository.deleteNumberEstimateById.mock.resetCalls();
   numberEstimateRepository.getCount.mock.resetCalls();
+  numberEstimateRepository.getEntriesCountById.mock.resetCalls();
   numberEstimateRepository.findNumberEstimateByEntryId.mock.resetCalls();
-  entryRepository.getCountByEstimationNombreId.mock.resetCalls();
 });
 
 describe("Find number estimate", () => {
@@ -72,8 +69,8 @@ describe("Data count per entity", () => {
 
     await numberEstimateService.getEntriesCountByNumberEstimate("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByEstimationNombreId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByEstimationNombreId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(numberEstimateRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(numberEstimateRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

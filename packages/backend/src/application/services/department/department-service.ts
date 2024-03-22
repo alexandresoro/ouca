@@ -7,21 +7,18 @@ import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { DepartmentsSearchParams, UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type DepartmentServiceDependencies = {
   departmentRepository: DepartmentRepository;
   townRepository: TownRepository;
   localityRepository: LocalityRepository;
-  entryRepository: DonneeRepository;
 };
 
 export const buildDepartmentService = ({
   departmentRepository,
   townRepository,
   localityRepository,
-  entryRepository,
 }: DepartmentServiceDependencies) => {
   const findDepartment = async (
     id: number,
@@ -43,7 +40,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByDepartementId(Number.parseInt(id)));
+    return ok(await departmentRepository.getEntriesCountById(id));
   };
 
   const getLocalitiesCountByDepartment = async (

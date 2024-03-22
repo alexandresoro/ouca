@@ -5,15 +5,13 @@ import type { WeatherRepository } from "@interfaces/weather-repository-interface
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import type { UpsertWeatherInput, WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type WeatherServiceDependencies = {
   weatherRepository: WeatherRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildWeatherService = ({ weatherRepository, entryRepository }: WeatherServiceDependencies) => {
+export const buildWeatherService = ({ weatherRepository }: WeatherServiceDependencies) => {
   const findWeather = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -50,7 +48,7 @@ export const buildWeatherService = ({ weatherRepository, entryRepository }: Weat
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByMeteoId(Number.parseInt(id)));
+    return ok(await weatherRepository.getEntriesCountById(id));
   };
 
   const findAllWeathers = async (): Promise<Weather[]> => {

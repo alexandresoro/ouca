@@ -8,18 +8,15 @@ import type { LocalityRepository } from "@interfaces/locality-repository-interfa
 import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { TownsSearchParams } from "@ou-ca/common/api/town";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildTownService } from "./town-service.js";
 
 const townRepository = mock<TownRepository>();
 const localityRepository = mock<LocalityRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const townService = buildTownService({
   townRepository,
   localityRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -30,9 +27,8 @@ beforeEach(() => {
   townRepository.createTowns.mock.resetCalls();
   townRepository.deleteTownById.mock.resetCalls();
   townRepository.getCount.mock.resetCalls();
+  townRepository.getEntriesCountById.mock.resetCalls();
   townRepository.findTownByLocalityId.mock.resetCalls();
-  entryRepository.getCountByCommuneId.mock.resetCalls();
-  localityRepository.getCount.mock.resetCalls();
 });
 
 describe("Find city", () => {
@@ -89,8 +85,8 @@ describe("Data count per entity", () => {
 
     await townService.getEntriesCountByTown("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByCommuneId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByCommuneId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(townRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(townRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

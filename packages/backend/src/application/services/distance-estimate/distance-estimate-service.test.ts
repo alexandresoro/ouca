@@ -7,16 +7,13 @@ import { upsertDistanceEstimateInputFactory } from "@fixtures/services/distance-
 import type { DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
 import type { DistanceEstimatesSearchParams } from "@ou-ca/common/api/distance-estimate";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildDistanceEstimateService } from "./distance-estimate-service.js";
 
 const distanceEstimateRepository = mock<DistanceEstimateRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const distanceEstimateService = buildDistanceEstimateService({
   distanceEstimateRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -27,8 +24,8 @@ beforeEach(() => {
   distanceEstimateRepository.updateDistanceEstimate.mock.resetCalls();
   distanceEstimateRepository.deleteDistanceEstimateById.mock.resetCalls();
   distanceEstimateRepository.getCount.mock.resetCalls();
+  distanceEstimateRepository.getEntriesCountById.mock.resetCalls();
   distanceEstimateRepository.findDistanceEstimateByEntryId.mock.resetCalls();
-  entryRepository.getCountByEstimationDistanceId.mock.resetCalls();
 });
 
 describe("Find distance estimate", () => {
@@ -70,8 +67,8 @@ describe("Data count per entity", () => {
 
     await distanceEstimateService.getEntriesCountByDistanceEstimate("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByEstimationDistanceId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByEstimationDistanceId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(distanceEstimateRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(distanceEstimateRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

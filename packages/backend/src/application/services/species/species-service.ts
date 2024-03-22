@@ -5,21 +5,15 @@ import type { SpeciesRepository } from "@interfaces/species-repository-interface
 import type { Species as SpeciesCommon } from "@ou-ca/common/api/entities/species";
 import type { SpeciesSearchParams, UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 import type { SpeciesClassService } from "../species-class/species-class-service.js";
 
 type SpeciesServiceDependencies = {
   classService: SpeciesClassService;
   speciesRepository: SpeciesRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildSpeciesService = ({
-  speciesRepository,
-  entryRepository,
-  classService,
-}: SpeciesServiceDependencies) => {
+export const buildSpeciesService = ({ speciesRepository, classService }: SpeciesServiceDependencies) => {
   const enrichSpecies = async (
     species: Species,
     loggedUser: LoggedUser | null,
@@ -73,7 +67,7 @@ export const buildSpeciesService = ({
     // FIXME: Add search criteria to the count query when migrating to the new repository
     const { q, orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
-    return ok(await entryRepository.getCountByEspeceId(Number.parseInt(id)));
+    return ok(await speciesRepository.getEntriesCountById(id, searchCriteria));
   };
 
   const findSpeciesOfEntryId = async (

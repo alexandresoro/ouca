@@ -8,31 +8,28 @@ import type { SpeciesClassRepository } from "@interfaces/species-class-repositor
 import type { SpeciesRepository } from "@interfaces/species-repository-interface.js";
 import type { ClassesSearchParams } from "@ou-ca/common/api/species-class";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildSpeciesClassService } from "./species-class-service.js";
 
 const classRepository = mock<SpeciesClassRepository>();
 const speciesRepository = mock<SpeciesRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const speciesClassService = buildSpeciesClassService({
   classRepository,
   speciesRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
   classRepository.findSpeciesClassById.mock.resetCalls();
   classRepository.findSpeciesClasses.mock.resetCalls();
   classRepository.getCount.mock.resetCalls();
+  classRepository.getEntriesCountById.mock.resetCalls();
   classRepository.createSpeciesClass.mock.resetCalls();
   classRepository.updateSpeciesClass.mock.resetCalls();
   classRepository.deleteSpeciesClassById.mock.resetCalls();
   classRepository.createSpeciesClasses.mock.resetCalls();
   classRepository.findSpeciesClassBySpeciesId.mock.resetCalls();
   speciesRepository.getCount.mock.resetCalls();
-  entryRepository.getCountByClasseId.mock.resetCalls();
 });
 
 describe("Find class", () => {
@@ -95,8 +92,8 @@ describe("Data count per entity", () => {
 
     await speciesClassService.getEntriesCountBySpeciesClass("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByClasseId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByClasseId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(classRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(classRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

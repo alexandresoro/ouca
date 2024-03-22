@@ -5,15 +5,13 @@ import type { SexRepository } from "@interfaces/sex-repository-interface.js";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import type { SexesSearchParams, UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type SexServiceDependencies = {
   sexRepository: SexRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDependencies) => {
+export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
   const findSex = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -46,7 +44,7 @@ export const buildSexService = ({ sexRepository, entryRepository }: SexServiceDe
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountBySexeId(Number.parseInt(id)));
+    return ok(await sexRepository.getEntriesCountById(id));
   };
 
   const findAllSexes = async (): Promise<Sex[]> => {

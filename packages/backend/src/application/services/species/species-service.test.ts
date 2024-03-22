@@ -9,18 +9,15 @@ import type { SpeciesRepository } from "@interfaces/species-repository-interface
 import type { SpeciesSearchParams } from "@ou-ca/common/api/species";
 import { err, ok } from "neverthrow";
 import type { SpeciesClassService } from "../../../application/services/species-class/species-class-service.js";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildSpeciesService } from "./species-service.js";
 
 const classService = mock<SpeciesClassService>();
 const speciesRepository = mock<SpeciesRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const speciesService = buildSpeciesService({
   classService,
   speciesRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -32,7 +29,7 @@ beforeEach(() => {
   speciesRepository.deleteSpeciesById.mock.resetCalls();
   speciesRepository.createSpeciesMultiple.mock.resetCalls();
   speciesRepository.getCount.mock.resetCalls();
-  entryRepository.getCountByEspeceId.mock.resetCalls();
+  speciesRepository.getEntriesCountById.mock.resetCalls();
   classService.findSpeciesClassOfSpecies.mock.resetCalls();
 });
 
@@ -78,15 +75,15 @@ describe("Data count per entity", () => {
 
     await speciesService.getEntriesCountBySpecies("12", {}, loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByEspeceId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByEspeceId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(speciesRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getEntriesCountById.mock.calls[0].arguments, ["12", {}]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesCountResult = await speciesService.getEntriesCountBySpecies("12", {}, null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-    assert.strictEqual(entryRepository.getCountByEspeceId.mock.callCount(), 0);
+    assert.strictEqual(speciesRepository.getEntriesCountById.mock.callCount(), 0);
   });
 });
 

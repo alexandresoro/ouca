@@ -116,13 +116,11 @@ export const buildServices = async (): Promise<Services> => {
   const classService = buildSpeciesClassService({
     classRepository,
     speciesRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const townService = buildTownService({
     townRepository,
     localityRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const behaviorService = buildBehaviorService({
@@ -133,7 +131,6 @@ export const buildServices = async (): Promise<Services> => {
     departmentRepository,
     townRepository,
     localityRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const entryService = buildDonneeService({
@@ -147,17 +144,14 @@ export const buildServices = async (): Promise<Services> => {
   const speciesService = buildSpeciesService({
     classService,
     speciesRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const distanceEstimateService = buildDistanceEstimateService({
     distanceEstimateRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const numberEstimateService = buildNumberEstimateService({
     numberEstimateRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const inventoryService = buildInventoryService({
@@ -169,17 +163,14 @@ export const buildServices = async (): Promise<Services> => {
   const localityService = buildLocalityService({
     localityRepository,
     inventoryRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const weatherService = buildWeatherService({
     weatherRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const environmentService = buildEnvironmentService({
     environmentRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const observerService = buildObserverService({
@@ -188,7 +179,6 @@ export const buildServices = async (): Promise<Services> => {
 
   const sexService = buildSexService({
     sexRepository,
-    entryRepository: entryRepositoryLegacy,
   });
 
   const userService = buildUserService({

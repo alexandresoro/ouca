@@ -5,18 +5,13 @@ import type { DistanceEstimateRepository } from "@interfaces/distance-estimate-r
 import type { DistanceEstimatesSearchParams, UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type DistanceEstimateServiceDependencies = {
   distanceEstimateRepository: DistanceEstimateRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildDistanceEstimateService = ({
-  distanceEstimateRepository,
-  entryRepository,
-}: DistanceEstimateServiceDependencies) => {
+export const buildDistanceEstimateService = ({ distanceEstimateRepository }: DistanceEstimateServiceDependencies) => {
   const findDistanceEstimate = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -51,7 +46,7 @@ export const buildDistanceEstimateService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByEstimationDistanceId(Number.parseInt(id)));
+    return ok(await distanceEstimateRepository.getEntriesCountById(id));
   };
 
   const findAllDistanceEstimates = async (): Promise<DistanceEstimate[]> => {

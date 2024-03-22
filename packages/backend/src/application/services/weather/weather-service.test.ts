@@ -7,16 +7,13 @@ import { upsertWeatherInputFactory } from "@fixtures/services/weather/weather-se
 import type { WeatherRepository } from "@interfaces/weather-repository-interface.js";
 import type { WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildWeatherService } from "./weather-service.js";
 
 const weatherRepository = mock<WeatherRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const weatherService = buildWeatherService({
   weatherRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -28,7 +25,7 @@ beforeEach(() => {
   weatherRepository.updateWeather.mock.resetCalls();
   weatherRepository.deleteWeatherById.mock.resetCalls();
   weatherRepository.getCount.mock.resetCalls();
-  entryRepository.getCountByMeteoId.mock.resetCalls();
+  weatherRepository.getEntriesCountById.mock.resetCalls();
 });
 
 describe("Find weather", () => {
@@ -109,8 +106,8 @@ describe("Data count per entity", () => {
 
     await weatherService.getEntriesCountByWeather("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByMeteoId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByMeteoId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(weatherRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(weatherRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

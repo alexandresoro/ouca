@@ -9,20 +9,17 @@ import type { LocalityRepository } from "@interfaces/locality-repository-interfa
 import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { DepartmentsSearchParams } from "@ou-ca/common/api/department";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { mock } from "../../../utils/mock.js";
 import { buildDepartmentService } from "./department-service.js";
 
 const departmentRepository = mock<DepartmentRepository>();
 const townRepository = mock<TownRepository>();
 const localityRepository = mock<LocalityRepository>();
-const entryRepository = mock<DonneeRepository>();
 
 const departmentService = buildDepartmentService({
   departmentRepository,
   townRepository,
   localityRepository,
-  entryRepository,
 });
 
 beforeEach(() => {
@@ -33,10 +30,10 @@ beforeEach(() => {
   departmentRepository.updateDepartment.mock.resetCalls();
   departmentRepository.deleteDepartmentById.mock.resetCalls();
   departmentRepository.getCount.mock.resetCalls();
+  departmentRepository.getEntriesCountById.mock.resetCalls();
   departmentRepository.findDepartmentByTownId.mock.resetCalls();
   townRepository.getCount.mock.resetCalls();
   localityRepository.getCount.mock.resetCalls();
-  entryRepository.getCountByDepartementId.mock.resetCalls();
 });
 
 describe("Find department", () => {
@@ -110,8 +107,8 @@ describe("Data count per entity", () => {
 
     await departmentService.getEntriesCountByDepartment("12", loggedUser);
 
-    assert.strictEqual(entryRepository.getCountByDepartementId.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCountByDepartementId.mock.calls[0].arguments, [12]);
+    assert.strictEqual(departmentRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(departmentRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

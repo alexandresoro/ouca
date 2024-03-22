@@ -6,21 +6,15 @@ import type { LocalityRepository } from "@interfaces/locality-repository-interfa
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { LocalitiesSearchParams, UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { getSqlPagination } from "../entities-utils.js";
 import { reshapeLocalityRepositoryToApi } from "./locality-service-reshape.js";
 
 type LocalityServiceDependencies = {
   localityRepository: LocalityRepository;
   inventoryRepository: InventoryRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildLocalityService = ({
-  localityRepository,
-  inventoryRepository,
-  entryRepository,
-}: LocalityServiceDependencies) => {
+export const buildLocalityService = ({ localityRepository, inventoryRepository }: LocalityServiceDependencies) => {
   const findLocality = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -52,7 +46,7 @@ export const buildLocalityService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByLieuditId(Number.parseInt(id)));
+    return ok(await localityRepository.getEntriesCountById(id));
   };
 
   const findLocalityOfInventoryId = async (

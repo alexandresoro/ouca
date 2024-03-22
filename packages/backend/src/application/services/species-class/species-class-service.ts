@@ -6,20 +6,14 @@ import type { SpeciesRepository } from "@interfaces/species-repository-interface
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import type { ClassesSearchParams, UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
 type SpeciesClassServiceDependencies = {
   classRepository: SpeciesClassRepository;
   speciesRepository: SpeciesRepository;
-  entryRepository: DonneeRepository;
 };
 
-export const buildSpeciesClassService = ({
-  classRepository,
-  speciesRepository,
-  entryRepository,
-}: SpeciesClassServiceDependencies) => {
+export const buildSpeciesClassService = ({ classRepository, speciesRepository }: SpeciesClassServiceDependencies) => {
   const findSpeciesClass = async (
     id: number,
     loggedUser: LoggedUser | null,
@@ -57,7 +51,7 @@ export const buildSpeciesClassService = ({
       return err("notAllowed");
     }
 
-    return ok(await entryRepository.getCountByClasseId(Number.parseInt(id)));
+    return ok(await classRepository.getEntriesCountById(id));
   };
 
   const findSpeciesClassOfSpecies = async (
