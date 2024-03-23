@@ -73,9 +73,9 @@ export const buildEntryService = ({
       return err("notAllowed");
     }
 
-    const reshapedSearchCriteria = reshapeSearchCriteria(options);
+    const { orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
-    return ok(await entryRepositoryLegacy.getCount(reshapedSearchCriteria));
+    return ok(await entryRepository.getCount(searchCriteria));
   };
 
   const findNextGrouping = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {

@@ -34,6 +34,7 @@ vi.doMock("./entry-service-reshape.js", () => {
 beforeEach(() => {
   vi.resetAllMocks();
   entryRepository.findEntryById.mock.resetCalls();
+  entryRepository.getCount.mock.resetCalls();
   entryRepository.createEntry.mock.resetCalls();
   entryRepository.updateEntry.mock.resetCalls();
   entryRepository.deleteEntryById.mock.resetCalls();
@@ -144,8 +145,8 @@ describe("Entities count by search criteria", () => {
       pageSize: 10,
     });
 
-    expect(entryRepositoryLegacy.getCount).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.getCount).toHaveBeenLastCalledWith(undefined);
+    assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [{}]);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -160,15 +161,20 @@ describe("Entities count by search criteria", () => {
 
     await entryService.getEntriesCount(loggedUser, searchCriteria);
 
-    expect(entryRepositoryLegacy.getCount).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.getCount).toHaveBeenLastCalledWith({
-      number: 12,
-      breeders: ["certain", "probable"],
-    });
+    assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [
+      {
+        number: 12,
+        breeders: ["certain", "probable"],
+      },
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await entryService.getEntriesCount(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(
+      await entryService.getEntriesCount(null, { pageNumber: 1, pageSize: 10 }),
+      err("notAllowed"),
+    );
   });
 });
 

@@ -1,6 +1,9 @@
 import { type Entry, type EntryCreateInput, entrySchema } from "@domain/entry/entry.js";
+import type { SearchCriteria } from "@domain/search/search-criteria.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
+import { countSchema } from "@infrastructure/repositories/common.js";
 import { reshapeRawEntry } from "@infrastructure/repositories/entry/entry-repository-reshape.js";
+import { withSearchCriteria } from "@infrastructure/repositories/search-criteria.js";
 import { sql } from "kysely";
 
 export const buildEntryRepository = () => {
@@ -30,6 +33,31 @@ export const buildEntryRepository = () => {
       .executeTakeFirst();
 
     return entryResult ? entrySchema.parse(reshapeRawEntry(entryResult)) : null;
+  };
+
+  const getCount = async (criteria?: SearchCriteria | null): Promise<number> => {
+    let query = kysely
+      .selectFrom("donnee")
+      .leftJoin("espece", "donnee.especeId", "espece.id")
+      .leftJoin("classe", "espece.classeId", "classe.id")
+      .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+      .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+      .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+      .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+      .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+      .leftJoin("commune", "lieudit.communeId", "commune.id")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"));
+
+    if (criteria != null) {
+      query = query.where(withSearchCriteria(criteria));
+    }
+
+    const countResult = await query.executeTakeFirstOrThrow();
+
+    return countSchema.parse(countResult).count;
   };
 
   const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
@@ -240,6 +268,7 @@ export const buildEntryRepository = () => {
 
   return {
     findEntryById,
+    getCount,
     createEntry,
     updateEntry,
     deleteEntryById,
