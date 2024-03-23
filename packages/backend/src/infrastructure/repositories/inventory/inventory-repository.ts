@@ -7,6 +7,7 @@ import {
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { type OperandExpression, type SqlBool, sql } from "kysely";
 import { z } from "zod";
+import { areSetsContainingSameValues } from "../../../utils/utils.js";
 import { countSchema } from "../common.js";
 import { reshapeRawInventory } from "./inventory-repository-reshape.js";
 
@@ -219,8 +220,8 @@ export const buildInventoryRepository = () => {
 
     const inventoryResult = inventoryResultWithoutLinks.filter((inventory) => {
       return (
-        new Set(inventory.associateIds) === new Set(criteria.associateIds) &&
-        new Set(inventory.weatherIds) === new Set(criteria.weatherIds)
+        areSetsContainingSameValues(new Set(inventory.associateIds), new Set(criteria.associateIds)) &&
+        areSetsContainingSameValues(new Set(inventory.weatherIds), new Set(criteria.weatherIds))
       );
     });
 
