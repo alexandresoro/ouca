@@ -12,7 +12,7 @@ import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/do
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { reshapeInputEntryUpsertDataLegacy } from "./entry-service-reshape.js";
+import { reshapeInputEntryUpsertData, reshapeInputEntryUpsertDataLegacy } from "./entry-service-reshape.js";
 
 type EntryServiceDependencies = {
   slonik: DatabasePool;
@@ -153,7 +153,7 @@ export const buildEntryService = ({
     id: string,
     input: UpsertEntryInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Donnee, EntryUpsertFailureReason>> => {
+  ): Promise<Result<Entry, EntryUpsertFailureReason>> => {
     if (!loggedUser) {
       return err({ type: "notAllowed" });
     }
@@ -172,40 +172,11 @@ export const buildEntryService = ({
         type: "similarEntryAlreadyExists",
         correspondingEntryFound: `${existingEntry.id}`,
       });
-      // biome-ignore lint/style/noUselessElse: <explanation>
-    } else {
-      const updatedEntry = await slonik.transaction(async (transactionConnection) => {
-        const updatedDonnee = await entryRepositoryLegacy.updateDonnee(
-          Number.parseInt(id),
-          reshapeInputEntryUpsertDataLegacy(input),
-          transactionConnection,
-        );
-
-        await entryBehaviorRepository.deleteComportementsOfDonneeId(Number.parseInt(id), transactionConnection);
-
-        if (behaviorIds?.length) {
-          await entryBehaviorRepository.insertDonneeWithComportements(
-            Number.parseInt(id),
-            behaviorIds.map((behavior) => Number.parseInt(behavior)),
-            transactionConnection,
-          );
-        }
-
-        await entryEnvironmentRepository.deleteMilieuxOfDonneeId(Number.parseInt(id), transactionConnection);
-
-        if (environmentIds?.length) {
-          await entryEnvironmentRepository.insertDonneeWithMilieux(
-            Number.parseInt(id),
-            environmentIds.map((environment) => Number.parseInt(environment)),
-            transactionConnection,
-          );
-        }
-
-        return updatedDonnee;
-      });
-
-      return ok(updatedEntry);
     }
+
+    const updatedEntry = await entryRepository.updateEntry(id, reshapeInputEntryUpsertData(input));
+
+    return ok(updatedEntry);
   };
 
   const deleteEntry = async (

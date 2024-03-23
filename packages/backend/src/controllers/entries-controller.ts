@@ -206,7 +206,7 @@ const entriesController: FastifyPluginCallback<{
 
     const entry = entryResult.value;
 
-    const entryEnrichedResult = await enrichedEntryLegacy(services, entry, req.user);
+    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
 
     if (entryEnrichedResult.isErr()) {
       switch (entryEnrichedResult.error) {

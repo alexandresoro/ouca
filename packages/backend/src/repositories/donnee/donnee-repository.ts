@@ -1,11 +1,6 @@
 import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
 import { countSchema } from "../common.js";
-import {
-  buildPaginationFragment,
-  buildSortOrderFragment,
-  objectToKeyValueInsert,
-  objectToKeyValueSet,
-} from "../repository-helpers.js";
+import { buildPaginationFragment, buildSortOrderFragment, objectToKeyValueInsert } from "../repository-helpers.js";
 import {
   buildFindMatchingDonneeClause,
   buildOrderByIdentifier,
@@ -188,36 +183,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return (transaction ?? slonik).one(query);
   };
 
-  const updateDonnee = async (
-    entryId: number,
-    donneeInput: DonneeCreateInput,
-    transaction?: DatabaseTransactionConnection,
-  ): Promise<Donnee> => {
-    const query = sql.type(donneeSchema)`
-      UPDATE
-        basenaturaliste.donnee
-      SET
-        ${objectToKeyValueSet(donneeInput)}
-      WHERE
-        id = ${entryId}
-      RETURNING
-        donnee.id::text,
-        donnee.inventaire_id::text,
-        donnee.espece_id::text,
-        donnee.sexe_id::text,
-        donnee.age_id::text,
-        donnee.estimation_nombre_id::text,
-        donnee.nombre,
-        donnee.estimation_distance_id::text,
-        donnee.distance,
-        donnee.commentaire,
-        donnee.regroupement,
-        donnee.date_creation
-    `;
-
-    return (transaction ?? slonik).one(query);
-  };
-
   return {
     /**
      * @deprecated
@@ -235,10 +200,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
      * @deprecated
      */
     createDonnee,
-    /**
-     * @deprecated
-     */
-    updateDonnee,
   };
 };
 

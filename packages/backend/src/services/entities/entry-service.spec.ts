@@ -1,13 +1,14 @@
 import { entryFactory } from "@fixtures/domain/entry/entry.fixtures.js";
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { upsertEntryInputFactory } from "@fixtures/services/entry/entry-service.fixtures.js";
 import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { err, ok } from "neverthrow";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
-import { any, anyNumber, anyObject, mock as mockVe } from "vitest-mock-extended";
+import { any, mock as mockVe } from "vitest-mock-extended";
 import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
@@ -44,6 +45,7 @@ vi.doMock("./entry-service-reshape.js", () => {
 beforeEach(() => {
   vi.resetAllMocks();
   entryRepository.findEntryById.mock.resetCalls();
+  entryRepository.updateEntry.mock.resetCalls();
   entryRepository.deleteEntryById.mock.resetCalls();
   entryRepository.findLatestGrouping.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
@@ -295,43 +297,20 @@ describe("Deletion of a data", () => {
 
 describe("Update of a data", () => {
   test("should update existing data", async () => {
-    const dataData = mockVe<UpsertEntryInput>({
-      behaviorIds: ["2", "3"],
-      environmentIds: ["4", "5"],
-    });
+    const dataData = upsertEntryInputFactory.build();
+    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
     entryRepositoryLegacy.findExistingDonnee.mockResolvedValueOnce(null);
-    entryRepositoryLegacy.createDonnee.mockResolvedValueOnce(
-      mockVe<Donnee>({
-        id: "12",
-      }),
-    );
-
-    const reshapedInputData = mockVe<DonneeCreateInput>();
-    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await entryService.updateEntry("12", dataData, loggedUser);
 
-    expect(entryRepositoryLegacy.updateDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.updateDonnee).toHaveBeenLastCalledWith(12, any(), any());
-    expect(entryBehaviorRepository.deleteComportementsOfDonneeId).toHaveBeenCalledTimes(1);
-    expect(entryBehaviorRepository.deleteComportementsOfDonneeId).toHaveBeenLastCalledWith(12, any());
-    expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
-    expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
-      anyNumber(),
-      expect.arrayContaining([2, 3]),
-      anyObject(),
-    );
-    expect(entryEnvironmentRepository.deleteMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
-    expect(entryEnvironmentRepository.deleteMilieuxOfDonneeId).toHaveBeenLastCalledWith(12, any());
-    expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(
-      anyNumber(),
-      expect.arrayContaining([4, 5]),
-      anyObject(),
-    );
+    assert.strictEqual(entryRepository.updateEntry.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.updateEntry.mock.calls[0].arguments, [
+      "12",
+      { ...restEntry, grouping: regroupment },
+    ]);
   });
 
   test("should not be allowed when trying to update to a different data that already exists", async () => {
@@ -345,20 +324,21 @@ describe("Update of a data", () => {
       }),
     );
 
-    expect(await entryService.updateEntry("12", dataData, loggedUser)).toEqual(
+    assert.deepStrictEqual(
+      await entryService.updateEntry("12", dataData, loggedUser),
       err({
         type: "similarEntryAlreadyExists",
         correspondingEntryFound: "345",
       }),
     );
-    expect(entryRepositoryLegacy.updateDonnee).not.toHaveBeenCalled();
+    assert.strictEqual(entryRepository.updateEntry.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
     const dataData = mockVe<UpsertEntryInput>();
 
-    expect(await entryService.updateEntry("12", dataData, null)).toEqual(err({ type: "notAllowed" }));
-    expect(entryRepositoryLegacy.createDonnee).not.toHaveBeenCalled();
+    assert.deepStrictEqual(await entryService.updateEntry("12", dataData, null), err({ type: "notAllowed" }));
+    assert.strictEqual(entryRepository.updateEntry.mock.callCount(), 0);
   });
 });
 

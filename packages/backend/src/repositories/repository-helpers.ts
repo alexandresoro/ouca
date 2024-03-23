@@ -10,22 +10,6 @@ import type { SortOrder } from "./common.js";
 /**
  * @deprecated
  */
-export const objectToKeyValueSet = (
-  obj: Record<string, string | number | boolean | undefined | null>,
-): ListSqlToken => {
-  return sql.join(
-    Object.entries(obj)
-      .filter((entry): entry is [string, string | number | boolean | null] => entry[1] !== undefined)
-      .map(([key, value]) => {
-        return sql.fragment`${sql.identifier([key])} = ${value}`;
-      }),
-    sql.fragment`, `,
-  );
-};
-
-/**
- * @deprecated
- */
 export const objectToKeyValueInsert = (
   obj: Record<string, string | number | boolean | undefined | null>,
 ): SqlFragment => {

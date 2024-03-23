@@ -343,7 +343,6 @@ export const buildInventoryRepository = () => {
           longitude: inventoryInput.customizedCoordinates?.longitude,
           latitude: inventoryInput.customizedCoordinates?.latitude,
           temperature: inventoryInput.temperature,
-          dateCreation: new Date(),
           ownerId: inventoryInput.ownerId,
         })
         .where("id", "=", Number.parseInt(inventoryId))
