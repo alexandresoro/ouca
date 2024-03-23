@@ -24,18 +24,6 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     return ok(enrichEntityWithEditableStatus(age, loggedUser));
   };
 
-  const findAgeOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const age = await ageRepository.findAgeByEntryId(entryId ? Number.parseInt(entryId) : undefined);
-    return ok(enrichEntityWithEditableStatus(age, loggedUser));
-  };
-
   const getEntriesCountByAge = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -177,10 +165,6 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
 
   return {
     findAge,
-    /**
-     * @deprecated
-     */
-    findAgeOfEntryId,
     getEntriesCountByAge,
     findAllAges,
     findPaginatedAges,

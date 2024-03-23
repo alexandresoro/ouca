@@ -17,7 +17,6 @@ const ageService = buildAgeService({
 
 beforeEach(() => {
   ageRepository.findAgeById.mock.resetCalls();
-  ageRepository.findAgeByEntryId.mock.resetCalls();
   ageRepository.findAges.mock.resetCalls();
   ageRepository.getCount.mock.resetCalls();
   ageRepository.getEntriesCountById.mock.resetCalls();
@@ -72,28 +71,6 @@ describe("Data count per entity", () => {
     const entitiesCountResult = await ageService.getEntriesCountByAge("12", null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-  });
-});
-
-describe("Find age by data ID", () => {
-  test("should handle age found", async () => {
-    const ageData = ageFactory.build();
-    const loggedUser = loggedUserFactory.build();
-
-    ageRepository.findAgeByEntryId.mock.mockImplementationOnce(() => Promise.resolve(ageData));
-
-    const ageResult = await ageService.findAgeOfEntryId("43", loggedUser);
-
-    assert.strictEqual(ageRepository.findAgeByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(ageRepository.findAgeByEntryId.mock.calls[0].arguments, [43]);
-    assert.ok(ageResult.isOk());
-    assert.strictEqual(ageResult.value?.id, ageData.id);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await ageService.findAgeOfEntryId("12", null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 

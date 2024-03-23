@@ -5,21 +5,15 @@ import type { EntryRepository } from "@interfaces/entry-repository-interface.js"
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
 import { getSqlPagination } from "../entities-utils.js";
 import { reshapeInputEntryUpsertData } from "./entry-service-reshape.js";
 
 type EntryServiceDependencies = {
   inventoryRepository: InventoryRepository;
   entryRepository: EntryRepository;
-  entryRepositoryLegacy: DonneeRepository;
 };
 
-export const buildEntryService = ({
-  inventoryRepository,
-  entryRepository,
-  entryRepositoryLegacy,
-}: EntryServiceDependencies) => {
+export const buildEntryService = ({ inventoryRepository, entryRepository }: EntryServiceDependencies) => {
   const findEntry = async (
     id: string,
     loggedUser: LoggedUser | null,

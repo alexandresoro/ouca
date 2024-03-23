@@ -240,6 +240,13 @@ export class ImportDonneeService extends ImportService {
       );
     });
 
+    // FIXME: remove this ugly workaround
+    // not even sure it works
+    const dummyLoggedUser: LoggedUser = {
+      id: "dummy",
+      role: "admin",
+    };
+
     // Check if already have a similar donnee in the database
     const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
       return (
@@ -254,11 +261,19 @@ export class ImportDonneeService extends ImportService {
         donnee.grouping === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
-          new Set(await this.services.behaviorService.findBehaviorIdsOfEntryId(donnee.id)),
+          new Set(
+            (await this.services.behaviorService.findBehaviors(donnee.behaviorIds, dummyLoggedUser))
+              ._unsafeUnwrap()
+              .map(({ id }) => id),
+          ),
           comportementsIds,
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.environmentService.findEnvironmentIdsOfEntryId(donnee.id)),
+          new Set(
+            (await this.services.environmentService.findEnvironments(donnee.environmentIds, dummyLoggedUser))
+              ._unsafeUnwrap()
+              .map(({ id }) => id),
+          ),
           milieuxIds,
         )
       );

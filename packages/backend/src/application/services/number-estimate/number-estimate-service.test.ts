@@ -27,7 +27,6 @@ beforeEach(() => {
   numberEstimateRepository.deleteNumberEstimateById.mock.resetCalls();
   numberEstimateRepository.getCount.mock.resetCalls();
   numberEstimateRepository.getEntriesCountById.mock.resetCalls();
-  numberEstimateRepository.findNumberEstimateByEntryId.mock.resetCalls();
 });
 
 describe("Find number estimate", () => {
@@ -77,30 +76,6 @@ describe("Data count per entity", () => {
     const entitiesCountResult = await numberEstimateService.getEntriesCountByNumberEstimate("12", null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-  });
-});
-
-describe("Find number estimate by data ID", () => {
-  test("should handle number estimate found", async () => {
-    const numberEstimateData = numberEstimateFactory.build();
-    const loggedUser = loggedUserFactory.build();
-
-    numberEstimateRepository.findNumberEstimateByEntryId.mock.mockImplementationOnce(() =>
-      Promise.resolve(numberEstimateData),
-    );
-
-    const numberEstimateResult = await numberEstimateService.findNumberEstimateOfEntryId("43", loggedUser);
-
-    assert.strictEqual(numberEstimateRepository.findNumberEstimateByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(numberEstimateRepository.findNumberEstimateByEntryId.mock.calls[0].arguments, [43]);
-    assert.ok(numberEstimateResult.isOk());
-    assert.strictEqual(numberEstimateResult.value?.id, numberEstimateData.id);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await numberEstimateService.findNumberEstimateOfEntryId("12", null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 

@@ -18,21 +18,6 @@ export const buildAgeRepository = () => {
     return ageResult ? ageSchema.parse(ageResult) : null;
   };
 
-  const findAgeByEntryId = async (entryId: number | undefined): Promise<Age | null> => {
-    if (!entryId) {
-      return null;
-    }
-
-    const ageResult = await kysely
-      .selectFrom("age")
-      .leftJoin("donnee", "donnee.ageId", "age.id")
-      .select([sql<string>`basenaturaliste.age.id::text`.as("id"), "libelle", "ownerId"])
-      .where("donnee.id", "=", entryId)
-      .executeTakeFirst();
-
-    return ageResult ? ageSchema.parse(ageResult) : null;
-  };
-
   const findAges = async ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {}): Promise<readonly Age[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
 
@@ -159,7 +144,6 @@ export const buildAgeRepository = () => {
 
   return {
     findAgeById,
-    findAgeByEntryId,
     findAges,
     getCount,
     getEntriesCountById,

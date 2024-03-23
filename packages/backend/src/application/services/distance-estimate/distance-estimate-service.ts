@@ -24,20 +24,6 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
     return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
   };
 
-  const findDistanceEstimateOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<DistanceEstimate | null, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const distanceEstimate = await distanceEstimateRepository.findDistanceEstimateByEntryId(
-      entryId ? Number.parseInt(entryId) : undefined,
-    );
-    return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
-  };
-
   const getEntriesCountByDistanceEstimate = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -179,10 +165,6 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
 
   return {
     findDistanceEstimate,
-    /**
-     * @deprecated
-     */
-    findDistanceEstimateOfEntryId,
     getEntriesCountByDistanceEstimate,
     findAllDistanceEstimates,
     findPaginatedDistanceEstimates,

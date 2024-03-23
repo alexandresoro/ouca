@@ -23,21 +23,6 @@ export const buildNumberEstimateRepository = () => {
     return numberEstimateResult ? numberEstimateSchema.parse(numberEstimateResult) : null;
   };
 
-  const findNumberEstimateByEntryId = async (entryId: number | undefined): Promise<NumberEstimate | null> => {
-    if (!entryId) {
-      return null;
-    }
-
-    const numberEstimateResult = await kysely
-      .selectFrom("estimation_nombre")
-      .leftJoin("donnee", "donnee.estimationNombreId", "estimation_nombre.id")
-      .select([sql<string>`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
-      .where("donnee.id", "=", entryId)
-      .executeTakeFirst();
-
-    return numberEstimateResult ? numberEstimateSchema.parse(numberEstimateResult) : null;
-  };
-
   const findNumberEstimates = async ({
     orderBy,
     sortOrder,
@@ -181,7 +166,6 @@ export const buildNumberEstimateRepository = () => {
 
   return {
     findNumberEstimateById,
-    findNumberEstimateByEntryId,
     findNumberEstimates,
     getCount,
     getEntriesCountById,

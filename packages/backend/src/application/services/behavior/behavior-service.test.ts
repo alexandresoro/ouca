@@ -26,7 +26,6 @@ beforeEach(() => {
   behaviorRepository.deleteBehaviorById.mock.resetCalls();
   behaviorRepository.getCount.mock.resetCalls();
   behaviorRepository.getEntriesCountById.mock.resetCalls();
-  behaviorRepository.findBehaviorsByEntryId.mock.resetCalls();
 });
 
 describe("Find behavior", () => {
@@ -113,28 +112,6 @@ describe("Data count per entity", () => {
 
   test("should not be allowed when the requester is not logged", async () => {
     const entitiesCountResult = await behaviorService.getEntriesCountByBehavior("12", null);
-
-    assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-  });
-});
-
-describe("Find behaviors by inventary ID", () => {
-  test("should handle behaviors found", async () => {
-    const behaviorsData = behaviorFactory.buildList(3);
-    const loggedUser = loggedUserFactory.build();
-
-    behaviorRepository.findBehaviorsByEntryId.mock.mockImplementationOnce(() => Promise.resolve(behaviorsData));
-
-    const behaviorsResult = await behaviorService.findBehaviorsOfEntryId("43", loggedUser);
-
-    assert.strictEqual(behaviorRepository.findBehaviorsByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(behaviorRepository.findBehaviorsByEntryId.mock.calls[0].arguments, ["43"]);
-    assert.ok(behaviorsResult.isOk());
-    assert.strictEqual(behaviorsResult.value.length, behaviorsData.length);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const entitiesCountResult = await behaviorService.findBehaviorsOfEntryId("12", null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
   });

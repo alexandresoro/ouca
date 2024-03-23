@@ -1,4 +1,3 @@
-import { dbConfig } from "@infrastructure/config/database-config.js";
 import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
@@ -17,12 +16,9 @@ import { buildSpeciesRepository } from "@infrastructure/repositories/species/spe
 import { buildTownRepository } from "@infrastructure/repositories/town/town-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
-import type { DatabasePool } from "slonik";
-import { buildDonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type GeoJSONService, buildGeoJSONService } from "../../services/geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "../../services/oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "../../services/oidc/zitadel-oidc-service.js";
-import getSlonikInstance from "../../slonik/slonik-instance.js";
 import { logger } from "../../utils/logger.js";
 import { type AgeService, buildAgeService } from "./age/age-service.js";
 import { type BehaviorService, buildBehaviorService } from "./behavior/behavior-service.js";
@@ -46,7 +42,6 @@ import { type UserService, buildUserService } from "./user/user-service.js";
 import { type WeatherService, buildWeatherService } from "./weather/weather-service.js";
 
 export type Services = {
-  slonik: DatabasePool;
   ageService: AgeService;
   behaviorService: BehaviorService;
   classService: SpeciesClassService;
@@ -68,19 +63,13 @@ export type Services = {
   zitadelOidcService: ZitadelOidcService;
 };
 
-export const buildServices = async (): Promise<Services> => {
-  // Database connection
-  const slonik = await getSlonikInstance({ dbConfig, logger: logger.child({ module: "slonik" }) });
-
-  logger.debug("Connection to database successful");
-
+export const buildServices = (): Services => {
   const ageRepository = buildAgeRepository();
   const behaviorRepository = buildBehaviorRepository();
   const classRepository = buildSpeciesClassRepository();
   const departmentRepository = buildDepartmentRepository();
   const distanceEstimateRepository = buildDistanceEstimateRepository();
   const entryRepository = buildEntryRepository();
-  const entryRepositoryLegacy = buildDonneeRepository({ slonik });
   const environmentRepository = buildEnvironmentRepository();
   const inventoryRepository = buildInventoryRepository();
   const localityRepository = buildLocalityRepository();
@@ -120,7 +109,6 @@ export const buildServices = async (): Promise<Services> => {
   const entryService = buildEntryService({
     inventoryRepository,
     entryRepository,
-    entryRepositoryLegacy,
   });
 
   const speciesService = buildSpeciesService({
@@ -189,7 +177,6 @@ export const buildServices = async (): Promise<Services> => {
   logger.debug("Services initialized successfully");
 
   return {
-    slonik,
     ageService,
     behaviorService,
     classService,

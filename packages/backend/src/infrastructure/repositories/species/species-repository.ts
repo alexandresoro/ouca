@@ -34,28 +34,6 @@ export const buildSpeciesRepository = () => {
     return speciesResult ? speciesSchema.parse(reshapeRawSpecies(speciesResult)) : null;
   };
 
-  const findSpeciesByEntryId = async (entryId: string | undefined): Promise<Species | null> => {
-    if (!entryId) {
-      return null;
-    }
-
-    const speciesResult = await kysely
-      .selectFrom("espece")
-      .leftJoin("donnee", "espece.id", "donnee.especeId")
-      .select([
-        sql<string>`espece.id::text`.as("id"),
-        "espece.code",
-        "espece.nomFrancais",
-        "espece.nomLatin",
-        sql<string>`espece.classe_id::text`.as("classeId"),
-        "espece.ownerId",
-      ])
-      .where("donnee.id", "=", Number.parseInt(entryId))
-      .executeTakeFirst();
-
-    return speciesResult ? speciesSchema.parse(reshapeRawSpecies(speciesResult)) : null;
-  };
-
   const findAllSpeciesWithClassLabel = async (): Promise<(Species & { classLabel: string })[]> => {
     const speciesWithClassLabel = await kysely
       .selectFrom("espece")
@@ -410,7 +388,6 @@ export const buildSpeciesRepository = () => {
 
   return {
     findSpeciesById,
-    findSpeciesByEntryId,
     findAllSpeciesWithClassLabel,
     findSpecies,
     getCount,

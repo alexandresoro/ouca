@@ -69,21 +69,6 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
     return ok(await speciesRepository.getEntriesCountById(id, searchCriteria));
   };
 
-  const findSpeciesOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<SpeciesCommon | null, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const species = await speciesRepository.findSpeciesByEntryId(entryId);
-    if (!species) {
-      return ok(null);
-    }
-    return enrichSpecies(species, loggedUser);
-  };
-
   const findAllSpecies = async (): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
     const species = await speciesRepository.findSpecies({
       orderBy: "code",
@@ -240,10 +225,6 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
   return {
     findSpecies,
     getEntriesCountBySpecies,
-    /**
-     * @deprecated
-     */
-    findSpeciesOfEntryId,
     findAllSpecies,
     findAllSpeciesWithClasses,
     findPaginatedSpecies,

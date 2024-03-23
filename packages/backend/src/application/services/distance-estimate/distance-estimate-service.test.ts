@@ -25,7 +25,6 @@ beforeEach(() => {
   distanceEstimateRepository.deleteDistanceEstimateById.mock.resetCalls();
   distanceEstimateRepository.getCount.mock.resetCalls();
   distanceEstimateRepository.getEntriesCountById.mock.resetCalls();
-  distanceEstimateRepository.findDistanceEstimateByEntryId.mock.resetCalls();
 });
 
 describe("Find distance estimate", () => {
@@ -75,30 +74,6 @@ describe("Data count per entity", () => {
     const entitiesCountResult = await distanceEstimateService.getEntriesCountByDistanceEstimate("12", null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-  });
-});
-
-describe("Find distance estimate by data ID", () => {
-  test("should handle distance estimate found", async () => {
-    const distanceEstimateData = distanceEstimateFactory.build();
-    const loggedUser = loggedUserFactory.build();
-
-    distanceEstimateRepository.findDistanceEstimateByEntryId.mock.mockImplementationOnce(() =>
-      Promise.resolve(distanceEstimateData),
-    );
-
-    const distanceEstimateResult = await distanceEstimateService.findDistanceEstimateOfEntryId("43", loggedUser);
-
-    assert.strictEqual(distanceEstimateRepository.findDistanceEstimateByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(distanceEstimateRepository.findDistanceEstimateByEntryId.mock.calls[0].arguments, [43]);
-    assert.ok(distanceEstimateResult.isOk());
-    assert.deepStrictEqual(distanceEstimateResult.value?.id, distanceEstimateData.id);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await distanceEstimateService.findDistanceEstimateOfEntryId("12", null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 

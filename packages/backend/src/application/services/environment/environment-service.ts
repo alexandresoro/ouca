@@ -40,31 +40,6 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     return ok(environments.map((environment) => enrichEntityWithEditableStatus(environment, loggedUser)));
   };
 
-  const findEnvironmentIdsOfEntryId = async (entryId: string): Promise<string[]> => {
-    const environmentIds = await environmentRepository
-      .findEnvironmentsByEntryId(entryId)
-      .then((environments) => environments.map(({ id }) => id));
-
-    return [...environmentIds];
-  };
-
-  const findEnvironmentsOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<Environment[], AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const environments = await environmentRepository.findEnvironmentsByEntryId(entryId);
-
-    const enrichedEnvironments = environments.map((environment) => {
-      return enrichEntityWithEditableStatus(environment, loggedUser);
-    });
-
-    return ok([...enrichedEnvironments]);
-  };
-
   const getEntriesCountByEnvironment = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -207,14 +182,6 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
   return {
     findEnvironment,
     findEnvironments,
-    /**
-     * @deprecated
-     */
-    findEnvironmentIdsOfEntryId,
-    /**
-     * @deprecated
-     */
-    findEnvironmentsOfEntryId,
     getEntriesCountByEnvironment,
     findAllEnvironments,
     findPaginatedEnvironments,

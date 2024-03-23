@@ -38,21 +38,6 @@ export const buildBehaviorRepository = () => {
     return z.array(behaviorSchema).parse(behaviorsResult);
   };
 
-  const findBehaviorsByEntryId = async (entryId: string | undefined): Promise<Behavior[]> => {
-    if (!entryId) {
-      return [];
-    }
-
-    const behaviorsResult = await kysely
-      .selectFrom("comportement")
-      .leftJoin("donnee_comportement", "comportement.id", "donnee_comportement.comportementId")
-      .select([sql<string>`basenaturaliste.comportement.id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-      .where("donnee_comportement.donneeId", "=", Number.parseInt(entryId))
-      .execute();
-
-    return z.array(behaviorSchema).parse(behaviorsResult);
-  };
-
   const findBehaviors = async ({
     orderBy,
     sortOrder,
@@ -226,7 +211,6 @@ export const buildBehaviorRepository = () => {
   return {
     findBehaviorById,
     findBehaviorsById,
-    findBehaviorsByEntryId,
     findBehaviors,
     getCount,
     getEntriesCountById,

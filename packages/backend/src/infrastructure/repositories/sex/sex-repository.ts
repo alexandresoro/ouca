@@ -18,21 +18,6 @@ export const buildSexRepository = () => {
     return sexResult ? sexSchema.parse(sexResult) : null;
   };
 
-  const findSexByEntryId = async (entryId: number | undefined): Promise<Sex | null> => {
-    if (!entryId) {
-      return null;
-    }
-
-    const sexResult = await kysely
-      .selectFrom("sexe")
-      .leftJoin("donnee", "donnee.sexeId", "sexe.id")
-      .select([sql<string>`basenaturaliste.sexe.id::text`.as("id"), "libelle", "ownerId"])
-      .where("donnee.id", "=", entryId)
-      .executeTakeFirst();
-
-    return sexResult ? sexSchema.parse(sexResult) : null;
-  };
-
   const findSexes = async ({
     orderBy,
     sortOrder,
@@ -165,7 +150,6 @@ export const buildSexRepository = () => {
 
   return {
     findSexById,
-    findSexByEntryId,
     findSexes,
     getCount,
     getEntriesCountById,

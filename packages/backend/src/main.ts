@@ -4,7 +4,7 @@ import { runMigrations } from "@infrastructure/umzug/umzug-instance.js";
 import { buildServices } from "./application/services/services.js";
 import { buildServer } from "./fastify.js";
 import { startWorkersAndJobs } from "./jobs/job-runner.js";
-import shutdown from "./shutdown.js";
+import { shutdown } from "./shutdown.js";
 import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
 
@@ -22,14 +22,14 @@ await runMigrations().catch((e) => {
 });
 
 const startApp = async () => {
-  const services = await buildServices();
+  const services = buildServices();
 
   await startWorkersAndJobs(services);
 
   const server = await buildServer(services);
 
-  process.on("SIGINT", shutdown(server, services));
-  process.on("SIGTERM", shutdown(server, services));
+  process.on("SIGINT", shutdown(server));
+  process.on("SIGTERM", shutdown(server));
 
   await server.listen({ ...serverConfig });
 };

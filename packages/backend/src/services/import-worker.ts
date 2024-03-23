@@ -15,7 +15,6 @@ import {
   type ImportPostCompleteMessage,
   VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message.js";
-import { logger } from "../utils/logger.js";
 import { IMPORTS_DIR_PATH } from "../utils/paths.js";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type.js";
 import {
@@ -31,53 +30,49 @@ const { importId, importType, loggedUser } = workerData as {
   loggedUser: LoggedUser;
 };
 
-(async () => {
-  const services = await buildServices();
+const services = buildServices();
 
-  const serviceWorker = getNewImportServiceForRequestType(importType, services);
+const serviceWorker = getNewImportServiceForRequestType(importType, services);
 
-  serviceWorker.on(IMPORT_PROGRESS_UPDATE_EVENT, (progressContent: ImportNotifyProgressMessageContent) => {
-    const messageContent: ImportNotifyProgressMessage = {
-      type: VALIDATION_PROGRESS,
-      progress: progressContent,
-    };
-    parentPort?.postMessage(messageContent);
-  });
+serviceWorker.on(IMPORT_PROGRESS_UPDATE_EVENT, (progressContent: ImportNotifyProgressMessageContent) => {
+  const messageContent: ImportNotifyProgressMessage = {
+    type: VALIDATION_PROGRESS,
+    progress: progressContent,
+  };
+  parentPort?.postMessage(messageContent);
+});
 
-  serviceWorker.on(IMPORT_STATUS_UPDATE_EVENT, (statusUpdate: ImportNotifyStatusUpdateMessage) => {
-    parentPort?.postMessage(statusUpdate);
-  });
+serviceWorker.on(IMPORT_STATUS_UPDATE_EVENT, (statusUpdate: ImportNotifyStatusUpdateMessage) => {
+  parentPort?.postMessage(statusUpdate);
+});
 
-  serviceWorker.on(IMPORT_FAILED_EVENT, (failureReason?: string) => {
-    const messageContent: ImportFailureMessage = {
-      type: IMPORT_FAILED,
-      failureReason,
-    };
+serviceWorker.on(IMPORT_FAILED_EVENT, (failureReason?: string) => {
+  const messageContent: ImportFailureMessage = {
+    type: IMPORT_FAILED,
+    failureReason,
+  };
 
-    parentPort?.postMessage(messageContent);
-    process.exit(0);
-  });
+  parentPort?.postMessage(messageContent);
+  process.exit(0);
+});
 
-  serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string[][]) => {
-    const messageContent: ImportPostCompleteMessage = {
-      type: IMPORT_COMPLETE,
-      lineErrors: importResult,
-    };
+serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string[][]) => {
+  const messageContent: ImportPostCompleteMessage = {
+    type: IMPORT_COMPLETE,
+    lineErrors: importResult,
+  };
 
-    parentPort?.postMessage(messageContent);
-    process.exit(0);
-  });
+  parentPort?.postMessage(messageContent);
+  process.exit(0);
+});
 
-  promisify(readFile)(path.join(IMPORTS_DIR_PATH.pathname, importId))
-    .then((data) => {
-      // This is the 100% CPU intensive task
-      serviceWorker.importFile(data.toString(), loggedUser).catch((error) => {
-        throw error;
-      });
-    })
-    .catch((error) => {
+promisify(readFile)(path.join(IMPORTS_DIR_PATH.pathname, importId))
+  .then((data) => {
+    // This is the 100% CPU intensive task
+    serviceWorker.importFile(data.toString(), loggedUser).catch((error) => {
       throw error;
     });
-})().catch((e) => {
-  logger.error(e);
-});
+  })
+  .catch((error) => {
+    throw error;
+  });

@@ -22,7 +22,6 @@ const speciesService = buildSpeciesService({
 
 beforeEach(() => {
   speciesRepository.findSpeciesById.mock.resetCalls();
-  speciesRepository.findSpeciesByEntryId.mock.resetCalls();
   speciesRepository.findSpecies.mock.resetCalls();
   speciesRepository.updateSpecies.mock.resetCalls();
   speciesRepository.createSpecies.mock.resetCalls();
@@ -84,36 +83,6 @@ describe("Data count per entity", () => {
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
     assert.strictEqual(speciesRepository.getEntriesCountById.mock.callCount(), 0);
-  });
-});
-
-describe("Find species by data ID", () => {
-  test("should handle species found", async () => {
-    const speciesData = speciesFactory.build({
-      id: "256",
-    });
-    const loggedUser = loggedUserFactory.build();
-
-    const speciesClass = speciesClassFactory.build();
-    classService.findSpeciesClassOfSpecies.mock.mockImplementationOnce(() =>
-      Promise.resolve(ok({ ...speciesClass, editable: true })),
-    );
-
-    speciesRepository.findSpeciesByEntryId.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
-
-    const speciesResult = await speciesService.findSpeciesOfEntryId("43", loggedUser);
-
-    assert.strictEqual(speciesRepository.findSpeciesByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.findSpeciesByEntryId.mock.calls[0].arguments, ["43"]);
-    assert.ok(speciesResult.isOk());
-    assert.strictEqual(speciesResult.value?.id, "256");
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await speciesService.findSpeciesOfEntryId("12", null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
-    assert.strictEqual(speciesRepository.findSpeciesByEntryId.mock.callCount(), 0);
   });
 });
 

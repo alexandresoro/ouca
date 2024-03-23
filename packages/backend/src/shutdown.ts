@@ -7,13 +7,12 @@ import type {
   RawServerDefault,
 } from "fastify";
 import type { Logger } from "pino";
-import type { Services } from "./application/services/services.js";
 import { logger } from "./utils/logger.js";
 
 // Handle shutdown request gracefully
 // This is used when inside a container
 // See https://emmer.dev/blog/you-don-t-need-an-init-system-for-node.js-in-docker/
-const shutdown =
+export const shutdown =
   (
     server: FastifyInstance<
       RawServerDefault,
@@ -21,15 +20,11 @@ const shutdown =
       RawReplyDefaultExpression<RawServerDefault>,
       Logger
     >,
-    services: Services,
   ): (() => void) =>
   () => {
     logger.info("Shutdown requested");
     void Promise.all([
       Sentry.close(2000),
-      services.slonik.end().then(() => {
-        logger.info("Database connector has been shut down");
-      }),
       kysely.destroy().then(() => {
         logger.info("Kysely database connection has been shut down");
       }),
@@ -40,5 +35,3 @@ const shutdown =
       process.exit(0);
     });
   };
-
-export default shutdown;

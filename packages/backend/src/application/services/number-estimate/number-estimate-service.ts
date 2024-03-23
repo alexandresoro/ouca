@@ -24,20 +24,6 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
   };
 
-  const findNumberEstimateOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const numberEstimate = await numberEstimateRepository.findNumberEstimateByEntryId(
-      entryId ? Number.parseInt(entryId) : undefined,
-    );
-    return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
-  };
-
   const getEntriesCountByNumberEstimate = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -178,10 +164,6 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
 
   return {
     findNumberEstimate,
-    /**
-     * @deprecated
-     */
-    findNumberEstimateOfEntryId,
     getEntriesCountByNumberEstimate,
     findAllNumberEstimates,
     findPaginatesNumberEstimates,

@@ -40,31 +40,6 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     return ok(behaviors.map((behavior) => enrichEntityWithEditableStatus(behavior, loggedUser)));
   };
 
-  const findBehaviorIdsOfEntryId = async (entryId: string): Promise<string[]> => {
-    const behaviorIds = await behaviorRepository
-      .findBehaviorsByEntryId(entryId)
-      .then((behaviors) => behaviors.map(({ id }) => id));
-
-    return [...behaviorIds];
-  };
-
-  const findBehaviorsOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<Behavior[], AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const behaviors = await behaviorRepository.findBehaviorsByEntryId(entryId);
-
-    const enrichedBehaviors = behaviors.map((behavior) => {
-      return enrichEntityWithEditableStatus(behavior, loggedUser);
-    });
-
-    return ok([...enrichedBehaviors]);
-  };
-
   const getEntriesCountByBehavior = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -207,14 +182,6 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
   return {
     findBehavior,
     findBehaviors,
-    /**
-     * @deprecated
-     */
-    findBehaviorIdsOfEntryId,
-    /**
-     * @deprecated
-     */
-    findBehaviorsOfEntryId,
     getEntriesCountByBehavior,
     findAllBehaviors,
     findPaginatedBehaviors,

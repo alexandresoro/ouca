@@ -8,10 +8,6 @@ import type { Result } from "neverthrow";
 
 export type NumberEstimateRepository = {
   findNumberEstimateById: (id: number) => Promise<NumberEstimate | null>;
-  /**
-   * @deprecated
-   */
-  findNumberEstimateByEntryId: (entryId: number | undefined) => Promise<NumberEstimate | null>;
   findNumberEstimates: ({
     orderBy,
     sortOrder,

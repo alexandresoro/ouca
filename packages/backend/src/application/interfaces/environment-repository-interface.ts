@@ -5,10 +5,6 @@ import type { Result } from "neverthrow";
 export type EnvironmentRepository = {
   findEnvironmentById: (id: number) => Promise<Environment | null>;
   findEnvironmentsById: (ids: string[]) => Promise<Environment[]>;
-  /**
-   * @deprecated
-   */
-  findEnvironmentsByEntryId: (entryId: string | undefined) => Promise<Environment[]>;
   findEnvironments: ({ orderBy, sortOrder, q, offset, limit }: EnvironmentFindManyInput) => Promise<Environment[]>;
   getCount: (q?: string | null) => Promise<number>;
   getEntriesCountById: (id: string) => Promise<number>;

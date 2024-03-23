@@ -23,21 +23,6 @@ export const buildDistanceEstimateRepository = () => {
     return distanceEstimateResult ? distanceEstimateSchema.parse(distanceEstimateResult) : null;
   };
 
-  const findDistanceEstimateByEntryId = async (entryId: number | undefined): Promise<DistanceEstimate | null> => {
-    if (!entryId) {
-      return null;
-    }
-
-    const distanceEstimateResult = await kysely
-      .selectFrom("estimation_distance")
-      .leftJoin("donnee", "donnee.estimationDistanceId", "estimation_distance.id")
-      .select([sql<string>`basenaturaliste.estimation_distance.id::text`.as("id"), "libelle", "ownerId"])
-      .where("donnee.id", "=", entryId)
-      .executeTakeFirst();
-
-    return distanceEstimateResult ? distanceEstimateSchema.parse(distanceEstimateResult) : null;
-  };
-
   const findDistanceEstimates = async ({
     orderBy,
     sortOrder,
@@ -186,7 +171,6 @@ export const buildDistanceEstimateRepository = () => {
 
   return {
     findDistanceEstimateById,
-    findDistanceEstimateByEntryId,
     findDistanceEstimates,
     getCount,
     getEntriesCountById,

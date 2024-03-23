@@ -25,7 +25,6 @@ beforeEach(() => {
   environmentRepository.deleteEnvironmentById.mock.resetCalls();
   environmentRepository.getCount.mock.resetCalls();
   environmentRepository.getEntriesCountById.mock.resetCalls();
-  environmentRepository.findEnvironmentsByEntryId.mock.resetCalls();
 });
 
 describe("Find environment", () => {
@@ -114,30 +113,6 @@ describe("Data count per entity", () => {
     const entitiesCountResult = await environmentService.getEntriesCountByEnvironment("12", null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-  });
-});
-
-describe("Find environments by inventary ID", () => {
-  test("should handle environments found", async () => {
-    const environmentsData = environmentFactory.buildList(3);
-    const loggedUser = loggedUserFactory.build();
-
-    environmentRepository.findEnvironmentsByEntryId.mock.mockImplementationOnce(() =>
-      Promise.resolve(environmentsData),
-    );
-
-    const environmentsResult = await environmentService.findEnvironmentsOfEntryId("43", loggedUser);
-
-    assert.strictEqual(environmentRepository.findEnvironmentsByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.findEnvironmentsByEntryId.mock.calls[0].arguments, ["43"]);
-    assert.ok(environmentsResult.isOk());
-    assert.strictEqual(environmentsResult.value.length, environmentsData.length);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await environmentService.findEnvironmentsOfEntryId("12", null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 

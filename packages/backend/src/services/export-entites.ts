@@ -183,18 +183,21 @@ export const generateDonneesExport = async (
       const departement = (await departmentService.findDepartmentOfTownId(commune?.id, loggedUser))._unsafeUnwrap();
       const associes = (await observerService.findObservers(inventaire.associateIds, loggedUser))._unsafeUnwrap();
       const meteos = (await weatherService.findWeathers(inventaire.weatherIds, loggedUser))._unsafeUnwrap();
-      const espece = (await speciesService.findSpeciesOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
+      const espece = (await speciesService.findSpecies(Number.parseInt(donnee.speciesId), loggedUser))._unsafeUnwrap();
       const classe = (await classService.findSpeciesClassOfSpecies(espece?.id, loggedUser))._unsafeUnwrap();
-      const age = (await ageService.findAgeOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
-      const sexe = (await sexService.findSexOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
-      const estimationDistance = (
-        await distanceEstimateService.findDistanceEstimateOfEntryId(donnee?.id, loggedUser)
-      )._unsafeUnwrap();
+      const age = (await ageService.findAge(Number.parseInt(donnee.ageId), loggedUser))._unsafeUnwrap();
+      const sexe = (await sexService.findSex(Number.parseInt(donnee.sexId), loggedUser))._unsafeUnwrap();
+      const estimationDistance =
+        donnee.distanceEstimateId != null
+          ? (
+              await distanceEstimateService.findDistanceEstimate(Number.parseInt(donnee.distanceEstimateId), loggedUser)
+            )._unsafeUnwrap()
+          : null;
       const estimationNombre = (
-        await numberEstimateService.findNumberEstimateOfEntryId(donnee?.id, loggedUser)
+        await numberEstimateService.findNumberEstimate(Number.parseInt(donnee.numberEstimateId), loggedUser)
       )._unsafeUnwrap();
-      const comportements = (await behaviorService.findBehaviorsOfEntryId(donnee?.id, loggedUser))._unsafeUnwrap();
-      const milieux = (await environmentService.findEnvironmentsOfEntryId(donnee.id, loggedUser))._unsafeUnwrap();
+      const comportements = (await behaviorService.findBehaviors(donnee.behaviorIds, loggedUser))._unsafeUnwrap();
+      const milieux = (await environmentService.findEnvironments(donnee.environmentIds, loggedUser))._unsafeUnwrap();
 
       const nicheurStatus = getNicheurStatusToDisplay(comportements, "");
 

@@ -24,18 +24,6 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
     return ok(enrichEntityWithEditableStatus(sex, loggedUser));
   };
 
-  const findSexOfEntryId = async (
-    entryId: string | undefined,
-    loggedUser: LoggedUser | null,
-  ): Promise<Result<Sex | null, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const sex = await sexRepository.findSexByEntryId(entryId ? Number.parseInt(entryId) : undefined);
-    return ok(enrichEntityWithEditableStatus(sex, loggedUser));
-  };
-
   const getEntriesCountBySex = async (
     id: string,
     loggedUser: LoggedUser | null,
@@ -177,10 +165,6 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
 
   return {
     findSex,
-    /**
-     * @deprecated
-     */
-    findSexOfEntryId,
     getEntriesCountBySex,
     findAllSexes,
     findPaginatedSexes,

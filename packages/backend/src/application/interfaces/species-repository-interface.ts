@@ -5,10 +5,6 @@ import type { Result } from "neverthrow";
 
 export type SpeciesRepository = {
   findSpeciesById(id: number): Promise<Species | null>;
-  /**
-   * @deprecated
-   */
-  findSpeciesByEntryId(entryId: string | undefined): Promise<Species | null>;
   findAllSpeciesWithClassLabel(): Promise<(Species & { classLabel: string })[]>;
   findSpecies(options?: SpeciesFindManyInput): Promise<Species[]>;
   getCount(options?: Pick<SpeciesFindManyInput, "q" | "searchCriteria">): Promise<number>;

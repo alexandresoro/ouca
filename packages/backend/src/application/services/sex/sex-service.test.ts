@@ -17,7 +17,6 @@ const sexService = buildSexService({
 
 beforeEach(() => {
   sexRepository.findSexById.mock.resetCalls();
-  sexRepository.findSexByEntryId.mock.resetCalls();
   sexRepository.findSexes.mock.resetCalls();
   sexRepository.getCount.mock.resetCalls();
   sexRepository.getEntriesCountById.mock.resetCalls();
@@ -72,28 +71,6 @@ describe("Data count per entity", () => {
     const entitiesCountResult = await sexService.getEntriesCountBySex("12", null);
 
     assert.deepStrictEqual(entitiesCountResult, err("notAllowed"));
-  });
-});
-
-describe("Find sex by data ID", () => {
-  test("should handle sex found", async () => {
-    const sexData = sexFactory.build();
-    const loggedUser = loggedUserFactory.build();
-
-    sexRepository.findSexByEntryId.mock.mockImplementationOnce(() => Promise.resolve(sexData));
-
-    const sexResult = await sexService.findSexOfEntryId("43", loggedUser);
-
-    assert.strictEqual(sexRepository.findSexByEntryId.mock.callCount(), 1);
-    assert.deepStrictEqual(sexRepository.findSexByEntryId.mock.calls[0].arguments, [43]);
-    assert.ok(sexResult.isOk());
-    assert.deepStrictEqual(sexResult.value?.id, sexData.id);
-  });
-
-  test("should not be allowed when the requester is not logged", async () => {
-    const findResult = await sexService.findSexOfEntryId("12", null);
-
-    assert.deepStrictEqual(findResult, err("notAllowed"));
   });
 });
 
