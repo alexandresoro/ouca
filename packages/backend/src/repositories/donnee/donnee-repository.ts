@@ -1,6 +1,6 @@
-import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
+import { type DatabasePool, sql } from "slonik";
 import { countSchema } from "../common.js";
-import { buildPaginationFragment, buildSortOrderFragment, objectToKeyValueInsert } from "../repository-helpers.js";
+import { buildPaginationFragment, buildSortOrderFragment } from "../repository-helpers.js";
 import {
   buildFindMatchingDonneeClause,
   buildOrderByIdentifier,
@@ -8,7 +8,6 @@ import {
 } from "./donnee-repository-helper.js";
 import {
   type Donnee,
-  type DonneeCreateInput,
   type DonneeFindManyInput,
   type DonneeFindMatchingInput,
   donneeSchema,
@@ -157,32 +156,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const createDonnee = async (
-    donneeInput: DonneeCreateInput,
-    transaction?: DatabaseTransactionConnection,
-  ): Promise<Donnee> => {
-    const query = sql.type(donneeSchema)`
-      INSERT INTO
-        basenaturaliste.donnee
-        ${objectToKeyValueInsert({ ...donneeInput, date_creation: "NOW()" })}
-      RETURNING
-        donnee.id::text,
-        donnee.inventaire_id::text,
-        donnee.espece_id::text,
-        donnee.sexe_id::text,
-        donnee.age_id::text,
-        donnee.estimation_nombre_id::text,
-        donnee.nombre,
-        donnee.estimation_distance_id::text,
-        donnee.distance,
-        donnee.commentaire,
-        donnee.regroupement,
-        donnee.date_creation
-    `;
-
-    return (transaction ?? slonik).one(query);
-  };
-
   return {
     /**
      * @deprecated
@@ -196,10 +169,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
      * @deprecated
      */
     getCount,
-    /**
-     * @deprecated
-     */
-    createDonnee,
   };
 };
 

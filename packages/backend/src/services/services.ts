@@ -49,8 +49,6 @@ import { type SpeciesService, buildSpeciesService } from "../application/service
 import { type TownService, buildTownService } from "../application/services/town/town-service.js";
 import { type UserService, buildUserService } from "../application/services/user/user-service.js";
 import { type WeatherService, buildWeatherService } from "../application/services/weather/weather-service.js";
-import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository.js";
-import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
 import getSlonikInstance from "../slonik/slonik-instance.js";
 import { logger } from "../utils/logger.js";
@@ -95,8 +93,6 @@ export const buildServices = async (): Promise<Services> => {
   const distanceEstimateRepository = buildDistanceEstimateRepository();
   const entryRepository = buildEntryRepository();
   const entryRepositoryLegacy = buildDonneeRepository({ slonik });
-  const entryBehaviorRepository = buildDonneeComportementRepository({ slonik });
-  const entryEnvironmentRepository = buildDonneeMilieuRepository({ slonik });
   const environmentRepository = buildEnvironmentRepository();
   const inventoryRepository = buildInventoryRepository();
   const localityRepository = buildLocalityRepository();
@@ -134,12 +130,9 @@ export const buildServices = async (): Promise<Services> => {
   });
 
   const entryService = buildEntryService({
-    slonik,
     inventoryRepository,
     entryRepository,
     entryRepositoryLegacy,
-    entryBehaviorRepository,
-    entryEnvironmentRepository,
   });
 
   const speciesService = buildSpeciesService({

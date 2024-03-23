@@ -32,6 +32,76 @@ export const buildEntryRepository = () => {
     return entryResult ? entrySchema.parse(reshapeRawEntry(entryResult)) : null;
   };
 
+  const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
+    const createdEntry = await kysely.transaction().execute(async (trx) => {
+      const entryResult = await trx
+        .insertInto("donnee")
+        .values({
+          inventaireId: Number.parseInt(entryInput.inventoryId),
+          especeId: Number.parseInt(entryInput.speciesId),
+          sexeId: Number.parseInt(entryInput.sexId),
+          ageId: Number.parseInt(entryInput.ageId),
+          estimationNombreId: Number.parseInt(entryInput.numberEstimateId),
+          nombre: entryInput.number,
+          estimationDistanceId:
+            entryInput.distanceEstimateId != null ? Number.parseInt(entryInput.distanceEstimateId) : null,
+          distance: entryInput.distance,
+          commentaire: entryInput.comment,
+          regroupement: entryInput.grouping,
+          dateCreation: new Date(),
+        })
+        .returning([
+          sql<string>`donnee.id::text`.as("id"),
+          sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+          sql<string>`donnee.espece_id::text`.as("especeId"),
+          sql<string>`donnee.sexe_id::text`.as("sexeId"),
+          sql<string>`donnee.age_id::text`.as("ageId"),
+          sql<string>`donnee.estimation_nombre_id::text`.as("estimationNombreId"),
+          "nombre",
+          sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
+          "distance",
+          "commentaire",
+          "regroupement",
+          "dateCreation",
+        ])
+        .executeTakeFirstOrThrow();
+
+      let behaviorIdsResult: { comportementId: string }[] = [];
+      if (entryInput.behaviorIds.length) {
+        behaviorIdsResult = await trx
+          .insertInto("donnee_comportement")
+          .values(
+            entryInput.behaviorIds.map((behaviorId) => {
+              return { donneeId: Number.parseInt(entryResult.id), comportementId: Number.parseInt(behaviorId) };
+            }),
+          )
+          .returning(sql<string>`donnee_comportement.comportement_id::text`.as("comportementId"))
+          .execute();
+      }
+
+      let environmentIdsResult: { milieuId: string }[] = [];
+      if (entryInput.environmentIds.length) {
+        environmentIdsResult = await trx
+          .insertInto("donnee_milieu")
+          .values(
+            entryInput.environmentIds.map((environmentId) => {
+              return { donneeId: Number.parseInt(entryResult.id), milieuId: Number.parseInt(environmentId) };
+            }),
+          )
+          .returning(sql<string>`donnee_milieu.milieu_id::text`.as("milieuId"))
+          .execute();
+      }
+
+      return {
+        ...entryResult,
+        behaviorIds: behaviorIdsResult.map((behaviorId) => behaviorId.comportementId),
+        environmentIds: environmentIdsResult.map((environmentId) => environmentId.milieuId),
+      };
+    });
+
+    return entrySchema.parse(reshapeRawEntry(createdEntry));
+  };
+
   const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promise<Entry> => {
     const updatedEntry = await kysely.transaction().execute(async (trx) => {
       const entryResult = await trx
@@ -170,6 +240,7 @@ export const buildEntryRepository = () => {
 
   return {
     findEntryById,
+    createEntry,
     updateEntry,
     deleteEntryById,
     findLatestGrouping,

@@ -5,31 +5,22 @@ import type { EntryRepository } from "@interfaces/entry-repository-interface.js"
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
-import type { DatabasePool } from "slonik";
 import { getSqlPagination } from "../../application/services/entities-utils.js";
-import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
-import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { reshapeInputEntryUpsertData, reshapeInputEntryUpsertDataLegacy } from "./entry-service-reshape.js";
 
 type EntryServiceDependencies = {
-  slonik: DatabasePool;
   inventoryRepository: InventoryRepository;
   entryRepository: EntryRepository;
   entryRepositoryLegacy: DonneeRepository;
-  entryBehaviorRepository: DonneeComportementRepository;
-  entryEnvironmentRepository: DonneeMilieuRepository;
 };
 
 export const buildEntryService = ({
-  slonik,
   inventoryRepository,
   entryRepository,
   entryRepositoryLegacy,
-  entryBehaviorRepository,
-  entryEnvironmentRepository,
 }: EntryServiceDependencies) => {
   const findEntry = async (
     id: string,
@@ -99,7 +90,7 @@ export const buildEntryService = ({
   const createEntry = async (
     input: UpsertEntryInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Donnee, EntryUpsertFailureReason>> => {
+  ): Promise<Result<Entry, EntryUpsertFailureReason>> => {
     if (!loggedUser) {
       return err({ type: "notAllowed" });
     }
@@ -121,30 +112,7 @@ export const buildEntryService = ({
       });
     }
 
-    const createdEntry = await slonik.transaction(async (transactionConnection) => {
-      const createdDonnee = await entryRepositoryLegacy.createDonnee(
-        reshapeInputEntryUpsertDataLegacy(input),
-        transactionConnection,
-      );
-
-      if (behaviorIds?.length) {
-        await entryBehaviorRepository.insertDonneeWithComportements(
-          Number.parseInt(createdDonnee.id),
-          behaviorIds.map((behavior) => Number.parseInt(behavior)),
-          transactionConnection,
-        );
-      }
-
-      if (environmentIds?.length) {
-        await entryEnvironmentRepository.insertDonneeWithMilieux(
-          Number.parseInt(createdDonnee.id),
-          environmentIds.map((environment) => Number.parseInt(environment)),
-          transactionConnection,
-        );
-      }
-
-      return createdDonnee;
-    });
+    const createdEntry = await entryRepository.createEntry(reshapeInputEntryUpsertData(input));
 
     return ok(createdEntry);
   };

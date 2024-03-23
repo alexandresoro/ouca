@@ -4,13 +4,10 @@ import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js
 import { upsertEntryInputFactory } from "@fixtures/services/entry/entry-service.fixtures.js";
 import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
-import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
+import type { EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { err, ok } from "neverthrow";
-import { createMockPool } from "slonik";
 import { vi } from "vitest";
-import { any, mock as mockVe } from "vitest-mock-extended";
-import type { DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
-import type { DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
+import { mock as mockVe } from "vitest-mock-extended";
 import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { mock, mockVi } from "../../utils/mock.js";
@@ -18,20 +15,12 @@ import { buildEntryService } from "./entry-service.js";
 
 const entryRepository = mock<EntryRepository>();
 const entryRepositoryLegacy = mockVi<DonneeRepository>();
-const entryBehaviorRepository = mockVi<DonneeComportementRepository>();
-const entryEnvironmentRepository = mockVi<DonneeMilieuRepository>();
 const inventoryRepository = mock<InventoryRepository>();
-const slonik = createMockPool({
-  query: vi.fn(),
-});
 
 const entryService = buildEntryService({
-  slonik,
   inventoryRepository,
   entryRepository,
   entryRepositoryLegacy,
-  entryBehaviorRepository,
-  entryEnvironmentRepository,
 });
 
 const reshapeInputEntryUpsertData = vi.fn<unknown[], DonneeCreateInput>();
@@ -45,6 +34,7 @@ vi.doMock("./entry-service-reshape.js", () => {
 beforeEach(() => {
   vi.resetAllMocks();
   entryRepository.findEntryById.mock.resetCalls();
+  entryRepository.createEntry.mock.resetCalls();
   entryRepository.updateEntry.mock.resetCalls();
   entryRepository.deleteEntryById.mock.resetCalls();
   entryRepository.findLatestGrouping.mock.resetCalls();
@@ -221,7 +211,7 @@ describe("Deletion of a data", () => {
 
     const matchingInventory = inventoryFactory.build();
 
-    const deletedEntry = mockVe<Donnee>({
+    const deletedEntry = entryFactory.build({
       id: "42",
     });
 
@@ -245,7 +235,7 @@ describe("Deletion of a data", () => {
         ownerId: loggedUser.id,
       });
 
-      const deletedEntry = mockVe<Donnee>({
+      const deletedEntry = entryFactory.build({
         id: "42",
       });
 
@@ -314,7 +304,7 @@ describe("Update of a data", () => {
   });
 
   test("should not be allowed when trying to update to a different data that already exists", async () => {
-    const dataData = mockVe<UpsertEntryInput>();
+    const dataData = upsertEntryInputFactory.build();
 
     const loggedUser = loggedUserFactory.build();
 
@@ -335,7 +325,7 @@ describe("Update of a data", () => {
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    const dataData = mockVe<UpsertEntryInput>();
+    const dataData = upsertEntryInputFactory.build();
 
     assert.deepStrictEqual(await entryService.updateEntry("12", dataData, null), err({ type: "notAllowed" }));
     assert.strictEqual(entryRepository.updateEntry.mock.callCount(), 0);
@@ -344,71 +334,57 @@ describe("Update of a data", () => {
 
 describe("Creation of a data", () => {
   test("should create new data without behaviors or environments", async () => {
-    const dataData = mockVe<UpsertEntryInput>({
+    const dataData = upsertEntryInputFactory.build({
       behaviorIds: [],
       environmentIds: [],
     });
+    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
-    const reshapedInputData = mockVe<DonneeCreateInput>();
-    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
-
     await entryService.createEntry(dataData, loggedUser);
 
-    expect(entryRepositoryLegacy.createDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.createDonnee).toHaveBeenLastCalledWith(any(), any());
-    expect(entryBehaviorRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
-    expect(entryEnvironmentRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
+    assert.strictEqual(entryRepository.createEntry.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [
+      { ...restEntry, grouping: regroupment },
+    ]);
   });
 
   test("should create new data with behaviors only", async () => {
-    const dataData = mockVe<UpsertEntryInput>({
+    const dataData = upsertEntryInputFactory.build({
       behaviorIds: ["2", "3"],
       environmentIds: [],
     });
+    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
-    const reshapedInputData = mockVe<DonneeCreateInput>();
-    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
-    entryRepositoryLegacy.createDonnee.mockResolvedValueOnce(
-      mockVe<Donnee>({
-        id: "12",
-      }),
-    );
+    entryRepository.createEntry.mock.mockImplementationOnce(() => Promise.resolve(entryFactory.build()));
 
     await entryService.createEntry(dataData, loggedUser);
 
-    expect(entryRepositoryLegacy.createDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.createDonnee).toHaveBeenLastCalledWith(any(), any());
-    expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
-    expect(entryBehaviorRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(12, [2, 3], any());
-    expect(entryEnvironmentRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
+    assert.strictEqual(entryRepository.createEntry.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [
+      { ...restEntry, grouping: regroupment },
+    ]);
   });
 
   test("should create new data with environments only", async () => {
-    const dataData = mockVe<UpsertEntryInput>({
+    const dataData = upsertEntryInputFactory.build({
       behaviorIds: [],
       environmentIds: ["2", "3"],
     });
+    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
-    const reshapedInputData = mockVe<DonneeCreateInput>();
-    reshapeInputEntryUpsertData.mockReturnValueOnce(reshapedInputData);
-    entryRepositoryLegacy.createDonnee.mockResolvedValueOnce(
-      mockVe<Donnee>({
-        id: "12",
-      }),
-    );
+    entryRepository.createEntry.mock.mockImplementationOnce(() => Promise.resolve(entryFactory.build()));
 
     await entryService.createEntry(dataData, loggedUser);
 
-    expect(entryRepositoryLegacy.createDonnee).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.createDonnee).toHaveBeenLastCalledWith(any(), any());
-    expect(entryBehaviorRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
-    expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    expect(entryEnvironmentRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, [2, 3], any());
+    assert.strictEqual(entryRepository.createEntry.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [
+      { ...restEntry, grouping: regroupment },
+    ]);
   });
 });
