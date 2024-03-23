@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import type { Services } from "../application/services/services.js";
 import agesController from "../controllers/ages-controller.js";
 import behaviorsController from "../controllers/behaviors-controller.js";
 import classesController from "../controllers/classes-controller.js";
@@ -17,7 +18,6 @@ import sexesController from "../controllers/sexes-controller.js";
 import speciesController from "../controllers/species-controller.js";
 import townsController from "../controllers/towns-controller.js";
 import weathersController from "../controllers/weathers-controller.js";
-import type { Services } from "../services/services.js";
 import handleAuthorizationHook from "./handle-authorization-hook.js";
 
 const apiRoutesPlugin: FastifyPluginAsync<{ services: Services }> = async (fastify, { services }) => {

@@ -17,12 +17,12 @@ import fastify, {
   type RawServerDefault,
 } from "fastify";
 import type { Logger } from "pino";
+import type { Services } from "./application/services/services.js";
 import downloadController from "./controllers/download-controller.js";
 import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import sentryPlugin from "./fastify/sentry-plugin.js";
 import { startImportTask } from "./services/import-manager.js";
-import type { Services } from "./services/services.js";
 import { logger as loggerParent } from "./utils/logger.js";
 import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "./utils/paths.js";
 

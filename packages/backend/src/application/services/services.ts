@@ -18,44 +18,32 @@ import { buildTownRepository } from "@infrastructure/repositories/town/town-repo
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import type { DatabasePool } from "slonik";
-import { type AgeService, buildAgeService } from "../application/services/age/age-service.js";
-import { type BehaviorService, buildBehaviorService } from "../application/services/behavior/behavior-service.js";
-import {
-  type DepartmentService,
-  buildDepartmentService,
-} from "../application/services/department/department-service.js";
+import { buildDonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type GeoJSONService, buildGeoJSONService } from "../../services/geojson-service.js";
+import { buildOidcWithInternalUserMappingService } from "../../services/oidc/oidc-with-internal-user-mapping.js";
+import { type ZitadelOidcService, buildZitadelOidcService } from "../../services/oidc/zitadel-oidc-service.js";
+import getSlonikInstance from "../../slonik/slonik-instance.js";
+import { logger } from "../../utils/logger.js";
+import { type AgeService, buildAgeService } from "./age/age-service.js";
+import { type BehaviorService, buildBehaviorService } from "./behavior/behavior-service.js";
+import { type DepartmentService, buildDepartmentService } from "./department/department-service.js";
 import {
   type DistanceEstimateService,
   buildDistanceEstimateService,
-} from "../application/services/distance-estimate/distance-estimate-service.js";
-import {
-  type EnvironmentService,
-  buildEnvironmentService,
-} from "../application/services/environment/environment-service.js";
-import { type InventoryService, buildInventoryService } from "../application/services/inventory/inventory-service.js";
-import { type LocalityService, buildLocalityService } from "../application/services/locality/locality-service.js";
-import {
-  type NumberEstimateService,
-  buildNumberEstimateService,
-} from "../application/services/number-estimate/number-estimate-service.js";
-import { type ObserverService, buildObserverService } from "../application/services/observer/observer-service.js";
-import { type SettingsService, buildSettingsService } from "../application/services/settings/settings-service.js";
-import { type SexService, buildSexService } from "../application/services/sex/sex-service.js";
-import {
-  type SpeciesClassService,
-  buildSpeciesClassService,
-} from "../application/services/species-class/species-class-service.js";
-import { type SpeciesService, buildSpeciesService } from "../application/services/species/species-service.js";
-import { type TownService, buildTownService } from "../application/services/town/town-service.js";
-import { type UserService, buildUserService } from "../application/services/user/user-service.js";
-import { type WeatherService, buildWeatherService } from "../application/services/weather/weather-service.js";
-import { buildDonneeRepository } from "../repositories/donnee/donnee-repository.js";
-import getSlonikInstance from "../slonik/slonik-instance.js";
-import { logger } from "../utils/logger.js";
-import { type EntryService, buildEntryService } from "./entities/entry-service.js";
-import { type GeoJSONService, buildGeoJSONService } from "./geojson-service.js";
-import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
-import { type ZitadelOidcService, buildZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
+} from "./distance-estimate/distance-estimate-service.js";
+import { type EntryService, buildEntryService } from "./entry/entry-service.js";
+import { type EnvironmentService, buildEnvironmentService } from "./environment/environment-service.js";
+import { type InventoryService, buildInventoryService } from "./inventory/inventory-service.js";
+import { type LocalityService, buildLocalityService } from "./locality/locality-service.js";
+import { type NumberEstimateService, buildNumberEstimateService } from "./number-estimate/number-estimate-service.js";
+import { type ObserverService, buildObserverService } from "./observer/observer-service.js";
+import { type SettingsService, buildSettingsService } from "./settings/settings-service.js";
+import { type SexService, buildSexService } from "./sex/sex-service.js";
+import { type SpeciesClassService, buildSpeciesClassService } from "./species-class/species-class-service.js";
+import { type SpeciesService, buildSpeciesService } from "./species/species-service.js";
+import { type TownService, buildTownService } from "./town/town-service.js";
+import { type UserService, buildUserService } from "./user/user-service.js";
+import { type WeatherService, buildWeatherService } from "./weather/weather-service.js";
 
 export type Services = {
   slonik: DatabasePool;

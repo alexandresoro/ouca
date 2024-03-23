@@ -1,7 +1,7 @@
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { Queue, Worker } from "bullmq";
 import type { Logger } from "pino";
-import type { Services } from "../services/services.js";
+import type { Services } from "../application/services/services.js";
 
 const GEOJSON_QUEUE_NAME = "geojson";
 

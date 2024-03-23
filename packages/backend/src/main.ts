@@ -1,9 +1,9 @@
 import { serverConfig } from "@infrastructure/config/server-config.js";
 import { captureException, initSentry } from "@infrastructure/sentry/sentry.js";
 import { runMigrations } from "@infrastructure/umzug/umzug-instance.js";
+import { buildServices } from "./application/services/services.js";
 import { buildServer } from "./fastify.js";
 import { startWorkersAndJobs } from "./jobs/job-runner.js";
-import { buildServices } from "./services/services.js";
 import shutdown from "./shutdown.js";
 import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";

@@ -1,7 +1,7 @@
 import { redis } from "@infrastructure/ioredis/redis.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import type { Services } from "../application/services/services.js";
 import type { ZitadelIntrospectionResult } from "../services/oidc/zitadel-oidc-service.js";
-import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 
 export const BEARER_PATTERN = /^Bearer (.+)$/;

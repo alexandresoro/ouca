@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { ImportType } from "@ou-ca/common/import/import-types";
+import { buildServices } from "../application/services/services.js";
 import {
   IMPORT_COMPLETE,
   IMPORT_FAILED,
@@ -23,7 +24,6 @@ import {
   IMPORT_PROGRESS_UPDATE_EVENT,
   IMPORT_STATUS_UPDATE_EVENT,
 } from "./import/import-service.js";
-import { buildServices } from "./services.js";
 
 const { importId, importType, loggedUser } = workerData as {
   importId: string;

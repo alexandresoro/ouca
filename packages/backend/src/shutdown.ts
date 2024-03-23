@@ -7,7 +7,7 @@ import type {
   RawServerDefault,
 } from "fastify";
 import type { Logger } from "pino";
-import type { Services } from "./services/services.js";
+import type { Services } from "./application/services/services.js";
 import { logger } from "./utils/logger.js";
 
 // Handle shutdown request gracefully

@@ -1,6 +1,6 @@
 import { fastifyCaching } from "@fastify/caching";
 import type { FastifyPluginAsync } from "fastify";
-import type { Services } from "../services/services.js";
+import type { Services } from "../application/services/services.js";
 import { sha256 } from "../utils/crypto.js";
 import { logger } from "../utils/logger.js";
 

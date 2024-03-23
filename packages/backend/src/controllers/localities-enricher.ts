@@ -2,7 +2,7 @@ import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Locality, LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { type Result, err, ok } from "neverthrow";
-import type { Services } from "../services/services.js";
+import type { Services } from "../application/services/services.js";
 
 export const enrichedLocality = async (
   services: Services,

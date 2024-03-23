@@ -8,8 +8,8 @@ import type { EntryRepository } from "@interfaces/entry-repository-interface.js"
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { err, ok } from "neverthrow";
-import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { mock } from "../../utils/mock.js";
+import type { DonneeRepository } from "../../../repositories/donnee/donnee-repository.js";
+import { mock } from "../../../utils/mock.js";
 import { buildEntryService } from "./entry-service.js";
 
 const entryRepository = mock<EntryRepository>();

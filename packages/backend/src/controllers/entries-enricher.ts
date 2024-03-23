@@ -3,8 +3,8 @@ import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { GetEntryResponse } from "@ou-ca/common/api/entry";
 import { Result, err, ok } from "neverthrow";
+import type { Services } from "../application/services/services.js";
 import type { Donnee } from "../repositories/donnee/donnee-repository-types.js";
-import type { Services } from "../services/services.js";
 
 /**
  * @deprecated
