@@ -14,8 +14,7 @@
       "@domain/*": ["./src/domain/*"],
       "@fixtures/*": ["./src/__fixtures__/*"],
       "@infrastructure/*": ["./src/infrastructure/*"]
-    },
-    "types": ["vitest/globals"]
+    }
   },
   "include": ["src/**/*"],
   "references": [{ "path": "../common/tsconfig.ref.json" }]

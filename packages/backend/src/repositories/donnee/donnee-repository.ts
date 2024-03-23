@@ -89,12 +89,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.any(query);
   };
 
-  return {
-    /**
-     * @deprecated
-     */
-    findDonnees,
-  };
+  return {};
 };
 
 /**

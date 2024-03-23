@@ -223,11 +223,11 @@ export const generateDonneesExport = async (
         "Nom scientifique": espece?.nomLatin,
         Sexe: sexe?.libelle,
         Âge: age?.libelle,
-        "Nombre d'individus": donnee.nombre,
+        "Nombre d'individus": donnee.number,
         "Estimation du nombre": estimationNombre?.libelle,
         "Estimation de la distance": estimationDistance?.libelle,
         "Distance en mètres": donnee.distance,
-        "Numéro de regroupement": donnee.regroupement,
+        "Numéro de regroupement": donnee.grouping,
         Nicheur: nicheurStatus,
         "Comportement 1": getComportement(comportements, 1),
         "Comportement 2": getComportement(comportements, 2),
@@ -239,7 +239,7 @@ export const generateDonneesExport = async (
         "Milieu 2": getMilieu(milieux, 2),
         "Milieu 3": getMilieu(milieux, 3),
         "Milieu 4": getMilieu(milieux, 4),
-        Commentaires: donnee.commentaire,
+        Commentaires: donnee.comment,
       };
     }),
   );

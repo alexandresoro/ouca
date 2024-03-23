@@ -1,3 +1,4 @@
+import type { Entry } from "@domain/entry/entry.js";
 import type { Inventory } from "@domain/inventory/inventory.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { AgeSimple } from "@ou-ca/common/api/entities/age";
@@ -17,7 +18,6 @@ import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coord
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
-import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { getDateOnlyAsLocalISOString } from "../../utils/time-utils.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
@@ -37,7 +37,7 @@ export class ImportDonneeService extends ImportService {
   private meteos!: Weather[];
   private inventaires: Inventory[] = []; // The list of existing inventories + the ones we created along with the validation
 
-  private existingDonnees!: Donnee[];
+  private existingDonnees!: Entry[];
 
   private newDonnees!: UpsertEntryInput[];
 
@@ -243,16 +243,16 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the database
     const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
       return (
-        donnee.inventaireId === existingInventaire?.id &&
-        donnee.especeId === espece.id &&
-        donnee.sexeId === sexe.id &&
+        donnee.inventoryId === existingInventaire?.id &&
+        donnee.speciesId === espece.id &&
+        donnee.sexId === sexe.id &&
         donnee.ageId === age.id &&
-        donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
-        donnee.estimationNombreId === estimationNombre.id &&
+        donnee.number === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
+        donnee.numberEstimateId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
-        donnee.estimationDistanceId === (estimationDistance?.id ?? null) &&
-        donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
-        this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
+        donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
+        donnee.grouping === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
+        this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
           new Set(await this.services.behaviorService.findBehaviorIdsOfEntryId(donnee.id)),
           comportementsIds,

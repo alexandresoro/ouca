@@ -1,3 +1,5 @@
+import assert from "node:assert/strict";
+import { beforeEach, describe, test } from "node:test";
 import { entryFactory } from "@fixtures/domain/entry/entry.fixtures.js";
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
@@ -6,15 +8,12 @@ import type { EntryRepository } from "@interfaces/entry-repository-interface.js"
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { err, ok } from "neverthrow";
-import { vi } from "vitest";
-import { mock as mockVe } from "vitest-mock-extended";
-import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { mock, mockVi } from "../../utils/mock.js";
+import { mock } from "../../utils/mock.js";
 import { buildEntryService } from "./entry-service.js";
 
 const entryRepository = mock<EntryRepository>();
-const entryRepositoryLegacy = mockVi<DonneeRepository>();
+const entryRepositoryLegacy = mock<DonneeRepository>();
 const inventoryRepository = mock<InventoryRepository>();
 
 const entryService = buildEntryService({
@@ -24,9 +23,9 @@ const entryService = buildEntryService({
 });
 
 beforeEach(() => {
-  vi.resetAllMocks();
   entryRepository.findEntryById.mock.resetCalls();
   entryRepository.findExistingEntry.mock.resetCalls();
+  entryRepository.findEntries.mock.resetCalls();
   entryRepository.getCount.mock.resetCalls();
   entryRepository.createEntry.mock.resetCalls();
   entryRepository.updateEntry.mock.resetCalls();
@@ -66,36 +65,41 @@ describe("Find data", () => {
 });
 
 test("Find all datas", async () => {
-  const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
+  const dataData = entryFactory.buildList(3);
 
-  entryRepositoryLegacy.findDonnees.mockResolvedValueOnce(dataData);
+  entryRepository.findEntries.mock.mockImplementationOnce(() => Promise.resolve(dataData));
 
   await entryService.findAllEntries();
 
-  expect(entryRepositoryLegacy.findDonnees).toHaveBeenCalledTimes(1);
+  assert.strictEqual(entryRepository.findEntries.mock.callCount(), 1);
 });
 
 describe("Data paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
+    const dataData = entryFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
-    entryRepositoryLegacy.findDonnees.mockResolvedValueOnce(dataData);
+    entryRepository.findEntries.mock.mockImplementationOnce(() => Promise.resolve(dataData));
 
     await entryService.findPaginatedEntries(loggedUser, {
       pageNumber: 1,
       pageSize: 10,
     });
 
-    expect(entryRepositoryLegacy.findDonnees).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.findDonnees).toHaveBeenLastCalledWith({
-      offset: 0,
-      limit: 10,
-    });
+    assert.strictEqual(entryRepository.findEntries.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.findEntries.mock.calls[0].arguments, [
+      {
+        orderBy: undefined,
+        sortOrder: undefined,
+        searchCriteria: {},
+        offset: 0,
+        limit: 10,
+      },
+    ]);
   });
 
   test("should handle params when retrieving paginated data", async () => {
-    const dataData = [mockVe<Donnee>(), mockVe<Donnee>(), mockVe<Donnee>()];
+    const dataData = entryFactory.buildList(3);
     const loggedUser = loggedUserFactory.build();
 
     const searchParams: EntriesSearchParams = {
@@ -107,25 +111,30 @@ describe("Data paginated find by search criteria", () => {
       pageSize: 10,
     };
 
-    entryRepositoryLegacy.findDonnees.mockResolvedValueOnce([dataData[0]]);
+    entryRepository.findEntries.mock.mockImplementationOnce(() => Promise.resolve([dataData[0]]));
 
     await entryService.findPaginatedEntries(loggedUser, searchParams);
 
-    expect(entryRepositoryLegacy.findDonnees).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.findDonnees).toHaveBeenLastCalledWith({
-      searchCriteria: {
-        number: 12,
-        breeders: ["certain", "probable"],
+    assert.strictEqual(entryRepository.findEntries.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.findEntries.mock.calls[0].arguments, [
+      {
+        searchCriteria: {
+          number: 12,
+          breeders: ["certain", "probable"],
+        },
+        orderBy: "department",
+        sortOrder: "desc",
+        offset: 0,
+        limit: 10,
       },
-      orderBy: "departement",
-      sortOrder: "desc",
-      offset: 0,
-      limit: 10,
-    });
+    ]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await entryService.findPaginatedEntries(null, { pageNumber: 1, pageSize: 10 })).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(
+      await entryService.findPaginatedEntries(null, { pageNumber: 1, pageSize: 10 }),
+      err("notAllowed"),
+    );
   });
 });
 
@@ -253,9 +262,7 @@ describe("Deletion of a data", () => {
         role: "contributor",
       });
 
-      const deletedEntry = mockVe<Donnee>({
-        id: "42",
-      });
+      const deletedEntry = entryFactory.build();
 
       inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(null));
       entryRepository.deleteEntryById.mock.mockImplementationOnce(() => Promise.resolve(deletedEntry));

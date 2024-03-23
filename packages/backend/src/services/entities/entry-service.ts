@@ -1,4 +1,4 @@
-import type { Entry, EntryUpsertFailureReason } from "@domain/entry/entry.js";
+import type { Entry, EntryFindManyInput, EntryUpsertFailureReason } from "@domain/entry/entry.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
@@ -6,9 +6,7 @@ import type { InventoryRepository } from "@interfaces/inventory-repository-inter
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
 import { getSqlPagination } from "../../application/services/entities-utils.js";
-import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { reshapeInputEntryUpsertData } from "./entry-service-reshape.js";
 
 type EntryServiceDependencies = {
@@ -34,35 +32,73 @@ export const buildEntryService = ({
   };
 
   // Be careful when calling it, it will retrieve a lot of data!
-  const findAllEntries = async (): Promise<Donnee[]> => {
-    const entries = await entryRepositoryLegacy.findDonnees();
+  const findAllEntries = async (): Promise<Entry[]> => {
+    const entries = await entryRepository.findEntries();
 
-    return [...entries];
+    return entries;
   };
 
   const findPaginatedEntries = async (
     loggedUser: LoggedUser | null,
     options: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> & Partial<{ pageNumber: number; pageSize: number }>,
-  ): Promise<Result<Donnee[], AccessFailureReason>> => {
+  ): Promise<Result<Entry[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const { orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
-    const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
+    let orderBy: EntryFindManyInput["orderBy"] | undefined;
+    switch (orderByField) {
+      case "observateur":
+        orderBy = "observerName";
+        break;
+      case "codeEspece":
+        orderBy = "speciesCode";
+        break;
+      case "nomFrancais":
+        orderBy = "speciesName";
+        break;
+      case "nombre":
+        orderBy = "number";
+        break;
+      case "sexe":
+        orderBy = "sex";
+        break;
+      case "departement":
+        orderBy = "department";
+        break;
+      case "codeCommune":
+        orderBy = "townCode";
+        break;
+      case "nomCommune":
+        orderBy = "townName";
+        break;
+      case "lieuDit":
+        orderBy = "locality";
+        break;
+      case "heure":
+        orderBy = "time";
+        break;
+      case "duree":
+        orderBy = "duration";
+        break;
+      default:
+        orderBy = orderByField;
+        break;
+    }
 
-    const entries = await entryRepositoryLegacy.findDonnees({
-      searchCriteria: reshapedSearchCriteria,
+    const entries = await entryRepository.findEntries({
+      searchCriteria,
       ...getSqlPagination({
         pageNumber,
         pageSize,
       }),
-      orderBy: orderByField,
+      orderBy,
       sortOrder,
     });
 
-    return ok([...entries]);
+    return ok(entries);
   };
 
   const getEntriesCount = async (
