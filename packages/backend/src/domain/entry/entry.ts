@@ -1,5 +1,7 @@
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { z } from "zod";
+import type { SearchCriteria } from "../search/search-criteria.js";
+import type { SortOrder } from "../shared/sort-order.js";
 
 export type EntryFailureReason = AccessFailureReason;
 
@@ -30,6 +32,30 @@ export const entrySchema = z.object({
 });
 
 export type Entry = z.infer<typeof entrySchema>;
+
+export type EntryFindManyInput = Partial<{
+  searchCriteria: SearchCriteria | null | undefined;
+  orderBy:
+    | "id"
+    | "number"
+    | "speciesCode"
+    | "speciesName"
+    | "sex"
+    | "age"
+    | "department"
+    | "townCode"
+    | "townName"
+    | "locality"
+    | "date"
+    | "time"
+    | "duration"
+    | "observerName"
+    | "creationDate"
+    | null;
+  sortOrder: SortOrder;
+  offset: number | null;
+  limit: number | null;
+}>;
 
 export type EntryCreateInput = {
   inventoryId: string;

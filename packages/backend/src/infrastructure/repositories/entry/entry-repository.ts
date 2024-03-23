@@ -1,10 +1,12 @@
-import { type Entry, type EntryCreateInput, entrySchema } from "@domain/entry/entry.js";
+import { type Entry, type EntryCreateInput, type EntryFindManyInput, entrySchema } from "@domain/entry/entry.js";
 import type { SearchCriteria } from "@domain/search/search-criteria.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { countSchema } from "@infrastructure/repositories/common.js";
+import { getOrderByIdentifier } from "@infrastructure/repositories/entry/entry-repository-helper.js";
 import { reshapeRawEntry } from "@infrastructure/repositories/entry/entry-repository-reshape.js";
 import { withSearchCriteria } from "@infrastructure/repositories/search-criteria.js";
 import { type OperandExpression, type SqlBool, sql } from "kysely";
+import { z } from "zod";
 import { areSetsContainingSameValues } from "../../../utils/utils.js";
 
 export const buildEntryRepository = () => {
@@ -117,6 +119,71 @@ export const buildEntryRepository = () => {
     }
 
     return entrySchema.parse(reshapeRawEntry(entryResult[0]));
+  };
+
+  const findEntries = async ({
+    orderBy,
+    sortOrder,
+    searchCriteria,
+    offset,
+    limit,
+  }: EntryFindManyInput = {}): Promise<Entry[]> => {
+    let queryEntry = kysely
+      .selectFrom("donnee")
+      .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+      .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+      .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+      .leftJoin("commune", "lieudit.communeId", "commune.id")
+      .leftJoin("departement", "commune.departementId", "departement.id")
+      .leftJoin("espece", "donnee.especeId", "espece.id")
+      .leftJoin("age", "donnee.ageId", "age.id")
+      .leftJoin("sexe", "donnee.sexeId", "sexe.id")
+      .select([
+        sql<string>`donnee.id::text`.as("id"),
+        sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+        sql<string>`donnee.espece_id::text`.as("especeId"),
+        sql<string>`donnee.sexe_id::text`.as("sexeId"),
+        sql<string>`donnee.age_id::text`.as("ageId"),
+        sql<string>`donnee.estimation_nombre_id::text`.as("estimationNombreId"),
+        "donnee.nombre",
+        sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
+        "donnee.distance",
+        "donnee.commentaire",
+        "donnee.regroupement",
+        "donnee.dateCreation",
+        sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
+        sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
+      ]);
+
+    if (searchCriteria != null) {
+      queryEntry = queryEntry.where(withSearchCriteria(searchCriteria));
+    }
+
+    queryEntry = queryEntry.groupBy("donnee.id");
+
+    const orderByIdentifier = getOrderByIdentifier(orderBy);
+    if (orderByIdentifier != null) {
+      queryEntry = queryEntry.groupBy(orderByIdentifier).orderBy(orderByIdentifier, sortOrder ?? undefined);
+    }
+
+    queryEntry = queryEntry
+      .orderBy("donnee.dateCreation", sortOrder ?? undefined)
+      .orderBy("donnee.id", sortOrder ?? undefined);
+
+    if (offset) {
+      queryEntry = queryEntry.offset(offset);
+    }
+    if (limit) {
+      queryEntry = queryEntry.limit(limit);
+    }
+
+    const entriesResult = await queryEntry.execute();
+
+    return z.array(entrySchema).parse(entriesResult.map((entry) => reshapeRawEntry(entry)));
   };
 
   const getCount = async (criteria?: SearchCriteria | null): Promise<number> => {
@@ -353,6 +420,7 @@ export const buildEntryRepository = () => {
   return {
     findEntryById,
     findExistingEntry,
+    findEntries,
     getCount,
     createEntry,
     updateEntry,
