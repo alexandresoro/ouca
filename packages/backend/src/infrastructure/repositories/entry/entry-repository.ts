@@ -10,13 +10,13 @@ export const buildEntryRepository = () => {
     return result.grouping;
   };
 
-  const updateAssociatedInventory = async (currentInventaireId: string, newInventaireId: string): Promise<void> => {
+  const updateAssociatedInventory = async (currentInventoryId: string, newInventoryId: string): Promise<void> => {
     await kysely
       .updateTable("donnee")
       .set({
-        inventaireId: Number.parseInt(newInventaireId),
+        inventaireId: Number.parseInt(newInventoryId),
       })
-      .where("inventaireId", "=", Number.parseInt(currentInventaireId))
+      .where("inventaireId", "=", Number.parseInt(currentInventoryId))
       .execute();
   };
 
