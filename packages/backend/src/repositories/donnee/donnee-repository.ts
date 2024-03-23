@@ -218,31 +218,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return (transaction ?? slonik).one(query);
   };
 
-  const deleteDonneeById = async (entryId: number, transaction?: DatabaseTransactionConnection): Promise<Donnee> => {
-    const query = sql.type(donneeSchema)`
-      DELETE
-      FROM
-        basenaturaliste.donnee
-      WHERE
-        id = ${entryId}
-      RETURNING
-        donnee.id::text,
-        donnee.inventaire_id::text,
-        donnee.espece_id::text,
-        donnee.sexe_id::text,
-        donnee.age_id::text,
-        donnee.estimation_nombre_id::text,
-        donnee.nombre,
-        donnee.estimation_distance_id::text,
-        donnee.distance,
-        donnee.commentaire,
-        donnee.regroupement,
-        donnee.date_creation
-    `;
-
-    return (transaction ?? slonik).one(query);
-  };
-
   return {
     /**
      * @deprecated
@@ -264,10 +239,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
      * @deprecated
      */
     updateDonnee,
-    /**
-     * @deprecated
-     */
-    deleteDonneeById,
   };
 };
 

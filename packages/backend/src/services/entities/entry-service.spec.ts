@@ -44,6 +44,7 @@ vi.doMock("./entry-service-reshape.js", () => {
 beforeEach(() => {
   vi.resetAllMocks();
   entryRepository.findEntryById.mock.resetCalls();
+  entryRepository.deleteEntryById.mock.resetCalls();
   entryRepository.findLatestGrouping.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
 });
@@ -223,12 +224,12 @@ describe("Deletion of a data", () => {
     });
 
     inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(matchingInventory));
-    entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
+    entryRepository.deleteEntryById.mock.mockImplementationOnce(() => Promise.resolve(deletedEntry));
 
     const result = await entryService.deleteEntry("11", loggedUser);
 
-    expect(entryRepositoryLegacy.deleteDonneeById).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(ok(deletedEntry));
+    assert.strictEqual(entryRepository.deleteEntryById.mock.callCount(), 1);
+    assert.deepStrictEqual(result, ok(deletedEntry));
   });
 
   describe("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
@@ -247,12 +248,12 @@ describe("Deletion of a data", () => {
       });
 
       inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(matchingInventory));
-      entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
+      entryRepository.deleteEntryById.mock.mockImplementationOnce(() => Promise.resolve(deletedEntry));
 
       const result = await entryService.deleteEntry("11", loggedUser);
 
-      expect(entryRepositoryLegacy.deleteDonneeById).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(ok(deletedEntry));
+      assert.strictEqual(entryRepository.deleteEntryById.mock.callCount(), 1);
+      assert.deepStrictEqual(result, ok(deletedEntry));
     });
 
     test("unless no matching inventory has been found", async () => {
@@ -266,10 +267,10 @@ describe("Deletion of a data", () => {
       });
 
       inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() => Promise.resolve(null));
-      entryRepositoryLegacy.deleteDonneeById.mockResolvedValueOnce(deletedEntry);
+      entryRepository.deleteEntryById.mock.mockImplementationOnce(() => Promise.resolve(deletedEntry));
 
-      expect(await entryService.deleteEntry("11", loggedUser)).toEqual(err("notAllowed"));
-      expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
+      assert.deepStrictEqual(await entryService.deleteEntry("11", loggedUser), err("notAllowed"));
+      assert.strictEqual(entryRepository.deleteEntryById.mock.callCount(), 0);
     });
   });
 
@@ -282,13 +283,13 @@ describe("Deletion of a data", () => {
       Promise.resolve(inventoryFactory.build()),
     );
 
-    expect(await entryService.deleteEntry("11", loggedUser)).toEqual(err("notAllowed"));
-    expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(await entryService.deleteEntry("11", loggedUser), err("notAllowed"));
+    assert.strictEqual(entryRepository.deleteEntryById.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
-    expect(await entryService.deleteEntry("11", null)).toEqual(err("notAllowed"));
-    expect(entryRepositoryLegacy.deleteDonneeById).not.toHaveBeenCalled();
+    assert.deepStrictEqual(await entryService.deleteEntry("11", null), err("notAllowed"));
+    assert.strictEqual(entryRepository.deleteEntryById.mock.callCount(), 0);
   });
 });
 

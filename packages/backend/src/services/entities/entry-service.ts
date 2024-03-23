@@ -211,7 +211,7 @@ export const buildEntryService = ({
   const deleteEntry = async (
     id: string,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Donnee, AccessFailureReason>> => {
+  ): Promise<Result<Entry | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -223,18 +223,9 @@ export const buildEntryService = ({
       return err("notAllowed");
     }
 
-    const deletedEntryResult = await slonik.transaction(async (transactionConnection) => {
-      // Delete the actual entry
-      const deletedEntry = await entryRepositoryLegacy.deleteDonneeById(Number.parseInt(id), transactionConnection);
+    const deletedEntry = await entryRepository.deleteEntryById(id);
 
-      return ok(deletedEntry);
-    });
-
-    if (deletedEntryResult.isErr()) {
-      return err(deletedEntryResult.error as AccessFailureReason);
-    }
-
-    return deletedEntryResult;
+    return ok(deletedEntry);
   };
 
   return {
