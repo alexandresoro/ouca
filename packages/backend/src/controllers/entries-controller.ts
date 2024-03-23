@@ -12,7 +12,7 @@ import { Result } from "neverthrow";
 import type { Services } from "../services/services.js";
 import { logger } from "../utils/logger.js";
 import { getPaginationMetadata } from "./controller-utils.js";
-import { enrichedEntryLegacy } from "./entries-enricher.js";
+import { enrichedEntry, enrichedEntryLegacy } from "./entries-enricher.js";
 import { enrichedInventory } from "./inventories-enricher.js";
 
 const entriesController: FastifyPluginCallback<{
@@ -25,7 +25,7 @@ const entriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const entryResult = await entryService.findEntry(req.params.id, req.user);
+    const entryResult = await entryService.findEntry(`${req.params.id}`, req.user);
 
     if (entryResult.isErr()) {
       switch (entryResult.error) {
@@ -43,7 +43,7 @@ const entriesController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    const entryEnrichedResult = await enrichedEntryLegacy(services, entry, req.user);
+    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
 
     if (entryEnrichedResult.isErr()) {
       switch (entryEnrichedResult.error) {

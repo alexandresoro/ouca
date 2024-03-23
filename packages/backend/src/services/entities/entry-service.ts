@@ -1,4 +1,4 @@
-import type { EntryUpsertFailureReason } from "@domain/entry/entry.js";
+import type { Entry, EntryUpsertFailureReason } from "@domain/entry/entry.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
@@ -32,14 +32,14 @@ export const buildEntryService = ({
   entryEnvironmentRepository,
 }: EntryServiceDependencies) => {
   const findEntry = async (
-    id: number,
+    id: string,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Donnee | null, AccessFailureReason>> => {
+  ): Promise<Result<Entry | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    return ok(await entryRepositoryLegacy.findDonneeById(id));
+    return ok(await entryRepository.findEntryById(id));
   };
 
   // Be careful when calling it, it will retrieve a lot of data!

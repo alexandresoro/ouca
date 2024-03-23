@@ -27,30 +27,6 @@ export type DonneeRepositoryDependencies = {
  * @deprecated
  */
 export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) => {
-  const findDonneeById = async (id: number): Promise<Donnee | null> => {
-    const query = sql.type(donneeSchema)`
-      SELECT 
-        donnee.id::text,
-        donnee.inventaire_id::text,
-        donnee.espece_id::text,
-        donnee.sexe_id::text,
-        donnee.age_id::text,
-        donnee.estimation_nombre_id::text,
-        donnee.nombre,
-        donnee.estimation_distance_id::text,
-        donnee.distance,
-        donnee.commentaire,
-        donnee.regroupement,
-        donnee.date_creation
-      FROM
-        basenaturaliste.donnee
-      WHERE
-        id = ${id}
-    `;
-
-    return slonik.maybeOne(query);
-  };
-
   const findDonnees = async ({
     orderBy,
     sortOrder,
@@ -268,10 +244,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   return {
-    /**
-     * @deprecated
-     */
-    findDonneeById,
     /**
      * @deprecated
      */

@@ -1,3 +1,4 @@
+import { entryFactory } from "@fixtures/domain/entry/entry.fixtures.js";
 import { inventoryFactory } from "@fixtures/domain/inventory/inventory.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import type { EntryRepository } from "@interfaces/entry-repository-interface.js";
@@ -42,37 +43,38 @@ vi.doMock("./entry-service-reshape.js", () => {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  entryRepository.findEntryById.mock.resetCalls();
   entryRepository.findLatestGrouping.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
 });
 
 describe("Find data", () => {
   test("should handle a matching data", async () => {
-    const dataData = mockVe<Donnee>();
+    const dataData = entryFactory.build();
     const loggedUser = loggedUserFactory.build();
 
-    entryRepositoryLegacy.findDonneeById.mockResolvedValueOnce(dataData);
+    entryRepository.findEntryById.mock.mockImplementationOnce(() => Promise.resolve(dataData));
 
-    await entryService.findEntry(12, loggedUser);
+    await entryService.findEntry("12", loggedUser);
 
-    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenLastCalledWith(12);
+    assert.strictEqual(entryRepository.findEntryById.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.findEntryById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should handle data not found", async () => {
-    entryRepositoryLegacy.findDonneeById.mockResolvedValueOnce(null);
+    entryRepository.findEntryById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
-    await expect(entryService.findEntry(10, loggedUser)).resolves.toEqual(ok(null));
+    assert.deepStrictEqual(await entryService.findEntry("10", loggedUser), ok(null));
 
-    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenCalledTimes(1);
-    expect(entryRepositoryLegacy.findDonneeById).toHaveBeenLastCalledWith(10);
+    assert.strictEqual(entryRepository.findEntryById.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.findEntryById.mock.calls[0].arguments, ["10"]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    expect(await entryService.findEntry(11, null)).toEqual(err("notAllowed"));
+    assert.deepStrictEqual(await entryService.findEntry("11", null), err("notAllowed"));
 
-    expect(entryRepositoryLegacy.findDonneeById).not.toHaveBeenCalled();
+    assert.strictEqual(entryRepository.findEntryById.mock.callCount(), 0);
   });
 });
 
