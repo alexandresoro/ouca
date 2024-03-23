@@ -9,7 +9,7 @@ import { getSqlPagination } from "../../application/services/entities-utils.js";
 import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
-import { reshapeInputEntryUpsertData, reshapeInputEntryUpsertDataLegacy } from "./entry-service-reshape.js";
+import { reshapeInputEntryUpsertData } from "./entry-service-reshape.js";
 
 type EntryServiceDependencies = {
   inventoryRepository: InventoryRepository;
@@ -95,14 +95,8 @@ export const buildEntryService = ({
       return err({ type: "notAllowed" });
     }
 
-    const { behaviorIds, environmentIds } = input;
-
     // Check if an exact same entry already exists or not
-    const existingEntry = await entryRepositoryLegacy.findExistingDonnee({
-      ...reshapeInputEntryUpsertDataLegacy(input),
-      behaviorIds,
-      environmentIds,
-    });
+    const existingEntry = await entryRepository.findExistingEntry(reshapeInputEntryUpsertData(input));
 
     if (existingEntry) {
       // The entry already exists so we return an error
@@ -126,14 +120,8 @@ export const buildEntryService = ({
       return err({ type: "notAllowed" });
     }
 
-    const { behaviorIds, environmentIds } = input;
-
     // Check if an exact same entry already exists or not
-    const existingEntry = await entryRepositoryLegacy.findExistingDonnee({
-      ...reshapeInputEntryUpsertDataLegacy(input),
-      behaviorIds,
-      environmentIds,
-    });
+    const existingEntry = await entryRepository.findExistingEntry(reshapeInputEntryUpsertData(input));
 
     if (existingEntry && existingEntry.id !== id) {
       return err({

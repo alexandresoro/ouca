@@ -1,16 +1,7 @@
 import { type DatabasePool, sql } from "slonik";
 import { buildPaginationFragment, buildSortOrderFragment } from "../repository-helpers.js";
-import {
-  buildFindMatchingDonneeClause,
-  buildOrderByIdentifier,
-  buildSearchCriteriaClause,
-} from "./donnee-repository-helper.js";
-import {
-  type Donnee,
-  type DonneeFindManyInput,
-  type DonneeFindMatchingInput,
-  donneeSchema,
-} from "./donnee-repository-types.js";
+import { buildOrderByIdentifier, buildSearchCriteriaClause } from "./donnee-repository-helper.js";
+import { type Donnee, type DonneeFindManyInput, donneeSchema } from "./donnee-repository-types.js";
 
 export type DonneeRepositoryDependencies = {
   slonik: DatabasePool;
@@ -98,51 +89,11 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.any(query);
   };
 
-  const findExistingDonnee = async (criteria: DonneeFindMatchingInput): Promise<Donnee | null> => {
-    const { behaviorIds, environmentIds } = criteria;
-
-    // TODO the match is a bit too wide, meaning that a missing/null criteria will have no
-    // associated where clause, but we can consider this as acceptable
-    const query = sql.type(donneeSchema)`
-      SELECT
-        donnee.id::text,
-        donnee.inventaire_id::text,
-        donnee.espece_id::text,
-        donnee.sexe_id::text,
-        donnee.age_id::text,
-        donnee.estimation_nombre_id::text,
-        donnee.nombre,
-        donnee.estimation_distance_id::text,
-        donnee.distance,
-        donnee.commentaire,
-        donnee.regroupement,
-        donnee.date_creation
-      FROM
-        basenaturaliste.donnee
-      LEFT JOIN
-	      basenaturaliste.donnee_comportement ON donnee_comportement.donnee_id = donnee.id
-      LEFT JOIN
-	      basenaturaliste.donnee_milieu ON donnee_milieu.donnee_id = donnee.id
-      ${buildFindMatchingDonneeClause(criteria)}
-      GROUP BY donnee.id
-      HAVING 
-        COUNT(DISTINCT donnee_comportement.comportement_id) = ${behaviorIds?.length ?? 0}
-        AND COUNT(DISTINCT donnee_milieu.milieu_id) = ${environmentIds?.length ?? 0}
-      LIMIT 1
-    `;
-
-    return slonik.maybeOne(query);
-  };
-
   return {
     /**
      * @deprecated
      */
     findDonnees,
-    /**
-     * @deprecated
-     */
-    findExistingDonnee,
   };
 };
 

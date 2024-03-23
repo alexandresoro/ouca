@@ -4,7 +4,8 @@ import { kysely } from "@infrastructure/kysely/kysely.js";
 import { countSchema } from "@infrastructure/repositories/common.js";
 import { reshapeRawEntry } from "@infrastructure/repositories/entry/entry-repository-reshape.js";
 import { withSearchCriteria } from "@infrastructure/repositories/search-criteria.js";
-import { sql } from "kysely";
+import { type OperandExpression, type SqlBool, sql } from "kysely";
+import { areSetsContainingSameValues } from "../../../utils/utils.js";
 
 export const buildEntryRepository = () => {
   const findEntryById = async (id: string): Promise<Entry | null> => {
@@ -33,6 +34,89 @@ export const buildEntryRepository = () => {
       .executeTakeFirst();
 
     return entryResult ? entrySchema.parse(reshapeRawEntry(entryResult)) : null;
+  };
+
+  const findExistingEntry = async (criteria: EntryCreateInput): Promise<Entry | null> => {
+    const entryResultWithoutLinks = await kysely
+      .selectFrom("donnee")
+      .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+      .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+      .select([
+        sql<string>`donnee.id::text`.as("id"),
+        sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+        sql<string>`donnee.espece_id::text`.as("especeId"),
+        sql<string>`donnee.sexe_id::text`.as("sexeId"),
+        sql<string>`donnee.age_id::text`.as("ageId"),
+        sql<string>`donnee.estimation_nombre_id::text`.as("estimationNombreId"),
+        "nombre",
+        sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
+        "distance",
+        "commentaire",
+        "regroupement",
+        "dateCreation",
+        sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
+        sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
+      ])
+      .where((eb) => {
+        const clause: OperandExpression<SqlBool>[] = [];
+
+        clause.push(eb("donnee.inventaireId", "=", Number.parseInt(criteria.inventoryId)));
+        clause.push(eb("donnee.especeId", "=", Number.parseInt(criteria.speciesId)));
+        clause.push(eb("donnee.sexeId", "=", Number.parseInt(criteria.sexId)));
+        clause.push(eb("donnee.ageId", "=", Number.parseInt(criteria.ageId)));
+        clause.push(eb("donnee.estimationNombreId", "=", Number.parseInt(criteria.numberEstimateId)));
+
+        if (criteria.number != null) {
+          clause.push(eb("donnee.nombre", "=", criteria.number));
+        } else {
+          clause.push(eb("donnee.nombre", "is", null));
+        }
+
+        if (criteria.distanceEstimateId != null) {
+          clause.push(eb("donnee.estimationDistanceId", "=", Number.parseInt(criteria.distanceEstimateId)));
+        } else {
+          clause.push(eb("donnee.estimationDistanceId", "is", null));
+        }
+
+        if (criteria.distance != null) {
+          clause.push(eb("donnee.distance", "=", criteria.distance));
+        } else {
+          clause.push(eb("donnee.distance", "is", null));
+        }
+
+        if (criteria.comment != null) {
+          clause.push(eb("donnee.commentaire", "=", criteria.comment));
+        } else {
+          clause.push(eb("donnee.commentaire", "is", null));
+        }
+
+        if (criteria.grouping != null) {
+          clause.push(eb("donnee.regroupement", "=", criteria.grouping));
+        } else {
+          clause.push(eb("donnee.regroupement", "is", null));
+        }
+
+        return eb.and(clause);
+      })
+      .groupBy("donnee.id")
+      .execute();
+
+    if (entryResultWithoutLinks.length === 0) {
+      return null;
+    }
+
+    const entryResult = entryResultWithoutLinks.filter((entry) => {
+      return (
+        areSetsContainingSameValues(new Set(entry.behaviorIds), new Set(criteria.behaviorIds)) &&
+        areSetsContainingSameValues(new Set(entry.environmentIds), new Set(criteria.environmentIds))
+      );
+    });
+
+    if (entryResult.length === 0) {
+      return null;
+    }
+
+    return entrySchema.parse(reshapeRawEntry(entryResult[0]));
   };
 
   const getCount = async (criteria?: SearchCriteria | null): Promise<number> => {
@@ -268,6 +352,7 @@ export const buildEntryRepository = () => {
 
   return {
     findEntryById,
+    findExistingEntry,
     getCount,
     createEntry,
     updateEntry,

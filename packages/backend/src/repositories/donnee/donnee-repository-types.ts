@@ -1,5 +1,4 @@
 import type { LegacySearchCriteria } from "@domain/search/search-criteria.js";
-import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { z } from "zod";
 import type { SortOrder } from "../common.js";
 
@@ -51,25 +50,3 @@ export type DonneeFindManyInput = Partial<{
   offset: number | null;
   limit: number | null;
 }>;
-
-/**
- * @deprecated
- */
-export type DonneeFindMatchingInput = DonneeCreateInput &
-  Required<Pick<UpsertEntryInput, "behaviorIds" | "environmentIds">>;
-
-/**
- * @deprecated
- */
-export type DonneeCreateInput = {
-  inventaire_id: number;
-  espece_id: number;
-  sexe_id: number;
-  age_id: number;
-  estimation_nombre_id: number;
-  nombre?: number | null;
-  estimation_distance_id?: number | null;
-  distance?: number | null;
-  commentaire?: string | null;
-  regroupement?: number | null;
-};

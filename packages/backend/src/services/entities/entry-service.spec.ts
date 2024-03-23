@@ -8,7 +8,7 @@ import type { EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { err, ok } from "neverthrow";
 import { vi } from "vitest";
 import { mock as mockVe } from "vitest-mock-extended";
-import type { Donnee, DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
+import type { Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import type { DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { mock, mockVi } from "../../utils/mock.js";
 import { buildEntryService } from "./entry-service.js";
@@ -23,17 +23,10 @@ const entryService = buildEntryService({
   entryRepositoryLegacy,
 });
 
-const reshapeInputEntryUpsertData = vi.fn<unknown[], DonneeCreateInput>();
-vi.doMock("./entry-service-reshape.js", () => {
-  return {
-    __esModule: true,
-    reshapeInputEntryUpsertData,
-  };
-});
-
 beforeEach(() => {
   vi.resetAllMocks();
   entryRepository.findEntryById.mock.resetCalls();
+  entryRepository.findExistingEntry.mock.resetCalls();
   entryRepository.getCount.mock.resetCalls();
   entryRepository.createEntry.mock.resetCalls();
   entryRepository.updateEntry.mock.resetCalls();
@@ -298,7 +291,7 @@ describe("Update of a data", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    entryRepositoryLegacy.findExistingDonnee.mockResolvedValueOnce(null);
+    entryRepository.findExistingEntry.mock.mockImplementationOnce(() => Promise.resolve(null));
 
     await entryService.updateEntry("12", dataData, loggedUser);
 
@@ -314,10 +307,12 @@ describe("Update of a data", () => {
 
     const loggedUser = loggedUserFactory.build();
 
-    entryRepositoryLegacy.findExistingDonnee.mockResolvedValueOnce(
-      mockVe<Donnee>({
-        id: "345",
-      }),
+    entryRepository.findExistingEntry.mock.mockImplementationOnce(() =>
+      Promise.resolve(
+        entryFactory.build({
+          id: "345",
+        }),
+      ),
     );
 
     assert.deepStrictEqual(
