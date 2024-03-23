@@ -1,5 +1,4 @@
-import { type DatabasePool, type DatabaseTransactionConnection, type QueryResult, sql } from "slonik";
-import { z } from "zod";
+import { type DatabasePool, type DatabaseTransactionConnection, sql } from "slonik";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
@@ -268,36 +267,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return (transaction ?? slonik).one(query);
   };
 
-  const updateAssociatedInventaire = async (
-    currentInventaireId: number,
-    newInventaireId: number,
-    transaction?: DatabaseTransactionConnection,
-  ): Promise<QueryResult<void>> => {
-    const query = sql.type(z.void())`
-      UPDATE
-        basenaturaliste.donnee
-      SET
-        donnee.inventaire_id = ${newInventaireId}
-      WHERE
-        donnee.inventaire_id = ${currentInventaireId}
-      RETURNING
-        donnee.id::text,
-        donnee.inventaire_id::text,
-        donnee.espece_id::text,
-        donnee.sexe_id::text,
-        donnee.age_id::text,
-        donnee.estimation_nombre_id::text,
-        donnee.nombre,
-        donnee.estimation_distance_id::text,
-        donnee.distance,
-        donnee.commentaire,
-        donnee.regroupement,
-        donnee.date_creation
-    `;
-
-    return (transaction ?? slonik).query(query);
-  };
-
   return {
     /**
      * @deprecated
@@ -327,10 +296,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
      * @deprecated
      */
     deleteDonneeById,
-    /**
-     * @deprecated
-     */
-    updateAssociatedInventaire,
   };
 };
 
