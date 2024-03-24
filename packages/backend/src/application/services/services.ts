@@ -6,6 +6,7 @@ import { buildDistanceEstimateRepository } from "@infrastructure/repositories/di
 import { buildEntryRepository } from "@infrastructure/repositories/entry/entry-repository.js";
 import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
 import { buildInventoryRepository } from "@infrastructure/repositories/inventory/inventory-repository.js";
+import { buildGeoJSONRepository } from "@infrastructure/repositories/locality/locality-geojson-repository.js";
 import { buildLocalityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
 import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
@@ -16,7 +17,6 @@ import { buildSpeciesRepository } from "@infrastructure/repositories/species/spe
 import { buildTownRepository } from "@infrastructure/repositories/town/town-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
-import { type GeoJSONService, buildGeoJSONService } from "../../services/geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "../../services/oidc/oidc-with-internal-user-mapping.js";
 import { type ZitadelOidcService, buildZitadelOidcService } from "../../services/oidc/zitadel-oidc-service.js";
 import { logger } from "../../utils/logger.js";
@@ -30,6 +30,7 @@ import {
 import { type EntryService, buildEntryService } from "./entry/entry-service.js";
 import { type EnvironmentService, buildEnvironmentService } from "./environment/environment-service.js";
 import { type InventoryService, buildInventoryService } from "./inventory/inventory-service.js";
+import { type GeoJSONService, buildGeoJSONService } from "./locality/geojson-service.js";
 import { type LocalityService, buildLocalityService } from "./locality/locality-service.js";
 import { type NumberEstimateService, buildNumberEstimateService } from "./number-estimate/number-estimate-service.js";
 import { type ObserverService, buildObserverService } from "./observer/observer-service.js";
@@ -81,6 +82,8 @@ export const buildServices = (): Services => {
   const townRepository = buildTownRepository();
   const userRepository = buildUserRepository({ settingsRepository });
   const weatherRepository = buildWeatherRepository();
+
+  const localitiesGeoJSONRepository = buildGeoJSONRepository();
 
   const ageService = buildAgeService({
     ageRepository,
@@ -166,6 +169,7 @@ export const buildServices = (): Services => {
 
   const geojsonService = buildGeoJSONService({
     localityRepository,
+    localitiesGeoJSONRepository,
   });
 
   const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });
