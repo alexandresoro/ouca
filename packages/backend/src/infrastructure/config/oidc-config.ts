@@ -2,6 +2,7 @@ import { z } from "zod";
 import { logger } from "../../utils/logger.js";
 
 const envOidcSchema = z.object({
+  OIDC_PROVIDER: z.enum(["zitadel"]).default("zitadel"), // TODO: Remove default value at some point
   OIDC_ISSUER: z.string(),
   OIDC_INTROSPECTION_PATH: z.string().default("/oauth/v2/introspect"),
   OIDC_CLIENT_ID: z.string(),
@@ -16,13 +17,12 @@ export const getOidcConfig = () => {
   }
   const env = envOidcParseResult.data;
   return {
+    provider: env.OIDC_PROVIDER,
     issuer: env.OIDC_ISSUER,
     introspectionPath: env.OIDC_INTROSPECTION_PATH,
     clientId: env.OIDC_CLIENT_ID,
     clientSecret: env.OIDC_CLIENT_SECRET,
   };
 };
-
-export type OidcConfig = ReturnType<typeof getOidcConfig>;
 
 export const oidcConfig = getOidcConfig();

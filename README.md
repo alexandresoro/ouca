@@ -18,7 +18,7 @@ This project also provides a web application that consumes the API and allows a 
 - An OIDC provider to provide authentication services. 
 
 Most of the app is independent of the OIDC provider as it follows standard claims except for roles that are expected to be returned in specific claims. 
-Hence, currently only [Zitadel](https://zitadel.com/) is supported, but additional providers could be easily added.
+Hence, currently only [Zitadel](https://zitadel.com/) is supported, but additional providers can be easily added.
 
 ## API structure
 
@@ -54,6 +54,7 @@ The following options are available as environment variables:
 | `OUCA_DATABASE_MIGRATION_SCHEMA` |    `string`     |                                        `public`                                        | The name of the schema where to store the database migrations info                                                                                                                                                                                  |
 | `OUCA_DATABASE_MIGRATION_TABLE`  |    `string`     |                          `base_naturaliste_umzug_migrations`                           | The name of the table where to store the database migrations info                                                                                                                                                                                   |
 | `OUCA_DATABASE_MIGRATIONS_PATH`  |    `string`     |                                    Default migration folder path                                     | The path where the migration scripts are stored. Normally this should not need to be changed                                                                                                                                                        |
+| `OIDC_PROVIDER`* | `string` | none | Only `zitadel` is supported for the moment |
 | `OIDC_ISSUER`* | `string` | none | The URL of the OIDC provider. |
 | `OIDC_INTROSPECTION_PATH` | `string` | `/oauth/v2/introspect` | The path for introspection endpoint. |
 | `OIDC_CLIENT_ID`* | `string` | none | Client ID to connect to OIDC. |

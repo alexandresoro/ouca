@@ -1,12 +1,11 @@
 import type { FastifyPluginCallback } from "fastify";
 import type { Services } from "../application/services/services.js";
 import { BEARER_PATTERN } from "../fastify/handle-authorization-hook.js";
-import { EXTERNAL_PROVIDER_NAME } from "../services/oidc/zitadel-oidc-service.js";
 
 const userController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { userService, zitadelOidcService } = services;
+  const { userService, oidcService } = services;
 
   fastify.post("/create", async (req, reply) => {
     const authorizationHeader = req.headers.authorization;
@@ -26,21 +25,27 @@ const userController: FastifyPluginCallback<{
     const accessToken = bearerGroups[1];
 
     // Validate token
-    const introspectionResult = await zitadelOidcService.introspectAccessToken(accessToken);
+    const introspectionResultResult = await oidcService.introspectAccessToken(accessToken);
+
+    if (introspectionResultResult.isErr()) {
+      return await reply.status(500).send();
+    }
+
+    const introspectionResult = introspectionResultResult.value;
 
     if (!introspectionResult.active) {
       return await reply.status(401).send("Access token is not active.");
     }
 
     // Only user with active roles can create account
-    const role = zitadelOidcService.getRoleFromLoggedUser(introspectionResult);
+    const role = oidcService.getHighestRoleFromLoggedUser(introspectionResult.user);
     if (!role) {
       return await reply.status(403).send();
     }
 
     const { id } = await userService.createUser({
-      extProvider: EXTERNAL_PROVIDER_NAME,
-      extProviderUserId: introspectionResult.sub,
+      extProvider: introspectionResult.user.oidcProvider,
+      extProviderUserId: introspectionResult.user.sub,
     });
     await reply.status(201).send({ id });
   });

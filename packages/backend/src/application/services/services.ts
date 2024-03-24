@@ -17,8 +17,6 @@ import { buildSpeciesRepository } from "@infrastructure/repositories/species/spe
 import { buildTownRepository } from "@infrastructure/repositories/town/town-repository.js";
 import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
 import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
-import { buildOidcWithInternalUserMappingService } from "../../services/oidc/oidc-with-internal-user-mapping.js";
-import { type ZitadelOidcService, buildZitadelOidcService } from "../../services/oidc/zitadel-oidc-service.js";
 import { logger } from "../../utils/logger.js";
 import { type AgeService, buildAgeService } from "./age/age-service.js";
 import { type BehaviorService, buildBehaviorService } from "./behavior/behavior-service.js";
@@ -35,6 +33,7 @@ import { type GeoJSONService, buildGeoJSONService } from "./locality/geojson-ser
 import { type LocalityService, buildLocalityService } from "./locality/locality-service.js";
 import { type NumberEstimateService, buildNumberEstimateService } from "./number-estimate/number-estimate-service.js";
 import { type ObserverService, buildObserverService } from "./observer/observer-service.js";
+import { type OidcService, buildOidcService } from "./oidc/oidc-service.js";
 import { type SettingsService, buildSettingsService } from "./settings/settings-service.js";
 import { type SexService, buildSexService } from "./sex/sex-service.js";
 import { type SpeciesClassService, buildSpeciesClassService } from "./species-class/species-class-service.js";
@@ -62,8 +61,8 @@ export type Services = {
   settingsService: SettingsService;
   userService: UserService;
   geojsonService: GeoJSONService;
-  zitadelOidcService: ZitadelOidcService;
   exportService: ExportService;
+  oidcService: OidcService;
 };
 
 export const buildServices = (): Services => {
@@ -176,9 +175,8 @@ export const buildServices = (): Services => {
     localitiesGeoJSONRepository,
   });
 
-  const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });
-  const zitadelOidcService = buildZitadelOidcService({
-    oidcWithInternalUserMappingService,
+  const oidcService = buildOidcService({
+    userService,
   });
 
   const exportService = buildExportService({
@@ -221,7 +219,7 @@ export const buildServices = (): Services => {
     settingsService,
     userService,
     geojsonService,
-    zitadelOidcService,
+    oidcService,
     exportService,
   };
 };

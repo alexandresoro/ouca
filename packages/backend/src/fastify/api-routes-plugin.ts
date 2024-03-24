@@ -18,7 +18,7 @@ import sexesController from "../controllers/sexes-controller.js";
 import speciesController from "../controllers/species-controller.js";
 import townsController from "../controllers/towns-controller.js";
 import weathersController from "../controllers/weathers-controller.js";
-import handleAuthorizationHook from "./handle-authorization-hook.js";
+import { handleAuthorizationHook } from "./handle-authorization-hook.js";
 
 const apiRoutesPlugin: FastifyPluginAsync<{ services: Services }> = async (fastify, { services }) => {
   // API needs authentication/authorization
