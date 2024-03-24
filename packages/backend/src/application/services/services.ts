@@ -1,4 +1,3 @@
-import { oidcConfig } from "@infrastructure/config/oidc-config.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
@@ -179,7 +178,6 @@ export const buildServices = (): Services => {
 
   const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });
   const zitadelOidcService = buildZitadelOidcService({
-    oidcConfig,
     oidcWithInternalUserMappingService,
   });
 
