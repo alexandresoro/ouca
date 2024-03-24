@@ -7,7 +7,7 @@ import departmentsController from "../controllers/departments-controller.js";
 import distanceEstimatesController from "../controllers/distance-estimates-controller.js";
 import entriesController from "../controllers/entries-controller.js";
 import environmentsController from "../controllers/environments-controller.js";
-import generateExportController from "../controllers/generate-export-controllers.js";
+import { generateExportController } from "../controllers/generate-export-controllers.js";
 import geojsonController from "../controllers/geojson-controller.js";
 import inventoriesController from "../controllers/inventories-controller.js";
 import localitiesController from "../controllers/localities-controller.js";

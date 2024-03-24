@@ -1,3 +1,4 @@
+import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { ExportRepository } from "@interfaces/export-repository-interface.js";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
@@ -5,6 +6,7 @@ import type { Environment } from "@ou-ca/common/api/entities/environment";
 import type { EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
+import { type Result, err, ok } from "neverthrow";
 import type { AgeService } from "../age/age-service.js";
 import type { BehaviorService } from "../behavior/behavior-service.js";
 import type { DepartmentService } from "../department/department-service.js";
@@ -62,7 +64,11 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     weatherService,
   } = dependencies;
 
-  const generateAgesExport = async (): Promise<string> => {
+  const generateAgesExport = async (loggedUser: LoggedUser | null): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const agesDb = await ageService.findAllAges();
 
     const agesToExport = agesDb.map((ageDb) => {
@@ -72,10 +78,14 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(agesToExport, "Âges");
-    return id;
+    return ok(id);
   };
 
-  const generateClassesExport = async (): Promise<string> => {
+  const generateClassesExport = async (loggedUser: LoggedUser | null): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const classes = await classService.findAllSpeciesClasses();
 
     const objectsToExport = classes.map((object) => {
@@ -83,10 +93,14 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Classes");
-    return id;
+    return ok(id);
   };
 
-  const generateTownsExport = async (): Promise<string> => {
+  const generateTownsExport = async (loggedUser: LoggedUser | null): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const communesDb = await townService.findAllTownsWithDepartments();
 
     const objectsToExport = communesDb.map((communeDb) => {
@@ -98,10 +112,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Communes");
-    return id;
+    return ok(id);
   };
 
-  const generateBehaviorsExport = async (): Promise<string> => {
+  const generateBehaviorsExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const comportementsDb = await behaviorService.findAllBehaviors();
 
     const comportementsToExport = comportementsDb.map((object) => {
@@ -112,10 +132,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(comportementsToExport, "Comportements");
-    return id;
+    return ok(id);
   };
 
-  const generateDepartmentsExport = async (): Promise<string> => {
+  const generateDepartmentsExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const departementsDb = await departmentService.findAllDepartments();
 
     const objectsToExport = departementsDb.map((object) => {
@@ -125,14 +151,18 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Départements");
-    return id;
+    return ok(id);
   };
 
   const generateEntriesExport = async (
     loggedUser: LoggedUser | null,
     searchCriteria: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> &
       Partial<{ pageNumber: number; pageSize: number }>,
-  ): Promise<string> => {
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const coordinatesSystem = GPS_COORDINATES;
     const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
 
@@ -225,10 +255,14 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     );
 
     const id = await exportRepository.storeExport(objectsToExport, "Données");
-    return id;
+    return ok(id);
   };
 
-  const generateSpeciesExport = async (): Promise<string> => {
+  const generateSpeciesExport = async (loggedUser: LoggedUser | null): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const especes = await speciesService.findAllSpeciesWithClasses();
 
     const objectsToExport = especes.map((espece) => {
@@ -241,10 +275,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Espèces");
-    return id;
+    return ok(id);
   };
 
-  const generateDistanceEstimatesExport = async (): Promise<string> => {
+  const generateDistanceEstimatesExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const estimations = await distanceEstimateService.findAllDistanceEstimates();
 
     const objectsToExport = estimations.map((object) => {
@@ -254,10 +294,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Estimations de la distance");
-    return id;
+    return ok(id);
   };
 
-  const generateNumberEstimatesExport = async (): Promise<string> => {
+  const generateNumberEstimatesExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const estimations = await numberEstimateService.findAllNumberEstimates();
 
     const objectsToExport = estimations.map((object) => {
@@ -267,10 +313,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Estimations du nombre");
-    return id;
+    return ok(id);
   };
 
-  const generateLocalitiesExport = async (): Promise<string> => {
+  const generateLocalitiesExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const lieuxDits = await localityService.findAllLocalitiesWithTownAndDepartment();
 
     const objectsToExport = lieuxDits.map((lieudit) => {
@@ -286,10 +338,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Lieux-dits");
-    return id;
+    return ok(id);
   };
 
-  const generateWeathersExport = async (): Promise<string> => {
+  const generateWeathersExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const meteos = await weatherService.findAllWeathers();
 
     const objectsToExport = meteos.map((object) => {
@@ -299,10 +357,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Météos");
-    return id;
+    return ok(id);
   };
 
-  const generateEnvironmentsExport = async (): Promise<string> => {
+  const generateEnvironmentsExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const milieuxDb = await environmentService.findAllEnvironments();
 
     const milieuxToExport = milieuxDb.map((object) => {
@@ -313,10 +377,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(milieuxToExport, "Milieux");
-    return id;
+    return ok(id);
   };
 
-  const generateObserversExport = async (): Promise<string> => {
+  const generateObserversExport = async (
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const observateurs = await observerService.findAllObservers();
 
     const objectsToExport = observateurs.map((object) => {
@@ -326,10 +396,14 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Observateurs");
-    return id;
+    return ok(id);
   };
 
-  const generateSexesExport = async (): Promise<string> => {
+  const generateSexesExport = async (loggedUser: LoggedUser | null): Promise<Result<string, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
     const sexes = await sexService.findAllSexes();
 
     const objectsToExport = sexes.map((object) => {
@@ -339,7 +413,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     });
 
     const id = await exportRepository.storeExport(objectsToExport, "Sexes");
-    return id;
+    return ok(id);
   };
 
   const getExport = async (exportId: string): Promise<Buffer | null> => {
