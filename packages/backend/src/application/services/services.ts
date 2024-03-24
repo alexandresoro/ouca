@@ -5,6 +5,7 @@ import { buildDepartmentRepository } from "@infrastructure/repositories/departme
 import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
 import { buildEntryRepository } from "@infrastructure/repositories/entry/entry-repository.js";
 import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
+import { buildExportRepository } from "@infrastructure/repositories/export/export-repository.js";
 import { buildInventoryRepository } from "@infrastructure/repositories/inventory/inventory-repository.js";
 import { buildGeoJSONRepository } from "@infrastructure/repositories/locality/locality-geojson-repository.js";
 import { buildLocalityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
@@ -29,6 +30,7 @@ import {
 } from "./distance-estimate/distance-estimate-service.js";
 import { type EntryService, buildEntryService } from "./entry/entry-service.js";
 import { type EnvironmentService, buildEnvironmentService } from "./environment/environment-service.js";
+import { type ExportService, buildExportService } from "./export/export-service.js";
 import { type InventoryService, buildInventoryService } from "./inventory/inventory-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./locality/geojson-service.js";
 import { type LocalityService, buildLocalityService } from "./locality/locality-service.js";
@@ -62,6 +64,7 @@ export type Services = {
   userService: UserService;
   geojsonService: GeoJSONService;
   zitadelOidcService: ZitadelOidcService;
+  exportService: ExportService;
 };
 
 export const buildServices = (): Services => {
@@ -84,6 +87,8 @@ export const buildServices = (): Services => {
   const weatherRepository = buildWeatherRepository();
 
   const localitiesGeoJSONRepository = buildGeoJSONRepository();
+
+  const exportRepository = buildExportRepository();
 
   const ageService = buildAgeService({
     ageRepository,
@@ -178,6 +183,25 @@ export const buildServices = (): Services => {
     oidcWithInternalUserMappingService,
   });
 
+  const exportService = buildExportService({
+    exportRepository,
+    ageService,
+    behaviorService,
+    classService,
+    departmentService,
+    distanceEstimateService,
+    entryService,
+    environmentService,
+    inventoryService,
+    localityService,
+    numberEstimateService,
+    observerService,
+    sexService,
+    speciesService,
+    townService,
+    weatherService,
+  });
+
   logger.debug("Services initialized successfully");
 
   return {
@@ -200,5 +224,6 @@ export const buildServices = (): Services => {
     userService,
     geojsonService,
     zitadelOidcService,
+    exportService,
   };
 };

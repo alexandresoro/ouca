@@ -18,7 +18,7 @@ import fastify, {
 } from "fastify";
 import type { Logger } from "pino";
 import type { Services } from "./application/services/services.js";
-import downloadController from "./controllers/download-controller.js";
+import { downloadController } from "./controllers/download-controller.js";
 import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import sentryPlugin from "./fastify/sentry-plugin.js";
@@ -80,7 +80,7 @@ export const buildServer = async (
   await server.register(userController, { services, prefix: `${API_V1_PREFIX}/user` });
   logger.debug("Fastify API routes registered");
 
-  await server.register(downloadController, { prefix: "/download" });
+  await server.register(downloadController, { services, prefix: "/download" });
   registerFastifyStaticRoutes(server);
   logger.debug("Fastify static routes added");
 
