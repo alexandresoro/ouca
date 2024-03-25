@@ -7014,6 +7014,12 @@ packages:
   /type-fest@4.13.1:
     resolution: {integrity: sha512-ASMgM+Vf2cLwDMt1KXSkMUDSYCxtckDJs8zsaVF/mYteIsiARKCVtyXtcK38mIKbLTctZP8v6GMqdNaeI3fo7g==}
     engines: {node: '>=16'}
+    dev: true
+
+  /type-fest@4.14.0:
+    resolution: {integrity: sha512-on5/Cw89wwqGZQu+yWO0gGMGu8VNxsaW9SB2HE8yJjllEk7IDTwnSN1dUVldYILhYPN5HzD7WAaw2cc/jBfn0Q==}
+    engines: {node: '>=16'}
+    dev: false
 
   /typed-array-buffer@1.0.2:
     resolution: {integrity: sha512-gEymJYKZtKXzzBzM4jqa9w6Q1Jjm7x2d+sh19AdsD4wqnMPDYyvwpsIc2Q/835kHuo3BEQ7CjelGhfTsoBb2MQ==}
@@ -7094,7 +7100,7 @@ packages:
       emittery: 0.13.1
       glob: 8.1.0
       pony-cause: 2.1.10
-      type-fest: 4.13.1
+      type-fest: 4.14.0
     transitivePeerDependencies:
       - '@types/node'
     dev: false
