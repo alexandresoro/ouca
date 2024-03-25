@@ -11,15 +11,11 @@ import fastify, {
   type RawServerDefault,
 } from "fastify";
 import type { Logger } from "pino";
-import { registerRoutes } from "../../application/http/routes.js";
-import type { Services } from "../../application/services/services.js";
 import { logger as loggerParent } from "../../utils/logger.js";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "../../utils/paths.js";
 import { sentryPlugin } from "./sentry-plugin.js";
 
-export const buildServer = async (
-  services: Services,
-): Promise<
+export const buildServer = async (): Promise<
   FastifyInstance<
     RawServerDefault,
     RawRequestDefaultExpression<RawServerDefault>,
@@ -63,8 +59,6 @@ export const buildServer = async (
   logger.debug("Fastify static server successfully registered");
 
   await server.register(sentryPlugin);
-
-  await registerRoutes(server, services);
 
   return server;
 };

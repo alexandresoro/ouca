@@ -2,6 +2,7 @@ import { serverConfig } from "@infrastructure/config/server-config.js";
 import { buildServer } from "@infrastructure/fastify/fastify.js";
 import { captureException, initSentry } from "@infrastructure/sentry/sentry.js";
 import { runMigrations } from "@infrastructure/umzug/umzug-instance.js";
+import { registerRoutes } from "./application/http/routes.js";
 import { startWorkersAndJobs } from "./application/jobs/jobs.js";
 import { buildServices } from "./application/services/services.js";
 import { shutdown } from "./shutdown.js";
@@ -26,7 +27,9 @@ const startApp = async () => {
 
   await startWorkersAndJobs(services);
 
-  const server = await buildServer(services);
+  const server = await buildServer();
+
+  await registerRoutes(server, services);
 
   process.on("SIGINT", shutdown(server));
   process.on("SIGTERM", shutdown(server));
