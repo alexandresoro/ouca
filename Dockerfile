@@ -43,8 +43,7 @@ COPY --from=build /app/packages/backend/dist/ packages/backend/dist/
 WORKDIR /app/packages/backend/dist
 
 # Create the necessary directories
-RUN mkdir public && \
-  mkdir uploads
+RUN mkdir public
 
 ARG GIT_SHA
 ENV SENTRY_RELEASE ${GIT_SHA}

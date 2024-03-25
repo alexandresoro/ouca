@@ -29,6 +29,7 @@ import {
 import { type EntryService, buildEntryService } from "./entry/entry-service.js";
 import { type EnvironmentService, buildEnvironmentService } from "./environment/environment-service.js";
 import { type ExportService, buildExportService } from "./export/export-service.js";
+import { type ImportService, buildImportService } from "./import/import-service.js";
 import { type InventoryService, buildInventoryService } from "./inventory/inventory-service.js";
 import { type GeoJSONService, buildGeoJSONService } from "./locality/geojson-service.js";
 import { type LocalityService, buildLocalityService } from "./locality/locality-service.js";
@@ -64,6 +65,7 @@ export type Services = {
   userService: UserService;
   geojsonService: GeoJSONService;
   exportService: ExportService;
+  importService: ImportService;
   oidcService: OidcService;
 };
 
@@ -202,6 +204,8 @@ export const buildServices = (): Services => {
     weatherService,
   });
 
+  const importService = buildImportService();
+
   logger.debug("Services initialized successfully");
 
   return {
@@ -226,5 +230,6 @@ export const buildServices = (): Services => {
     geojsonService,
     oidcService,
     exportService,
+    importService,
   };
 };

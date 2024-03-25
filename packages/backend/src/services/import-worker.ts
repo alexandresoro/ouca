@@ -1,6 +1,3 @@
-import { readFile } from "node:fs";
-import path from "node:path";
-import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { ImportType } from "@ou-ca/common/import/import-types";
@@ -15,7 +12,7 @@ import {
   type ImportPostCompleteMessage,
   VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message.js";
-import { IMPORTS_DIR_PATH } from "../utils/paths.js";
+import { logger } from "../utils/logger.js";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type.js";
 import {
   IMPORT_COMPLETE_EVENT,
@@ -66,13 +63,13 @@ serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string[][]) => {
   process.exit(0);
 });
 
-promisify(readFile)(path.join(IMPORTS_DIR_PATH.pathname, importId))
-  .then((data) => {
-    // This is the 100% CPU intensive task
-    serviceWorker.importFile(data.toString(), loggedUser).catch((error) => {
-      throw error;
-    });
-  })
-  .catch((error) => {
-    throw error;
-  });
+const importData = await services.importService.getUploadData(importId);
+
+if (importData === null) {
+  logger.error(`No data found for import with id ${importId}`);
+  process.exit(1);
+}
+
+await serviceWorker.importFile(importData, loggedUser).catch((error) => {
+  throw error;
+});

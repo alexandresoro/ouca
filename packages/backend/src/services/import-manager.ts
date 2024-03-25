@@ -62,7 +62,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
     `Creating new worker for import id ${importId} and type ${importType} initiatied by user ${loggedUser.id}`,
   );
 
-  const worker = new Worker("./services/import-worker.js", {
+  const worker = new Worker(new URL("./import-worker.js", import.meta.url), {
     argv: process.argv.slice(2),
     workerData: {
       importId,
