@@ -3,8 +3,8 @@ import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { Result, err, ok } from "neverthrow";
-import type { Services } from "../application/services/services.js";
-import { getDateOnlyAsLocalISOString } from "../utils/time-utils.js";
+import { getDateOnlyAsLocalISOString } from "../../../utils/time-utils.js";
+import type { Services } from "../../services/services.js";
 import { enrichedLocality } from "./localities-enricher.js";
 
 export const enrichedInventory = async (

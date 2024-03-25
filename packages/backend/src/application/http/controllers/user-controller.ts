@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
-import type { Services } from "../application/services/services.js";
-import { BEARER_PATTERN } from "../fastify/handle-authorization-hook.js";
+import type { Services } from "../../services/services.js";
+import { BEARER_PATTERN } from "../hooks/handle-authorization-hook.js";
 
 const userController: FastifyPluginCallback<{
   services: Services;

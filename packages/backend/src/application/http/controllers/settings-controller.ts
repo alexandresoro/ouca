@@ -1,7 +1,7 @@
 import { getSettingsResponse, putSettingsInput, putSettingsResponse } from "@ou-ca/common/api/settings";
 import type { FastifyPluginCallback } from "fastify";
-import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../../../utils/logger.js";
+import type { Services } from "../../services/services.js";
 
 const settingsController: FastifyPluginCallback<{
   services: Services;

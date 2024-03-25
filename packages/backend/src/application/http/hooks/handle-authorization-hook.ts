@@ -1,10 +1,18 @@
 import type { OIDCIntrospectionResult } from "@domain/oidc/oidc-introspection.js";
+import type { LoggedUser } from "@domain/user/logged-user.js";
 import {
   getIntrospectionResultFromCache,
   storeIntrospectionResultInCache,
 } from "@infrastructure/oidc/oidc-introspect-access-token.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { Services } from "../application/services/services.js";
+import type { Services } from "../../services/services.js";
+
+declare module "fastify" {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface FastifyRequest {
+    user: LoggedUser | null;
+  }
+}
 
 export const BEARER_PATTERN = /^Bearer (.+)$/;
 

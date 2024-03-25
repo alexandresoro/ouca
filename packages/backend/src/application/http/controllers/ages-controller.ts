@@ -1,52 +1,52 @@
-import type { Sex, SexExtended } from "@ou-ca/common/api/entities/sex";
 import {
-  getSexResponse,
-  getSexesExtendedResponse,
-  getSexesQueryParamsSchema,
-  getSexesResponse,
-  upsertSexInput,
-  upsertSexResponse,
-} from "@ou-ca/common/api/sex";
+  getAgeResponse,
+  getAgesExtendedResponse,
+  getAgesQueryParamsSchema,
+  getAgesResponse,
+  upsertAgeInput,
+  upsertAgeResponse,
+} from "@ou-ca/common/api/age";
+import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../../../utils/logger.js";
+import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const sexesController: FastifyPluginCallback<{
+const agesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { sexService } = services;
+  const { ageService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const sexResult = await sexService.findSex(req.params.id, req.user);
+    const ageResult = await ageService.findAge(req.params.id, req.user);
 
-    if (sexResult.isErr()) {
-      switch (sexResult.error) {
+    if (ageResult.isErr()) {
+      switch (ageResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         default:
-          logger.error({ error: sexResult.error }, "Unexpected error");
+          logger.error({ error: ageResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const sex = sexResult.value;
+    const age = ageResult.value;
 
-    if (!sex) {
+    if (!age) {
       return await reply.status(404).send();
     }
 
-    const response = getSexResponse.parse(sex);
+    const response = getAgeResponse.parse(age);
     return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getSexesQueryParamsSchema.safeParse(req.query);
+    const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
@@ -57,8 +57,8 @@ const sexesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await sexService.findPaginatedSexes(req.user, queryParams),
-      await sexService.getSexesCount(req.user, queryParams.q),
+      await ageService.findPaginatedAges(req.user, queryParams),
+      await ageService.getAgesCount(req.user, queryParams.q),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -71,22 +71,22 @@ const sexesController: FastifyPluginCallback<{
       }
     }
 
-    const [sexesData, count] = paginatedResults.value;
+    const [agesData, count] = paginatedResults.value;
 
-    let data: Sex[] | SexExtended[] = sexesData;
+    let data: AgeSimple[] | Age[] = agesData;
     if (extended) {
       data = await Promise.all(
-        sexesData.map(async (sexData) => {
-          const entriesCount = (await sexService.getEntriesCountBySex(sexData.id, req.user))._unsafeUnwrap();
+        agesData.map(async (ageData) => {
+          const entriesCount = (await ageService.getEntriesCountByAge(ageData.id, req.user))._unsafeUnwrap();
           return {
-            ...sexData,
+            ...ageData,
             entriesCount,
           };
         }),
       );
     }
 
-    const responseParser = extended ? getSexesExtendedResponse : getSexesResponse;
+    const responseParser = extended ? getAgesExtendedResponse : getAgesResponse;
     const response = responseParser.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
@@ -96,7 +96,7 @@ const sexesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertSexInput.safeParse(req.body);
+    const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(422).send();
@@ -104,21 +104,21 @@ const sexesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const sexCreateResult = await sexService.createSex(input, req.user);
+    const ageCreateResult = await ageService.createAge(input, req.user);
 
-    if (sexCreateResult.isErr()) {
-      switch (sexCreateResult.error) {
+    if (ageCreateResult.isErr()) {
+      switch (ageCreateResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
         default:
-          logger.error({ error: sexCreateResult.error }, "Unexpected error");
+          logger.error({ error: ageCreateResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const response = upsertSexResponse.parse(sexCreateResult.value);
+    const response = upsertAgeResponse.parse(ageCreateResult.value);
     return await reply.send(response);
   });
 
@@ -127,7 +127,7 @@ const sexesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertSexInput.safeParse(req.body);
+    const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(422).send();
@@ -135,21 +135,21 @@ const sexesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const sexUpdateResult = await sexService.updateSex(req.params.id, input, req.user);
+    const ageUpdateResult = await ageService.updateAge(req.params.id, input, req.user);
 
-    if (sexUpdateResult.isErr()) {
-      switch (sexUpdateResult.error) {
+    if (ageUpdateResult.isErr()) {
+      switch (ageUpdateResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
         default:
-          logger.error({ error: sexUpdateResult.error }, "Unexpected error");
+          logger.error({ error: ageUpdateResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const response = upsertSexResponse.parse(sexUpdateResult.value);
+    const response = upsertAgeResponse.parse(ageUpdateResult.value);
     return await reply.send(response);
   });
 
@@ -158,28 +158,28 @@ const sexesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedSexResult = await sexService.deleteSex(req.params.id, req.user);
+    const deletedAgeResult = await ageService.deleteAge(req.params.id, req.user);
 
-    if (deletedSexResult.isErr()) {
-      switch (deletedSexResult.error) {
+    if (deletedAgeResult.isErr()) {
+      switch (deletedAgeResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         default:
-          logger.error({ error: deletedSexResult.error }, "Unexpected error");
+          logger.error({ error: deletedAgeResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const deletedSex = deletedSexResult.value;
+    const deletedAge = deletedAgeResult.value;
 
-    if (!deletedSex) {
+    if (!deletedAge) {
       return await reply.status(404).send();
     }
 
-    return await reply.send({ id: deletedSex.id });
+    return await reply.send({ id: deletedAge.id });
   });
 
   done();
 };
 
-export default sexesController;
+export default agesController;

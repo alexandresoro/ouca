@@ -1,52 +1,52 @@
 import {
-  getAgeResponse,
-  getAgesExtendedResponse,
-  getAgesQueryParamsSchema,
-  getAgesResponse,
-  upsertAgeInput,
-  upsertAgeResponse,
-} from "@ou-ca/common/api/age";
-import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
+  getBehaviorResponse,
+  getBehaviorsExtendedResponse,
+  getBehaviorsQueryParamsSchema,
+  getBehaviorsResponse,
+  upsertBehaviorInput,
+  upsertBehaviorResponse,
+} from "@ou-ca/common/api/behavior";
+import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../../../utils/logger.js";
+import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const agesController: FastifyPluginCallback<{
+const behaviorsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { ageService } = services;
+  const { behaviorService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const ageResult = await ageService.findAge(req.params.id, req.user);
+    const behaviorResult = await behaviorService.findBehavior(req.params.id, req.user);
 
-    if (ageResult.isErr()) {
-      switch (ageResult.error) {
+    if (behaviorResult.isErr()) {
+      switch (behaviorResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         default:
-          logger.error({ error: ageResult.error }, "Unexpected error");
+          logger.error({ error: behaviorResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const age = ageResult.value;
+    const behavior = behaviorResult.value;
 
-    if (!age) {
+    if (!behavior) {
       return await reply.status(404).send();
     }
 
-    const response = getAgeResponse.parse(age);
+    const response = getBehaviorResponse.parse(behavior);
     return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
+    const parsedQueryParamsResult = getBehaviorsQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
@@ -57,8 +57,8 @@ const agesController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await ageService.findPaginatedAges(req.user, queryParams),
-      await ageService.getAgesCount(req.user, queryParams.q),
+      await behaviorService.findPaginatedBehaviors(req.user, queryParams),
+      await behaviorService.getBehaviorsCount(req.user, queryParams.q),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -71,22 +71,24 @@ const agesController: FastifyPluginCallback<{
       }
     }
 
-    const [agesData, count] = paginatedResults.value;
+    const [behaviorsData, count] = paginatedResults.value;
 
-    let data: AgeSimple[] | Age[] = agesData;
+    let data: Behavior[] | BehaviorExtended[] = behaviorsData;
     if (extended) {
       data = await Promise.all(
-        agesData.map(async (ageData) => {
-          const entriesCount = (await ageService.getEntriesCountByAge(ageData.id, req.user))._unsafeUnwrap();
+        behaviorsData.map(async (behaviorData) => {
+          const entriesCount = (
+            await behaviorService.getEntriesCountByBehavior(behaviorData.id, req.user)
+          )._unsafeUnwrap();
           return {
-            ...ageData,
+            ...behaviorData,
             entriesCount,
           };
         }),
       );
     }
 
-    const responseParser = extended ? getAgesExtendedResponse : getAgesResponse;
+    const responseParser = extended ? getBehaviorsExtendedResponse : getBehaviorsResponse;
     const response = responseParser.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
@@ -96,7 +98,7 @@ const agesController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertAgeInput.safeParse(req.body);
+    const parsedInputResult = upsertBehaviorInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(422).send();
@@ -104,21 +106,21 @@ const agesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const ageCreateResult = await ageService.createAge(input, req.user);
+    const behaviorResult = await behaviorService.createBehavior(input, req.user);
 
-    if (ageCreateResult.isErr()) {
-      switch (ageCreateResult.error) {
+    if (behaviorResult.isErr()) {
+      switch (behaviorResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
         default:
-          logger.error({ error: ageCreateResult.error }, "Unexpected error");
+          logger.error({ error: behaviorResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const response = upsertAgeResponse.parse(ageCreateResult.value);
+    const response = upsertBehaviorResponse.parse(behaviorResult.value);
     return await reply.send(response);
   });
 
@@ -127,7 +129,7 @@ const agesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertAgeInput.safeParse(req.body);
+    const parsedInputResult = upsertBehaviorInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(422).send();
@@ -135,21 +137,21 @@ const agesController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const ageUpdateResult = await ageService.updateAge(req.params.id, input, req.user);
+    const behaviorResult = await behaviorService.updateBehavior(req.params.id, input, req.user);
 
-    if (ageUpdateResult.isErr()) {
-      switch (ageUpdateResult.error) {
+    if (behaviorResult.isErr()) {
+      switch (behaviorResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
         default:
-          logger.error({ error: ageUpdateResult.error }, "Unexpected error");
+          logger.error({ error: behaviorResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const response = upsertAgeResponse.parse(ageUpdateResult.value);
+    const response = upsertBehaviorResponse.parse(behaviorResult.value);
     return await reply.send(response);
   });
 
@@ -158,28 +160,28 @@ const agesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedAgeResult = await ageService.deleteAge(req.params.id, req.user);
+    const deletedBehaviorResult = await behaviorService.deleteBehavior(req.params.id, req.user);
 
-    if (deletedAgeResult.isErr()) {
-      switch (deletedAgeResult.error) {
+    if (deletedBehaviorResult.isErr()) {
+      switch (deletedBehaviorResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         default:
-          logger.error({ error: deletedAgeResult.error }, "Unexpected error");
+          logger.error({ error: deletedBehaviorResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const deletedAge = deletedAgeResult.value;
+    const deletedBehavior = deletedBehaviorResult.value;
 
-    if (!deletedAge) {
+    if (!deletedBehavior) {
       return await reply.status(404).send();
     }
 
-    return await reply.send({ id: deletedAge.id });
+    return await reply.send({ id: deletedBehavior.id });
   });
 
   done();
 };
 
-export default agesController;
+export default behaviorsController;

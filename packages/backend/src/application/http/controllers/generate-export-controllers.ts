@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback, FastifyRequest } from "fastify";
-import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../../../utils/logger.js";
+import type { Services } from "../../services/services.js";
 
 const getExportUrl = (req: FastifyRequest, exportId: string) => {
   return `${req.protocol}://${req.hostname}/download/${exportId}`;

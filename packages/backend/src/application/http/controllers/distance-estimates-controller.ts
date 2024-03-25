@@ -9,8 +9,8 @@ import {
 import type { DistanceEstimate, DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../../../utils/logger.js";
+import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 const distanceEstimatesController: FastifyPluginCallback<{

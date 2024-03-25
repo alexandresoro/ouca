@@ -1,6 +1,6 @@
 import contentDisposition from "content-disposition";
 import type { FastifyPluginCallback } from "fastify";
-import type { Services } from "../application/services/services.js";
+import type { Services } from "../../services/services.js";
 
 export const downloadController: FastifyPluginCallback<{
   services: Services;

@@ -1,52 +1,52 @@
-import type { Weather, WeatherExtended } from "@ou-ca/common/api/entities/weather";
+import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import {
-  getWeatherResponse,
-  getWeathersExtendedResponse,
-  getWeathersQueryParamsSchema,
-  getWeathersResponse,
-  upsertWeatherInput,
-  upsertWeatherResponse,
-} from "@ou-ca/common/api/weather";
+  getEnvironmentResponse,
+  getEnvironmentsExtendedResponse,
+  getEnvironmentsQueryParamsSchema,
+  getEnvironmentsResponse,
+  upsertEnvironmentInput,
+  upsertEnvironmentResponse,
+} from "@ou-ca/common/api/environment";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../../../utils/logger.js";
+import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const weathersController: FastifyPluginCallback<{
+const environmentsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { weatherService } = services;
+  const { environmentService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const weatherResult = await weatherService.findWeather(req.params.id, req.user);
+    const environmentResult = await environmentService.findEnvironment(req.params.id, req.user);
 
-    if (weatherResult.isErr()) {
-      switch (weatherResult.error) {
+    if (environmentResult.isErr()) {
+      switch (environmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         default:
-          logger.error({ error: weatherResult.error }, "Unexpected error");
+          logger.error({ error: environmentResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const weather = weatherResult.value;
+    const environment = environmentResult.value;
 
-    if (!weather) {
+    if (!environment) {
       return await reply.status(404).send();
     }
 
-    const response = getWeatherResponse.parse(weather);
+    const response = getEnvironmentResponse.parse(environment);
     return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getWeathersQueryParamsSchema.safeParse(req.query);
+    const parsedQueryParamsResult = getEnvironmentsQueryParamsSchema.safeParse(req.query);
 
     if (!parsedQueryParamsResult.success) {
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
@@ -57,8 +57,8 @@ const weathersController: FastifyPluginCallback<{
     } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
-      await weatherService.findPaginatedWeathers(req.user, queryParams),
-      await weatherService.getWeathersCount(req.user, queryParams.q),
+      await environmentService.findPaginatedEnvironments(req.user, queryParams),
+      await environmentService.getEnvironmentsCount(req.user, queryParams.q),
     ]);
 
     if (paginatedResults.isErr()) {
@@ -71,24 +71,24 @@ const weathersController: FastifyPluginCallback<{
       }
     }
 
-    const [weathersData, count] = paginatedResults.value;
+    const [environmentsData, count] = paginatedResults.value;
 
-    let data: Weather[] | WeatherExtended[] = weathersData;
+    let data: Environment[] | EnvironmentExtended[] = environmentsData;
     if (extended) {
       data = await Promise.all(
-        weathersData.map(async (weatherData) => {
+        environmentsData.map(async (environmentData) => {
           const entriesCount = (
-            await weatherService.getEntriesCountByWeather(weatherData.id, req.user)
+            await environmentService.getEntriesCountByEnvironment(environmentData.id, req.user)
           )._unsafeUnwrap();
           return {
-            ...weatherData,
+            ...environmentData,
             entriesCount,
           };
         }),
       );
     }
 
-    const responseParser = extended ? getWeathersExtendedResponse : getWeathersResponse;
+    const responseParser = extended ? getEnvironmentsExtendedResponse : getEnvironmentsResponse;
     const response = responseParser.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
@@ -98,7 +98,7 @@ const weathersController: FastifyPluginCallback<{
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertWeatherInput.safeParse(req.body);
+    const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(422).send();
@@ -106,21 +106,21 @@ const weathersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const weatherResult = await weatherService.createWeather(input, req.user);
+    const environmentResult = await environmentService.createEnvironment(input, req.user);
 
-    if (weatherResult.isErr()) {
-      switch (weatherResult.error) {
+    if (environmentResult.isErr()) {
+      switch (environmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
         default:
-          logger.error({ error: weatherResult.error }, "Unexpected error");
+          logger.error({ error: environmentResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const response = upsertWeatherResponse.parse(weatherResult.value);
+    const response = upsertEnvironmentResponse.parse(environmentResult.value);
     return await reply.send(response);
   });
 
@@ -129,7 +129,7 @@ const weathersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertWeatherInput.safeParse(req.body);
+    const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
 
     if (!parsedInputResult.success) {
       return await reply.status(422).send();
@@ -137,21 +137,21 @@ const weathersController: FastifyPluginCallback<{
 
     const { data: input } = parsedInputResult;
 
-    const weatherResult = await weatherService.updateWeather(req.params.id, input, req.user);
+    const environmentResult = await environmentService.updateEnvironment(req.params.id, input, req.user);
 
-    if (weatherResult.isErr()) {
-      switch (weatherResult.error) {
+    if (environmentResult.isErr()) {
+      switch (environmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
         default:
-          logger.error({ error: weatherResult.error }, "Unexpected error");
+          logger.error({ error: environmentResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const response = upsertWeatherResponse.parse(weatherResult.value);
+    const response = upsertEnvironmentResponse.parse(environmentResult.value);
     return await reply.send(response);
   });
 
@@ -160,28 +160,28 @@ const weathersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const deletedWeatherResult = await weatherService.deleteWeather(req.params.id, req.user);
+    const deletedEnvironmentResult = await environmentService.deleteEnvironment(req.params.id, req.user);
 
-    if (deletedWeatherResult.isErr()) {
-      switch (deletedWeatherResult.error) {
+    if (deletedEnvironmentResult.isErr()) {
+      switch (deletedEnvironmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
         default:
-          logger.error({ error: deletedWeatherResult.error }, "Unexpected error");
+          logger.error({ error: deletedEnvironmentResult.error }, "Unexpected error");
           return await reply.status(500).send();
       }
     }
 
-    const deletedWeather = deletedWeatherResult.value;
+    const deletedEnvironment = deletedEnvironmentResult.value;
 
-    if (!deletedWeather) {
+    if (!deletedEnvironment) {
       return await reply.status(404).send();
     }
 
-    return await reply.send({ id: deletedWeather.id });
+    return await reply.send({ id: deletedEnvironment.id });
   });
 
   done();
 };
 
-export default weathersController;
+export default environmentsController;

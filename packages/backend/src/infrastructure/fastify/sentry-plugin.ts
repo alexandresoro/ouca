@@ -2,8 +2,8 @@ import { captureException, captureMessage, getCurrentHub, runWithAsyncContext, s
 import type { FastifyPluginCallback } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
-const sentry: FastifyPluginCallback = (fastify, options, next) => {
-  fastify.addHook("onRequest", (request, reply, done) => {
+const sentry: FastifyPluginCallback = (fastify, _, next) => {
+  fastify.addHook("onRequest", (request, _, done) => {
     return runWithAsyncContext(() => {
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const transaction = startTransaction({ name: request.routeOptions.url!, op: "http" });
@@ -45,7 +45,7 @@ const sentry: FastifyPluginCallback = (fastify, options, next) => {
     });
   });
 
-  fastify.addHook("onError", (request, reply, error, done) => {
+  fastify.addHook("onError", (_, reply, error, done) => {
     return runWithAsyncContext(() => {
       // Capture errors thrown inside Fastify
       captureException(error);
@@ -63,7 +63,7 @@ const sentry: FastifyPluginCallback = (fastify, options, next) => {
   next();
 };
 
-export default fastifyPlugin(sentry, {
+export const sentryPlugin = fastifyPlugin(sentry, {
   fastify: "4.x",
   name: "@sentry/fastify",
 });
