@@ -1,3 +1,4 @@
+import { type Queues, createQueues } from "@infrastructure/bullmq/queues.js";
 import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
 import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
@@ -43,6 +44,7 @@ import { type UserService, buildUserService } from "./user/user-service.js";
 import { type WeatherService, buildWeatherService } from "./weather/weather-service.js";
 
 export type Services = {
+  queues: Queues;
   ageService: AgeService;
   behaviorService: BehaviorService;
   classService: SpeciesClassService;
@@ -66,6 +68,8 @@ export type Services = {
 };
 
 export const buildServices = (): Services => {
+  const queues = createQueues();
+
   const ageRepository = buildAgeRepository();
   const behaviorRepository = buildBehaviorRepository();
   const classRepository = buildSpeciesClassRepository();
@@ -201,6 +205,7 @@ export const buildServices = (): Services => {
   logger.debug("Services initialized successfully");
 
   return {
+    queues,
     ageService,
     behaviorService,
     classService,
