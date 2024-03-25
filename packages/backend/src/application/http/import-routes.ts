@@ -1,5 +1,6 @@
-import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import/import-types";
+import { IMPORT_TYPE } from "@ou-ca/common/import/import-types";
 import type { FastifyPluginCallback } from "fastify";
+import { z } from "zod";
 import { startImportTask } from "../../services/import-manager.js";
 import type { Services } from "../services/services.js";
 import { handleAuthorizationHook } from "./hooks/handle-authorization-hook.js";
@@ -19,34 +20,32 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
   );
 
   // Upload import path
-  fastify.post<{ Params: { entityName: string } }>("/uploads/:entityName", async (req, reply) => {
+  fastify.post("/uploads/:entityName", async (req, reply) => {
     if (!req.user) {
       return reply.code(401).send();
     }
 
-    const { params } = req;
-
     // Check that the import is a known one
-    if (
-      !IMPORT_TYPE.find((importType) => {
-        return importType === params.entityName;
+    const parsedQueryResult = z
+      .object({
+        entityName: z.enum(IMPORT_TYPE),
       })
-    ) {
-      return await reply.code(404).send();
+      .safeParse(req.params);
+
+    if (!parsedQueryResult.success) {
+      return reply.code(404).send();
     }
+
+    const entityName = parsedQueryResult.data.entityName;
 
     const data = await req.file();
     if (!data) {
       return reply.code(400).send();
     }
 
-    const uploadId = await services.importService.handleUpload(
-      await data.toBuffer(),
-      params.entityName as ImportType,
-      req.user,
-    );
+    const uploadId = await services.importService.handleUpload(await data.toBuffer(), entityName, req.user);
 
-    startImportTask(uploadId, params.entityName as ImportType, req.user);
+    startImportTask(uploadId, entityName, req.user);
 
     await reply.send(
       JSON.stringify({
