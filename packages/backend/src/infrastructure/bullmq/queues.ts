@@ -9,6 +9,9 @@ const QUEUES = {
   geojson: {
     jobs: ["geojsonrefresh"] as const,
   },
+  import: {
+    jobs: ["import"] as const,
+  },
 };
 
 export type QueueName = keyof typeof QUEUES;
