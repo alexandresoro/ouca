@@ -1,50 +1,12 @@
 import type { OIDCIntrospectionResult } from "@domain/oidc/oidc-introspection.js";
-import { redis } from "@infrastructure/ioredis/redis.js";
+import {
+  getIntrospectionResultFromCache,
+  storeIntrospectionResultInCache,
+} from "@infrastructure/oidc/oidc-introspect-access-token.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Services } from "../application/services/services.js";
-import { logger } from "../utils/logger.js";
 
 export const BEARER_PATTERN = /^Bearer (.+)$/;
-
-const ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_PREFIX = "accessTokenIntrospection";
-
-const ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION = 3600; // 1h
-
-// TODO: Move that to a proper infrastructure
-const storeIntrospectionResultInCache = async (
-  key: string,
-  introspectionResult: OIDCIntrospectionResult,
-  accessToken: string,
-) => {
-  await redis.set(key, JSON.stringify(introspectionResult)).catch(() => {
-    logger.warn(
-      {
-        accessToken,
-      },
-      "Storing token introspection result has failed.",
-    );
-    return;
-  });
-
-  // Compute the TTL, it has to be the earliest between the cache duration and the expiration time, if active
-  if (introspectionResult.active) {
-    const tokenExpirationDate = new Date(introspectionResult.user.exp * 1000); // Token is in seconds
-
-    const cacheExpirationDate = new Date();
-    cacheExpirationDate.setSeconds(cacheExpirationDate.getSeconds() + ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
-
-    if (cacheExpirationDate <= tokenExpirationDate) {
-      // Default cache duration is earlier than token duration
-      await redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
-    } else {
-      // Token expires before the default duration
-      await redis.expireat(key, introspectionResult.user.exp);
-    }
-  } else {
-    // If token is not active, set the default duration
-    await redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
-  }
-};
 
 export const handleAuthorizationHook = async (
   request: FastifyRequest,
@@ -70,13 +32,18 @@ export const handleAuthorizationHook = async (
   const accessToken = bearerGroups[1];
 
   // Check if introspection result exists in cache
-  const redisKey = `${ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_PREFIX}:${accessToken}`;
-  const cachedKey = await redis.get(redisKey);
+  const cachedKeyResult = await getIntrospectionResultFromCache(accessToken);
+
+  if (cachedKeyResult.isErr()) {
+    return await reply.status(500).send();
+  }
+
+  const cachedKey = cachedKeyResult.value;
 
   let introspectionResult: OIDCIntrospectionResult;
   if (cachedKey != null) {
     // Retrieve result from cache
-    introspectionResult = JSON.parse(cachedKey) as OIDCIntrospectionResult;
+    introspectionResult = cachedKey;
   } else {
     // Introspect token if not present in cache
     const introspectionResultResult = await oidcService.introspectAccessToken(accessToken);
@@ -88,7 +55,7 @@ export const handleAuthorizationHook = async (
     introspectionResult = introspectionResultResult.value;
 
     // Regardless of the outcome, store the result in cache
-    await storeIntrospectionResultInCache(redisKey, introspectionResult, accessToken);
+    await storeIntrospectionResultInCache(introspectionResult, accessToken);
   }
 
   if (!introspectionResult.active) {
