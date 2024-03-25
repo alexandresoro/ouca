@@ -28,6 +28,8 @@
     "umzug:dev": "tsx -r dotenv/config src/umzug.ts"
   },
   "dependencies": {
+    "@bull-board/api": "5.15.2",
+    "@bull-board/fastify": "5.15.2",
     "@fastify/caching": "8.3.0",
     "@fastify/compress": "7.0.0",
     "@fastify/cors": "9.0.1",

@@ -54,6 +54,9 @@ updates:
       typescript-eslint:
         patterns:
           - "@typescript-eslint/*"
+      bull-board:
+        patterns:
+          - "@bull-board/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

@@ -27,7 +27,7 @@ const startApp = async () => {
 
   await startWorkersAndJobs(services);
 
-  const server = await buildServer();
+  const server = await buildServer(services.queues);
 
   await registerRoutes(server, services);
 
