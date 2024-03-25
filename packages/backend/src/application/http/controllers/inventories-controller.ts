@@ -14,7 +14,7 @@ import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedInventory } from "./inventories-enricher.js";
 
-const inventoriesController: FastifyPluginCallback<{
+export const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { inventoryService } = services;
@@ -267,5 +267,3 @@ const inventoriesController: FastifyPluginCallback<{
 
   done();
 };
-
-export default inventoriesController;

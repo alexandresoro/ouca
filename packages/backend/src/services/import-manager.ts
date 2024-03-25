@@ -84,7 +84,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         writeFileSync(path.join(IMPORT_REPORTS_DIR_PATH.pathname, importReportId), csvString);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportCompleteStructure = {
         ...currentStatus,
@@ -101,7 +101,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
 
       importStatuses.set(importId, newStatus);
     } else if (postMessage.type === IMPORT_FAILED) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,
@@ -113,7 +113,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       };
       importStatuses.set(importId, newStatus);
     } else if (postMessage.type === VALIDATION_PROGRESS) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportOngoingStructure = {
         ...currentStatus,
@@ -130,7 +130,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       };
       importStatuses.set(importId, newStatus);
     } else if (Object.values(OngoingSubStatus).includes(postMessage.type)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportOngoingStructure = {
         ...currentStatus,
@@ -149,7 +149,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       importId,
       errorMsg: error,
     });
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     const currentStatus = importStatuses.get(importId)!;
     const newStatus: ImportGlobalErrorStructure = {
       ...currentStatus,
@@ -169,7 +169,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         importId,
         exitCode,
       });
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,

@@ -17,7 +17,7 @@ import { IMPORTS_DIR_PATH } from "../../utils/paths.js";
 import type { Services } from "../services/services.js";
 import { apiRoutes } from "./api-routes.js";
 import { downloadController } from "./controllers/download-controller.js";
-import userController from "./controllers/user-controller.js";
+import { userController } from "./controllers/user-controller.js";
 
 const logger = loggerParent.child({ module: "fastify" });
 

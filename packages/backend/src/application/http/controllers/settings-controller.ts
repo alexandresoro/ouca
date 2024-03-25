@@ -3,7 +3,7 @@ import type { FastifyPluginCallback } from "fastify";
 import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 
-const settingsController: FastifyPluginCallback<{
+export const settingsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { settingsService } = services;
@@ -59,5 +59,3 @@ const settingsController: FastifyPluginCallback<{
 
   done();
 };
-
-export default settingsController;

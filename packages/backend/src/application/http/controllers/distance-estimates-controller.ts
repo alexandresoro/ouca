@@ -13,7 +13,7 @@ import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const distanceEstimatesController: FastifyPluginCallback<{
+export const distanceEstimatesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { distanceEstimateService } = services;
@@ -187,5 +187,3 @@ const distanceEstimatesController: FastifyPluginCallback<{
 
   done();
 };
-
-export default distanceEstimatesController;

@@ -13,7 +13,7 @@ import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const weathersController: FastifyPluginCallback<{
+export const weathersController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { weatherService } = services;
@@ -183,5 +183,3 @@ const weathersController: FastifyPluginCallback<{
 
   done();
 };
-
-export default weathersController;

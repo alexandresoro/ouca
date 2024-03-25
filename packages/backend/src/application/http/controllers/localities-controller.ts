@@ -13,7 +13,7 @@ import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const localitiesController: FastifyPluginCallback<{
+export const localitiesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { localityService, townService, departmentService } = services;
@@ -195,5 +195,3 @@ const localitiesController: FastifyPluginCallback<{
 
   done();
 };
-
-export default localitiesController;

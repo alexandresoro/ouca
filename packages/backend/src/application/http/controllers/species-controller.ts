@@ -13,7 +13,7 @@ import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const speciesController: FastifyPluginCallback<{
+export const speciesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { speciesService, classService } = services;
@@ -188,5 +188,3 @@ const speciesController: FastifyPluginCallback<{
 
   done();
 };
-
-export default speciesController;

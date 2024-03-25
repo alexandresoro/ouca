@@ -24,13 +24,13 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
         return {
           name,
           up: async () => {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             const sqlToRun = fs.readFileSync(pathFile!).toString();
             await sql.raw(sqlToRun).execute(kysely);
           },
           down: async () => {
             // Get the corresponding `down file` file to undo this migration
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             const downPath = path.join(path.dirname(pathFile!), "down", path.basename(pathFile!));
             const sqlToRun = fs.readFileSync(downPath).toString();
             await sql.raw(sqlToRun).execute(kysely);

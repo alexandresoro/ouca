@@ -13,7 +13,7 @@ import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const numberEstimatesController: FastifyPluginCallback<{
+export const numberEstimatesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { numberEstimateService } = services;
@@ -183,5 +183,3 @@ const numberEstimatesController: FastifyPluginCallback<{
 
   done();
 };
-
-export default numberEstimatesController;

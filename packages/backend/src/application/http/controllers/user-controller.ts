@@ -2,7 +2,7 @@ import type { FastifyPluginCallback } from "fastify";
 import type { Services } from "../../services/services.js";
 import { BEARER_PATTERN } from "../hooks/handle-authorization-hook.js";
 
-const userController: FastifyPluginCallback<{
+export const userController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { userService, oidcService } = services;
@@ -52,5 +52,3 @@ const userController: FastifyPluginCallback<{
 
   done();
 };
-
-export default userController;

@@ -13,7 +13,7 @@ import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-const sexesController: FastifyPluginCallback<{
+export const sexesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { sexService } = services;
@@ -181,5 +181,3 @@ const sexesController: FastifyPluginCallback<{
 
   done();
 };
-
-export default sexesController;

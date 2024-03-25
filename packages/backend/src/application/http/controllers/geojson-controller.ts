@@ -4,7 +4,7 @@ import { sha256 } from "../../../utils/crypto.js";
 import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 
-const geojsonController: FastifyPluginAsync<{
+export const geojsonController: FastifyPluginAsync<{
   services: Services;
 }> = async (fastify, { services }) => {
   const { geojsonService } = services;
@@ -32,5 +32,3 @@ const geojsonController: FastifyPluginAsync<{
     return await reply.etag(sha256(geoJsonLocalitiesStr)).send(geoJsonLocalitiesStr);
   });
 };
-
-export default geojsonController;
