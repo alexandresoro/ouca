@@ -54,5 +54,28 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
     );
   });
 
+  // Import progress report
+  fastify.get("/import-status/:importId", async (req, reply) => {
+    if (!req.user) {
+      return reply.code(401).send();
+    }
+
+    const parsedQueryResult = z
+      .object({
+        importId: z.string().uuid(),
+      })
+      .safeParse(req.params);
+
+    if (!parsedQueryResult.success) {
+      return reply.code(404).send();
+    }
+
+    const importId = parsedQueryResult.data.importId;
+
+    await services.importService.getImportStatus(importId, req.user);
+
+    return reply.status(501).send();
+  });
+
   done();
 };

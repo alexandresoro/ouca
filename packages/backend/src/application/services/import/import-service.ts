@@ -3,6 +3,8 @@ import type { LoggedUser } from "@domain/user/logged-user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import type { ImportType } from "@ou-ca/common/import/import-types";
 
+const IMPORT_STATUS_KEY_PREFIX = "importStatus";
+
 const UPLOADS_KEY_PREFIX = "uploads";
 
 const UPLOAD_DATA_EXPIRATION = 3600; // 1h
@@ -25,9 +27,18 @@ export const buildImportService = () => {
     return redis.get(key);
   };
 
+  const getImportStatus = async (importId: string, loggedUser: LoggedUser): Promise<void> => {
+    const key = `${IMPORT_STATUS_KEY_PREFIX}:${importId}`;
+
+    const statusStr = await redis.get(key);
+
+    throw new Error("Not implemented");
+  };
+
   return {
     handleUpload,
     getUploadData,
+    getImportStatus,
   };
 };
 
