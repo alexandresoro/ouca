@@ -43,6 +43,6 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["pnpm-*.yaml"]
+    "ignore": ["pnpm-*.yaml", "*-sandboxed.js"]
   }
 }

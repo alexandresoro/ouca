@@ -12,6 +12,7 @@ module.exports = {
       node: true,
     },
   },
+  ignorePatterns: ["src/application/jobs/**/*-sandboxed.js"],
   overrides: [
     {
       files: ["*.test.ts"],

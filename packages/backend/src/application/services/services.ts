@@ -204,7 +204,9 @@ export const buildServices = (): Services => {
     weatherService,
   });
 
-  const importService = buildImportService();
+  const importService = buildImportService({
+    importQueue: queues.import,
+  });
 
   logger.debug("Services initialized successfully");
 

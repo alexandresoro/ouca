@@ -2,7 +2,6 @@
 import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
-import fastifyStatic from "@fastify/static";
 import fastifyUnderPressure from "@fastify/under-pressure";
 import { buildBullBoardAdapter } from "@infrastructure/bullmq/bullboard.js";
 import type { Queues } from "@infrastructure/bullmq/queues.js";
@@ -14,7 +13,6 @@ import fastify, {
 } from "fastify";
 import type { Logger } from "pino";
 import { logger as loggerParent } from "../../utils/logger.js";
-import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "../../utils/paths.js";
 import { sentryPlugin } from "./sentry-plugin.js";
 
 export const buildServer = async (
@@ -53,14 +51,6 @@ export const buildServer = async (
   // Remove default text/plain parser
   // https://fastify.dev/docs/latest/Reference/ContentTypeParser/
   server.removeContentTypeParser(["text/plain"]);
-
-  // Static files server
-  await server.register(fastifyStatic, {
-    root: IMPORT_REPORTS_DIR_PATH.pathname,
-    prefix: `${DOWNLOAD_ENDPOINT}/${IMPORT_REPORTS_DIR}`,
-  });
-
-  logger.debug("Fastify static server successfully registered");
 
   // BullBoard
   const serverAdapter = buildBullBoardAdapter(queues);

@@ -7,14 +7,11 @@ import { startWorkersAndJobs } from "./application/jobs/jobs.js";
 import { buildServices } from "./application/services/services.js";
 import { shutdown } from "./shutdown.js";
 import { logger } from "./utils/logger.js";
-import { checkAndCreateFolders } from "./utils/paths.js";
 
 logger.debug("Starting app");
 
 // Sentry
 initSentry();
-
-checkAndCreateFolders();
 
 // Run database migrations if active
 await runMigrations().catch((e) => {

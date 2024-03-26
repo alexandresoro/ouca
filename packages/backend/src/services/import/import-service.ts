@@ -1,45 +1,62 @@
-import { EventEmitter } from "node:events";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import { OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
+import type { ImportStatus } from "@ou-ca/common/import/import-status";
+import type { SandboxedJob } from "bullmq";
 import { parse } from "csv-parse/sync";
 import type { Services } from "../../application/services/services.js";
-import type { ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message.js";
 import { logger } from "../../utils/logger.js";
 
 const COMMENT_PREFIX = "###";
 
-export const IMPORT_PROGRESS_UPDATE_EVENT = "importProgressUpdate";
-
-export const IMPORT_STATUS_UPDATE_EVENT = "importStatusUpdate";
-
-export const IMPORT_COMPLETE_EVENT = "importComplete";
-
-export const IMPORT_FAILED_EVENT = "importFailed";
-
-export abstract class ImportService extends EventEmitter {
+export abstract class ImportService {
   protected services: Services;
 
   constructor(services: Services) {
-    super();
     this.services = services;
   }
 
-  public importFile = async (fileContent: string, loggedUser: LoggedUser): Promise<void> => {
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.PROCESS_STARTED });
+  public importFile = async (importId: string, loggedUser: LoggedUser, job: SandboxedJob): Promise<void> => {
+    await job.updateProgress({
+      importId,
+      userId: loggedUser.id,
+      status: "ongoing",
+      step: "processStarted",
+    } satisfies ImportStatus);
 
-    if (!fileContent) {
-      this.emit(IMPORT_FAILED_EVENT, "Le contenu du fichier n'a pas pu être lu");
+    const importData = await this.services.importService.getUploadData(importId);
+
+    if (!importData) {
+      await job.updateProgress({
+        importId,
+        userId: loggedUser.id,
+        status: "failed",
+        reason: "Uploaded file could not be read",
+      } satisfies ImportStatus);
       return;
     }
 
+    await job.updateProgress({
+      importId,
+      userId: loggedUser.id,
+      status: "ongoing",
+      step: "importRetrieved",
+    } satisfies ImportStatus);
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const content: string[][] = parse(fileContent, {
+    const content: string[][] = parse(importData, {
       delimiter: ";",
       encoding: "utf-8",
     });
 
-    if (!content) {
-      this.emit(IMPORT_COMPLETE_EVENT, "Le contenu du fichier n'a pas pu être lu");
+    if (!content.length) {
+      await job.updateProgress({
+        importId,
+        userId: loggedUser.id,
+        status: "completed",
+        totalLinesInFile: 0,
+        validEntries: 0,
+        validatedEntries: 0,
+        errors: [[]],
+      } satisfies ImportStatus);
       return;
     }
 
@@ -49,12 +66,26 @@ export abstract class ImportService extends EventEmitter {
     const errors = [] as string[][];
     let validatedEntries = 0;
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.RETRIEVING_REQUIRED_DATA });
+    await job.updateProgress({
+      importId,
+      userId: loggedUser.id,
+      status: "ongoing",
+      step: "retrievingRequiredData",
+    } satisfies ImportStatus);
 
     // Retrieve any initialization info needed before validation
     await this.init(loggedUser);
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.VALIDATING_INPUT_FILE });
+    await job.updateProgress({
+      importId,
+      userId: loggedUser.id,
+      status: "ongoing",
+      step: "validatingInputFile",
+      totalLinesInFile: content.length,
+      validEntries: numberOfLines,
+      validatedEntries,
+      errors,
+    } satisfies ImportStatus);
 
     // Validate all entries
     for (const lineTab of content) {
@@ -74,33 +105,51 @@ export abstract class ImportService extends EventEmitter {
 
         validatedEntries++;
 
-        const progressContent: ImportNotifyProgressMessageContent = {
-          status: "Validating entries",
-          totalEntries: content.length,
-          entriesToBeValidated: numberOfLines,
+        await job.updateProgress({
+          importId,
+          userId: loggedUser.id,
+          status: "ongoing",
+          step: "validatingInputFile",
+          totalLinesInFile: content.length,
+          validEntries: numberOfLines,
           validatedEntries,
-          errors: errors.length,
-        };
-        this.emit(IMPORT_PROGRESS_UPDATE_EVENT, progressContent);
+          errors,
+        } satisfies ImportStatus);
       }
     }
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.INSERTING_IMPORTED_DATA });
+    await job.updateProgress({
+      importId,
+      userId: loggedUser.id,
+      status: "ongoing",
+      step: "insertingImportedData",
+      totalLinesInFile: content.length,
+      validEntries: numberOfLines,
+      validatedEntries,
+      errors,
+    } satisfies ImportStatus);
 
     // Insert the valid entries in the database
     await this.persistAllValidEntities(loggedUser);
 
     logger.debug(
-      `Résultat de l'import : ${numberOfLines - errors.length}/${numberOfLines} importées avec succès --> ${
+      {
+        importId,
+      },
+      `Import result : ${numberOfLines - errors.length}/${numberOfLines} successfully imported --> ${
         errors.length
-      } lignes en erreur`,
+      } lines failed to import`,
     );
 
-    if (errors.length > 0) {
-      this.emit(IMPORT_COMPLETE_EVENT, errors);
-    } else {
-      this.emit(IMPORT_COMPLETE_EVENT, null);
-    }
+    await job.updateProgress({
+      importId,
+      userId: loggedUser.id,
+      status: "completed",
+      totalLinesInFile: content.length,
+      validEntries: numberOfLines,
+      validatedEntries: numberOfLines - errors.length,
+      errors,
+    } satisfies ImportStatus);
   };
 
   protected abstract getNumberOfColumns(): number;

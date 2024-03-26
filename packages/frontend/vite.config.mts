@@ -32,6 +32,8 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api/v1": API_SERVER_URL,
         "/download": API_SERVER_URL,
+        "/uploads": API_SERVER_URL,
+        "/import-status": API_SERVER_URL,
       },
     },
     plugins: [

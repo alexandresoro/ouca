@@ -1,7 +1,6 @@
 import { IMPORT_TYPE } from "@ou-ca/common/import/import-types";
 import type { FastifyPluginCallback } from "fastify";
 import { z } from "zod";
-import { startImportTask } from "../../services/import-manager.js";
 import type { Services } from "../services/services.js";
 import { handleAuthorizationHook } from "./hooks/handle-authorization-hook.js";
 
@@ -11,13 +10,6 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
   fastify.addHook("onRequest", async (request, reply) => {
     await handleAuthorizationHook(request, reply, services);
   });
-
-  fastify.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
-    "/download/importReports/:id",
-    async (req, reply) => {
-      return reply.download(req.params.id, req.query.filename ?? undefined);
-    },
-  );
 
   // Upload import path
   fastify.post("/uploads/:entityName", async (req, reply) => {
@@ -43,9 +35,7 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
       return reply.code(400).send();
     }
 
-    const uploadId = await services.importService.handleUpload(await data.toBuffer(), entityName, req.user);
-
-    startImportTask(uploadId, entityName, req.user);
+    const uploadId = await services.importService.createImportJob(await data.toBuffer(), entityName, req.user);
 
     await reply.send(
       JSON.stringify({
@@ -72,9 +62,13 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
 
     const importId = parsedQueryResult.data.importId;
 
-    await services.importService.getImportStatus(importId, req.user);
+    const status = await services.importService.getImportStatus(importId, req.user);
 
-    return reply.status(501).send();
+    if (status == null) {
+      return reply.code(404).send();
+    }
+
+    return reply.send(status);
   });
 
   done();

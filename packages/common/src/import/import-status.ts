@@ -1,12 +1,39 @@
-import type { ImportErrorType } from "./import-error-types.js";
-import type { ImportStatusEnum, OngoingSubStatus } from "./import-status-enum.js";
-import type { OngoingValidationStats } from "./ongoing-validation-stats.js";
+import { z } from "zod";
 
-export type ImportStatus = {
-  status: ImportStatusEnum;
-  subStatus?: OngoingSubStatus;
-  errorType?: ImportErrorType;
-  errorDescription?: string;
-  importErrorsReportFile?: string;
-  ongoingValidationStats?: OngoingValidationStats;
-};
+export const importStatusSchema = z
+  .union([
+    z.object({
+      status: z.literal("notStarted"),
+    }),
+    z.object({
+      status: z.literal("ongoing"),
+      step: z.enum(["processStarted", "importRetrieved", "retrievingRequiredData"]),
+    }),
+    z.object({
+      status: z.literal("ongoing"),
+      step: z.enum(["validatingInputFile", "insertingImportedData"]),
+      totalLinesInFile: z.number(),
+      validEntries: z.number(),
+      validatedEntries: z.number(),
+      errors: z.array(z.array(z.string())),
+    }),
+    z.object({
+      status: z.literal("completed"),
+      totalLinesInFile: z.number(),
+      validEntries: z.number(),
+      validatedEntries: z.number(),
+      errors: z.array(z.array(z.string())),
+    }),
+    z.object({
+      status: z.literal("failed"),
+      reason: z.string(),
+    }),
+  ])
+  .and(
+    z.object({
+      importId: z.string(),
+      userId: z.string(),
+    }),
+  );
+
+export type ImportStatus = z.infer<typeof importStatusSchema>;
