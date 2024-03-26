@@ -15,7 +15,7 @@ import {
   IMPORT_SEXE,
   type ImportType,
 } from "@ou-ca/common/import/import-types";
-import type { Services } from "../../application/services/services.js";
+import type { Services } from "../../services.js";
 import { ImportAgeService } from "./import-age-service.js";
 import { ImportClasseService } from "./import-classe-service.js";
 import { ImportCommuneService } from "./import-commune-service.js";

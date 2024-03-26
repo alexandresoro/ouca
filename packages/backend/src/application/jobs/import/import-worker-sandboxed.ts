@@ -3,7 +3,7 @@ import { workerLogger } from "@infrastructure/bullmq/worker.js";
 import type { ImportStatus } from "@ou-ca/common/import/import-status";
 import type { ImportType } from "@ou-ca/common/import/import-types";
 import type { SandboxedJob } from "bullmq";
-import { getNewImportServiceForRequestType } from "../../../services/import/import-service-per-request-type.js";
+import { getNewImportServiceForRequestType } from "../../services/import/entities/import-service-per-request-type.js";
 import { buildServices } from "../../services/services.js";
 
 const IMPORT_QUEUE_NAME = "import";

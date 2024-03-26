@@ -2,8 +2,8 @@ import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { ImportStatus } from "@ou-ca/common/import/import-status";
 import type { SandboxedJob } from "bullmq";
 import { parse } from "csv-parse/sync";
-import type { Services } from "../../application/services/services.js";
-import { logger } from "../../utils/logger.js";
+import { logger } from "../../../../utils/logger.js";
+import type { Services } from "../../services.js";
 
 const COMMENT_PREFIX = "###";
 

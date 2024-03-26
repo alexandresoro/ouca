@@ -17,9 +17,9 @@ import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
-import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
-import { getDateOnlyAsLocalISOString } from "../../utils/time-utils.js";
-import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
+import { ImportedDonnee } from "../../../../objects/import/imported-donnee.object.js";
+import { getDateOnlyAsLocalISOString } from "../../../../utils/time-utils.js";
+import { areSetsContainingSameValues, isIdInListIds } from "../../../../utils/utils.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportDonneeService extends ImportService {

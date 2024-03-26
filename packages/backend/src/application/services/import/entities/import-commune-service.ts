@@ -2,7 +2,7 @@ import type { TownCreateInput } from "@domain/town/town.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import type { Town } from "@ou-ca/common/api/entities/town";
-import { ImportedCommune } from "../../objects/import/imported-commune.object.js";
+import { ImportedCommune } from "../../../../objects/import/imported-commune.object.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportCommuneService extends ImportService {

@@ -2,7 +2,7 @@ import type { SpeciesCreateInput } from "@domain/species/species.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
-import { ImportedEspece } from "../../objects/import/imported-espece.object.js";
+import { ImportedEspece } from "../../../../objects/import/imported-espece.object.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportEspeceService extends ImportService {
