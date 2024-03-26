@@ -1,7 +1,7 @@
 import type { Department } from "@domain/department/department.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import { ImportedDepartement } from "../../../../objects/import/imported-departement.object.js";
 import { ImportService } from "./import-service.js";
+import { ImportedDepartement } from "./objects/imported-departement.object.js";
 
 export class ImportDepartementService extends ImportService {
   private departements!: (Department | Omit<Department, "id" | "ownerId">)[];

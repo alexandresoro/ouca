@@ -2,7 +2,7 @@ import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
-import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils.js";
+import { getFormattedDate, getFormattedTime, isTimeValid } from "../../../../../utils/utils.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
 
 const OBSERVATEUR_INDEX = 0;

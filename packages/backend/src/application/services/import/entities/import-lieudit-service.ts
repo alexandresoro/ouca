@@ -8,8 +8,8 @@ import type {
   CoordinatesSystem,
   CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
-import { ImportedLieuDit } from "../../../../objects/import/imported-lieu-dit.object.js";
 import { ImportService } from "./import-service.js";
+import { ImportedLieuDit } from "./objects/imported-lieu-dit.object.js";
 
 export class ImportLieuxditService extends ImportService {
   private departements!: Department[];

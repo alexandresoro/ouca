@@ -1,6 +1,6 @@
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import { ImportedEntiteAvecLibelleEtCode } from "../../../../objects/import/imported-entite-avec-libelle-et-code.object.js";
 import { ImportService } from "./import-service.js";
+import { ImportedEntiteAvecLibelleEtCode } from "./objects/imported-entite-avec-libelle-et-code.object.js";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService<T = unknown> extends ImportService {
   protected entities!: { libelle: string; code: string }[];
