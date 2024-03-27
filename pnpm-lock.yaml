@@ -1813,7 +1813,7 @@ packages:
     dependencies:
       '@babel/core': 7.24.3
       '@sentry/babel-plugin-component-annotate': 2.16.0
-      '@sentry/cli': 2.30.2
+      '@sentry/cli': 2.30.4
       dotenv: 16.4.5
       find-up: 5.0.0
       glob: 9.3.5
@@ -1824,16 +1824,16 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/cli-darwin@2.30.2:
-    resolution: {integrity: sha512-lZkKXMt0HUAwLQuPpi/DM3CsdCCp+6B2cdur+8fAq7uARXTOsTKVDxv9pkuJHCgHUnguh8ittP5GMr0baTxmMg==}
+  /@sentry/cli-darwin@2.30.4:
+    resolution: {integrity: sha512-d61JxgtPvUtUZ58T4WgzFDsRODAQbKcRxhK9DY7Y/+q7fH1gWc6J8s8RwxxhYu/N/UuWnAcXNtIH9daUanKTjQ==}
     engines: {node: '>=10'}
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@sentry/cli-linux-arm64@2.30.2:
-    resolution: {integrity: sha512-IWassuXggNhHOPCNrORNmd5SrAx5rU4XDlgOWBJr/ez7DvlPrr9EhV1xsdht6K4mPXhCGJq3rtRdCoWGJQW6Uw==}
+  /@sentry/cli-linux-arm64@2.30.4:
+    resolution: {integrity: sha512-XxRBiZAj84umr+i4n6zNGkbdJIX76G6SFalv4466XZkbhPuAeSABFQ5PxRVc+j7pLyOBGao4q2yiO8wrBLsJug==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux, freebsd]
@@ -1841,8 +1841,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-arm@2.30.2:
-    resolution: {integrity: sha512-H7hqiLpEL7w/EHdhuUGatwg9O080mdujq4/zS96buKIHXxZE6KqMXGtMVIAvTl1+z6BlBEnfvZGI19MPw3t/7w==}
+  /@sentry/cli-linux-arm@2.30.4:
+    resolution: {integrity: sha512-2+L8FVOc8XLD2k4rUklsIG8gCoawOZJv1TdlHcIvsHIt6e55vVil6JDBc7dOD/tzJlJPAs+LMOuHHe8e/F+Y5A==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux, freebsd]
@@ -1850,8 +1850,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-i686@2.30.2:
-    resolution: {integrity: sha512-gZIq131M4TJTG1lX9uvpoaGWaEXCEfdDXrXu/z/YZmAKBcThpMYChodXmm8FB6X4xb0TPXzIFqdzlLdglFK46g==}
+  /@sentry/cli-linux-i686@2.30.4:
+    resolution: {integrity: sha512-ruouCpmxJXumNxvZ4asQzz2gzAKeUhg9dofB9h5PEmemceTLKfOAyfplD5l1iLWL3+JfF88SNeuu2/sWHP7aBg==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [linux, freebsd]
@@ -1859,8 +1859,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-linux-x64@2.30.2:
-    resolution: {integrity: sha512-NmTAIl7aW9OHxwB4149sBfvCbTyK9T/CvBX38keaD2yIThet9gZ4koP49hBDxYF99aQX3E+LIAqWwnkV9W72Sw==}
+  /@sentry/cli-linux-x64@2.30.4:
+    resolution: {integrity: sha512-Kcb1Fn5wNSQW5bKkF35MpJSATtvgzGAHDzJkuEXPfF9xQMhOaYPnMN/D0aLYZgTpQawL4CM7dcfLuaafGmiazQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux, freebsd]
@@ -1868,8 +1868,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-win32-i686@2.30.2:
-    resolution: {integrity: sha512-SBR/Q3T6o+7uHwHNdjcG9GA3R++9w8oi778b95GuOC3dh0WOU6hXaKwQWe95ZcuSd2rKpouH7dhMjqqNM4HxOA==}
+  /@sentry/cli-win32-i686@2.30.4:
+    resolution: {integrity: sha512-FJ6IS+N7CsacDiHrFbE4Ic9UmumsiaBSD4SiQMIG2wfM7Ig1hc7+F4xoMC3MjivAIM7F94ZdSt0aZDGwE+zYeg==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [win32]
@@ -1877,8 +1877,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli-win32-x64@2.30.2:
-    resolution: {integrity: sha512-gF9wSZxzXFgakkC+uKVLAAYlbYj13e1gTsNm3gm+ODfpV+rbHwvbKoLfNsbVCFVCEZxIV2rXEP5WmTr0kiMvWQ==}
+  /@sentry/cli-win32-x64@2.30.4:
+    resolution: {integrity: sha512-wzvMpj+AVEaLKKLkN1vZxuEwQJa5s8qiasYMBJTXFtD7+LqrONerHCRqk79W+60IBXX7MQSRFF3IsjVJzJGEjA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
@@ -1886,8 +1886,8 @@ packages:
     dev: true
     optional: true
 
-  /@sentry/cli@2.30.2:
-    resolution: {integrity: sha512-jQ/RBJ3bZ4PFbfOsGq8EykygHHmXXPw+i6jqsnQfAPIeZoX+DsqpAZbYubQEZKekmQ8EVGFxGHzUVkd6hLVMbA==}
+  /@sentry/cli@2.30.4:
+    resolution: {integrity: sha512-5zYdNGK2sNiP0zbnzMWuwm71KlCWLISbiJDyFQk6YYTKLh2RIYBPLF5mNLBxE2Ns4/wuKuBZjqE2ESLS5FzoOw==}
     engines: {node: '>= 10'}
     hasBin: true
     requiresBuild: true
@@ -1898,13 +1898,13 @@ packages:
       proxy-from-env: 1.1.0
       which: 2.0.2
     optionalDependencies:
-      '@sentry/cli-darwin': 2.30.2
-      '@sentry/cli-linux-arm': 2.30.2
-      '@sentry/cli-linux-arm64': 2.30.2
-      '@sentry/cli-linux-i686': 2.30.2
-      '@sentry/cli-linux-x64': 2.30.2
-      '@sentry/cli-win32-i686': 2.30.2
-      '@sentry/cli-win32-x64': 2.30.2
+      '@sentry/cli-darwin': 2.30.4
+      '@sentry/cli-linux-arm': 2.30.4
+      '@sentry/cli-linux-arm64': 2.30.4
+      '@sentry/cli-linux-i686': 2.30.4
+      '@sentry/cli-linux-x64': 2.30.4
+      '@sentry/cli-win32-i686': 2.30.4
+      '@sentry/cli-win32-x64': 2.30.4
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -2347,11 +2347,11 @@ packages:
     resolution: {integrity: sha512-PxEsB9OjmQeYGffoWnYAd/r5FiJuUw2niFQHPc2v2idwh8wGPkkYzOHuinNJJY6NZqfoTCiOIizDOz38gYNsyw==}
     dependencies:
       '@types/prop-types': 15.7.12
-      '@types/scheduler': 0.16.8
+      '@types/scheduler': 0.23.0
       csstype: 3.1.3
 
-  /@types/scheduler@0.16.8:
-    resolution: {integrity: sha512-WZLiwShhwLRmeV6zH+GkbOFT6Z6VklCItrDioxUnv+u4Ll+8vKeFySoFyK/0ctcRpOmwAicELfmys1sDc/Rw+A==}
+  /@types/scheduler@0.23.0:
+    resolution: {integrity: sha512-YIoDCTH3Af6XM5VuwGG/QL/CJqga1Zm3NkU3HZ4ZHK2fRMPYP1VczsTUqtsf43PH/iJNVlPHAo2oWX7BSdB2Hw==}
 
   /@types/semver@7.5.8:
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
@@ -2889,7 +2889,7 @@ packages:
     dependencies:
       '@fastify/error': 3.4.1
       archy: 1.0.0
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       fastq: 1.17.1
     transitivePeerDependencies:
       - supports-color
@@ -3359,18 +3359,6 @@ packages:
     dependencies:
       ms: 2.1.3
     dev: true
-
-  /debug@4.3.4:
-    resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: 2.1.2
-    dev: false
 
   /debug@4.3.4(supports-color@5.5.0):
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -4599,7 +4587,7 @@ packages:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@5.5.0)
       denque: 2.1.0
       lodash.defaults: 4.2.0
       lodash.isarguments: 3.1.0
