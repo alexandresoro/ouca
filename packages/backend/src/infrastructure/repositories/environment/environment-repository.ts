@@ -12,102 +12,50 @@ import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 
-export const buildEnvironmentRepository = () => {
-  const findEnvironmentById = async (id: number): Promise<Environment | null> => {
-    const environmentResult = await kysely
+const findEnvironmentById = async (id: number): Promise<Environment | null> => {
+  const environmentResult = await kysely
+    .selectFrom("milieu")
+    .select([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
+    .where("id", "=", id)
+    .executeTakeFirst();
+
+  return environmentResult ? environmentSchema.parse(environmentResult) : null;
+};
+
+const findEnvironmentsById = async (ids: string[]): Promise<Environment[]> => {
+  const environmentsResult = await kysely
+    .selectFrom("milieu")
+    .select([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
+    .where(
+      "milieu.id",
+      "in",
+      ids.map((id) => Number.parseInt(id)),
+    )
+    .execute();
+
+  return z.array(environmentSchema).parse(environmentsResult);
+};
+
+const findEnvironments = async ({
+  orderBy,
+  sortOrder,
+  q,
+  offset,
+  limit,
+}: EnvironmentFindManyInput = {}): Promise<Environment[]> => {
+  const isSortByNbDonnees = orderBy === "nbDonnees";
+
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+  let queryEnvironment;
+
+  if (isSortByNbDonnees) {
+    queryEnvironment = kysely
       .selectFrom("milieu")
-      .select([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
-      .where("id", "=", id)
-      .executeTakeFirst();
-
-    return environmentResult ? environmentSchema.parse(environmentResult) : null;
-  };
-
-  const findEnvironmentsById = async (ids: string[]): Promise<Environment[]> => {
-    const environmentsResult = await kysely
-      .selectFrom("milieu")
-      .select([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
-      .where(
-        "milieu.id",
-        "in",
-        ids.map((id) => Number.parseInt(id)),
-      )
-      .execute();
-
-    return z.array(environmentSchema).parse(environmentsResult);
-  };
-
-  const findEnvironments = async ({
-    orderBy,
-    sortOrder,
-    q,
-    offset,
-    limit,
-  }: EnvironmentFindManyInput = {}): Promise<Environment[]> => {
-    const isSortByNbDonnees = orderBy === "nbDonnees";
-
-    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-    let queryEnvironment;
-
-    if (isSortByNbDonnees) {
-      queryEnvironment = kysely
-        .selectFrom("milieu")
-        .leftJoin("donnee_milieu", "milieu.id", "donnee_milieu.milieuId")
-        .select([sql`basenaturaliste.milieu.id::text`.as("id"), "milieu.code", "milieu.libelle", "milieu.ownerId"]);
-
-      if (q?.length) {
-        queryEnvironment = queryEnvironment.where((eb) =>
-          eb.or([
-            eb("code", "ilike", sql<string>`unaccent(${`${q}%`})`),
-            eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
-          ]),
-        );
-      }
-
-      queryEnvironment = queryEnvironment
-        .groupBy("milieu.id")
-        .orderBy((eb) => eb.fn.count("donnee_milieu.donneeId"), sortOrder ?? undefined)
-        .orderBy("milieu.code asc");
-    } else {
-      queryEnvironment = kysely
-        .selectFrom("milieu")
-        .select([sql`basenaturaliste.milieu.id::text`.as("id"), "milieu.code", "milieu.libelle", "milieu.ownerId"]);
-
-      if (q?.length) {
-        queryEnvironment = queryEnvironment.where((eb) =>
-          eb.or([
-            eb("code", "ilike", sql<string>`unaccent(${`${q}%`})`),
-            eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
-          ]),
-        );
-      }
-
-      if (orderBy) {
-        queryEnvironment = queryEnvironment.orderBy(orderBy, sortOrder ?? undefined);
-      } else if (q?.length) {
-        queryEnvironment = queryEnvironment.orderBy(sql`milieu.code ilike ${`${q}%`}`, "desc");
-      }
-
-      queryEnvironment = queryEnvironment.orderBy("milieu.code asc");
-    }
-
-    if (offset) {
-      queryEnvironment = queryEnvironment.offset(offset);
-    }
-    if (limit) {
-      queryEnvironment = queryEnvironment.limit(limit);
-    }
-
-    const environmentResult = await queryEnvironment.execute();
-
-    return z.array(environmentSchema).parse(environmentResult);
-  };
-
-  const getCount = async (q?: string | null): Promise<number> => {
-    let query = kysely.selectFrom("milieu").select((eb) => eb.fn.countAll().as("count"));
+      .leftJoin("donnee_milieu", "milieu.id", "donnee_milieu.milieuId")
+      .select([sql`basenaturaliste.milieu.id::text`.as("id"), "milieu.code", "milieu.libelle", "milieu.ownerId"]);
 
     if (q?.length) {
-      query = query.where((eb) =>
+      queryEnvironment = queryEnvironment.where((eb) =>
         eb.or([
           eb("code", "ilike", sql<string>`unaccent(${`${q}%`})`),
           eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
@@ -115,94 +63,144 @@ export const buildEnvironmentRepository = () => {
       );
     }
 
-    const countResult = await query.executeTakeFirstOrThrow();
+    queryEnvironment = queryEnvironment
+      .groupBy("milieu.id")
+      .orderBy((eb) => eb.fn.count("donnee_milieu.donneeId"), sortOrder ?? undefined)
+      .orderBy("milieu.code asc");
+  } else {
+    queryEnvironment = kysely
+      .selectFrom("milieu")
+      .select([sql`basenaturaliste.milieu.id::text`.as("id"), "milieu.code", "milieu.libelle", "milieu.ownerId"]);
 
-    return countSchema.parse(countResult).count;
-  };
+    if (q?.length) {
+      queryEnvironment = queryEnvironment.where((eb) =>
+        eb.or([
+          eb("code", "ilike", sql<string>`unaccent(${`${q}%`})`),
+          eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
+        ]),
+      );
+    }
 
-  const getEntriesCountById = async (id: string): Promise<number> => {
-    const countResult = await kysely
-      .selectFrom("donnee_milieu")
-      .select((eb) => eb.fn.count("donnee_milieu.donneeId").distinct().as("count"))
-      .where("milieuId", "=", Number.parseInt(id))
-      .executeTakeFirstOrThrow();
+    if (orderBy) {
+      queryEnvironment = queryEnvironment.orderBy(orderBy, sortOrder ?? undefined);
+    } else if (q?.length) {
+      queryEnvironment = queryEnvironment.orderBy(sql`milieu.code ilike ${`${q}%`}`, "desc");
+    }
 
-    return countSchema.parse(countResult).count;
-  };
+    queryEnvironment = queryEnvironment.orderBy("milieu.code asc");
+  }
 
-  const createEnvironment = async (
-    environmentInput: EnvironmentCreateInput,
-  ): Promise<Result<Environment, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .insertInto("milieu")
-        .values({
-          code: environmentInput.code,
-          libelle: environmentInput.libelle,
-          ownerId: environmentInput.ownerId,
-        })
-        .returning([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((createdEnvironment) => environmentSchema.parse(createdEnvironment));
-  };
+  if (offset) {
+    queryEnvironment = queryEnvironment.offset(offset);
+  }
+  if (limit) {
+    queryEnvironment = queryEnvironment.limit(limit);
+  }
 
-  const createEnvironments = async (environmentInputs: EnvironmentCreateInput[]): Promise<Environment[]> => {
-    const createdEnvironments = await kysely
+  const environmentResult = await queryEnvironment.execute();
+
+  return z.array(environmentSchema).parse(environmentResult);
+};
+
+const getCount = async (q?: string | null): Promise<number> => {
+  let query = kysely.selectFrom("milieu").select((eb) => eb.fn.countAll().as("count"));
+
+  if (q?.length) {
+    query = query.where((eb) =>
+      eb.or([
+        eb("code", "ilike", sql<string>`unaccent(${`${q}%`})`),
+        eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
+      ]),
+    );
+  }
+
+  const countResult = await query.executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const getEntriesCountById = async (id: string): Promise<number> => {
+  const countResult = await kysely
+    .selectFrom("donnee_milieu")
+    .select((eb) => eb.fn.count("donnee_milieu.donneeId").distinct().as("count"))
+    .where("milieuId", "=", Number.parseInt(id))
+    .executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const createEnvironment = async (
+  environmentInput: EnvironmentCreateInput,
+): Promise<Result<Environment, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
       .insertInto("milieu")
-      .values(
-        environmentInputs.map((environmentInput) => {
-          return {
-            code: environmentInput.code,
-            libelle: environmentInput.libelle,
-            ownerId: environmentInput.ownerId,
-          };
-        }),
-      )
+      .values({
+        code: environmentInput.code,
+        libelle: environmentInput.libelle,
+        ownerId: environmentInput.ownerId,
+      })
       .returning([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
-      .execute();
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((createdEnvironment) => environmentSchema.parse(createdEnvironment));
+};
 
-    return z.array(environmentSchema).parse(createdEnvironments);
-  };
-
-  const updateEnvironment = async (
-    environmentId: number,
-    environmentInput: EnvironmentCreateInput,
-  ): Promise<Result<Environment, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .updateTable("milieu")
-        .set({
+const createEnvironments = async (environmentInputs: EnvironmentCreateInput[]): Promise<Environment[]> => {
+  const createdEnvironments = await kysely
+    .insertInto("milieu")
+    .values(
+      environmentInputs.map((environmentInput) => {
+        return {
           code: environmentInput.code,
           libelle: environmentInput.libelle,
           ownerId: environmentInput.ownerId,
-        })
-        .where("id", "=", environmentId)
-        .returning([sql`id::text`.as("id"), "code", "libelle", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((updatedEnvironment) => environmentSchema.parse(updatedEnvironment));
-  };
+        };
+      }),
+    )
+    .returning([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
+    .execute();
 
-  const deleteEnvironmentById = async (environmentId: number): Promise<Environment | null> => {
-    const deletedEnvironment = await kysely
-      .deleteFrom("milieu")
+  return z.array(environmentSchema).parse(createdEnvironments);
+};
+
+const updateEnvironment = async (
+  environmentId: number,
+  environmentInput: EnvironmentCreateInput,
+): Promise<Result<Environment, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
+      .updateTable("milieu")
+      .set({
+        code: environmentInput.code,
+        libelle: environmentInput.libelle,
+        ownerId: environmentInput.ownerId,
+      })
       .where("id", "=", environmentId)
-      .returning([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
-      .executeTakeFirst();
+      .returning([sql`id::text`.as("id"), "code", "libelle", "ownerId"])
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((updatedEnvironment) => environmentSchema.parse(updatedEnvironment));
+};
 
-    return deletedEnvironment ? environmentSchema.parse(deletedEnvironment) : null;
-  };
+const deleteEnvironmentById = async (environmentId: number): Promise<Environment | null> => {
+  const deletedEnvironment = await kysely
+    .deleteFrom("milieu")
+    .where("id", "=", environmentId)
+    .returning([sql<string>`id::text`.as("id"), "code", "libelle", "ownerId"])
+    .executeTakeFirst();
 
-  return {
-    findEnvironmentById,
-    findEnvironmentsById,
-    findEnvironments,
-    getCount,
-    getEntriesCountById,
-    createEnvironment,
-    createEnvironments,
-    updateEnvironment,
-    deleteEnvironmentById,
-  };
+  return deletedEnvironment ? environmentSchema.parse(deletedEnvironment) : null;
+};
+
+export const environmentRepository = {
+  findEnvironmentById,
+  findEnvironmentsById,
+  findEnvironments,
+  getCount,
+  getEntriesCountById,
+  createEnvironment,
+  createEnvironments,
+  updateEnvironment,
+  deleteEnvironmentById,
 };

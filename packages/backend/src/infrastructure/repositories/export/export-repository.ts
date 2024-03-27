@@ -4,24 +4,22 @@ import { writeExcelToBuffer } from "../../../utils/export-excel-utils.js";
 
 const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
 
-export const buildExportRepository = () => {
-  const getExport = async (exportId: string): Promise<Buffer | null> => {
-    return redis.getBuffer(`${EXPORT_ENTITY_RESULT_PREFIX}:${exportId}`);
-  };
+const getExport = async (exportId: string): Promise<Buffer | null> => {
+  return redis.getBuffer(`${EXPORT_ENTITY_RESULT_PREFIX}:${exportId}`);
+};
 
-  const storeExport = async (entitiesToExport: Record<string, unknown>[], sheetName: string): Promise<string> => {
-    const exportArrayBuffer = await writeExcelToBuffer(entitiesToExport, sheetName);
-    const exportBuffer = Buffer.from(exportArrayBuffer);
+const storeExport = async (entitiesToExport: Record<string, unknown>[], sheetName: string): Promise<string> => {
+  const exportArrayBuffer = await writeExcelToBuffer(entitiesToExport, sheetName);
+  const exportBuffer = Buffer.from(exportArrayBuffer);
 
-    const id = randomUUID();
-    const redisKey = `${EXPORT_ENTITY_RESULT_PREFIX}:${id}`;
-    await redis.set(redisKey, exportBuffer, "EX", 600);
+  const id = randomUUID();
+  const redisKey = `${EXPORT_ENTITY_RESULT_PREFIX}:${id}`;
+  await redis.set(redisKey, exportBuffer, "EX", 600);
 
-    return id;
-  };
+  return id;
+};
 
-  return {
-    getExport,
-    storeExport,
-  };
+export const exportRepository = {
+  getExport,
+  storeExport,
 };

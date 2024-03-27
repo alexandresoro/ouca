@@ -1,23 +1,23 @@
 import { type Queues, createQueues } from "@infrastructure/bullmq/queues.js";
-import { buildAgeRepository } from "@infrastructure/repositories/age/age-repository.js";
-import { buildBehaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
-import { buildDepartmentRepository } from "@infrastructure/repositories/department/department-repository.js";
-import { buildDistanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
-import { buildEntryRepository } from "@infrastructure/repositories/entry/entry-repository.js";
-import { buildEnvironmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
-import { buildExportRepository } from "@infrastructure/repositories/export/export-repository.js";
-import { buildInventoryRepository } from "@infrastructure/repositories/inventory/inventory-repository.js";
-import { buildGeoJSONRepository } from "@infrastructure/repositories/locality/locality-geojson-repository.js";
-import { buildLocalityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
-import { buildNumberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
-import { buildObserverRepository } from "@infrastructure/repositories/observer/observer-repository.js";
-import { buildSettingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
-import { buildSexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
-import { buildSpeciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
-import { buildSpeciesRepository } from "@infrastructure/repositories/species/species-repository.js";
-import { buildTownRepository } from "@infrastructure/repositories/town/town-repository.js";
-import { buildUserRepository } from "@infrastructure/repositories/user/user-repository.js";
-import { buildWeatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
+import { ageRepository } from "@infrastructure/repositories/age/age-repository.js";
+import { behaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
+import { departmentRepository } from "@infrastructure/repositories/department/department-repository.js";
+import { distanceEstimateRepository } from "@infrastructure/repositories/distance-estimate/distance-estimate-repository.js";
+import { entryRepository } from "@infrastructure/repositories/entry/entry-repository.js";
+import { environmentRepository } from "@infrastructure/repositories/environment/environment-repository.js";
+import { exportRepository } from "@infrastructure/repositories/export/export-repository.js";
+import { inventoryRepository } from "@infrastructure/repositories/inventory/inventory-repository.js";
+import { localityGeojsonRepository } from "@infrastructure/repositories/locality/locality-geojson-repository.js";
+import { localityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
+import { numberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
+import { observerRepository } from "@infrastructure/repositories/observer/observer-repository.js";
+import { settingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
+import { sexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
+import { speciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
+import { speciesRepository } from "@infrastructure/repositories/species/species-repository.js";
+import { townRepository } from "@infrastructure/repositories/town/town-repository.js";
+import { userRepository } from "@infrastructure/repositories/user/user-repository.js";
+import { weatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import { logger } from "../../utils/logger.js";
 import { type AgeService, buildAgeService } from "./age/age-service.js";
 import { type BehaviorService, buildBehaviorService } from "./behavior/behavior-service.js";
@@ -72,34 +72,12 @@ export type Services = {
 export const buildServices = (): Services => {
   const queues = createQueues();
 
-  const ageRepository = buildAgeRepository();
-  const behaviorRepository = buildBehaviorRepository();
-  const classRepository = buildSpeciesClassRepository();
-  const departmentRepository = buildDepartmentRepository();
-  const distanceEstimateRepository = buildDistanceEstimateRepository();
-  const entryRepository = buildEntryRepository();
-  const environmentRepository = buildEnvironmentRepository();
-  const inventoryRepository = buildInventoryRepository();
-  const localityRepository = buildLocalityRepository();
-  const numberEstimateRepository = buildNumberEstimateRepository();
-  const observerRepository = buildObserverRepository();
-  const settingsRepository = buildSettingsRepository();
-  const sexRepository = buildSexRepository();
-  const speciesRepository = buildSpeciesRepository();
-  const townRepository = buildTownRepository();
-  const userRepository = buildUserRepository({ settingsRepository });
-  const weatherRepository = buildWeatherRepository();
-
-  const localitiesGeoJSONRepository = buildGeoJSONRepository();
-
-  const exportRepository = buildExportRepository();
-
   const ageService = buildAgeService({
     ageRepository,
   });
 
   const classService = buildSpeciesClassService({
-    classRepository,
+    classRepository: speciesClassRepository,
     speciesRepository,
   });
 
@@ -178,7 +156,7 @@ export const buildServices = (): Services => {
 
   const geojsonService = buildGeoJSONService({
     localityRepository,
-    localitiesGeoJSONRepository,
+    localitiesGeoJSONRepository: localityGeojsonRepository,
   });
 
   const oidcService = buildOidcService({

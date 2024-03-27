@@ -13,114 +13,56 @@ import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 
-export const buildBehaviorRepository = () => {
-  const findBehaviorById = async (id: number): Promise<Behavior | null> => {
-    const behaviorResult = await kysely
+const findBehaviorById = async (id: number): Promise<Behavior | null> => {
+  const behaviorResult = await kysely
+    .selectFrom("comportement")
+    .select([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
+    .where("id", "=", id)
+    .executeTakeFirst();
+
+  return behaviorResult ? behaviorSchema.parse(behaviorResult) : null;
+};
+
+const findBehaviorsById = async (ids: string[]): Promise<Behavior[]> => {
+  const behaviorsResult = await kysely
+    .selectFrom("comportement")
+    .select([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
+    .where(
+      "comportement.id",
+      "in",
+      ids.map((id) => Number.parseInt(id)),
+    )
+    .execute();
+
+  return z.array(behaviorSchema).parse(behaviorsResult);
+};
+
+const findBehaviors = async ({
+  orderBy,
+  sortOrder,
+  q,
+  offset,
+  limit,
+}: BehaviorFindManyInput = {}): Promise<Behavior[]> => {
+  const isSortByNbDonnees = orderBy === "nbDonnees";
+
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+  let queryBehavior;
+
+  if (isSortByNbDonnees) {
+    queryBehavior = kysely
       .selectFrom("comportement")
-      .select([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-      .where("id", "=", id)
-      .executeTakeFirst();
-
-    return behaviorResult ? behaviorSchema.parse(behaviorResult) : null;
-  };
-
-  const findBehaviorsById = async (ids: string[]): Promise<Behavior[]> => {
-    const behaviorsResult = await kysely
-      .selectFrom("comportement")
-      .select([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-      .where(
-        "comportement.id",
-        "in",
-        ids.map((id) => Number.parseInt(id)),
-      )
-      .execute();
-
-    return z.array(behaviorSchema).parse(behaviorsResult);
-  };
-
-  const findBehaviors = async ({
-    orderBy,
-    sortOrder,
-    q,
-    offset,
-    limit,
-  }: BehaviorFindManyInput = {}): Promise<Behavior[]> => {
-    const isSortByNbDonnees = orderBy === "nbDonnees";
-
-    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-    let queryBehavior;
-
-    if (isSortByNbDonnees) {
-      queryBehavior = kysely
-        .selectFrom("comportement")
-        .leftJoin("donnee_comportement", "comportement.id", "donnee_comportement.comportementId")
-        .select([
-          sql`basenaturaliste.comportement.id::text`.as("id"),
-          "comportement.code",
-          "comportement.libelle",
-          "comportement.nicheur",
-          "comportement.ownerId",
-        ]);
-
-      if (q?.length) {
-        queryBehavior = queryBehavior.where((eb) =>
-          eb.or([
-            eb("code", "~*", sql<string>`${`^0*${escapeStringRegexp(q)}`}`),
-            eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
-          ]),
-        );
-      }
-
-      queryBehavior = queryBehavior
-        .groupBy("comportement.id")
-        .orderBy((eb) => eb.fn.count("donnee_comportement.donneeId"), sortOrder ?? undefined)
-        .orderBy("comportement.code asc");
-    } else {
-      queryBehavior = kysely
-        .selectFrom("comportement")
-        .select([
-          sql`basenaturaliste.comportement.id::text`.as("id"),
-          "comportement.code",
-          "comportement.libelle",
-          "comportement.nicheur",
-          "comportement.ownerId",
-        ]);
-
-      if (q?.length) {
-        queryBehavior = queryBehavior.where((eb) =>
-          eb.or([
-            eb("code", "~*", sql<string>`${`^0*${escapeStringRegexp(q)}`}`),
-            eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
-          ]),
-        );
-      }
-
-      if (orderBy) {
-        queryBehavior = queryBehavior.orderBy(orderBy, sortOrder ?? undefined);
-      } else if (q?.length) {
-        queryBehavior = queryBehavior.orderBy(sql`comportement.code ~* ${`^0*${escapeStringRegexp(q)}`}`, "desc");
-      }
-
-      queryBehavior = queryBehavior.orderBy("comportement.code asc");
-    }
-
-    if (offset) {
-      queryBehavior = queryBehavior.offset(offset);
-    }
-    if (limit) {
-      queryBehavior = queryBehavior.limit(limit);
-    }
-
-    const behaviorResult = await queryBehavior.execute();
-
-    return z.array(behaviorSchema).parse(behaviorResult);
-  };
-
-  const getCount = async (q?: string | null): Promise<number> => {
-    let query = kysely.selectFrom("comportement").select((eb) => eb.fn.countAll().as("count"));
+      .leftJoin("donnee_comportement", "comportement.id", "donnee_comportement.comportementId")
+      .select([
+        sql`basenaturaliste.comportement.id::text`.as("id"),
+        "comportement.code",
+        "comportement.libelle",
+        "comportement.nicheur",
+        "comportement.ownerId",
+      ]);
 
     if (q?.length) {
-      query = query.where((eb) =>
+      queryBehavior = queryBehavior.where((eb) =>
         eb.or([
           eb("code", "~*", sql<string>`${`^0*${escapeStringRegexp(q)}`}`),
           eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
@@ -128,95 +70,151 @@ export const buildBehaviorRepository = () => {
       );
     }
 
-    const countResult = await query.executeTakeFirstOrThrow();
+    queryBehavior = queryBehavior
+      .groupBy("comportement.id")
+      .orderBy((eb) => eb.fn.count("donnee_comportement.donneeId"), sortOrder ?? undefined)
+      .orderBy("comportement.code asc");
+  } else {
+    queryBehavior = kysely
+      .selectFrom("comportement")
+      .select([
+        sql`basenaturaliste.comportement.id::text`.as("id"),
+        "comportement.code",
+        "comportement.libelle",
+        "comportement.nicheur",
+        "comportement.ownerId",
+      ]);
 
-    return countSchema.parse(countResult).count;
-  };
+    if (q?.length) {
+      queryBehavior = queryBehavior.where((eb) =>
+        eb.or([
+          eb("code", "~*", sql<string>`${`^0*${escapeStringRegexp(q)}`}`),
+          eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
+        ]),
+      );
+    }
 
-  const getEntriesCountById = async (id: string): Promise<number> => {
-    const countResult = await kysely
-      .selectFrom("donnee_comportement")
-      .select((eb) => eb.fn.count("donnee_comportement.donneeId").distinct().as("count"))
-      .where("comportementId", "=", Number.parseInt(id))
-      .executeTakeFirstOrThrow();
+    if (orderBy) {
+      queryBehavior = queryBehavior.orderBy(orderBy, sortOrder ?? undefined);
+    } else if (q?.length) {
+      queryBehavior = queryBehavior.orderBy(sql`comportement.code ~* ${`^0*${escapeStringRegexp(q)}`}`, "desc");
+    }
 
-    return countSchema.parse(countResult).count;
-  };
+    queryBehavior = queryBehavior.orderBy("comportement.code asc");
+  }
 
-  const createBehavior = async (behaviorInput: BehaviorCreateInput): Promise<Result<Behavior, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .insertInto("comportement")
-        .values({
-          code: behaviorInput.code,
-          libelle: behaviorInput.libelle,
-          nicheur: behaviorInput.nicheur,
-          ownerId: behaviorInput.ownerId,
-        })
-        .returning([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((createdBehavior) => behaviorSchema.parse(createdBehavior));
-  };
+  if (offset) {
+    queryBehavior = queryBehavior.offset(offset);
+  }
+  if (limit) {
+    queryBehavior = queryBehavior.limit(limit);
+  }
 
-  const createBehaviors = async (behaviorInputs: BehaviorCreateInput[]): Promise<Behavior[]> => {
-    const createdBehaviors = await kysely
+  const behaviorResult = await queryBehavior.execute();
+
+  return z.array(behaviorSchema).parse(behaviorResult);
+};
+
+const getCount = async (q?: string | null): Promise<number> => {
+  let query = kysely.selectFrom("comportement").select((eb) => eb.fn.countAll().as("count"));
+
+  if (q?.length) {
+    query = query.where((eb) =>
+      eb.or([
+        eb("code", "~*", sql<string>`${`^0*${escapeStringRegexp(q)}`}`),
+        eb(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`),
+      ]),
+    );
+  }
+
+  const countResult = await query.executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const getEntriesCountById = async (id: string): Promise<number> => {
+  const countResult = await kysely
+    .selectFrom("donnee_comportement")
+    .select((eb) => eb.fn.count("donnee_comportement.donneeId").distinct().as("count"))
+    .where("comportementId", "=", Number.parseInt(id))
+    .executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const createBehavior = async (behaviorInput: BehaviorCreateInput): Promise<Result<Behavior, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
       .insertInto("comportement")
-      .values(
-        behaviorInputs.map((behaviorInput) => {
-          return {
-            code: behaviorInput.code,
-            libelle: behaviorInput.libelle,
-            nicheur: behaviorInput.nicheur,
-            ownerId: behaviorInput.ownerId,
-          };
-        }),
-      )
+      .values({
+        code: behaviorInput.code,
+        libelle: behaviorInput.libelle,
+        nicheur: behaviorInput.nicheur,
+        ownerId: behaviorInput.ownerId,
+      })
       .returning([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-      .execute();
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((createdBehavior) => behaviorSchema.parse(createdBehavior));
+};
 
-    return z.array(behaviorSchema).parse(createdBehaviors);
-  };
-
-  const updateBehavior = async (
-    behaviorId: number,
-    behaviorInput: BehaviorCreateInput,
-  ): Promise<Result<Behavior, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .updateTable("comportement")
-        .set({
+const createBehaviors = async (behaviorInputs: BehaviorCreateInput[]): Promise<Behavior[]> => {
+  const createdBehaviors = await kysely
+    .insertInto("comportement")
+    .values(
+      behaviorInputs.map((behaviorInput) => {
+        return {
           code: behaviorInput.code,
           libelle: behaviorInput.libelle,
           nicheur: behaviorInput.nicheur,
           ownerId: behaviorInput.ownerId,
-        })
-        .where("id", "=", behaviorId)
-        .returning([sql`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((updatedBehavior) => behaviorSchema.parse(updatedBehavior));
-  };
+        };
+      }),
+    )
+    .returning([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
+    .execute();
 
-  const deleteBehaviorById = async (behaviorId: number): Promise<Behavior | null> => {
-    const deletedBehavior = await kysely
-      .deleteFrom("comportement")
+  return z.array(behaviorSchema).parse(createdBehaviors);
+};
+
+const updateBehavior = async (
+  behaviorId: number,
+  behaviorInput: BehaviorCreateInput,
+): Promise<Result<Behavior, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
+      .updateTable("comportement")
+      .set({
+        code: behaviorInput.code,
+        libelle: behaviorInput.libelle,
+        nicheur: behaviorInput.nicheur,
+        ownerId: behaviorInput.ownerId,
+      })
       .where("id", "=", behaviorId)
-      .returning([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
-      .executeTakeFirst();
+      .returning([sql`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((updatedBehavior) => behaviorSchema.parse(updatedBehavior));
+};
 
-    return deletedBehavior ? behaviorSchema.parse(deletedBehavior) : null;
-  };
+const deleteBehaviorById = async (behaviorId: number): Promise<Behavior | null> => {
+  const deletedBehavior = await kysely
+    .deleteFrom("comportement")
+    .where("id", "=", behaviorId)
+    .returning([sql<string>`id::text`.as("id"), "code", "libelle", "nicheur", "ownerId"])
+    .executeTakeFirst();
 
-  return {
-    findBehaviorById,
-    findBehaviorsById,
-    findBehaviors,
-    getCount,
-    getEntriesCountById,
-    createBehavior,
-    createBehaviors,
-    updateBehavior,
-    deleteBehaviorById,
-  };
+  return deletedBehavior ? behaviorSchema.parse(deletedBehavior) : null;
+};
+
+export const behaviorRepository = {
+  findBehaviorById,
+  findBehaviorsById,
+  findBehaviors,
+  getCount,
+  getEntriesCountById,
+  createBehavior,
+  createBehaviors,
+  updateBehavior,
+  deleteBehaviorById,
 };

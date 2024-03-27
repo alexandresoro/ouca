@@ -12,212 +12,198 @@ import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 
-export const buildSpeciesClassRepository = () => {
-  const findSpeciesClassById = async (id: number): Promise<SpeciesClass | null> => {
-    const speciesClassResult = await kysely
-      .selectFrom("classe")
-      .select([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
-      .where("id", "=", id)
-      .executeTakeFirst();
+const findSpeciesClassById = async (id: number): Promise<SpeciesClass | null> => {
+  const speciesClassResult = await kysely
+    .selectFrom("classe")
+    .select([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+    .where("id", "=", id)
+    .executeTakeFirst();
 
-    return speciesClassResult ? speciesClassSchema.parse(speciesClassResult) : null;
-  };
+  return speciesClassResult ? speciesClassSchema.parse(speciesClassResult) : null;
+};
 
-  const findSpeciesClassBySpeciesId = async (speciesId: number | undefined): Promise<SpeciesClass | null> => {
-    if (!speciesId) {
-      return null;
-    }
+const findSpeciesClassBySpeciesId = async (speciesId: number | undefined): Promise<SpeciesClass | null> => {
+  if (!speciesId) {
+    return null;
+  }
 
-    const speciesClassResult = await kysely
-      .selectFrom("classe")
-      .leftJoin("espece", "espece.classeId", "classe.id")
-      .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"])
-      .where("espece.id", "=", speciesId)
-      .executeTakeFirst();
+  const speciesClassResult = await kysely
+    .selectFrom("classe")
+    .leftJoin("espece", "espece.classeId", "classe.id")
+    .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"])
+    .where("espece.id", "=", speciesId)
+    .executeTakeFirst();
 
-    return speciesClassResult ? speciesClassSchema.parse(speciesClassResult) : null;
-  };
+  return speciesClassResult ? speciesClassSchema.parse(speciesClassResult) : null;
+};
 
-  const findSpeciesClasses = async ({
-    orderBy,
-    sortOrder,
-    q,
-    offset,
-    limit,
-  }: SpeciesClassFindManyInput = {}): Promise<SpeciesClass[]> => {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-    let querySpeciesClass;
+const findSpeciesClasses = async ({
+  orderBy,
+  sortOrder,
+  q,
+  offset,
+  limit,
+}: SpeciesClassFindManyInput = {}): Promise<SpeciesClass[]> => {
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+  let querySpeciesClass;
 
-    switch (orderBy) {
-      case "nbDonnees":
-        querySpeciesClass = kysely
-          .selectFrom("classe")
-          .leftJoin("espece", "espece.classeId", "classe.id")
-          .leftJoin("donnee", "donnee.especeId", "espece.id")
-          .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
+  switch (orderBy) {
+    case "nbDonnees":
+      querySpeciesClass = kysely
+        .selectFrom("classe")
+        .leftJoin("espece", "espece.classeId", "classe.id")
+        .leftJoin("donnee", "donnee.especeId", "espece.id")
+        .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
 
-        if (q?.length) {
-          querySpeciesClass = querySpeciesClass.where(
-            sql`unaccent(classe.libelle)`,
-            "ilike",
-            sql`unaccent(${`%${q}%`})`,
-          );
-        }
+      if (q?.length) {
+        querySpeciesClass = querySpeciesClass.where(sql`unaccent(classe.libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
 
-        querySpeciesClass = querySpeciesClass
-          .groupBy("classe.id")
-          .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
-          .orderBy("classe.libelle asc");
+      querySpeciesClass = querySpeciesClass
+        .groupBy("classe.id")
+        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy("classe.libelle asc");
 
-        break;
-      case "nbEspeces":
-        querySpeciesClass = kysely
-          .selectFrom("classe")
-          .leftJoin("espece", "espece.classeId", "classe.id")
-          .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
+      break;
+    case "nbEspeces":
+      querySpeciesClass = kysely
+        .selectFrom("classe")
+        .leftJoin("espece", "espece.classeId", "classe.id")
+        .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
 
-        if (q?.length) {
-          querySpeciesClass = querySpeciesClass.where(
-            sql`unaccent(classe.libelle)`,
-            "ilike",
-            sql`unaccent(${`%${q}%`})`,
-          );
-        }
+      if (q?.length) {
+        querySpeciesClass = querySpeciesClass.where(sql`unaccent(classe.libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
 
-        querySpeciesClass = querySpeciesClass
-          .groupBy("classe.id")
-          .orderBy((eb) => eb.fn.count("espece.id"), sortOrder ?? undefined)
-          .orderBy("classe.libelle asc");
+      querySpeciesClass = querySpeciesClass
+        .groupBy("classe.id")
+        .orderBy((eb) => eb.fn.count("espece.id"), sortOrder ?? undefined)
+        .orderBy("classe.libelle asc");
 
-        break;
-      default:
-        querySpeciesClass = kysely
-          .selectFrom("classe")
-          .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
+      break;
+    default:
+      querySpeciesClass = kysely
+        .selectFrom("classe")
+        .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
 
-        if (q?.length) {
-          querySpeciesClass = querySpeciesClass.where(
-            sql`unaccent(classe.libelle)`,
-            "ilike",
-            sql`unaccent(${`%${q}%`})`,
-          );
-        }
+      if (q?.length) {
+        querySpeciesClass = querySpeciesClass.where(sql`unaccent(classe.libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      }
 
-        if (orderBy) {
-          querySpeciesClass = querySpeciesClass.orderBy(orderBy, sortOrder ?? undefined);
-        }
+      if (orderBy) {
+        querySpeciesClass = querySpeciesClass.orderBy(orderBy, sortOrder ?? undefined);
+      }
 
-        querySpeciesClass = querySpeciesClass.orderBy("classe.libelle asc");
+      querySpeciesClass = querySpeciesClass.orderBy("classe.libelle asc");
 
-        break;
-    }
+      break;
+  }
 
-    if (offset) {
-      querySpeciesClass = querySpeciesClass.offset(offset);
-    }
+  if (offset) {
+    querySpeciesClass = querySpeciesClass.offset(offset);
+  }
 
-    if (limit) {
-      querySpeciesClass = querySpeciesClass.limit(limit);
-    }
+  if (limit) {
+    querySpeciesClass = querySpeciesClass.limit(limit);
+  }
 
-    const speciesClassesResult = await querySpeciesClass.execute();
+  const speciesClassesResult = await querySpeciesClass.execute();
 
-    return z.array(speciesClassSchema).parse(speciesClassesResult);
-  };
+  return z.array(speciesClassSchema).parse(speciesClassesResult);
+};
 
-  const getCount = async (q?: string | null): Promise<number> => {
-    let query = kysely.selectFrom("classe").select((eb) => eb.fn.countAll().as("count"));
+const getCount = async (q?: string | null): Promise<number> => {
+  let query = kysely.selectFrom("classe").select((eb) => eb.fn.countAll().as("count"));
 
-    if (q?.length) {
-      query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
-    }
+  if (q?.length) {
+    query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+  }
 
-    const countResult = await query.executeTakeFirstOrThrow();
+  const countResult = await query.executeTakeFirstOrThrow();
 
-    return countSchema.parse(countResult).count;
-  };
+  return countSchema.parse(countResult).count;
+};
 
-  const getEntriesCountById = async (id: string): Promise<number> => {
-    const countResult = await kysely
-      .selectFrom("donnee")
-      .leftJoin("espece", "espece.id", "donnee.especeId")
-      .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
-      .where("espece.classeId", "=", Number.parseInt(id))
-      .executeTakeFirstOrThrow();
+const getEntriesCountById = async (id: string): Promise<number> => {
+  const countResult = await kysely
+    .selectFrom("donnee")
+    .leftJoin("espece", "espece.id", "donnee.especeId")
+    .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+    .where("espece.classeId", "=", Number.parseInt(id))
+    .executeTakeFirstOrThrow();
 
-    return countSchema.parse(countResult).count;
-  };
+  return countSchema.parse(countResult).count;
+};
 
-  const createSpeciesClass = async (
-    speciesClassInput: SpeciesClassCreateInput,
-  ): Promise<Result<SpeciesClass, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .insertInto("classe")
-        .values({
-          libelle: speciesClassInput.libelle,
-          ownerId: speciesClassInput.ownerId,
-        })
-        .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((createdSpeciesClass) => speciesClassSchema.parse(createdSpeciesClass));
-  };
-
-  const createSpeciesClasses = async (speciesClassInputs: SpeciesClassCreateInput[]): Promise<SpeciesClass[]> => {
-    const createdSpeciesClasses = await kysely
+const createSpeciesClass = async (
+  speciesClassInput: SpeciesClassCreateInput,
+): Promise<Result<SpeciesClass, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
       .insertInto("classe")
-      .values(
-        speciesClassInputs.map((speciesClassInput) => {
-          return {
-            libelle: speciesClassInput.libelle,
-            ownerId: speciesClassInput.ownerId,
-          };
-        }),
-      )
+      .values({
+        libelle: speciesClassInput.libelle,
+        ownerId: speciesClassInput.ownerId,
+      })
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
-      .execute();
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((createdSpeciesClass) => speciesClassSchema.parse(createdSpeciesClass));
+};
 
-    return z.array(speciesClassSchema).nonempty().parse(createdSpeciesClasses);
-  };
-
-  const updateSpeciesClass = async (
-    speciesClassId: number,
-    speciesClassInput: SpeciesClassCreateInput,
-  ): Promise<Result<SpeciesClass, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .updateTable("classe")
-        .set({
+const createSpeciesClasses = async (speciesClassInputs: SpeciesClassCreateInput[]): Promise<SpeciesClass[]> => {
+  const createdSpeciesClasses = await kysely
+    .insertInto("classe")
+    .values(
+      speciesClassInputs.map((speciesClassInput) => {
+        return {
           libelle: speciesClassInput.libelle,
           ownerId: speciesClassInput.ownerId,
-        })
-        .where("id", "=", speciesClassId)
-        .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((updatedSpeciesClass) => speciesClassSchema.parse(updatedSpeciesClass));
-  };
+        };
+      }),
+    )
+    .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+    .execute();
 
-  const deleteSpeciesClassById = async (speciesClassId: number): Promise<SpeciesClass | null> => {
-    const deletedSpeciesClass = await kysely
-      .deleteFrom("classe")
+  return z.array(speciesClassSchema).nonempty().parse(createdSpeciesClasses);
+};
+
+const updateSpeciesClass = async (
+  speciesClassId: number,
+  speciesClassInput: SpeciesClassCreateInput,
+): Promise<Result<SpeciesClass, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
+      .updateTable("classe")
+      .set({
+        libelle: speciesClassInput.libelle,
+        ownerId: speciesClassInput.ownerId,
+      })
       .where("id", "=", speciesClassId)
       .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
-      .executeTakeFirst();
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((updatedSpeciesClass) => speciesClassSchema.parse(updatedSpeciesClass));
+};
 
-    return deletedSpeciesClass ? speciesClassSchema.parse(deletedSpeciesClass) : null;
-  };
+const deleteSpeciesClassById = async (speciesClassId: number): Promise<SpeciesClass | null> => {
+  const deletedSpeciesClass = await kysely
+    .deleteFrom("classe")
+    .where("id", "=", speciesClassId)
+    .returning([sql<string>`id::text`.as("id"), "libelle", "ownerId"])
+    .executeTakeFirst();
 
-  return {
-    findSpeciesClassById,
-    findSpeciesClassBySpeciesId,
-    findSpeciesClasses,
-    getCount,
-    getEntriesCountById,
-    createSpeciesClass,
-    createSpeciesClasses,
-    updateSpeciesClass,
-    deleteSpeciesClassById,
-  };
+  return deletedSpeciesClass ? speciesClassSchema.parse(deletedSpeciesClass) : null;
+};
+
+export const speciesClassRepository = {
+  findSpeciesClassById,
+  findSpeciesClassBySpeciesId,
+  findSpeciesClasses,
+  getCount,
+  getEntriesCountById,
+  createSpeciesClass,
+  createSpeciesClasses,
+  updateSpeciesClass,
+  deleteSpeciesClassById,
 };

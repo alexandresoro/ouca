@@ -12,166 +12,162 @@ import { type Result, fromPromise } from "neverthrow";
 import { z } from "zod";
 import { countSchema } from "../common.js";
 
-export const buildNumberEstimateRepository = () => {
-  const findNumberEstimateById = async (id: number): Promise<NumberEstimate | null> => {
-    const numberEstimateResult = await kysely
+const findNumberEstimateById = async (id: number): Promise<NumberEstimate | null> => {
+  const numberEstimateResult = await kysely
+    .selectFrom("estimation_nombre")
+    .select([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
+    .where("id", "=", id)
+    .executeTakeFirst();
+
+  return numberEstimateResult ? numberEstimateSchema.parse(numberEstimateResult) : null;
+};
+
+const findNumberEstimates = async ({
+  orderBy,
+  sortOrder,
+  q,
+  offset,
+  limit,
+}: NumberEstimateFindManyInput = {}): Promise<NumberEstimate[]> => {
+  const isSortByNbDonnees = orderBy === "nbDonnees";
+
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+  let queryNumberEstimate;
+
+  if (isSortByNbDonnees) {
+    queryNumberEstimate = kysely
       .selectFrom("estimation_nombre")
-      .select([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
-      .where("id", "=", id)
-      .executeTakeFirst();
-
-    return numberEstimateResult ? numberEstimateSchema.parse(numberEstimateResult) : null;
-  };
-
-  const findNumberEstimates = async ({
-    orderBy,
-    sortOrder,
-    q,
-    offset,
-    limit,
-  }: NumberEstimateFindManyInput = {}): Promise<NumberEstimate[]> => {
-    const isSortByNbDonnees = orderBy === "nbDonnees";
-
-    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-    let queryNumberEstimate;
-
-    if (isSortByNbDonnees) {
-      queryNumberEstimate = kysely
-        .selectFrom("estimation_nombre")
-        .leftJoin("donnee", "donnee.estimationNombreId", "estimation_nombre.id")
-        .select([sql`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"]);
-
-      if (q?.length) {
-        queryNumberEstimate = queryNumberEstimate.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
-      }
-
-      queryNumberEstimate = queryNumberEstimate
-        .groupBy("estimation_nombre.id")
-        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
-        .orderBy("estimation_nombre.libelle asc");
-    } else {
-      queryNumberEstimate = kysely
-        .selectFrom("estimation_nombre")
-        .select([sql`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"]);
-
-      if (q?.length) {
-        queryNumberEstimate = queryNumberEstimate.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
-      }
-
-      if (orderBy) {
-        queryNumberEstimate = queryNumberEstimate.orderBy(orderBy, sortOrder ?? undefined);
-      }
-    }
-
-    if (offset) {
-      queryNumberEstimate = queryNumberEstimate.offset(offset);
-    }
-
-    if (limit) {
-      queryNumberEstimate = queryNumberEstimate.limit(limit);
-    }
-
-    const numberEstimatesResult = await queryNumberEstimate.execute();
-
-    return z.array(numberEstimateSchema).parse(numberEstimatesResult);
-  };
-
-  const getCount = async (q?: string | null): Promise<number> => {
-    let query = kysely.selectFrom("estimation_nombre").select((eb) => eb.fn.countAll().as("count"));
+      .leftJoin("donnee", "donnee.estimationNombreId", "estimation_nombre.id")
+      .select([sql`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"]);
 
     if (q?.length) {
-      query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+      queryNumberEstimate = queryNumberEstimate.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
     }
 
-    const countResult = await query.executeTakeFirstOrThrow();
+    queryNumberEstimate = queryNumberEstimate
+      .groupBy("estimation_nombre.id")
+      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+      .orderBy("estimation_nombre.libelle asc");
+  } else {
+    queryNumberEstimate = kysely
+      .selectFrom("estimation_nombre")
+      .select([sql`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"]);
 
-    return countSchema.parse(countResult).count;
-  };
+    if (q?.length) {
+      queryNumberEstimate = queryNumberEstimate.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+    }
 
-  const getEntriesCountById = async (id: string): Promise<number> => {
-    const countResult = await kysely
-      .selectFrom("donnee")
-      .select((eb) => eb.fn.countAll().as("count"))
-      .where("estimationNombreId", "=", Number.parseInt(id))
-      .executeTakeFirstOrThrow();
+    if (orderBy) {
+      queryNumberEstimate = queryNumberEstimate.orderBy(orderBy, sortOrder ?? undefined);
+    }
+  }
 
-    return countSchema.parse(countResult).count;
-  };
+  if (offset) {
+    queryNumberEstimate = queryNumberEstimate.offset(offset);
+  }
 
-  const createNumberEstimate = async (
-    numberEstimateInput: NumberEstimateCreateInput,
-  ): Promise<Result<NumberEstimate, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .insertInto("estimation_nombre")
-        .values({
-          libelle: numberEstimateInput.libelle,
-          nonCompte: numberEstimateInput.nonCompte,
-          ownerId: numberEstimateInput.ownerId,
-        })
-        .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((createdNumberEstimate) => numberEstimateSchema.parse(createdNumberEstimate));
-  };
+  if (limit) {
+    queryNumberEstimate = queryNumberEstimate.limit(limit);
+  }
 
-  const createNumberEstimates = async (
-    numberEstimateInputs: NumberEstimateCreateInput[],
-  ): Promise<NumberEstimate[]> => {
-    const createdNumberEstimates = await kysely
+  const numberEstimatesResult = await queryNumberEstimate.execute();
+
+  return z.array(numberEstimateSchema).parse(numberEstimatesResult);
+};
+
+const getCount = async (q?: string | null): Promise<number> => {
+  let query = kysely.selectFrom("estimation_nombre").select((eb) => eb.fn.countAll().as("count"));
+
+  if (q?.length) {
+    query = query.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
+  }
+
+  const countResult = await query.executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const getEntriesCountById = async (id: string): Promise<number> => {
+  const countResult = await kysely
+    .selectFrom("donnee")
+    .select((eb) => eb.fn.countAll().as("count"))
+    .where("estimationNombreId", "=", Number.parseInt(id))
+    .executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const createNumberEstimate = async (
+  numberEstimateInput: NumberEstimateCreateInput,
+): Promise<Result<NumberEstimate, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
       .insertInto("estimation_nombre")
-      .values(
-        numberEstimateInputs.map((numberEstimateInput) => {
-          return {
-            libelle: numberEstimateInput.libelle,
-            nonCompte: numberEstimateInput.nonCompte,
-            ownerId: numberEstimateInput.ownerId,
-          };
-        }),
-      )
+      .values({
+        libelle: numberEstimateInput.libelle,
+        nonCompte: numberEstimateInput.nonCompte,
+        ownerId: numberEstimateInput.ownerId,
+      })
       .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
-      .execute();
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((createdNumberEstimate) => numberEstimateSchema.parse(createdNumberEstimate));
+};
 
-    return z.array(numberEstimateSchema).nonempty().parse(createdNumberEstimates);
-  };
-
-  const updateNumberEstimate = async (
-    numberEstimateId: number,
-    numberEstimateInput: NumberEstimateCreateInput,
-  ): Promise<Result<NumberEstimate, EntityFailureReason>> => {
-    return fromPromise(
-      kysely
-        .updateTable("estimation_nombre")
-        .set({
+const createNumberEstimates = async (numberEstimateInputs: NumberEstimateCreateInput[]): Promise<NumberEstimate[]> => {
+  const createdNumberEstimates = await kysely
+    .insertInto("estimation_nombre")
+    .values(
+      numberEstimateInputs.map((numberEstimateInput) => {
+        return {
           libelle: numberEstimateInput.libelle,
           nonCompte: numberEstimateInput.nonCompte,
           ownerId: numberEstimateInput.ownerId,
-        })
-        .where("id", "=", numberEstimateId)
-        .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
-        .executeTakeFirstOrThrow(),
-      handleDatabaseError,
-    ).map((updatedNumberEstimate) => numberEstimateSchema.parse(updatedNumberEstimate));
-  };
+        };
+      }),
+    )
+    .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
+    .execute();
 
-  const deleteNumberEstimateById = async (numberEstimateId: number): Promise<NumberEstimate | null> => {
-    const deletedNumberEstimate = await kysely
-      .deleteFrom("estimation_nombre")
+  return z.array(numberEstimateSchema).nonempty().parse(createdNumberEstimates);
+};
+
+const updateNumberEstimate = async (
+  numberEstimateId: number,
+  numberEstimateInput: NumberEstimateCreateInput,
+): Promise<Result<NumberEstimate, EntityFailureReason>> => {
+  return fromPromise(
+    kysely
+      .updateTable("estimation_nombre")
+      .set({
+        libelle: numberEstimateInput.libelle,
+        nonCompte: numberEstimateInput.nonCompte,
+        ownerId: numberEstimateInput.ownerId,
+      })
       .where("id", "=", numberEstimateId)
       .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
-      .executeTakeFirst();
+      .executeTakeFirstOrThrow(),
+    handleDatabaseError,
+  ).map((updatedNumberEstimate) => numberEstimateSchema.parse(updatedNumberEstimate));
+};
 
-    return deletedNumberEstimate ? numberEstimateSchema.parse(deletedNumberEstimate) : null;
-  };
+const deleteNumberEstimateById = async (numberEstimateId: number): Promise<NumberEstimate | null> => {
+  const deletedNumberEstimate = await kysely
+    .deleteFrom("estimation_nombre")
+    .where("id", "=", numberEstimateId)
+    .returning([sql<string>`id::text`.as("id"), "libelle", "nonCompte", "ownerId"])
+    .executeTakeFirst();
 
-  return {
-    findNumberEstimateById,
-    findNumberEstimates,
-    getCount,
-    getEntriesCountById,
-    createNumberEstimate,
-    createNumberEstimates,
-    updateNumberEstimate,
-    deleteNumberEstimateById,
-  };
+  return deletedNumberEstimate ? numberEstimateSchema.parse(deletedNumberEstimate) : null;
+};
+
+export const numberEstimateRepository = {
+  findNumberEstimateById,
+  findNumberEstimates,
+  getCount,
+  getEntriesCountById,
+  createNumberEstimate,
+  createNumberEstimates,
+  updateNumberEstimate,
+  deleteNumberEstimateById,
 };
