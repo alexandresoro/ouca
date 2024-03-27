@@ -332,14 +332,6 @@
   "townEditionTitle": "Modification d'une commune",
   "towns": "Communes",
   "unspecified": "non renseigné",
-  "userForm": {
-    "firstName": "Prénom",
-    "lastName": "Nom",
-    "username": "Identifiant",
-    "password": "Mot de passe",
-    "passwordConfirmation": "Confirmation du mot de passe",
-    "role": "Rôle"
-  },
   "userRoles": {
     "user": "Utilisateur",
     "contributor": "Contributeur",
@@ -358,12 +350,6 @@
   "weathers": "Météos",
   "weathers_one": "Météo",
   "weathers_other": "Météos",
-  "loginLabel": "Utilisateur",
-  "loginRequiredLabel": "Le nom d'utilisateur est requis",
-  "loginFailedMessage": "Le nom d'utilisateur ou le mot de passe est incorrect. Veuillez réessayer.",
-  "passwordLabel": "Mot de passe",
-  "passwordRequiredLabel": "Le mot de passe est requis",
-  "loginButton": "Connexion",
   "createAction": "Créer",
   "exportAction": "Exporter",
   "filter": {
