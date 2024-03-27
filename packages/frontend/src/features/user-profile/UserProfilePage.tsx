@@ -1,40 +1,24 @@
+import { useUser } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
 import stringToColor from "@utils/user-profile/stringToColor";
-import { getFullName, getInitials } from "@utils/user-profile/usernameUtils";
-import type { User } from "oidc-client-ts";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "react-oidc-context";
 import { Link } from "react-router-dom";
-
-const ROLES = ["admin", "contributor", "user"] as const;
-
-const getRole = (user: User): (typeof ROLES)[number] | null | undefined => {
-  const rolesMap = user.profile["urn:zitadel:iam:org:project:roles"] as Record<string, unknown>[] | undefined;
-  if (!rolesMap) {
-    // Should not happen in practice
-    return null;
-  }
-
-  const roles = Object.keys(rolesMap);
-
-  return ROLES.find((existingRole) => roles.includes(existingRole));
-};
 
 const UserProfilePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { user } = useAuth();
+  const {
+    auth: { user },
+    role,
+    fullName,
+    initials,
+  } = useUser();
 
   if (!user) {
     return null;
   }
-
-  const fullName = getFullName(user);
-  const initials = getInitials(user);
-
-  const role = getRole(user);
 
   return (
     <>

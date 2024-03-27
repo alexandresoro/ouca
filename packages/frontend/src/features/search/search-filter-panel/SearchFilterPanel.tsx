@@ -1,4 +1,5 @@
 import Switch from "@components/base/Switch";
+import { useUser } from "@hooks/useUser";
 import { useFeatures } from "@services/app-features/features";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,14 +22,16 @@ const SearchFilterPanel: FunctionComponent = () => {
 
   const features = useFeatures();
 
+  const { role } = useUser();
+
   const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
-    features.tmp_only_own_observations_filter,
+    features.tmp_only_own_observations_filter && role === "admin",
   );
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">{t("observationFilter.search")}</h2>
-      {features.tmp_only_own_observations_filter && (
+      {features.tmp_only_own_observations_filter && role === "admin" && (
         <Switch
           label={t("observationFilter.displayOnlyMyObservations")}
           checked={displayOnlyOwnObservations}

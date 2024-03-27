@@ -1,13 +1,12 @@
 import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
+import { useUser } from "@hooks/useUser";
 import { type Features, useFeatures } from "@services/app-features/features";
 import { Cog, Import, LogOut, User } from "@styled-icons/boxicons-regular";
 import stringToColor from "@utils/user-profile/stringToColor";
-import { getFullName, getInitials } from "@utils/user-profile/usernameUtils";
 import type { ParseKeys } from "i18next";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "react-oidc-context";
 import { Link } from "react-router-dom";
 
 const getMenuOptions = (features: Features) => [
@@ -38,7 +37,11 @@ const HeaderSettings: FunctionComponent = () => {
   const features = useFeatures();
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { user, removeUser } = useAuth();
+  const {
+    auth: { removeUser },
+    fullName,
+    initials,
+  } = useUser();
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-end",
@@ -56,9 +59,6 @@ const HeaderSettings: FunctionComponent = () => {
     ],
     whileElementsMounted: autoUpdate,
   });
-
-  const fullName = getFullName(user);
-  const initials = getInitials(user);
 
   const handleLogoutAction = async () => {
     await removeUser();
