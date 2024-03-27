@@ -10,16 +10,21 @@ export type ApiQueryKey = {
   token: string | undefined;
 } | null;
 
-type UseApiQueryParams<T = unknown> = {
+export type UseApiQueryCommonParams = {
   queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
-  schema?: z.ZodType<T>;
   paused?: boolean;
 };
 
-const useApiQuery = <T = unknown, E = unknown>(
+type UseApiQueryParams<T = unknown> = UseApiQueryCommonParams & {
+  schema?: z.ZodType<T>;
+};
+
+export type UseApiQuerySWROptions<T = unknown, E = unknown> = Omit<SWRConfiguration<T, E>, "fetcher">;
+
+export const useApiQuery = <T = unknown, E = unknown>(
   path: string,
   { queryParams, paused, schema }: UseApiQueryParams<T> = {},
-  swrOptions?: Omit<SWRConfiguration<T, E>, "fetcher">,
+  swrOptions?: UseApiQuerySWROptions<T, E>,
 ) => {
   const { user } = useAuth();
   const apiUrl = useApiUrl();

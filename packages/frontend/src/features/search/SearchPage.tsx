@@ -1,15 +1,43 @@
 import { Tab } from "@headlessui/react";
+import { useApiEntryQueryAll } from "@services/api/entry/api-entry-queries";
+import { useApiSpeciesQueryAll } from "@services/api/species/api-species-queries";
 import { useFeatures } from "@services/app-features/features";
-import { Fragment, type FunctionComponent } from "react";
+import { useAtomValue } from "jotai";
+import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchEntriesTable from "./search-entries-table/SearchEntriesTable";
 import SearchFilterPanel from "./search-filter-panel/SearchFilterPanel";
 import SearchSpeciesTable from "./search-species-table/SearchSpeciesTable";
+import { searchEntriesCriteriaAtom } from "./searchEntriesCriteriaAtom";
+
+const SELECTED_TAB_MAPPING = ["entries", "species"] as const;
 
 const SearchPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const features = useFeatures();
+
+  const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
+
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const { data: dataEntries } = useApiEntryQueryAll({
+    queryParams: {
+      pageNumber: 1,
+      pageSize: 1,
+      ...searchCriteria,
+    },
+    paused: selectedTab !== 0,
+  });
+
+  const { data: dataSpecies } = useApiSpeciesQueryAll({
+    queryParams: {
+      pageNumber: 1,
+      pageSize: 1,
+      ...searchCriteria,
+    },
+    paused: selectedTab !== 1,
+  });
 
   return (
     <div className="container mx-auto flex gap-16 mt-6">
@@ -18,7 +46,7 @@ const SearchPage: FunctionComponent = () => {
       </div>
 
       <div className="flex-grow">
-        <Tab.Group>
+        <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
           <div className="flex justify-between mb-12">
             <Tab.List className="join">
               <Tab as={Fragment}>
@@ -46,11 +74,25 @@ const SearchPage: FunctionComponent = () => {
                 )}
               </Tab>
             </Tab.List>
-            {features.tmp_export_search_results && (
-              <button type="button" className="btn btn-sm btn-outline btn-secondary uppercase mt-2">
-                {t("observationFilter.exportToExcel")}
-              </button>
-            )}
+            <div className="flex gap-4">
+              <div
+                className={`flex items-center text-sm font-bold uppercase text-base-content ${
+                  features.tmp_export_search_results ? "" : "mr-12"
+                }`}
+              >
+                {SELECTED_TAB_MAPPING[selectedTab] === "entries" &&
+                  dataEntries?.meta != null &&
+                  t("search.entriesCount", { count: dataEntries.meta.count })}
+                {SELECTED_TAB_MAPPING[selectedTab] === "species" &&
+                  dataSpecies?.meta != null &&
+                  t("search.speciesCount", { count: dataSpecies.meta.count })}
+              </div>
+              {features.tmp_export_search_results && (
+                <button type="button" className="btn btn-sm btn-outline btn-secondary uppercase mt-2">
+                  {t("observationFilter.exportToExcel")}
+                </button>
+              )}
+            </div>
           </div>
           <Tab.Panels>
             <Tab.Panel>

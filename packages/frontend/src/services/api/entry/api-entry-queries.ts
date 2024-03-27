@@ -1,7 +1,27 @@
 import useApiMutation from "@hooks/api/useApiMutation";
-import { type UpsertEntryInput, type UpsertEntryResponse, upsertEntryResponse } from "@ou-ca/common/api/entry";
+import {
+  type UpsertEntryInput,
+  type UpsertEntryResponse,
+  getEntriesResponse,
+  upsertEntryResponse,
+} from "@ou-ca/common/api/entry";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { UseMutationOptions } from "@tanstack/react-query";
 import type { FetchErrorType } from "@utils/fetch-api";
+import type { z } from "zod";
+
+export const useApiEntryQueryAll = (
+  params: UseApiQueryCommonParams,
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getEntriesResponse>>,
+) =>
+  useApiQuery(
+    "/entries",
+    {
+      schema: getEntriesResponse,
+      ...params,
+    },
+    swrOptions,
+  );
 
 export const useApiEntryCreate = (
   mutationOptions?: Omit<

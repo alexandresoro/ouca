@@ -373,6 +373,14 @@
     "resultsCount_zero": "Aucun résultat",
     "resultsCount_one": "{{count}} résultat"
   },
+  "search": {
+    "entriesCount": "{{count}} données",
+    "entriesCount_zero": "Aucune donnée",
+    "entriesCount_one": "{{count}} donnée",
+    "speciesCount": "{{count}} espèces",
+    "speciesCount_zero": "Aucune espèce",
+    "speciesCount_one": "{{count}} espèce"
+  },
   "label": "Libellé",
   "undefinedNumber": "Indénombrable",
   "actions": "Actions",
