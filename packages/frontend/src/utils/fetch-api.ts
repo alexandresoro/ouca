@@ -19,20 +19,22 @@ export const fetchApiResponse = async ({
 }: {
   url: string;
   method?: string;
-  body?: Record<string, unknown>;
+  body?: Record<string, unknown> | FormData;
   token?: string;
 }): Promise<Response> => {
   const response = await fetch(url, {
     method,
     headers: {
-      ...(body !== undefined ? { "Content-Type": "application/json; charset=utf-8" } : {}),
+      ...(body !== undefined && !(body instanceof FormData)
+        ? { "Content-Type": "application/json; charset=utf-8" }
+        : {}),
       ...(token
         ? {
             Authorization: `Bearer ${token}`,
           }
         : {}),
     },
-    body: body ? JSON.stringify(body) : null,
+    ...(body != null ? { body: body instanceof FormData ? body : JSON.stringify(body) } : {}),
   });
 
   if (!response.ok) {
@@ -51,7 +53,7 @@ const fetchApi = async <T = unknown>({
 }: {
   url: string;
   method?: string;
-  body?: Record<string, unknown>;
+  body?: Record<string, unknown> | FormData;
   token?: string;
   schema?: z.ZodType<T>;
 }): Promise<T> => {

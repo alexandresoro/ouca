@@ -62,6 +62,10 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
           lazy: lazyRoute(() => import("../features/settings/SettingsPage")),
         },
         {
+          path: "import",
+          lazy: lazyRoute(() => import("../features/import/ImportPage")),
+        },
+        {
           path: "*",
           element: <Navigate to="/" replace={true} />,
         },

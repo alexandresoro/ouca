@@ -3,24 +3,23 @@ import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useCallback } from "react";
 import { useAuth } from "react-oidc-context";
 import type { z } from "zod";
-import useApiUrl from "./useApiUrl";
 
-type UseApiFetchParams<T> = { path?: string; method?: string; schema?: z.ZodType<T> };
+type UseFetchWithAuthParams<T> = { path?: string; method?: string; schema?: z.ZodType<T> };
 
-type UseApiFetchCallParams = {
+type UseFetchWithAuthCallParams = {
   path?: string;
   body?: Record<string, unknown> | FormData;
   queryParams?: Record<string, string | number | boolean | undefined>;
 };
 
-export function useApiFetch<T>({
+export function useFetchWithAuth<T>({
   path,
   method,
   schema,
 }: { path: string; method?: string; schema?: z.ZodType<T> }): (
-  options?: Omit<UseApiFetchCallParams, "path">,
+  options?: Omit<UseFetchWithAuthCallParams, "path">,
 ) => Promise<T>;
-export function useApiFetch<T>({ method, schema }: Omit<UseApiFetchParams<T>, "path">): ({
+export function useFetchWithAuth<T>({ method, schema }: Omit<UseFetchWithAuthParams<T>, "path">): ({
   path,
   body,
   queryParams,
@@ -29,18 +28,17 @@ export function useApiFetch<T>({ method, schema }: Omit<UseApiFetchParams<T>, "p
   body?: Record<string, unknown>;
   queryParams?: Record<string, string | number | boolean | undefined>;
 }) => Promise<T>;
-export function useApiFetch<T>({
+export function useFetchWithAuth<T>({
   path: pathFromSignature,
   method,
   schema,
-}: UseApiFetchParams<T>): (params?: UseApiFetchCallParams) => Promise<T> {
+}: UseFetchWithAuthParams<T>): (params?: UseFetchWithAuthCallParams) => Promise<T> {
   const { user } = useAuth();
-  const apiUrl = useApiUrl();
 
   const accessToken = user?.access_token;
 
   return useCallback(
-    async (params?: UseApiFetchCallParams) => {
+    async (params?: UseFetchWithAuthCallParams) => {
       const { path: pathFromCall, body, queryParams } = params ?? {};
 
       const queryString = toUrlSearchParams(queryParams).toString();
@@ -51,15 +49,13 @@ export function useApiFetch<T>({
       }
 
       return fetchApi({
-        url: `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}`,
+        url: `${path}${queryString.length ? `?${queryString}` : ""}`,
         method,
         body,
         token: accessToken,
         schema,
       });
     },
-    [apiUrl, accessToken, pathFromSignature, method, schema],
+    [accessToken, pathFromSignature, method, schema],
   );
 }
-
-export default useApiFetch;
