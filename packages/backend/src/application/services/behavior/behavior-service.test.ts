@@ -255,7 +255,7 @@ describe("Update of a behavior", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     behaviorRepository.findBehaviorById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -342,7 +342,7 @@ describe("Deletion of a behavior", () => {
   test("should handle the deletion of an owned behavior", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: "contributor",
+      role: "user",
     };
 
     const behavior = behaviorFactory.build({
@@ -372,7 +372,7 @@ describe("Deletion of a behavior", () => {
 
   test("should not be allowed when deleting a non-owned behavior as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     behaviorRepository.findBehaviorById.mock.mockImplementationOnce(() => Promise.resolve(behaviorFactory.build()));

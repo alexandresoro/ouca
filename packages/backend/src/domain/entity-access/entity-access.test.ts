@@ -26,7 +26,7 @@ describe("canModifyEntity", () => {
 
     const user: LoggedUser = {
       id: "22",
-      role: "contributor",
+      role: "user",
     };
 
     assert.strictEqual(canModifyEntity(entity, user), false);
@@ -39,7 +39,7 @@ describe("canModifyEntity", () => {
 
     const user: LoggedUser = {
       id: entity.ownerId,
-      role: "contributor",
+      role: "user",
     };
 
     assert.ok(canModifyEntity(entity, user));
@@ -73,7 +73,7 @@ describe("canModifyEntity", () => {
 
     const user: LoggedUser = {
       id: "22",
-      role: "contributor",
+      role: "user",
     };
 
     assert.strictEqual(canModifyEntity(entity, user), false);

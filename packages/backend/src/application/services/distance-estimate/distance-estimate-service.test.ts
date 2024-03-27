@@ -227,7 +227,7 @@ describe("Update of a distance estimate", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     distanceEstimateRepository.findDistanceEstimateById.mock.mockImplementationOnce(() =>
@@ -325,7 +325,7 @@ describe("Deletion of a distance estimate", () => {
   test("should handle the deletion of an owned distance estimate", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: "contributor",
+      role: "user",
     };
 
     const distanceEstimate = distanceEstimateFactory.build({
@@ -359,7 +359,7 @@ describe("Deletion of a distance estimate", () => {
 
   test("should not be allowed when deleting a non-owned distance estimate as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     distanceEstimateRepository.findDistanceEstimateById.mock.mockImplementationOnce(() =>

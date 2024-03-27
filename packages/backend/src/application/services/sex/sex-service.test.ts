@@ -206,7 +206,7 @@ describe("Update of a sex", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -293,7 +293,7 @@ describe("Deletion of a sex", () => {
   test("should handle the deletion of an owned sex", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const sex = sexFactory.build({

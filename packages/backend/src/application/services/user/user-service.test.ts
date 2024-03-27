@@ -54,7 +54,7 @@ describe("User deletion", () => {
   test("should not be allowed when deleting another user as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const deleteResult = await userService.deleteUser("11", loggedUser);

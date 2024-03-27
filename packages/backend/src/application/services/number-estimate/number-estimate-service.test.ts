@@ -225,7 +225,7 @@ describe("Update of a number estimate", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     numberEstimateRepository.findNumberEstimateById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -321,7 +321,7 @@ describe("Deletion of a number estimate", () => {
   test("should handle the deletion of an owned number estimate", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const numberEstimate = numberEstimateFactory.build({
@@ -353,7 +353,7 @@ describe("Deletion of a number estimate", () => {
 
   test("should not be allowed when deleting a non-owned number estimate as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     numberEstimateRepository.findNumberEstimateById.mock.mockImplementationOnce(() =>

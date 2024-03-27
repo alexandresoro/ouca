@@ -231,7 +231,7 @@ describe("Update of an observer", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     observerRepository.findObserverById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -318,7 +318,7 @@ describe("Deletion of an observer", () => {
   test("should handle the deletion of an owned observer", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const observer = observerFactory.build({ ownerId: loggedUser.id });

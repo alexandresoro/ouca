@@ -233,7 +233,7 @@ describe("Deletion of a data", () => {
     test("when the inventory exists", async () => {
       const loggedUser = loggedUserFactory.build({
         id: "12",
-        role: "contributor",
+        role: "user",
       });
 
       const matchingInventory = inventoryFactory.build({
@@ -256,7 +256,7 @@ describe("Deletion of a data", () => {
     test("unless no matching inventory has been found", async () => {
       const loggedUser = loggedUserFactory.build({
         id: "12",
-        role: "contributor",
+        role: "user",
       });
 
       const deletedEntry = entryFactory.build();
@@ -271,7 +271,7 @@ describe("Deletion of a data", () => {
 
   test("should not be allowed when trying to deletre a data belonging to a non-owned inventory", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() =>

@@ -5,6 +5,6 @@ import { Factory } from "fishery";
 export const loggedUserFactory = Factory.define<LoggedUser>(() => {
   return {
     id: faker.string.uuid(),
-    role: "contributor",
+    role: "user",
   };
 });

@@ -260,7 +260,7 @@ describe("Update of a city", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     townRepository.findTownById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -347,7 +347,7 @@ describe("Deletion of a city", () => {
   test("should handle the deletion of an owned city", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: "contributor",
+      role: "user",
     };
 
     const city = townFactory.build({
@@ -377,7 +377,7 @@ describe("Deletion of a city", () => {
 
   test("should not be allowed when deleting a non-owned city as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     townRepository.findTownById.mock.mockImplementationOnce(() => Promise.resolve(townFactory.build()));

@@ -341,7 +341,7 @@
     "role": "Rôle"
   },
   "userRoles": {
-    "viewer": "Lecteur",
+    "user": "Utilisateur",
     "contributor": "Contributeur",
     "admin": "Administrateur global"
   },

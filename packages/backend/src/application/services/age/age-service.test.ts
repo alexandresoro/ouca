@@ -212,7 +212,7 @@ describe("Update of an age", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -299,7 +299,7 @@ describe("Deletion of an age", () => {
   test("should handle the deletion of an owned age", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const age = ageFactory.build({ ownerId: loggedUser.id });

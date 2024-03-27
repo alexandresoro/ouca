@@ -278,7 +278,7 @@ describe("Update of a department", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     departmentRepository.findDepartmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -367,7 +367,7 @@ describe("Deletion of a department", () => {
   test("hould handle the deletion of an owned department", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: "contributor",
+      role: "user",
     };
 
     const department = departmentFactory.build({

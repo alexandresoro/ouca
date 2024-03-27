@@ -334,7 +334,7 @@ describe("Deletion of an inventory", () => {
   test("when deletion of inventory is done by a non-admin owner", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const inventory = inventoryFactory.build({
@@ -354,7 +354,7 @@ describe("Deletion of an inventory", () => {
   test("should not be allowed when trying to delete an inventory still used", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const inventory = inventoryFactory.build({
@@ -371,7 +371,7 @@ describe("Deletion of an inventory", () => {
 
   test("should not be allowed when trying to delete an inventory belonging to a non-owned inventory", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventoryFactory.build()));

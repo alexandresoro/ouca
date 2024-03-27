@@ -260,7 +260,7 @@ describe("Update of a locality", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -342,7 +342,7 @@ describe("Deletion of a locality", () => {
   test("should handle the deletion of an owned locality", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: "contributor",
+      role: "user",
     };
 
     const locality = localityFactory.build({
@@ -374,7 +374,7 @@ describe("Deletion of a locality", () => {
 
   test("should not be allowed when deleting a non-owned locality as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));

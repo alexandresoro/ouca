@@ -261,7 +261,7 @@ describe("Update of a class", () => {
 
     const loggedUser = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     classRepository.findSpeciesClassById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -350,7 +350,7 @@ describe("Deletion of a class", () => {
   test("should handle the deletion of an owned class", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: "contributor",
+      role: "user",
     };
 
     const speciesClass = speciesClassFactory.build({
@@ -382,7 +382,7 @@ describe("Deletion of a class", () => {
 
   test("should not be allowed when deleting a non-owned class as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     classRepository.findSpeciesClassById.mock.mockImplementationOnce(() =>

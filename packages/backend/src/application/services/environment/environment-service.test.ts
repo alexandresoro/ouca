@@ -254,7 +254,7 @@ describe("Update of an environment", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -343,7 +343,7 @@ describe("Deletion of an environment", () => {
   test("should handle the deletion of an owned environment", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const environment = environmentFactory.build({
@@ -375,7 +375,7 @@ describe("Deletion of an environment", () => {
 
   test("should not be allowed when deleting a non-owned environment as non-admin", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "contributor",
+      role: "user",
     });
 
     environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() =>

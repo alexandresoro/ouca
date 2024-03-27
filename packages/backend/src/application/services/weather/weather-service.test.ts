@@ -255,7 +255,7 @@ describe("Update of an weather", () => {
 
     const user = {
       id: "Bob",
-      role: "contributor",
+      role: "user",
     } as const;
 
     weatherRepository.findWeatherById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
@@ -342,7 +342,7 @@ describe("Deletion of an weather", () => {
   test("should handle the deletion of an owned weather", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "contributor",
+      role: "user",
     });
 
     const weather = weatherFactory.build({
