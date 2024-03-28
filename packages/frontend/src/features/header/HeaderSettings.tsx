@@ -1,7 +1,6 @@
 import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
 import { useUser } from "@hooks/useUser";
-import { type Features, useFeatures } from "@services/app-features/features";
 import { Cog, Import, LogOut, User } from "@styled-icons/boxicons-regular";
 import stringToColor from "@utils/user-profile/stringToColor";
 import type { ParseKeys } from "i18next";
@@ -9,7 +8,7 @@ import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const getMenuOptions = (features: Features) => [
+const getMenuOptions = (enableImport: boolean) => [
   {
     localizationKey: "profile" as ParseKeys,
     Icon: User,
@@ -20,12 +19,13 @@ const getMenuOptions = (features: Features) => [
     Icon: Cog,
     to: "/settings",
   },
-  ...(features.tmp_import
+  ...(enableImport
     ? [
         {
           localizationKey: "importFromFile" as ParseKeys,
           Icon: Import,
           to: "/import",
+          beta: true,
         },
       ]
     : []),
@@ -34,14 +34,15 @@ const getMenuOptions = (features: Features) => [
 const HeaderSettings: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const features = useFeatures();
-
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const {
     auth: { removeUser },
     fullName,
     initials,
+    role,
   } = useUser();
+
+  const enableImport = role === "admin" || role === "contributor";
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-end",
@@ -94,7 +95,7 @@ const HeaderSettings: FunctionComponent = () => {
         }}
         className="flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
       >
-        {getMenuOptions(features).map(({ Icon, localizationKey, to }) => {
+        {getMenuOptions(enableImport).map(({ Icon, localizationKey, to, beta }) => {
           const CurrentMenuItem = (
             <Menu.Item key={to}>
               {({ active }) => (
@@ -107,6 +108,7 @@ const HeaderSettings: FunctionComponent = () => {
                   <>
                     <Icon className="h-5" />
                     {t(localizationKey)}
+                    {beta && <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>}
                   </>
                 </Link>
               )}

@@ -1,17 +1,53 @@
-import type { ImportType } from "@ou-ca/common/import/import-types";
+import Select from "@components/base/select/Select";
+import { useUser } from "@hooks/useUser";
+import ContentContainerLayout from "@layouts/ContentContainerLayout";
+import { importStatusSchema } from "@ou-ca/common/import/import-status";
+import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import/import-types";
 import { useFetchWithAuth } from "@services/api/useFetchWithAuth";
+import { useQueryWithAuth } from "@services/api/useQueryWithAuth";
+import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
 import { type ChangeEvent, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Navigate } from "react-router-dom";
 import { z } from "zod";
+import ImportStatusPanel from "./ImportStatusPanel";
 
 const Test: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const [importType, setImportType] = useState<ImportType>();
+  const { role } = useUser();
+
+  const [importType, setImportType] = useState<ImportType>(IMPORT_TYPE[0]);
 
   const [file, setFile] = useState<File>();
   const [importId, setImportId] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+
+  const [isImportOngoing, setIsImportOngoing] = useState(false);
+
+  const { data: importStatus } = useQueryWithAuth(
+    `/import-status/${importId}`,
+    {
+      schema: importStatusSchema,
+      paused: !importId,
+    },
+    {
+      refreshInterval: (data) => {
+        if (data?.status === "completed" || data?.status === "failed") {
+          return 0;
+        }
+
+        return 1000;
+      },
+      onError: () => {
+        setIsImportOngoing(false);
+      },
+      onSuccess: (data) => {
+        if (data.status === "completed" || data.status === "failed") {
+          setIsImportOngoing(false);
+        }
+      },
+    },
+  );
 
   const submitImport = useFetchWithAuth({
     path: `/uploads/${importType}`,
@@ -21,13 +57,10 @@ const Test: FunctionComponent = () => {
     }),
   });
 
-  const getImportStatus = useFetchWithAuth({
-    path: `/import-status/${importId}`,
-  });
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
+      setImportId(null);
     }
   };
 
@@ -44,29 +77,52 @@ const Test: FunctionComponent = () => {
     });
 
     setImportId(response.uploadId);
+    setIsImportOngoing(true);
   };
 
-  const refreshStatus = async () => {
-    if (!importId) {
-      return;
-    }
-
-    const status = await getImportStatus();
-
-    setStatus(JSON.stringify(status));
-  };
+  if (role !== "admin" && role !== "contributor") {
+    return <Navigate to="/" replace={true} />;
+  }
 
   return (
-    <>
-      <input type="file" onChange={handleFileChange} />
-      <button className="btn" type="button" onClick={() => submitFile()}>
-        {t("importPage.submit")}
-      </button>
-      <button className="btn" type="button" onClick={() => refreshStatus()}>
-        Refresh status
-      </button>
-      {status}
-    </>
+    <ContentContainerLayout>
+      <div className="card border-2 border-primary p-6 shadow-xl">
+        <h2 className="text-xl font-semibold mb-3">{t("importPage.title")}</h2>
+        <div className="flex gap-24 items-end">
+          <div className="flex flex-grow max-w-3xl gap-6">
+            <Select
+              selectClassName="w-full max-w-xs !py-0"
+              label={t("importPage.typeLabel")}
+              data={[...IMPORT_TYPE]}
+              value={importType}
+              onChange={setImportType}
+              renderValue={(value) => capitalizeFirstLetter(t(`importPage.type.${value}`))}
+              disabled={isImportOngoing}
+            />
+            <label className="form-control w-full max-w-lg">
+              <div className="label">
+                <span className="label-text">{t("importPage.pickFileLabel")}</span>
+              </div>
+              <input
+                disabled={isImportOngoing}
+                type="file"
+                className="file-input file-input-bordered"
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+          <button
+            className="btn btn-primary uppercase"
+            type="button"
+            onClick={() => submitFile()}
+            disabled={!file || isImportOngoing}
+          >
+            {t("importPage.submit")}
+          </button>
+        </div>
+        <ImportStatusPanel importType={importType} status={importStatus} isImportOngoing={isImportOngoing} />
+      </div>
+    </ContentContainerLayout>
   );
 };
 

@@ -16,14 +16,16 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   onBlur?: FocusEventHandler<HTMLButtonElement>;
   renderValue: (value: T) => string;
   selectClassName?: string;
-} & (T extends { id: Key }
+  disabled?: boolean;
+} & (T extends { id: Key } | string
   ? {
       by?: K;
     }
   : { by: K });
 
 const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
-  const { data, name, value, required, onChange, onBlur, by, renderValue, hasError, label, selectClassName } = props;
+  const { data, name, value, required, onChange, onBlur, by, renderValue, hasError, label, selectClassName, disabled } =
+    props;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-start",
@@ -62,6 +64,7 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
       value={value}
       onChange={onChange}
       className={`form-control py-2 ${selectClassName ?? ""}`}
+      disabled={disabled}
     >
       <div className="label">
         <Listbox.Label className="label-text">
@@ -91,7 +94,11 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
       >
         {data?.map((option) => {
           return (
-            <Listbox.Option className="font-semibold" key={option[key] as Key} value={option}>
+            <Listbox.Option
+              className="font-semibold"
+              key={typeof option === "string" ? option : (option[key] as Key)}
+              value={option}
+            >
               {({ active, selected, disabled }) => (
                 <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
                   <span>{renderValue(option)}</span>

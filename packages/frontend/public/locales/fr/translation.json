@@ -410,27 +410,60 @@
   "exportDatabaseButton": "Sauvegarde de la base",
   "importFromFile": "Import depuis un fichier",
   "importPage": {
+    "title": "Import de données",
+    "statusTitle": "État de l'import",
     "submit": "Envoyer",
+    "typeLabel": "Type de données",
+    "pickFileLabel": "Fichier à importer",
     "type": {
-      "observer": "Observateurs",
-      "department": "Départements",
-      "town": "Communes",
-      "locality": "Lieux-dits",
-      "weather": "Météos",
-      "species-class": "Classes espèces",
-      "species": "Espèces",
-      "age": "Âges",
-      "sex": "Sexes",
-      "number-estimate": "Estimations du nombre",
-      "distance-estimate": "Estimations de la distance",
-      "behavior": "Comportements",
-      "environment": "Milieux naturels",
-      "entry": "Données"
-    }
+      "observer": "observateurs",
+      "department": "départements",
+      "town": "communes",
+      "locality": "lieux-dits",
+      "weather": "météos",
+      "species-class": "classes espèces",
+      "species": "espèces",
+      "age": "âges",
+      "sex": "sexes",
+      "number-estimate": "estimations du nombre",
+      "distance-estimate": "estimations de la distance",
+      "behavior": "comportements",
+      "environment": "milieux naturels",
+      "entry": "données"
+    },
+    "noOngoingImportStatus": "Aucun import en cours",
+    "importOngoingNoStatus": "Import soumis. Aucun statut disponible pour le moment.",
+    "importStatus": {
+      "notStarted": "Import en file d'attente",
+      "ongoing": "Import en cours",
+      "ongoingStep": {
+        "processStarted": "Lancement de l'import",
+        "importRetrieved": "Fichier d'import récupéré",
+        "retrievingRequiredData": "Recupération des données requises",
+        "validatingInputFile": "Validation du fichier d'import",
+        "insertingImportedData": "Import des données vers la base"
+      },
+      "completed": "Import terminé",
+      "failed": "Échec de l'import pour une raison indeterminée"
+    },
+    "importStats": {
+      "totalNumberOfLines": "Nombre de lignes",
+      "totalNumberOfLinesDescription": "Toutes les lignes - y compris les lignes de commentaires",
+      "progress": "Progression",
+      "progressDescription": "{{ count }} lignes au total",
+      "numberOfValidEntries": "Nombre de lignes utiles",
+      "numberOfValidEntriesDescription": "Uniquement lignes de contenus",
+      "numberOfErrorLines": "Nombre de lignes en erreur",
+      "numberOfErrorLinesDescriptionNoErrors": "Bravo !",
+      "numberOfErrorLinesDescriptionWithErrors": "L'import de certaines lignes a échoué"
+    },
+    "exportImportErrorsLabel": "Exporter les erreurs d'import au format CSV",
+    "exportFileName": "erreurs_import_{{suffix}}.csv"
   },
   "logout": "Déconnexion",
   "sessionExpired": {
     "description": "Votre session utilisateur a expiré. Veuillez vous reconnecter.",
     "reconnectButton": "Me reconnecter"
-  }
+  },
+  "beta": "beta"
 }
