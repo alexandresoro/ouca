@@ -1,20 +1,4 @@
-import {
-  IMPORT_AGE,
-  IMPORT_CLASSE,
-  IMPORT_COMMUNE,
-  IMPORT_COMPORTEMENT,
-  IMPORT_DEPARTEMENT,
-  IMPORT_DONNEE,
-  IMPORT_ESPECE,
-  IMPORT_ESTIMATION_DISTANCE,
-  IMPORT_ESTIMATION_NOMBRE,
-  IMPORT_LIEUDIT,
-  IMPORT_METEO,
-  IMPORT_MILIEU,
-  IMPORT_OBSERVATEUR,
-  IMPORT_SEXE,
-  type ImportType,
-} from "@ou-ca/common/import/import-types";
+import type { ImportType } from "@ou-ca/common/import/import-types";
 import type { Services } from "../../services.js";
 import { ImportAgeService } from "./import-age-service.js";
 import { ImportClasseService } from "./import-classe-service.js";
@@ -34,33 +18,33 @@ import { ImportSexeService } from "./import-sexe-service.js";
 
 export const getNewImportServiceForRequestType = (requestType: ImportType, services: Services): ImportService => {
   switch (requestType) {
-    case IMPORT_OBSERVATEUR:
+    case "observer":
       return new ImportObservateurService(services);
-    case IMPORT_DEPARTEMENT:
+    case "department":
       return new ImportDepartementService(services);
-    case IMPORT_COMMUNE:
+    case "town":
       return new ImportCommuneService(services);
-    case IMPORT_LIEUDIT:
+    case "locality":
       return new ImportLieuxditService(services);
-    case IMPORT_METEO:
+    case "weather":
       return new ImportMeteoService(services);
-    case IMPORT_CLASSE:
+    case "species-class":
       return new ImportClasseService(services);
-    case IMPORT_ESPECE:
+    case "species":
       return new ImportEspeceService(services);
-    case IMPORT_AGE:
+    case "age":
       return new ImportAgeService(services);
-    case IMPORT_SEXE:
+    case "sex":
       return new ImportSexeService(services);
-    case IMPORT_ESTIMATION_NOMBRE:
+    case "number-estimate":
       return new ImportEstimationNombreService(services);
-    case IMPORT_ESTIMATION_DISTANCE:
+    case "distance-estimate":
       return new ImportEstimationDistanceService(services);
-    case IMPORT_COMPORTEMENT:
+    case "behavior":
       return new ImportComportementService(services);
-    case IMPORT_MILIEU:
+    case "environment":
       return new ImportMilieuService(services);
-    case IMPORT_DONNEE:
+    case "entry":
       return new ImportDonneeService(services);
     default:
       throw new Error("I,port of unknown type requested");

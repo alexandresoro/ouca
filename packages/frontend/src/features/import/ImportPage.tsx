@@ -7,7 +7,7 @@ import { z } from "zod";
 const Test: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const [importType, setImportType] = useState<ImportType>("observateur");
+  const [importType, setImportType] = useState<ImportType>();
 
   const [file, setFile] = useState<File>();
   const [importId, setImportId] = useState<string | null>(null);

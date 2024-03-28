@@ -410,7 +410,23 @@
   "exportDatabaseButton": "Sauvegarde de la base",
   "importFromFile": "Import depuis un fichier",
   "importPage": {
-    "submit": "Envoyer"
+    "submit": "Envoyer",
+    "type": {
+      "observer": "Observateurs",
+      "department": "Départements",
+      "town": "Communes",
+      "locality": "Lieux-dits",
+      "weather": "Météos",
+      "species-class": "Classes espèces",
+      "species": "Espèces",
+      "age": "Âges",
+      "sex": "Sexes",
+      "number-estimate": "Estimations du nombre",
+      "distance-estimate": "Estimations de la distance",
+      "behavior": "Comportements",
+      "environment": "Milieux naturels",
+      "entry": "Données"
+    }
   },
   "logout": "Déconnexion",
   "sessionExpired": {
