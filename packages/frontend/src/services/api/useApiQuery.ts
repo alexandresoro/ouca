@@ -13,6 +13,7 @@ export type ApiQueryKey = {
 export type UseApiQueryCommonParams = {
   queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
   paused?: boolean;
+  useApiPath?: boolean;
 };
 
 type UseApiQueryParams<T = unknown> = UseApiQueryCommonParams & {
@@ -23,11 +24,11 @@ export type UseApiQuerySWROptions<T = unknown, E = unknown> = Omit<SWRConfigurat
 
 export const useApiQuery = <T = unknown, E = unknown>(
   path: string,
-  { queryParams, paused, schema }: UseApiQueryParams<T> = {},
+  { queryParams, paused, schema, useApiPath = true }: UseApiQueryParams<T> = {},
   swrOptions?: UseApiQuerySWROptions<T, E>,
 ) => {
   const { user } = useAuth();
-  const apiUrl = useApiUrl();
+  const apiUrl = useApiUrl(useApiPath);
 
   const accessToken = user?.access_token;
 

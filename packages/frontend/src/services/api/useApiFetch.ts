@@ -5,7 +5,7 @@ import { useAuth } from "react-oidc-context";
 import type { z } from "zod";
 import useApiUrl from "./useApiUrl";
 
-type UseApiFetchParams<T> = { path?: string; method?: string; schema?: z.ZodType<T> };
+type UseApiFetchParams<T> = { path?: string; method?: string; schema?: z.ZodType<T>; useApiPath?: boolean };
 
 type UseApiFetchCallParams = {
   path?: string;
@@ -17,7 +17,7 @@ export function useApiFetch<T>({
   path,
   method,
   schema,
-}: { path: string; method?: string; schema?: z.ZodType<T> }): (
+}: { path: string; method?: string; schema?: z.ZodType<T>; useApiPath?: boolean }): (
   options?: Omit<UseApiFetchCallParams, "path">,
 ) => Promise<T>;
 export function useApiFetch<T>({ method, schema }: Omit<UseApiFetchParams<T>, "path">): ({
@@ -28,14 +28,16 @@ export function useApiFetch<T>({ method, schema }: Omit<UseApiFetchParams<T>, "p
   path: string;
   body?: Record<string, unknown>;
   queryParams?: Record<string, string | number | boolean | undefined>;
+  useApiPath?: boolean;
 }) => Promise<T>;
 export function useApiFetch<T>({
   path: pathFromSignature,
   method,
   schema,
+  useApiPath = true,
 }: UseApiFetchParams<T>): (params?: UseApiFetchCallParams) => Promise<T> {
   const { user } = useAuth();
-  const apiUrl = useApiUrl();
+  const apiUrl = useApiUrl(useApiPath);
 
   const accessToken = user?.access_token;
 

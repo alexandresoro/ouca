@@ -7,8 +7,12 @@ export const apiUrlAtom = atom((get) => {
   return get(configAtom).apiUrl ?? "";
 });
 
-const useApiUrl = () => {
+const useApiUrl = (includeApiPath = true) => {
   const apiUrl = useAtomValue(apiUrlAtom);
+
+  if (!includeApiPath) {
+    return apiUrl;
+  }
 
   return `${apiUrl}${API_PATH}`;
 };

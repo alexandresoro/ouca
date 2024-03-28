@@ -3,8 +3,8 @@ import { useUser } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import { importStatusSchema } from "@ou-ca/common/import/import-status";
 import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import/import-types";
-import { useFetchWithAuth } from "@services/api/useFetchWithAuth";
-import { useQueryWithAuth } from "@services/api/useQueryWithAuth";
+import { useApiFetch } from "@services/api/useApiFetch";
+import { useApiQuery } from "@services/api/useApiQuery";
 import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
 import { type ChangeEvent, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,11 +24,12 @@ const Test: FunctionComponent = () => {
 
   const [isImportOngoing, setIsImportOngoing] = useState(false);
 
-  const { data: importStatus } = useQueryWithAuth(
+  const { data: importStatus } = useApiQuery(
     `/import-status/${importId}`,
     {
       schema: importStatusSchema,
       paused: !importId,
+      useApiPath: false,
     },
     {
       refreshInterval: (data) => {
@@ -49,12 +50,13 @@ const Test: FunctionComponent = () => {
     },
   );
 
-  const submitImport = useFetchWithAuth({
+  const submitImport = useApiFetch({
     path: `/uploads/${importType}`,
     method: "POST",
     schema: z.object({
       uploadId: z.string(),
     }),
+    useApiPath: false,
   });
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
