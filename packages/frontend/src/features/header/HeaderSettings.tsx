@@ -119,7 +119,7 @@ const HeaderSettings: FunctionComponent = () => {
           }
           return [CurrentMenuItem, ...Dividers];
         })}
-        <hr className="w-full border-t-[1px]" />
+        <hr className="w-full border-t-[1px] my-1" />
         <Menu.Item key="/logout">
           {({ active }) => (
             <button
