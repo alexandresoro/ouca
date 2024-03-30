@@ -24,8 +24,8 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
     externalUserId: string,
   ): Promise<string | null> => userRepository.findUserIdByExternalIdWithCache({ externalUserId, externalProviderName });
 
-  const findUserByExternalId = async (externalProviderName: string, externalUserId: string): Promise<User | null> =>
-    userRepository.findUserByExternalId({ externalUserId, externalProviderName });
+  const findUserByExternalId = async (externalProviderName: string, externalProviderId: string): Promise<User | null> =>
+    userRepository.findUserByExternalId({ externalProviderId, externalProviderName });
 
   const updateSettings = async (id: string, settings: User["settings"]): Promise<User> =>
     userRepository.updateUserSettings(id, settings);

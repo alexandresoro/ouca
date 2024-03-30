@@ -15,8 +15,8 @@ export type UserRepository = {
   }: { externalProviderName: string; externalUserId: string }) => Promise<string | null>;
   findUserByExternalId: ({
     externalProviderName,
-    externalUserId,
-  }: { externalProviderName: string; externalUserId: string }) => Promise<User | null>;
+    externalProviderId,
+  }: { externalProviderName: string; externalProviderId: string }) => Promise<User | null>;
   updateUserSettings: (id: string, settings: User["settings"]) => Promise<User>;
   createUser: (create: {
     extProviderName: string;
