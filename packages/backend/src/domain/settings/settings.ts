@@ -6,7 +6,6 @@ import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { z } from "zod";
 
 export const settingsSchema = z.object({
-  id: z.string(),
   defaultObservateurId: z.string().nullable(),
   defaultDepartementId: z.string().nullable(),
   defaultAgeId: z.string().nullable(),

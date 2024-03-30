@@ -1,7 +1,6 @@
 import type { Generated } from "kysely";
 
 export type Settings = {
-  id: Generated<number>;
   defaultObservateurId: number | null;
   defaultDepartementId: number | null;
   defaultAgeId: number | null;

@@ -6,7 +6,6 @@ const getUserSettings = async (userId: string): Promise<Settings | null> => {
   const userSettings = await kysely
     .selectFrom("settings")
     .select([
-      sql`id::text`.as("id"),
       sql`default_observateur_id::text`.as("default_observateur_id"),
       sql`default_departement_id::text`.as("default_departement_id"),
       sql`default_age_id::text`.as("default_age_id"),
@@ -40,7 +39,6 @@ const updateUserSettings = async (userId: string, updateSettingsInput: UpdateSet
     .set(updateSettingsInput)
     .where("userId", "=", userId)
     .returning([
-      sql`id::text`.as("id"),
       sql`default_observateur_id::text`.as("default_observateur_id"),
       sql`default_departement_id::text`.as("default_departement_id"),
       sql`default_age_id::text`.as("default_age_id"),
