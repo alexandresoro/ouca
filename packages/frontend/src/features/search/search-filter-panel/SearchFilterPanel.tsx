@@ -22,7 +22,8 @@ const SearchFilterPanel: FunctionComponent = () => {
 
   const features = useFeatures();
 
-  const { role } = useUser();
+  const user = useUser();
+  const role = user?.role;
 
   const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
     features.tmp_only_own_observations_filter && role === "admin",

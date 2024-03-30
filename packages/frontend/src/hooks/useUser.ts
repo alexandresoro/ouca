@@ -1,63 +1,26 @@
-import type { User } from "oidc-client-ts";
-import { useAuth } from "react-oidc-context";
+import { useApiMe } from "@services/api/me/api-me-queries";
+import { getFullName, getInitials } from "@utils/name-utils";
 
 const ROLES = ["admin", "contributor", "user"] as const;
 
-const getRole = (user: User): (typeof ROLES)[number] | null => {
-  const rolesMap = user.profile["urn:zitadel:iam:org:project:roles"] as Record<string, unknown>[] | undefined;
-  if (!rolesMap) {
-    // Should not happen in practice
-    return null;
-  }
-
-  const roles = Object.keys(rolesMap);
-
+const getRole = (roles: string[]): (typeof ROLES)[number] | null => {
   return ROLES.find((existingRole) => roles.includes(existingRole)) ?? null;
 };
 
-const getFullName = (user: User | null | undefined): string | null => {
-  if (!user?.profile) {
-    return null;
-  }
-  let fullName = "";
-  if (user.profile.given_name) {
-    fullName += user.profile.given_name;
-  }
-
-  if (user.profile.family_name) {
-    fullName += " ";
-    fullName += user.profile.family_name;
-  }
-
-  return fullName;
-};
-
-const getInitials = (user: User | null | undefined): string | null => {
-  if (!user?.profile) {
-    return null;
-  }
-  let initials = "";
-  if (user.profile.given_name?.length) {
-    initials += user.profile.given_name[0];
-  }
-
-  if (user.profile.family_name?.length) {
-    initials += user.profile.family_name[0];
-  }
-
-  return initials;
-};
-
 export const useUser = () => {
-  const auth = useAuth();
+  const user = useApiMe();
 
-  const fullName = getFullName(auth.user);
-  const initials = getInitials(auth.user);
+  if (user === undefined) {
+    return undefined;
+  }
 
-  const role = auth.user ? getRole(auth.user) : null;
+  const fullName = getFullName([user.user.given_name ?? "", user.user.family_name ?? ""]);
+  const initials = getInitials([user.user.given_name ?? "", user.user.family_name ?? ""]);
+
+  const role = getRole(user.user.roles ?? []);
 
   return {
-    auth,
+    ...user,
     fullName,
     initials,
     role,

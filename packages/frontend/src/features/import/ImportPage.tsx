@@ -15,7 +15,8 @@ import ImportStatusPanel from "./ImportStatusPanel";
 const Test: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { role } = useUser();
+  const user = useUser();
+  const role = user?.role;
 
   const [importType, setImportType] = useState<ImportType>(IMPORT_TYPE[0]);
 

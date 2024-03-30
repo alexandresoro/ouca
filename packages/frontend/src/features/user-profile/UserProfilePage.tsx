@@ -9,12 +9,7 @@ import { Link } from "react-router-dom";
 const UserProfilePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const {
-    auth: { user },
-    role,
-    fullName,
-    initials,
-  } = useUser();
+  const user = useUser();
 
   if (!user) {
     return null;
@@ -32,25 +27,23 @@ const UserProfilePage: FunctionComponent = () => {
               <div className="card-body items-center gap-4">
                 <div
                   style={
-                    fullName
+                    user.fullName
                       ? {
-                          backgroundColor: stringToColor(fullName),
+                          backgroundColor: stringToColor(user.fullName),
                         }
                       : {}
                   }
                   className="flex items-center justify-center uppercase font-bold text-white bg-secondary rounded-full h-16 md:h-40 w-16 md:w-40"
                 >
-                  <span className="text-2xl md:text-6xl">{initials}</span>
+                  <span className="text-2xl md:text-6xl">{user.initials}</span>
                 </div>
-                <span className="text-base-content text-lg uppercase">{fullName}</span>
-                {role && <span className="badge badge-outline badge-accent">{t(`userRoles.${role}`)}</span>}
+                <span className="text-base-content text-lg uppercase">{user.fullName}</span>
+                {user.role && <span className="badge badge-outline badge-accent">{t(`userRoles.${user.role}`)}</span>}
+                <span className="text-base-content text-center text-xs uppercase opacity-20 hover:opacity-60">
+                  ID {user.id}
+                </span>
                 {user && (
-                  <span className="text-base-content text-center text-xs uppercase opacity-20 hover:opacity-60">
-                    ID {user.profile.sub}
-                  </span>
-                )}
-                {user && (
-                  <Link to={user.profile.iss} target="_blank" className="btn btn-primary uppercase mt-4">
+                  <Link to={user.user.iss} target="_blank" className="btn btn-primary uppercase mt-4">
                     {t("updateProfileButton")}
                   </Link>
                 )}

@@ -6,6 +6,7 @@ import stringToColor from "@utils/user-profile/stringToColor";
 import type { ParseKeys } from "i18next";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "react-oidc-context";
 import { Link } from "react-router-dom";
 
 const getMenuOptions = (enableImport: boolean) => [
@@ -35,12 +36,9 @@ const HeaderSettings: FunctionComponent = () => {
   const { t } = useTranslation();
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const {
-    auth: { removeUser },
-    fullName,
-    initials,
-    role,
-  } = useUser();
+  const { removeUser } = useAuth();
+  const user = useUser();
+  const role = user?.role;
 
   const enableImport = role === "admin" || role === "contributor";
 
@@ -74,15 +72,15 @@ const HeaderSettings: FunctionComponent = () => {
       >
         <div
           style={
-            fullName
+            user?.fullName
               ? {
-                  backgroundColor: stringToColor(fullName),
+                  backgroundColor: stringToColor(user.fullName),
                 }
               : {}
           }
           className="text-white rounded-full w-8 bg-secondary"
         >
-          <span>{initials}</span>
+          <span>{user?.initials}</span>
         </div>
       </Menu.Button>
 
