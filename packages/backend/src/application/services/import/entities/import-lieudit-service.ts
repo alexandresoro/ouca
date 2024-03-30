@@ -3,11 +3,8 @@ import type { Department } from "@ou-ca/common/api/entities/department";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import type { UpsertLocalityInput } from "@ou-ca/common/api/locality";
-import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
-import type {
-  CoordinatesSystem,
-  CoordinatesSystemType,
-} from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import type { CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { ImportService } from "./import-service.js";
 import { ImportedLieuDit } from "./objects/imported-lieu-dit.object.js";
 
@@ -25,23 +22,14 @@ export class ImportLieuxditService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.lieuxDitsToInsert = [];
-    let coordinatesSystemType: CoordinatesSystemType | undefined;
 
-    [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
+    [this.departements, this.communes, this.lieuxDits] = await Promise.all([
       this.services.departmentService.findAllDepartments(),
       this.services.townService.findAllTowns(),
       this.services.localityService.findAllLocalities(),
-      "gps",
     ]);
 
-    if (!coordinatesSystemType) {
-      return Promise.reject(
-        "Veuillez choisir le système de coordonnées de l'application dans la page de configuration",
-      );
-      // biome-ignore lint/style/noUselessElse: <explanation>
-    } else {
-      this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
-    }
+    this.coordinatesSystem = GPS_COORDINATES;
   };
 
   protected validateAndPrepareEntity = (lieuDitTab: string[]): string | null => {

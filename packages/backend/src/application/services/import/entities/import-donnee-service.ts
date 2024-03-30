@@ -15,7 +15,7 @@ import type { Town } from "@ou-ca/common/api/entities/town";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
-import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
+import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { getDateOnlyAsLocalISOString } from "../../../../utils/time-utils.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../../../utils/utils.js";
@@ -120,8 +120,8 @@ export class ImportDonneeService extends ImportService {
     };
 
     // Round the coordinates
-    coordinates.longitude = +coordinates.longitude.toFixed(COORDINATES_SYSTEMS_CONFIG.gps.decimalPlaces);
-    coordinates.latitude = +coordinates.latitude.toFixed(COORDINATES_SYSTEMS_CONFIG.gps.decimalPlaces);
+    coordinates.longitude = +coordinates.longitude.toFixed(GPS_COORDINATES.decimalPlaces);
+    coordinates.latitude = +coordinates.latitude.toFixed(GPS_COORDINATES.decimalPlaces);
 
     if (!areCoordinatesCustomized(lieudit, altitude, coordinates.longitude, coordinates.latitude, "gps")) {
       altitude = null;
