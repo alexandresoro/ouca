@@ -39,39 +39,34 @@ export const buildSettingsService = ({
       return err("notAllowed");
     }
 
-    const settings = await settingsRepository.getUserSettings(loggedUser.id);
-    if (!settings) {
+    const user = await userService.getUser(loggedUser.id);
+    if (!user?.settings) {
       return ok(null);
     }
 
-    const {
-      defaultDepartementId,
-      defaultObservateurId,
-      defaultSexeId,
-      defaultAgeId,
-      defaultEstimationNombreId,
-      ...restSettings
-    } = settings;
+    const { id, settings } = user;
+
+    const { defaultDepartmentId, defaultObserverId, defaultSexId, defaultAgeId, defaultNumberEstimateId } = settings;
 
     const defaultDepartmentResult =
-      defaultDepartementId != null
-        ? await departmentService.findDepartment(Number.parseInt(defaultDepartementId), loggedUser)
+      defaultDepartmentId != null
+        ? await departmentService.findDepartment(Number.parseInt(defaultDepartmentId), loggedUser)
         : ok(null);
 
     const defaultObserverResult =
-      defaultObservateurId != null
-        ? await observerService.findObserver(Number.parseInt(defaultObservateurId), loggedUser)
+      defaultObserverId != null
+        ? await observerService.findObserver(Number.parseInt(defaultObserverId), loggedUser)
         : ok(null);
 
     const defaultSexResult =
-      defaultSexeId != null ? await sexService.findSex(Number.parseInt(defaultSexeId), loggedUser) : ok(null);
+      defaultSexId != null ? await sexService.findSex(Number.parseInt(defaultSexId), loggedUser) : ok(null);
 
     const defaultAgeResult =
       defaultAgeId != null ? await ageService.findAge(Number.parseInt(defaultAgeId), loggedUser) : ok(null);
 
     const defaultNumberEstimateResult =
-      defaultEstimationNombreId != null
-        ? await numberEstimateService.findNumberEstimate(Number.parseInt(defaultEstimationNombreId), loggedUser)
+      defaultNumberEstimateId != null
+        ? await numberEstimateService.findNumberEstimate(Number.parseInt(defaultNumberEstimateId), loggedUser)
         : ok(null);
 
     const getEnrichedDataResult = Result.combine([
@@ -90,12 +85,17 @@ export const buildSettingsService = ({
       getEnrichedDataResult.value;
 
     return ok({
-      ...restSettings,
       defaultDepartment,
       defaultObserver,
       defaultSex,
       defaultAge,
       defaultNumberEstimate,
+      defaultNombre: settings.defaultNumber ?? null,
+      areAssociesDisplayed: settings.displayAssociates ?? true,
+      isMeteoDisplayed: settings.displayWeather ?? true,
+      isDistanceDisplayed: settings.displayDistance ?? true,
+      isRegroupementDisplayed: settings.displayGrouping ?? true,
+      userId: id,
     });
   };
 
@@ -117,51 +117,52 @@ export const buildSettingsService = ({
       `Saving user settings of User=${loggedUser.id}`,
     );
 
-    const updatedSettings = await settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);
+    await settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);
 
     // Temporary sync to user service settings
     const updatedSettingsUser = {
-      defaultObserverId: updatedSettings.defaultObservateurId ?? undefined,
-      defaultDepartmentId: updatedSettings.defaultDepartementId ?? undefined,
-      defaultAgeId: updatedSettings.defaultAgeId ?? undefined,
-      defaultSexId: updatedSettings.defaultSexeId ?? undefined,
-      defaultNumberEstimateId: updatedSettings.defaultEstimationNombreId ?? undefined,
-      defaultNumber: updatedSettings.defaultNombre ?? undefined,
-      displayAssociates: updatedSettings.areAssociesDisplayed ?? undefined,
-      displayWeather: updatedSettings.isMeteoDisplayed ?? undefined,
-      displayDistance: updatedSettings.isDistanceDisplayed ?? undefined,
-      displayGrouping: updatedSettings.isRegroupementDisplayed ?? undefined,
+      defaultObserverId: `${updateSettingsInput.defaultObservateurId}` ?? undefined,
+      defaultDepartmentId: `${updateSettingsInput.defaultDepartementId}` ?? undefined,
+      defaultAgeId: `${updateSettingsInput.defaultAgeId}` ?? undefined,
+      defaultSexId: `${updateSettingsInput.defaultSexeId}` ?? undefined,
+      defaultNumberEstimateId: `${updateSettingsInput.defaultEstimationNombreId}` ?? undefined,
+      defaultNumber: updateSettingsInput.defaultNombre ?? undefined,
+      displayAssociates: updateSettingsInput.areAssociesDisplayed ?? undefined,
+      displayWeather: updateSettingsInput.isMeteoDisplayed ?? undefined,
+      displayDistance: updateSettingsInput.isDistanceDisplayed ?? undefined,
+      displayGrouping: updateSettingsInput.isRegroupementDisplayed ?? undefined,
     } satisfies User["settings"];
-    await userService.updateSettings(loggedUser.id, updatedSettingsUser);
+
+    const { id, settings: updatedSettingsNew } = await userService.updateSettings(loggedUser.id, updatedSettingsUser);
 
     const {
-      defaultDepartementId,
-      defaultObservateurId,
-      defaultSexeId,
+      defaultDepartmentId,
+      defaultObserverId,
+      defaultSexId,
       defaultAgeId,
-      defaultEstimationNombreId,
-      ...restSettings
-    } = updatedSettings;
+      defaultNumberEstimateId,
+      ...restSettingsNew
+    } = updatedSettingsNew ?? {};
 
     const defaultDepartmentResult =
-      defaultDepartementId != null
-        ? await departmentService.findDepartment(Number.parseInt(defaultDepartementId), loggedUser)
+      defaultDepartmentId != null
+        ? await departmentService.findDepartment(Number.parseInt(defaultDepartmentId), loggedUser)
         : ok(null);
 
     const defaultObserverResult =
-      defaultObservateurId != null
-        ? await observerService.findObserver(Number.parseInt(defaultObservateurId), loggedUser)
+      defaultObserverId != null
+        ? await observerService.findObserver(Number.parseInt(defaultObserverId), loggedUser)
         : ok(null);
 
     const defaultSexResult =
-      defaultSexeId != null ? await sexService.findSex(Number.parseInt(defaultSexeId), loggedUser) : ok(null);
+      defaultSexId != null ? await sexService.findSex(Number.parseInt(defaultSexId), loggedUser) : ok(null);
 
     const defaultAgeResult =
       defaultAgeId != null ? await ageService.findAge(Number.parseInt(defaultAgeId), loggedUser) : ok(null);
 
     const defaultNumberEstimateResult =
-      defaultEstimationNombreId != null
-        ? await numberEstimateService.findNumberEstimate(Number.parseInt(defaultEstimationNombreId), loggedUser)
+      defaultNumberEstimateId != null
+        ? await numberEstimateService.findNumberEstimate(Number.parseInt(defaultNumberEstimateId), loggedUser)
         : ok(null);
 
     const getEnrichedDataResult = Result.combine([
@@ -180,12 +181,17 @@ export const buildSettingsService = ({
       getEnrichedDataResult.value;
 
     return ok({
-      ...restSettings,
       defaultDepartment,
       defaultObserver,
       defaultSex,
       defaultAge,
       defaultNumberEstimate,
+      defaultNombre: restSettingsNew.defaultNumber ?? null,
+      areAssociesDisplayed: restSettingsNew.displayAssociates ?? true,
+      isMeteoDisplayed: restSettingsNew.displayWeather ?? true,
+      isDistanceDisplayed: restSettingsNew.displayDistance ?? true,
+      isRegroupementDisplayed: restSettingsNew.displayGrouping ?? true,
+      userId: id,
     });
   };
 

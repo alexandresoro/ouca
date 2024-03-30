@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test, { beforeEach, describe } from "node:test";
 import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
+import { userFactory } from "@fixtures/domain/user/user.fixtures.js";
 import { ageServiceFactory } from "@fixtures/services/age/age-service.fixtures.js";
 import { departmentServiceFactory } from "@fixtures/services/department/department-service.fixtures.js";
 import { numberEstimateServiceFactory } from "@fixtures/services/number-estimate/number-estimate-service.fixtures.js";
@@ -38,6 +39,8 @@ const settingsService = buildSettingsService({
 });
 
 beforeEach(() => {
+  userService.getUser.mock.resetCalls();
+  userService.updateSettings.mock.resetCalls();
   settingsRepository.getUserSettings.mock.resetCalls();
   settingsRepository.updateUserSettings.mock.resetCalls();
   departmentService.findDepartment.mock.resetCalls();
@@ -51,11 +54,14 @@ describe("Fetch app configuration for user", () => {
   test("should query needed parameters for user", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    const mockResolved = settingsFactory.build({
-      defaultDepartementId: "7",
-      defaultObservateurId: "13",
+    const user = userFactory.build({
+      settings: {
+        defaultDepartmentId: "7",
+        defaultObserverId: "13",
+      },
     });
-    settingsRepository.getUserSettings.mock.mockImplementationOnce(() => Promise.resolve(mockResolved));
+
+    userService.getUser.mock.mockImplementationOnce(() => Promise.resolve(user));
     departmentService.findDepartment.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(departmentServiceFactory.build())),
     );
@@ -68,8 +74,8 @@ describe("Fetch app configuration for user", () => {
 
     await settingsService.getSettings(loggedUser);
 
-    assert.strictEqual(settingsRepository.getUserSettings.mock.callCount(), 1);
-    assert.deepStrictEqual(settingsRepository.getUserSettings.mock.calls[0].arguments, [loggedUser.id]);
+    assert.strictEqual(userService.getUser.mock.callCount(), 1);
+    assert.deepStrictEqual(userService.getUser.mock.calls[0].arguments, [loggedUser.id]);
     assert.strictEqual(departmentService.findDepartment.mock.callCount(), 1);
     assert.deepStrictEqual(departmentService.findDepartment.mock.calls[0].arguments, [7, loggedUser]);
     assert.strictEqual(observerService.findObserver.mock.callCount(), 1);
@@ -79,11 +85,13 @@ describe("Fetch app configuration for user", () => {
   test("should query needed parameters for user when some of them are not defined", async () => {
     const loggedUser = loggedUserFactory.build();
 
-    const mockResolved = settingsFactory.build({
-      defaultDepartementId: null,
-      defaultObservateurId: null,
+    const user = userFactory.build({
+      settings: {
+        defaultDepartmentId: undefined,
+        defaultObserverId: undefined,
+      },
     });
-    settingsRepository.getUserSettings.mock.mockImplementationOnce(() => Promise.resolve(mockResolved));
+    userService.getUser.mock.mockImplementationOnce(() => Promise.resolve(user));
     ageService.findAge.mock.mockImplementationOnce(() => Promise.resolve(ok(ageServiceFactory.build())));
     sexService.findSex.mock.mockImplementationOnce(() => Promise.resolve(ok(sexServiceFactory.build())));
     numberEstimateService.findNumberEstimate.mock.mockImplementationOnce(() =>
@@ -92,8 +100,8 @@ describe("Fetch app configuration for user", () => {
 
     await settingsService.getSettings(loggedUser);
 
-    assert.strictEqual(settingsRepository.getUserSettings.mock.callCount(), 1);
-    assert.deepStrictEqual(settingsRepository.getUserSettings.mock.calls[0].arguments, [loggedUser.id]);
+    assert.strictEqual(userService.getUser.mock.callCount(), 1);
+    assert.deepStrictEqual(userService.getUser.mock.calls[0].arguments, [loggedUser.id]);
     assert.strictEqual(departmentService.findDepartment.mock.callCount(), 0);
     assert.strictEqual(observerService.findObserver.mock.callCount(), 0);
   });
@@ -126,7 +134,16 @@ test("should update settings with parameters for user", async () => {
     defaultDepartementId: "2",
     defaultObservateurId: "5",
   });
+
+  const user = userFactory.build({
+    settings: {
+      defaultDepartmentId: "2",
+      defaultObserverId: "5",
+    },
+  });
+
   settingsRepository.updateUserSettings.mock.mockImplementationOnce(() => Promise.resolve(mockResolved));
+  userService.updateSettings.mock.mockImplementationOnce(() => Promise.resolve(user));
   departmentService.findDepartment.mock.mockImplementationOnce(() =>
     Promise.resolve(ok(departmentServiceFactory.build())),
   );
