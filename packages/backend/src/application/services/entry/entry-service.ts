@@ -90,6 +90,8 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       }),
       orderBy,
       sortOrder,
+      // TODO: Right now we simply filter the entries by the owner ID
+      ownerId: loggedUser.id,
     });
 
     return ok(entries);
@@ -105,7 +107,8 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
 
     const { orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
-    return ok(await entryRepository.getCount(searchCriteria));
+    // TODO: Right now we simply filter the entries by the owner ID
+    return ok(await entryRepository.getCount({ criteria: searchCriteria, ownerId: loggedUser.id }));
   };
 
   const findNextGrouping = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {

@@ -55,6 +55,7 @@ export type EntryFindManyInput = Partial<{
   sortOrder: SortOrder;
   offset: number | null;
   limit: number | null;
+  ownerId: string | null;
 }>;
 
 export type EntryCreateInput = {

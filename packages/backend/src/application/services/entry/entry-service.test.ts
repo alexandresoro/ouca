@@ -91,6 +91,7 @@ describe("Data paginated find by search criteria", () => {
         searchCriteria: {},
         offset: 0,
         limit: 10,
+        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -123,6 +124,7 @@ describe("Data paginated find by search criteria", () => {
         sortOrder: "desc",
         offset: 0,
         limit: 10,
+        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -145,7 +147,12 @@ describe("Entities count by search criteria", () => {
     });
 
     assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [{}]);
+    assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [
+      {
+        criteria: {},
+        ownerId: loggedUser.id,
+      },
+    ]);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -163,8 +170,11 @@ describe("Entities count by search criteria", () => {
     assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
     assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [
       {
-        number: 12,
-        breeders: ["certain", "probable"],
+        criteria: {
+          number: 12,
+          breeders: ["certain", "probable"],
+        },
+        ownerId: loggedUser.id,
       },
     ]);
   });
