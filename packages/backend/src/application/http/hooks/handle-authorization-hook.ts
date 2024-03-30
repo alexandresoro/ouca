@@ -1,11 +1,7 @@
-import type { OIDCIntrospectionResult } from "@domain/oidc/oidc-introspection.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import {
-  getIntrospectionResultFromCache,
-  storeIntrospectionResultInCache,
-} from "@infrastructure/oidc/oidc-introspect-access-token.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Services } from "../../services/services.js";
+import { getAccessToken } from "../controllers/access-token-utils.js";
 
 declare module "fastify" {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -14,8 +10,6 @@ declare module "fastify" {
   }
 }
 
-export const BEARER_PATTERN = /^Bearer (.+)$/;
-
 export const handleAuthorizationHook = async (
   request: FastifyRequest,
   reply: FastifyReply,
@@ -23,47 +17,31 @@ export const handleAuthorizationHook = async (
 ): Promise<void> => {
   const { oidcService } = services;
 
-  const authorizationHeader = request.headers.authorization;
+  const accessTokenResult = getAccessToken(request);
 
-  // Return if authorization header is missing
-  if (!authorizationHeader) {
-    return await reply.status(401).send("Authorization header is missing.");
+  if (accessTokenResult.isErr()) {
+    switch (accessTokenResult.error) {
+      case "headerNotFound":
+        return await reply.status(401).send("Authorization header is missing.");
+      case "headerInvalidFormat":
+        return await reply.status(401).send("Authorization header is invalid.");
+    }
   }
 
-  // Return if authorization header format is incorrect
-  const bearerGroups = BEARER_PATTERN.exec(authorizationHeader);
-  if (!bearerGroups) {
-    return await reply.status(401).send("Authorization header is invalid.");
-  }
+  const accessToken = accessTokenResult.value;
 
-  // Access token extracted
-  const accessToken = bearerGroups[1];
+  const introspectTokenResult = await oidcService.introspectAccessTokenCached(accessToken);
 
-  // Check if introspection result exists in cache
-  const cachedKeyResult = await getIntrospectionResultFromCache(accessToken);
-
-  if (cachedKeyResult.isErr()) {
+  if (introspectTokenResult.isErr()) {
     return await reply.status(500).send();
   }
 
-  const cachedKey = cachedKeyResult.value;
+  const introspectionResult = introspectTokenResult.value;
 
-  let introspectionResult: OIDCIntrospectionResult;
-  if (cachedKey != null) {
-    // Retrieve result from cache
-    introspectionResult = cachedKey;
-  } else {
-    // Introspect token if not present in cache
-    const introspectionResultResult = await oidcService.introspectAccessToken(accessToken);
+  // Introspect token if not present in cache
 
-    if (introspectionResultResult.isErr()) {
-      return await reply.status(500).send();
-    }
-
-    introspectionResult = introspectionResultResult.value;
-
-    // Regardless of the outcome, store the result in cache
-    await storeIntrospectionResultInCache(introspectionResult, accessToken);
+  if (introspectTokenResult.isErr()) {
+    return await reply.status(500).send();
   }
 
   if (!introspectionResult.active) {

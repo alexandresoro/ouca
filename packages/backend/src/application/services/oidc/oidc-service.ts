@@ -3,7 +3,11 @@ import type { OIDCUser } from "@domain/oidc/oidc-user.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import { type UserRole, userRoles } from "@domain/user/user-role.js";
 import type { User } from "@domain/user/user.js";
-import { introspectAccessToken as introspectAccessTokenRepository } from "@infrastructure/oidc/oidc-introspect-access-token.js";
+import {
+  getIntrospectionResultFromCache,
+  introspectAccessToken as introspectAccessTokenRepository,
+  storeIntrospectionResultInCache,
+} from "@infrastructure/oidc/oidc-introspect-access-token.js";
 import { type Result, err, ok } from "neverthrow";
 import type { UserService } from "../user/user-service.js";
 
@@ -28,7 +32,47 @@ export const buildOidcService = ({ userService }: OidcServiceDependencies) => {
   const introspectAccessToken = async (
     accessToken: string,
   ): Promise<Result<OIDCIntrospectionResult, "introspectionError">> => {
-    return (await introspectAccessTokenRepository(accessToken)).mapErr(() => "introspectionError");
+    const introspectionResult = (await introspectAccessTokenRepository(accessToken)).mapErr(
+      () => "introspectionError" as const,
+    );
+
+    if (introspectionResult.isErr()) {
+      return err("introspectionError");
+    }
+
+    // Regardless of the outcome, store the result in cache
+    await storeIntrospectionResultInCache(introspectionResult.value, accessToken);
+
+    return introspectionResult;
+  };
+
+  const introspectAccessTokenCached = async (
+    accessToken: string,
+  ): Promise<Result<OIDCIntrospectionResult, "introspectionError">> => {
+    // Check if introspection result exists in cache
+    const cachedKeyResult = await getIntrospectionResultFromCache(accessToken);
+
+    if (cachedKeyResult.isErr()) {
+      return err("introspectionError");
+    }
+
+    const cachedKey = cachedKeyResult.value;
+    if (cachedKey != null) {
+      // Return result from cache
+      return ok(cachedKey);
+    }
+
+    // Introspect token if not present in cache
+    const introspectionResult = await introspectAccessToken(accessToken);
+
+    if (introspectionResult.isErr()) {
+      return err("introspectionError");
+    }
+
+    // Regardless of the outcome, store the result in cache
+    await storeIntrospectionResultInCache(introspectionResult.value, accessToken);
+
+    return introspectionResult;
   };
 
   const getHighestRoleFromLoggedUser = (oidcUser: OIDCUser): UserRole | null => {
@@ -64,7 +108,12 @@ export const buildOidcService = ({ userService }: OidcServiceDependencies) => {
     });
   };
 
-  return { introspectAccessToken, getHighestRoleFromLoggedUser, getMatchingLoggedUser };
+  return {
+    findLoggedUserFromProvider,
+    introspectAccessTokenCached,
+    getHighestRoleFromLoggedUser,
+    getMatchingLoggedUser,
+  };
 };
 
 export type OidcService = ReturnType<typeof buildOidcService>;

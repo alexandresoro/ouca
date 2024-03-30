@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
 import type { Services } from "../../services/services.js";
-import { BEARER_PATTERN } from "../hooks/handle-authorization-hook.js";
+import { getAccessToken } from "./access-token-utils.js";
 
 export const userController: FastifyPluginCallback<{
   services: Services;
@@ -8,24 +8,19 @@ export const userController: FastifyPluginCallback<{
   const { userService, oidcService } = services;
 
   fastify.post("/create", async (req, reply) => {
-    const authorizationHeader = req.headers.authorization;
+    const accessTokenResult = getAccessToken(req);
 
-    // Return if authorization header is missing
-    if (!authorizationHeader) {
-      return await reply.status(401).send("Authorization header is missing.");
+    if (accessTokenResult.isErr()) {
+      switch (accessTokenResult.error) {
+        case "headerNotFound":
+          return await reply.status(401).send("Authorization header is missing.");
+        case "headerInvalidFormat":
+          return await reply.status(401).send("Authorization header is invalid.");
+      }
     }
-
-    // Return if authorization header format is incorrect
-    const bearerGroups = BEARER_PATTERN.exec(authorizationHeader);
-    if (!bearerGroups) {
-      return await reply.status(401).send("Authorization header is invalid.");
-    }
-
-    // Access token extracted
-    const accessToken = bearerGroups[1];
 
     // Validate token
-    const introspectionResultResult = await oidcService.introspectAccessToken(accessToken);
+    const introspectionResultResult = await oidcService.introspectAccessTokenCached(accessTokenResult.value);
 
     if (introspectionResultResult.isErr()) {
       return await reply.status(500).send();
