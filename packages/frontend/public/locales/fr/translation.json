@@ -470,7 +470,7 @@
     "reconnectButton": "Me reconnecter"
   },
   "userProfile": {
-    "nicknameDescription": "Également connu sous le doux nom de {{nickname}}."
+    "nicknameDescription": "Également connu sous le doux nom de :"
   },
   "beta": "beta"
 }
