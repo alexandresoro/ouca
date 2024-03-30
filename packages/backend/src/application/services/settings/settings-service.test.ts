@@ -41,7 +41,6 @@ const settingsService = buildSettingsService({
 beforeEach(() => {
   userService.getUser.mock.resetCalls();
   userService.updateSettings.mock.resetCalls();
-  settingsRepository.getUserSettings.mock.resetCalls();
   settingsRepository.updateUserSettings.mock.resetCalls();
   departmentService.findDepartment.mock.resetCalls();
   observerService.findObserver.mock.resetCalls();
@@ -110,7 +109,7 @@ describe("Fetch app configuration for user", () => {
     const getSettingsResult = await settingsService.getSettings(null);
 
     assert.deepStrictEqual(getSettingsResult, err("notAllowed"));
-    assert.strictEqual(settingsRepository.getUserSettings.mock.callCount(), 0);
+    assert.strictEqual(userService.getUser.mock.callCount(), 0);
   });
 });
 

@@ -121,11 +121,16 @@ export const buildSettingsService = ({
 
     // Temporary sync to user service settings
     const updatedSettingsUser = {
-      defaultObserverId: `${updateSettingsInput.defaultObservateurId}` ?? undefined,
-      defaultDepartmentId: `${updateSettingsInput.defaultDepartementId}` ?? undefined,
-      defaultAgeId: `${updateSettingsInput.defaultAgeId}` ?? undefined,
-      defaultSexId: `${updateSettingsInput.defaultSexeId}` ?? undefined,
-      defaultNumberEstimateId: `${updateSettingsInput.defaultEstimationNombreId}` ?? undefined,
+      defaultObserverId:
+        updateSettingsInput.defaultObservateurId != null ? `${updateSettingsInput.defaultObservateurId}` : undefined,
+      defaultDepartmentId:
+        updateSettingsInput.defaultDepartementId != null ? `${updateSettingsInput.defaultDepartementId}` : undefined,
+      defaultAgeId: updateSettingsInput.defaultAgeId != null ? `${updateSettingsInput.defaultAgeId}` : undefined,
+      defaultSexId: updateSettingsInput.defaultSexeId != null ? `${updateSettingsInput.defaultSexeId}` : undefined,
+      defaultNumberEstimateId:
+        updateSettingsInput.defaultEstimationNombreId != null
+          ? `${updateSettingsInput.defaultEstimationNombreId}`
+          : undefined,
       defaultNumber: updateSettingsInput.defaultNombre ?? undefined,
       displayAssociates: updateSettingsInput.areAssociesDisplayed ?? undefined,
       displayWeather: updateSettingsInput.isMeteoDisplayed ?? undefined,
