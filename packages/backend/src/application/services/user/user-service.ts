@@ -12,6 +12,18 @@ type UserServiceDependencies = {
 export const buildUserService = ({ userRepository }: UserServiceDependencies) => {
   const getUser = async (userId: string): Promise<User | null> => userRepository.getUserInfoById(userId);
 
+  /**
+   * Compared to the more generic `findUserByExternalId` this function
+   * is more suitable to only find the user id which is expected to remain constant
+   * and not change over time for a given external user id/provider.
+   * This method leverages a cache to avoid querying the database for every request and
+   * so it is preferred to use this method over `findUserByExternalId` when only the user id is needed.
+   */
+  const findUserIdByExternalIdWithCache = async (
+    externalProviderName: string,
+    externalUserId: string,
+  ): Promise<string | null> => userRepository.findUserIdByExternalIdWithCache({ externalUserId, externalProviderName });
+
   const findUserByExternalId = async (externalProviderName: string, externalUserId: string): Promise<User | null> =>
     userRepository.findUserByExternalId({ externalUserId, externalProviderName });
 
@@ -43,6 +55,7 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
 
   return {
     getUser,
+    findUserIdByExternalIdWithCache,
     findUserByExternalId,
     updateSettings,
     createUser,

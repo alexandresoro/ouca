@@ -57,16 +57,16 @@ const getUserInfoById = async (userId: string): Promise<User | null> => {
   return userResult ? userSchema.parse(userResult) : null;
 };
 
-const findUserByExternalId = async ({
+const findUserIdByExternalIdWithCache = async ({
   externalProviderName,
   externalUserId,
-}: { externalProviderName: string; externalUserId: string }): Promise<User | null> => {
+}: { externalProviderName: string; externalUserId: string }): Promise<string | null> => {
   // Try first to retrieve from cache to avoid querying the DB if possible
   const cachedUser = await getCachedMappedUser({ externalProviderName, externalUserId });
 
   if (cachedUser) {
     // Use the cached structure
-    return cachedUser;
+    return cachedUser.id;
   }
 
   const user = await findUserByExternalIdFromStorage({ externalProviderName, externalProviderId: externalUserId });
@@ -76,8 +76,10 @@ const findUserByExternalId = async ({
     await storeMappedUserToCache(user);
   }
 
-  return user;
+  return user?.id ?? null;
 };
+
+const findUserByExternalId = findUserByExternalIdFromStorage;
 
 const updateUserSettings = async (id: string, settings: User["settings"]): Promise<User> => {
   const updatedUser = await kysely
@@ -121,4 +123,11 @@ const deleteUserById = async (userId: string): Promise<boolean> => {
   return deletedUsers.length === 1;
 };
 
-export const userRepository = { getUserInfoById, findUserByExternalId, updateUserSettings, createUser, deleteUserById };
+export const userRepository = {
+  getUserInfoById,
+  findUserIdByExternalIdWithCache,
+  findUserByExternalId,
+  updateUserSettings,
+  createUser,
+  deleteUserById,
+};

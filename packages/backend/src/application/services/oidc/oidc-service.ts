@@ -16,6 +16,26 @@ type OidcServiceDependencies = {
 };
 
 export const buildOidcService = ({ userService }: OidcServiceDependencies) => {
+  /**
+   * Compared to the more generic `findLoggedUserFromProvider` this function
+   * is more suitable to only find the user id which is expected to remain constant
+   * and not change over time for a given external user id/provider.
+   * This method leverages a cache to avoid querying the database for every request and
+   * so it is preferred to use this method over `findLoggedUserFromProvider` when only the user id is needed.
+   */
+  const findLoggedUserIdFromProvider = async (
+    externalProviderName: string,
+    externalUserId: string,
+  ): Promise<Result<string, "internalUserNotFound">> => {
+    const matchingUserId = await userService.findUserIdByExternalIdWithCache(externalProviderName, externalUserId);
+
+    if (!matchingUserId) {
+      return err("internalUserNotFound");
+    }
+
+    return ok(matchingUserId);
+  };
+
   const findLoggedUserFromProvider = async (
     externalProviderName: string,
     externalUserId: string,
@@ -94,21 +114,22 @@ export const buildOidcService = ({ userService }: OidcServiceDependencies) => {
     }
 
     // Validate internal matching user
-    const internalUserResult = await findLoggedUserFromProvider(oidcUser.oidcProvider, oidcUser.sub);
+    const internalUserIdResult = await findLoggedUserIdFromProvider(oidcUser.oidcProvider, oidcUser.sub);
 
-    if (internalUserResult.isErr()) {
-      return err(internalUserResult.error);
+    if (internalUserIdResult.isErr()) {
+      return err(internalUserIdResult.error);
     }
 
-    const internalUserInfo = internalUserResult.value;
+    const internalUserId = internalUserIdResult.value;
 
     return ok({
-      id: internalUserInfo.id,
+      id: internalUserId,
       role: roleFromToken,
     });
   };
 
   return {
+    findLoggedUserIdFromProvider,
     findLoggedUserFromProvider,
     introspectAccessTokenCached,
     getHighestRoleFromLoggedUser,
