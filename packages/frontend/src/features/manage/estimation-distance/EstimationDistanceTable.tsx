@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
@@ -77,7 +78,10 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -90,7 +94,10 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
                   <tr className="hover:bg-base-200" key={estimationDistance?.id}>
                     <td>{estimationDistance.libelle}</td>
                     <td>{estimationDistance.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={estimationDistance.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!estimationDistance.editable}
                         disabledDelete={!estimationDistance.editable || estimationDistance.entriesCount > 0}

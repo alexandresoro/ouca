@@ -17,7 +17,7 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
   return (
     <>
       <IconButton
-        className="mx-1 text-primary dark:text-white"
+        className="mx-1 text-primary dark:text-white disabled:bg-opacity-0"
         disabled={disabledEdit}
         aria-label={t("aria-editButton")}
         onClick={onEditClicked}
@@ -25,7 +25,7 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
         <EditAlt className="h-5" />
       </IconButton>
       <IconButton
-        className="mx-1 text-error"
+        className="mx-1 text-error disabled:bg-opacity-0"
         disabled={disabledDelete}
         aria-label={t("aria-deleteButton")}
         onClick={onDeleteClicked}

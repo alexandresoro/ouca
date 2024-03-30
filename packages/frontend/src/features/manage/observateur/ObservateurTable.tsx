@@ -76,7 +76,10 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>

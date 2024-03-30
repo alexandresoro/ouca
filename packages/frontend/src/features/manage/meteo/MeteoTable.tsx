@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
@@ -74,7 +75,10 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -87,7 +91,10 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
                   <tr className="hover:bg-base-200" key={meteo?.id}>
                     <td>{meteo.libelle}</td>
                     <td>{meteo.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={meteo.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!meteo.editable}
                         disabledDelete={!meteo.editable}

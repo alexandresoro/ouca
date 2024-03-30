@@ -14,6 +14,9 @@
   },
   "associateObservers_one": "observateur associé",
   "associateObservers_other": "observateurs associés",
+  "avatar": {
+    "currentUserTooltip": "Vous 😉"
+  },
   "behaviorAlreadyExistingError": "Il existe déjà un comportement avec un code ou un libellé identique.",
   "behaviorCreationTitle": "Création d'un comportement",
   "behaviorEditionTitle": "Modification d'un comportement",
@@ -299,6 +302,7 @@
   },
   "observer": "observateur",
   "observers": "Observateurs",
+  "owner": "propriétaire",
   "pagination": {
     "currentPageDescription": "Page {{currentPage}} sur {{totalPages}}"
   },

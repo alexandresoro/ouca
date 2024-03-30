@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { type DepartmentsOrderBy, getDepartmentsExtendedResponse } from "@ou-ca/common/api/department";
 import type { DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { Fragment, type FunctionComponent } from "react";
@@ -83,7 +84,10 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -98,7 +102,10 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
                     <td>{departement.townsCount}</td>
                     <td>{departement.localitiesCount}</td>
                     <td>{departement.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={departement.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!departement.editable}
                         disabledDelete={!departement.editable || departement.townsCount > 0}

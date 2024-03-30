@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { SexExtended } from "@ou-ca/common/api/entities/sex";
 import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
@@ -74,7 +75,10 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -87,7 +91,10 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
                   <tr className="hover:bg-base-200" key={sexe?.id}>
                     <td>{sexe?.libelle}</td>
                     <td>{sexe?.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={sexe.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!sexe.editable}
                         disabledDelete={!sexe.editable || sexe.entriesCount > 0}

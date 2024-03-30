@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesOrderBy, getNumberEstimatesExtendedResponse } from "@ou-ca/common/api/number-estimate";
 import { Fragment, type FunctionComponent } from "react";
@@ -80,7 +81,10 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -94,7 +98,10 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
                     <td>{estimationNombre.libelle}</td>
                     <td>{estimationNombre.nonCompte ? "Oui" : ""}</td>
                     <td>{estimationNombre.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={estimationNombre.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!estimationNombre.editable}
                         disabledDelete={!estimationNombre.editable || estimationNombre.entriesCount > 0}

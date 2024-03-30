@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { type BehaviorsOrderBy, getBehaviorsExtendedResponse } from "@ou-ca/common/api/behavior";
 import type { BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { Fragment, type FunctionComponent } from "react";
@@ -83,7 +84,10 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -98,7 +102,10 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
                     <td>{comportement.libelle}</td>
                     <td>{comportement.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
                     <td>{comportement.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={comportement.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!comportement.editable}
                         disabledDelete={!comportement.editable}

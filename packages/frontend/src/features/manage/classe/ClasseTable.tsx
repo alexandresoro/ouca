@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
 import { type ClassesOrderBy, getClassesExtendedResponse } from "@ou-ca/common/api/species-class";
 import { Fragment, type FunctionComponent } from "react";
@@ -76,7 +77,10 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -90,7 +94,10 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
                     <td>{classe.libelle}</td>
                     <td>{classe.speciesCount}</td>
                     <td>{classe.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={classe.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!classe.editable}
                         disabledDelete={!classe.editable || classe.speciesCount > 0}

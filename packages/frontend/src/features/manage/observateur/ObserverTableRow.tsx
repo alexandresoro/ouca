@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
 import { useApiObserverQuery } from "@services/api/observer/api-observer-queries";
 import type { FunctionComponent } from "react";
@@ -16,7 +17,10 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ id, onEdit
     <tr className="hover:bg-base-200">
       <td>{observer?.libelle}</td>
       <td>{observer?.entriesCount}</td>
-      <td align="right" className="pr-6">
+      <td align="center" className="w-32">
+        <AvatarWithUniqueNameAvatar input={observer?.ownerId ?? null} />
+      </td>
+      <td align="center" className="w-32">
         {observer != null && (
           <TableCellActionButtons
             disabledEdit={!observer.editable}

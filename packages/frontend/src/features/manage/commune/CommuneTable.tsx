@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import type { TownExtended } from "@ou-ca/common/api/entities/town";
 import { type TownsOrderBy, getTownsExtendedResponse } from "@ou-ca/common/api/town";
 import { Fragment, type FunctionComponent } from "react";
@@ -84,7 +85,10 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -100,7 +104,10 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
                     <td>{commune.nom}</td>
                     <td>{commune.localitiesCount}</td>
                     <td>{commune.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={commune.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!commune.editable}
                         disabledDelete={!commune.editable || commune.localitiesCount > 0}

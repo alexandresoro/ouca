@@ -1,3 +1,4 @@
+import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
@@ -74,7 +75,10 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right" className="pr-8">
+            <th align="center" className="w-32 first-letter:capitalize">
+              {t("owner")}
+            </th>
+            <th align="center" className="w-32">
               {t("actions")}
             </th>
           </>
@@ -87,7 +91,10 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
                   <tr className="hover:bg-base-200" key={age.id}>
                     <td>{age.libelle}</td>
                     <td>{age.entriesCount}</td>
-                    <td align="right" className="pr-6">
+                    <td align="center" className="w-32">
+                      <AvatarWithUniqueNameAvatar input={age.ownerId} />
+                    </td>
+                    <td align="center" className="w-32">
                       <TableCellActionButtons
                         disabledEdit={!age.editable}
                         disabledDelete={!age.editable || age.entriesCount > 0}
