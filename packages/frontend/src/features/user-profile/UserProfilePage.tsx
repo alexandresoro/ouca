@@ -1,6 +1,8 @@
 import { useUser } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
+import { generateUniqueNickname } from "@services/unique-name/unique-name";
+import { getInitials } from "@utils/name-utils";
 import stringToColor from "@utils/user-profile/stringToColor";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,6 +16,8 @@ const UserProfilePage: FunctionComponent = () => {
   if (!user) {
     return null;
   }
+
+  const nickname = generateUniqueNickname(user.id);
 
   return (
     <>
@@ -42,6 +46,19 @@ const UserProfilePage: FunctionComponent = () => {
                 <span className="text-base-content text-center text-xs uppercase opacity-20 hover:opacity-60">
                   ID {user.id}
                 </span>
+                <p className="text-base-content text-center">
+                  {t("userProfile.nicknameDescription", { nickname })}
+                  <div className="avatar placeholder mx-2 w-8">
+                    <div
+                      style={{
+                        backgroundColor: stringToColor(nickname),
+                      }}
+                      className="text-white rounded-full h-8"
+                    >
+                      <span>{getInitials(nickname)}</span>
+                    </div>
+                  </div>
+                </p>
                 {user && (
                   <Link to={user.user.iss} target="_blank" className="btn btn-primary uppercase mt-4">
                     {t("updateProfileButton")}

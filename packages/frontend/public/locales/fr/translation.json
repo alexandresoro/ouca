@@ -465,5 +465,8 @@
     "description": "Votre session utilisateur a expiré. Veuillez vous reconnecter.",
     "reconnectButton": "Me reconnecter"
   },
+  "userProfile": {
+    "nicknameDescription": "Également connu sous le doux nom de {{nickname}}."
+  },
   "beta": "beta"
 }

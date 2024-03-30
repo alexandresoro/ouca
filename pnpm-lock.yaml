@@ -295,6 +295,9 @@ importers:
       swr:
         specifier: 2.2.5
         version: 2.2.5(react@18.2.0)
+      unique-names-generator:
+        specifier: 4.7.1
+        version: 4.7.1
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -7230,6 +7233,11 @@ packages:
       get-value: 2.0.6
       is-extendable: 0.1.1
       set-value: 2.0.1
+    dev: false
+
+  /unique-names-generator@4.7.1:
+    resolution: {integrity: sha512-lMx9dX+KRmG8sq6gulYYpKWZc9RlGsgBR6aoO8Qsm3qvkSJ+3rAymr+TnV8EDMrIrwuFJ4kruzMWM/OpYzPoow==}
+    engines: {node: '>=8'}
     dev: false
 
   /universalify@0.1.2:
