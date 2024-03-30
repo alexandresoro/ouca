@@ -41,7 +41,7 @@ export const meController: FastifyPluginCallback<{
     const userResult = await oidcService.findLoggedUserFromProvider(oidcUser.oidcProvider, oidcUser.sub);
 
     if (userResult.isErr()) {
-      return await reply.status(401).send("Internal user not found");
+      return await reply.status(404).send("Internal user not found");
     }
 
     const { id } = userResult.value;
