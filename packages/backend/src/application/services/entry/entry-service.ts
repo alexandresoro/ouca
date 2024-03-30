@@ -150,6 +150,13 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       return err({ type: "notAllowed" });
     }
 
+    // First get the corresponding inventory
+    const inventory = await inventoryRepository.findInventoryByEntryId(id);
+
+    if (loggedUser.role !== "admin" && inventory?.ownerId !== loggedUser.id) {
+      return err({ type: "notAllowed" });
+    }
+
     // Check if an exact same entry already exists or not
     const existingEntry = await entryRepository.findExistingEntry(reshapeInputEntryUpsertData(input));
 

@@ -296,6 +296,13 @@ describe("Update of a data", () => {
     const loggedUser = loggedUserFactory.build();
 
     entryRepository.findExistingEntry.mock.mockImplementationOnce(() => Promise.resolve(null));
+    inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() =>
+      Promise.resolve(
+        inventoryFactory.build({
+          ownerId: loggedUser.id,
+        }),
+      ),
+    );
 
     await entryService.updateEntry("12", dataData, loggedUser);
 
@@ -315,6 +322,13 @@ describe("Update of a data", () => {
       Promise.resolve(
         entryFactory.build({
           id: "345",
+        }),
+      ),
+    );
+    inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() =>
+      Promise.resolve(
+        inventoryFactory.build({
+          ownerId: loggedUser.id,
         }),
       ),
     );
