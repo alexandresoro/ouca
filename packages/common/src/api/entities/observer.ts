@@ -4,6 +4,7 @@ export const observerSchema = z.object({
   id: z.coerce.string(),
   libelle: z.string(),
   editable: z.boolean(),
+  ownerId: z.string().uuid().nullable(),
   inventoriesCount: z.number(),
   entriesCount: z.number(),
 });

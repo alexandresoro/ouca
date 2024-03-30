@@ -5,6 +5,7 @@ export const townSchema = z.object({
   code: z.number(),
   nom: z.string(),
   departmentId: z.string(),
+  ownerId: z.string().uuid().nullable(),
   editable: z.boolean(),
 });
 

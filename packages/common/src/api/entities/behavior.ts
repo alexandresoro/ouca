@@ -6,6 +6,7 @@ export const behaviorSchema = z.object({
   code: z.string(),
   libelle: z.string(),
   nicheur: z.enum(NICHEUR_CODES).nullable(),
+  ownerId: z.string().uuid().nullable(),
   editable: z.boolean(),
 });
 

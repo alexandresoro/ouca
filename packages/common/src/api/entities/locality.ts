@@ -6,6 +6,7 @@ export const localitySchema = z.object({
   nom: z.string(),
   coordinates: coordinatesSchema,
   townId: z.string(),
+  ownerId: z.string().uuid().nullable(),
   editable: z.boolean(),
 });
 

@@ -8,6 +8,7 @@ export const speciesSchema = z.object({
   nomLatin: z.string(),
   classId: z.string().nullable(), // FIXME: field is nullable in DB
   speciesClass: speciesClassSchema.nullable(),
+  ownerId: z.string().uuid().nullable(),
   editable: z.boolean(),
 });
 
