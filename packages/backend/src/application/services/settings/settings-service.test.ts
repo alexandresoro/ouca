@@ -16,9 +16,11 @@ import type { DepartmentService } from "../department/department-service.js";
 import type { NumberEstimateService } from "../number-estimate/number-estimate-service.js";
 import type { ObserverService } from "../observer/observer-service.js";
 import type { SexService } from "../sex/sex-service.js";
+import type { UserService } from "../user/user-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mock<SettingsRepository>();
+const userService = mock<UserService>();
 const departmentService = mock<DepartmentService>();
 const observerService = mock<ObserverService>();
 const sexService = mock<SexService>();
@@ -27,6 +29,7 @@ const numberEstimateService = mock<NumberEstimateService>();
 
 const settingsService = buildSettingsService({
   settingsRepository,
+  userService,
   departmentService,
   observerService,
   sexService,

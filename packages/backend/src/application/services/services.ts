@@ -147,6 +147,7 @@ export const buildServices = (): Services => {
 
   const settingsService = buildSettingsService({
     settingsRepository,
+    userService,
     departmentService,
     observerService,
     sexService,

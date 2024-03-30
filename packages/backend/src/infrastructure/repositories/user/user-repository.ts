@@ -79,6 +79,17 @@ const findUserByExternalId = async ({
   return user;
 };
 
+const updateUserSettings = async (id: string, settings: User["settings"]): Promise<User> => {
+  const updatedUser = await kysely
+    .updateTable("user")
+    .set("settings", settings != null ? JSON.stringify(settings) : null)
+    .where("id", "=", id)
+    .returningAll()
+    .executeTakeFirstOrThrow();
+
+  return userSchema.parse(updatedUser);
+};
+
 const createUser = async ({
   extProviderName,
   extProviderId,
@@ -110,4 +121,4 @@ const deleteUserById = async (userId: string): Promise<boolean> => {
   return deletedUsers.length === 1;
 };
 
-export const userRepository = { getUserInfoById, findUserByExternalId, createUser, deleteUserById };
+export const userRepository = { getUserInfoById, findUserByExternalId, updateUserSettings, createUser, deleteUserById };

@@ -15,6 +15,9 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
   const findUserByExternalId = async (externalProviderName: string, externalUserId: string): Promise<User | null> =>
     userRepository.findUserByExternalId({ externalUserId, externalProviderName });
 
+  const updateSettings = async (id: string, settings: User["settings"]): Promise<User> =>
+    userRepository.updateUserSettings(id, settings);
+
   const createUser = async ({ extProvider, extProviderUserId }: CreateUserInput): Promise<User> =>
     userRepository.createUser({
       extProviderName: extProvider,
@@ -41,6 +44,7 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
   return {
     getUser,
     findUserByExternalId,
+    updateSettings,
     createUser,
     deleteUser,
   };

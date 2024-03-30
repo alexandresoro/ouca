@@ -3,6 +3,7 @@ import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import type { PutSettingsInput } from "@ou-ca/common/api/settings";
+import type { User } from "@sentry/node";
 import { Result, err, ok } from "neverthrow";
 import { logger } from "../../../utils/logger.js";
 import type { AgeService } from "../age/age-service.js";
@@ -10,9 +11,11 @@ import type { DepartmentService } from "../department/department-service.js";
 import type { NumberEstimateService } from "../number-estimate/number-estimate-service.js";
 import type { ObserverService } from "../observer/observer-service.js";
 import type { SexService } from "../sex/sex-service.js";
+import type { UserService } from "../user/user-service.js";
 
 type SettingsServiceDependencies = {
   settingsRepository: SettingsRepository;
+  userService: UserService;
   departmentService: DepartmentService;
   observerService: ObserverService;
   sexService: SexService;
@@ -22,6 +25,7 @@ type SettingsServiceDependencies = {
 
 export const buildSettingsService = ({
   settingsRepository,
+  userService,
   departmentService,
   observerService,
   sexService,
@@ -114,6 +118,21 @@ export const buildSettingsService = ({
     );
 
     const updatedSettings = await settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);
+
+    // Temporary sync to user service settings
+    const updatedSettingsUser = {
+      defaultObserverId: updatedSettings.defaultObservateurId ?? undefined,
+      defaultDepartmentId: updatedSettings.defaultDepartementId ?? undefined,
+      defaultAgeId: updatedSettings.defaultAgeId ?? undefined,
+      defaultSexId: updatedSettings.defaultSexeId ?? undefined,
+      defaultNumberEstimateId: updatedSettings.defaultEstimationNombreId ?? undefined,
+      defaultNumber: updatedSettings.defaultNombre ?? undefined,
+      displayAssociates: updatedSettings.areAssociesDisplayed ?? undefined,
+      displayWeather: updatedSettings.isMeteoDisplayed ?? undefined,
+      displayDistance: updatedSettings.isDistanceDisplayed ?? undefined,
+      displayGrouping: updatedSettings.isRegroupementDisplayed ?? undefined,
+    } satisfies User["settings"];
+    await userService.updateSettings(loggedUser.id, updatedSettingsUser);
 
     const {
       defaultDepartementId,
