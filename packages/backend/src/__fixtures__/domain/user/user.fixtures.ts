@@ -7,6 +7,7 @@ export const userFactory = Factory.define<User>(() => {
     id: faker.string.uuid(),
     extProviderId: faker.string.sample(),
     extProviderName: faker.string.alpha(),
+    settings: {},
   };
 });
 

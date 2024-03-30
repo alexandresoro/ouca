@@ -44,11 +44,12 @@ export const meController: FastifyPluginCallback<{
       return await reply.status(404).send("Internal user not found");
     }
 
-    const { id } = userResult.value;
+    const { id, settings } = userResult.value;
 
     const responseBody = getMeResponse.parse({
       id,
       user: introspectionData.user,
+      settings,
     });
 
     return await reply.send(responseBody);
