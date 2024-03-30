@@ -117,6 +117,7 @@ describe("Inventories paginated find by search criteria", () => {
         sortOrder: "desc",
         offset: 0,
         limit: searchParams.pageSize,
+        ownerId: loggedUser.id,
       },
     ]);
   });

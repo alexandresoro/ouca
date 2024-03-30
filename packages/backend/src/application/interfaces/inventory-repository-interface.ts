@@ -8,11 +8,12 @@ export type InventoryRepository = {
     options: {
       orderBy: NonNullable<InventoryFindManyInput["orderBy"]>;
       sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
+      ownerId: string | null;
     },
   ): Promise<number | null>;
-  findInventories({ orderBy, sortOrder, offset, limit }: InventoryFindManyInput): Promise<Inventory[]>;
+  findInventories({ orderBy, sortOrder, offset, limit, ownerId }: InventoryFindManyInput): Promise<Inventory[]>;
   findExistingInventory(criteria: InventoryCreateInput): Promise<Inventory | null>;
-  getCount(): Promise<number>;
+  getCount({ ownerId }: { ownerId: string | null }): Promise<number>;
   getEntriesCountById: (id: string) => Promise<number>;
   getCountByLocality(localityId: string): Promise<number>;
   createInventory(inventoryInput: InventoryCreateInput): Promise<Inventory>;

@@ -5,7 +5,7 @@ import {
   inventorySchema,
 } from "@domain/inventory/inventory.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
-import { type OperandExpression, type SqlBool, sql } from "kysely";
+import { type Expression, type OperandExpression, type SqlBool, sql } from "kysely";
 import { z } from "zod";
 import { areSetsContainingSameValues } from "../../../utils/utils.js";
 import { countSchema } from "../common.js";
@@ -74,9 +74,11 @@ const findInventoryIndex = async (
     // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     orderBy,
     sortOrder,
+    ownerId,
   }: {
     orderBy: NonNullable<InventoryFindManyInput["orderBy"]>;
     sortOrder: NonNullable<InventoryFindManyInput["sortOrder"]>;
+    ownerId: string | null;
   },
 ): Promise<number | null> => {
   const orderByIdentifier = "date_creation";
@@ -89,6 +91,15 @@ const findInventoryIndex = async (
           "id",
           sql`ROW_NUMBER() OVER ( ORDER BY ${sql.ref(orderByIdentifier)} ${sql.raw(sortOrder)} )`.as("index"),
         ])
+        .where((ebWhere) => {
+          const filters: Expression<SqlBool>[] = [];
+
+          if (ownerId != null) {
+            filters.push(ebWhere("inventaire.ownerId", "=", ownerId));
+          }
+
+          return ebWhere.and(filters);
+        })
         .as("result"),
     )
     .select("result.index")
@@ -103,6 +114,7 @@ const findInventories = async ({
   sortOrder,
   offset,
   limit,
+  ownerId,
 }: InventoryFindManyInput = {}): Promise<Inventory[]> => {
   let queryInventories = kysely
     .selectFrom("inventaire")
@@ -124,6 +136,10 @@ const findInventories = async ({
       sql<string[]>`array_remove(array_agg(inventaire_associe.observateur_id::text), NULL)`.as("associateIds"),
       sql<string[]>`array_remove(array_agg(inventaire_meteo.meteo_id::text), NULL)`.as("weatherIds"),
     ]);
+
+  if (ownerId != null) {
+    queryInventories = queryInventories.where("ownerId", "=", ownerId);
+  }
 
   if (orderBy != null) {
     const orderByIdentifier = "dateCreation";
@@ -231,11 +247,14 @@ const findExistingInventory = async (criteria: InventoryCreateInput): Promise<In
   return inventorySchema.parse(reshapeRawInventory(inventoryResult[0]));
 };
 
-const getCount = async (): Promise<number> => {
-  const countResult = await kysely
-    .selectFrom("inventaire")
-    .select((eb) => eb.fn.countAll().as("count"))
-    .executeTakeFirstOrThrow();
+const getCount = async ({ ownerId }: { ownerId: string | null }): Promise<number> => {
+  let queryCount = kysely.selectFrom("inventaire").select((eb) => eb.fn.countAll().as("count"));
+
+  if (ownerId != null) {
+    queryCount = queryCount.where("ownerId", "=", ownerId);
+  }
+
+  const countResult = await queryCount.executeTakeFirstOrThrow();
 
   return countSchema.parse(countResult).count;
 };

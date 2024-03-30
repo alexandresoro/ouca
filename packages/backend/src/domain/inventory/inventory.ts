@@ -51,6 +51,7 @@ export type InventoryFindManyInput = Partial<{
   sortOrder: SortOrder;
   offset: number | null;
   limit: number | null;
+  ownerId: string | null;
 }>;
 
 export type InventoryCreateInput = {

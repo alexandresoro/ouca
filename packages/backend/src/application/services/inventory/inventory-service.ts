@@ -52,7 +52,8 @@ export const buildInventoryService = ({
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepository.findInventoryIndex(id, order));
+    // TODO: Right now we simply filter the inventories by the owner ID
+    return ok(await inventoryRepository.findInventoryIndex(id, { ...order, ownerId: loggedUser.id }));
   };
 
   const findInventoryOfEntryId = async (
@@ -89,6 +90,8 @@ export const buildInventoryService = ({
       }),
       orderBy: orderByField,
       sortOrder,
+      // TODO: Right now we simply filter the inventories by the owner ID
+      ownerId: loggedUser.id,
     });
 
     return ok(inventories);
@@ -99,7 +102,8 @@ export const buildInventoryService = ({
       return err("notAllowed");
     }
 
-    return ok(await inventoryRepository.getCount());
+    // TODO: Right now we simply filter the inventories by the owner ID
+    return ok(await inventoryRepository.getCount({ ownerId: loggedUser.id }));
   };
 
   const createInventory = async (
