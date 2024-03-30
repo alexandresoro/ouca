@@ -92,6 +92,7 @@ const createUser = async ({
       .values({
         extProviderId,
         extProviderName,
+        settings: null,
       })
       .returningAll()
       .executeTakeFirstOrThrow();

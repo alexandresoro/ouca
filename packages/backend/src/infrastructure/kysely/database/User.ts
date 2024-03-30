@@ -1,7 +1,8 @@
-import type { Generated } from "kysely";
+import type { Generated, JSONColumnType } from "kysely";
 
 export type User = {
   id: Generated<string>;
-  extProviderName: string | null;
-  extProviderId: string | null;
+  extProviderName: string;
+  extProviderId: string;
+  settings: JSONColumnType<object> | null;
 };
