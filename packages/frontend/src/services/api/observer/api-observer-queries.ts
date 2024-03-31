@@ -1,7 +1,7 @@
 import { deleteObserverResponse, getObserverResponse, upsertObserverResponse } from "@ou-ca/common/api/observer";
-import useApiFetch from "@services/api/useApiFetch";
-import useApiMutation from "@services/api/useApiMutation";
-import useApiQuery from "@services/api/useApiQuery";
+import { useApiFetch } from "@services/api/useApiFetch";
+import { useApiMutation } from "@services/api/useApiMutation";
+import { useApiQuery } from "@services/api/useApiQuery";
 import type { SWRMutationConfiguration } from "swr/mutation";
 import type { z } from "zod";
 

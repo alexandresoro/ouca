@@ -7,7 +7,7 @@ import useApiUrl from "./useApiUrl";
 
 type MutationVariables = { body?: Record<string, unknown> } | undefined;
 
-const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
+export const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
   path: string | null,
   {
     method,
@@ -44,5 +44,3 @@ const useApiMutation = <T, TVariables extends MutationVariables, E = unknown>(
     },
   );
 };
-
-export default useApiMutation;
