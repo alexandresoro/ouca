@@ -3,9 +3,8 @@ import type { Entry as EntryRepository } from "@infrastructure/kysely/database/E
 
 type RawEntry = Omit<
   EntryRepository,
-  "id" | "inventaireId" | "especeId" | "sexeId" | "ageId" | "estimationNombreId" | "estimationDistanceId"
+  "inventaireId" | "especeId" | "sexeId" | "ageId" | "estimationNombreId" | "estimationDistanceId"
 > & {
-  id: string;
   inventaireId: string;
   especeId: string;
   sexeId: string;

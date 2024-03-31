@@ -22,7 +22,7 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     const expressions: OperandExpression<SqlBool>[] = [];
 
     if (searchCriteria.entryId != null) {
-      expressions.push(eb("donnee.id", "=", Number.parseInt(searchCriteria.entryId)));
+      expressions.push(eb("donnee.id", "=", searchCriteria.entryId));
     }
 
     if (searchCriteria.inventoryId != null) {

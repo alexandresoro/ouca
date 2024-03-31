@@ -1,4 +1,4 @@
 export type EntryBehavior = {
   comportementId: number;
-  donneeId: number;
+  donneeId: string;
 };

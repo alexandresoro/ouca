@@ -61,7 +61,7 @@ const findInventoryByEntryId = async (entryId: string): Promise<Inventory | null
       sql<string[]>`array_remove(array_agg(inventaire_associe.observateur_id::text), NULL)`.as("associateIds"),
       sql<string[]>`array_remove(array_agg(inventaire_meteo.meteo_id::text), NULL)`.as("weatherIds"),
     ])
-    .where("donnee.id", "=", Number.parseInt(entryId))
+    .where("donnee.id", "=", entryId)
     .groupBy("inventaire.id")
     .executeTakeFirst();
 

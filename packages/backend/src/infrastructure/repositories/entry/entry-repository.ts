@@ -6,6 +6,7 @@ import { getOrderByIdentifier } from "@infrastructure/repositories/entry/entry-r
 import { reshapeRawEntry } from "@infrastructure/repositories/entry/entry-repository-reshape.js";
 import { withSearchCriteria } from "@infrastructure/repositories/search-criteria.js";
 import { type OperandExpression, type SqlBool, sql } from "kysely";
+import { nanoid } from "nanoid";
 import { z } from "zod";
 import { areSetsContainingSameValues } from "../../../utils/utils.js";
 
@@ -15,7 +16,7 @@ const findEntryById = async (id: string): Promise<Entry | null> => {
     .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
     .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
     .select([
-      sql<string>`donnee.id::text`.as("id"),
+      "donnee.id",
       sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
@@ -30,7 +31,7 @@ const findEntryById = async (id: string): Promise<Entry | null> => {
       sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
       sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
     ])
-    .where("donnee.id", "=", Number.parseInt(id))
+    .where("donnee.id", "=", id)
     .groupBy("donnee.id")
     .executeTakeFirst();
 
@@ -43,7 +44,7 @@ const findExistingEntry = async (criteria: EntryCreateInput): Promise<Entry | nu
     .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
     .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
     .select([
-      sql<string>`donnee.id::text`.as("id"),
+      "donnee.id",
       sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
@@ -143,7 +144,7 @@ const findEntries = async ({
     .leftJoin("age", "donnee.ageId", "age.id")
     .leftJoin("sexe", "donnee.sexeId", "sexe.id")
     .select([
-      sql<string>`donnee.id::text`.as("id"),
+      "donnee.id",
       sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
@@ -227,6 +228,7 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
     const entryResult = await trx
       .insertInto("donnee")
       .values({
+        id: nanoid(12),
         inventaireId: Number.parseInt(entryInput.inventoryId),
         especeId: Number.parseInt(entryInput.speciesId),
         sexeId: Number.parseInt(entryInput.sexId),
@@ -241,7 +243,7 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
         dateCreation: new Date(),
       })
       .returning([
-        sql<string>`donnee.id::text`.as("id"),
+        "donnee.id",
         sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
         sql<string>`donnee.espece_id::text`.as("especeId"),
         sql<string>`donnee.sexe_id::text`.as("sexeId"),
@@ -262,7 +264,7 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
         .insertInto("donnee_comportement")
         .values(
           entryInput.behaviorIds.map((behaviorId) => {
-            return { donneeId: Number.parseInt(entryResult.id), comportementId: Number.parseInt(behaviorId) };
+            return { donneeId: entryResult.id, comportementId: Number.parseInt(behaviorId) };
           }),
         )
         .returning(sql<string>`donnee_comportement.comportement_id::text`.as("comportementId"))
@@ -275,7 +277,7 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
         .insertInto("donnee_milieu")
         .values(
           entryInput.environmentIds.map((environmentId) => {
-            return { donneeId: Number.parseInt(entryResult.id), milieuId: Number.parseInt(environmentId) };
+            return { donneeId: entryResult.id, milieuId: Number.parseInt(environmentId) };
           }),
         )
         .returning(sql<string>`donnee_milieu.milieu_id::text`.as("milieuId"))
@@ -309,9 +311,9 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
         commentaire: entryInput.comment,
         regroupement: entryInput.grouping,
       })
-      .where("id", "=", Number.parseInt(entryId))
+      .where("id", "=", entryId)
       .returning([
-        sql<string>`donnee.id::text`.as("id"),
+        "donnee.id",
         sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
         sql<string>`donnee.espece_id::text`.as("especeId"),
         sql<string>`donnee.sexe_id::text`.as("sexeId"),
@@ -326,7 +328,7 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
       ])
       .executeTakeFirstOrThrow();
 
-    await kysely.deleteFrom("donnee_comportement").where("donneeId", "=", Number.parseInt(entryId)).execute();
+    await kysely.deleteFrom("donnee_comportement").where("donneeId", "=", entryId).execute();
 
     let behaviorIdsResult: { comportementId: string }[] = [];
     if (entryInput.behaviorIds.length) {
@@ -334,14 +336,14 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
         .insertInto("donnee_comportement")
         .values(
           entryInput.behaviorIds.map((behaviorId) => {
-            return { donneeId: Number.parseInt(entryResult.id), comportementId: Number.parseInt(behaviorId) };
+            return { donneeId: entryResult.id, comportementId: Number.parseInt(behaviorId) };
           }),
         )
         .returning(sql<string>`donnee_comportement.comportement_id::text`.as("comportementId"))
         .execute();
     }
 
-    await kysely.deleteFrom("donnee_milieu").where("donneeId", "=", Number.parseInt(entryId)).execute();
+    await kysely.deleteFrom("donnee_milieu").where("donneeId", "=", entryId).execute();
 
     let environmentIdsResult: { milieuId: string }[] = [];
     if (entryInput.environmentIds.length) {
@@ -349,7 +351,7 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
         .insertInto("donnee_milieu")
         .values(
           entryInput.environmentIds.map((environmentId) => {
-            return { donneeId: Number.parseInt(entryResult.id), milieuId: Number.parseInt(environmentId) };
+            return { donneeId: entryResult.id, milieuId: Number.parseInt(environmentId) };
           }),
         )
         .returning(sql<string>`donnee_milieu.milieu_id::text`.as("milieuId"))
@@ -370,20 +372,20 @@ const deleteEntryById = async (entryId: string): Promise<Entry | null> => {
   const behaviorIdsResult = await kysely
     .selectFrom("donnee_comportement")
     .select(sql<string>`comportement_id::text`.as("comportementId"))
-    .where("donneeId", "=", Number.parseInt(entryId))
+    .where("donneeId", "=", entryId)
     .execute();
 
   const environmentIdsResult = await kysely
     .selectFrom("donnee_milieu")
     .select(sql<string>`milieu_id::text`.as("milieuId"))
-    .where("donneeId", "=", Number.parseInt(entryId))
+    .where("donneeId", "=", entryId)
     .execute();
 
   const deletedEntry = await kysely
     .deleteFrom("donnee")
-    .where("id", "=", Number.parseInt(entryId))
+    .where("id", "=", entryId)
     .returning([
-      sql<string>`donnee.id::text`.as("id"),
+      "donnee.id",
       sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),

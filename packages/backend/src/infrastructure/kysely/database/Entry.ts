@@ -1,7 +1,5 @@
-import type { Generated } from "kysely";
-
 export type Entry = {
-  id: Generated<number>;
+  id: string;
   inventaireId: number;
   especeId: number;
   sexeId: number;
