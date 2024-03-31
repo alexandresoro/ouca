@@ -4,7 +4,6 @@ import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { User } from "@domain/user/user.js";
 import type { PutSettingsInput } from "@ou-ca/common/api/settings";
 import { Result, err, ok } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { AgeService } from "../age/age-service.js";
 import type { DepartmentService } from "../department/department-service.js";
 import type { NumberEstimateService } from "../number-estimate/number-estimate-service.js";
@@ -103,14 +102,6 @@ export const buildSettingsService = ({
     if (!loggedUser) {
       return err("notAllowed");
     }
-
-    logger.trace(
-      {
-        userId: loggedUser.id,
-        inputUpdateSettings,
-      },
-      `Saving user settings of User=${loggedUser.id}`,
-    );
 
     // Temporary sync to user service settings
     const updatedSettingsUser = {

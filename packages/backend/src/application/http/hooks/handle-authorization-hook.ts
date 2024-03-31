@@ -1,3 +1,4 @@
+import type { OIDCUser } from "@domain/oidc/oidc-user.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Services } from "../../services/services.js";
@@ -6,7 +7,7 @@ import { getAccessToken } from "../controllers/access-token-utils.js";
 declare module "fastify" {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface FastifyRequest {
-    user: LoggedUser | null;
+    user: (LoggedUser & { oidcUser: OIDCUser }) | null;
   }
 }
 
@@ -58,5 +59,5 @@ export const handleAuthorizationHook = async (
     }
   }
 
-  request.user = matchingLoggedUserResult.value;
+  request.user = { ...matchingLoggedUserResult.value, oidcUser: introspectionResult.user };
 };

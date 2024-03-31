@@ -40,3 +40,20 @@ export const getMeResponse = z.object({
 });
 
 export type GetMeResponse = z.infer<typeof getMeResponse>;
+
+/**
+ * `PUT` `/me`
+ * Update of user settings
+ */
+export const putMeInput = z.object({
+  defaultDepartment: z.string().nullable(),
+  defaultObserver: z.string().nullable(),
+  defaultEstimationNombre: z.string().nullable(),
+  defaultNombre: z.coerce.number().min(1).max(65535).nullable(),
+  defaultSexe: z.string().nullable(),
+  defaultAge: z.string().nullable(),
+  areAssociesDisplayed: z.boolean(),
+  isMeteoDisplayed: z.boolean(),
+  isDistanceDisplayed: z.boolean(),
+  isRegroupementDisplayed: z.boolean(),
+});

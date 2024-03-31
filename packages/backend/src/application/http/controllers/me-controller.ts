@@ -1,44 +1,22 @@
-import { getMeResponse } from "@ou-ca/common/api/me";
+import type { User } from "@domain/user/user.js";
+import { getMeResponse, putMeInput } from "@ou-ca/common/api/me";
 import type { FastifyPluginCallback } from "fastify";
 import type { Services } from "../../services/services.js";
-import { getAccessToken } from "./access-token-utils.js";
 
 export const meController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { oidcService } = services;
+  const { oidcService, userService } = services;
 
   fastify.get("/", async (req, reply) => {
     if (!req.user) {
       return await reply.status(401).send();
     }
 
-    const accessTokenResult = getAccessToken(req);
-
-    if (accessTokenResult.isErr()) {
-      switch (accessTokenResult.error) {
-        case "headerNotFound":
-          return await reply.status(401).send("Authorization header is missing.");
-        case "headerInvalidFormat":
-          return await reply.status(401).send("Authorization header is invalid.");
-      }
-    }
-
-    const introspectionResult = await oidcService.introspectAccessTokenCached(accessTokenResult.value);
-
-    if (introspectionResult.isErr()) {
-      return await reply.status(500).send();
-    }
-
-    const introspectionData = introspectionResult.value;
-
-    if (!introspectionData.active) {
-      return await reply.status(401).send("Access token is not active.");
-    }
-
-    const oidcUser = introspectionData.user;
-
-    const userResult = await oidcService.findLoggedUserFromProvider(oidcUser.oidcProvider, oidcUser.sub);
+    const userResult = await oidcService.findLoggedUserFromProvider(
+      req.user.oidcUser.oidcProvider,
+      req.user.oidcUser.sub,
+    );
 
     if (userResult.isErr()) {
       return await reply.status(404).send("Internal user not found");
@@ -48,8 +26,47 @@ export const meController: FastifyPluginCallback<{
 
     const responseBody = getMeResponse.parse({
       id,
-      user: introspectionData.user,
       settings,
+      user: req.user.oidcUser,
+    });
+
+    return await reply.send(responseBody);
+  });
+
+  fastify.put("/", async (req, reply) => {
+    if (!req.user) {
+      return await reply.status(401).send();
+    }
+
+    const parsedInputResult = putMeInput.safeParse(req.body);
+
+    if (!parsedInputResult.success) {
+      return await reply.status(422).send();
+    }
+
+    const { data: input } = parsedInputResult;
+
+    const reshapedInput = {
+      defaultObserverId: input.defaultObserver ?? undefined,
+      defaultDepartmentId: input.defaultDepartment ?? undefined,
+      defaultAgeId: input.defaultAge ?? undefined,
+      defaultSexId: input.defaultSexe ?? undefined,
+      defaultNumberEstimateId: input.defaultEstimationNombre ?? undefined,
+      defaultNumber: input.defaultNombre ?? undefined,
+      displayAssociates: input.areAssociesDisplayed ?? undefined,
+      displayWeather: input.isMeteoDisplayed ?? undefined,
+      displayDistance: input.isDistanceDisplayed ?? undefined,
+      displayGrouping: input.isRegroupementDisplayed ?? undefined,
+    } satisfies User["settings"];
+
+    const updatedUser = await userService.updateSettings(req.user.id, reshapedInput);
+
+    const { id, settings } = updatedUser;
+
+    const responseBody = getMeResponse.parse({
+      id,
+      settings,
+      user: req.user.oidcUser,
     });
 
     return await reply.send(responseBody);

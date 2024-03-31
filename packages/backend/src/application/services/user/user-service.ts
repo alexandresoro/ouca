@@ -27,8 +27,17 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
   const findUserByExternalId = async (externalProviderName: string, externalProviderId: string): Promise<User | null> =>
     userRepository.findUserByExternalId({ externalProviderId, externalProviderName });
 
-  const updateSettings = async (id: string, settings: User["settings"]): Promise<User> =>
-    userRepository.updateUserSettings(id, settings);
+  const updateSettings = async (id: string, settings: NonNullable<User["settings"]>): Promise<User> => {
+    logger.trace(
+      {
+        userId: id,
+        settings,
+      },
+      `Saving user settings of User=${id}`,
+    );
+
+    return userRepository.updateUserSettings(id, settings);
+  };
 
   const createUser = async ({ extProvider, extProviderUserId }: CreateUserInput): Promise<User> =>
     userRepository.createUser({
