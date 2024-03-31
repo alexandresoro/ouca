@@ -17,7 +17,6 @@ import type { InventoryWeather } from "./database/InventoryWeather.js";
 import type { Locality } from "./database/Locality.js";
 import type { NumberEstimate } from "./database/NumberEstimate.js";
 import type { Observer } from "./database/Observer.js";
-import type { Settings } from "./database/Settings.js";
 import type { Sex } from "./database/Sex.js";
 import type { Species } from "./database/Species.js";
 import type { SpeciesClass } from "./database/SpeciesClass.js";
@@ -44,7 +43,6 @@ export type Database = {
   meteo: Weather;
   milieu: Environment;
   observateur: Observer;
-  settings: Settings;
   sexe: Sex;
   user: User;
 };

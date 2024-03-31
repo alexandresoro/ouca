@@ -11,7 +11,6 @@ import { localityGeojsonRepository } from "@infrastructure/repositories/locality
 import { localityRepository } from "@infrastructure/repositories/locality/locality-repository.js";
 import { numberEstimateRepository } from "@infrastructure/repositories/number-estimate/number-estimate-repository.js";
 import { observerRepository } from "@infrastructure/repositories/observer/observer-repository.js";
-import { settingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { sexRepository } from "@infrastructure/repositories/sex/sex-repository.js";
 import { speciesClassRepository } from "@infrastructure/repositories/species-class/species-class-repository.js";
 import { speciesRepository } from "@infrastructure/repositories/species/species-repository.js";
@@ -146,7 +145,6 @@ export const buildServices = (): Services => {
   });
 
   const settingsService = buildSettingsService({
-    settingsRepository,
     userService,
     departmentService,
     observerService,

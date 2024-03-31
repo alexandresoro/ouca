@@ -1,9 +1,8 @@
-import type { SettingsEnriched, UpdateSettingsInput } from "@domain/settings/settings.js";
+import type { SettingsEnriched } from "@domain/settings/settings.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import type { SettingsRepository } from "@interfaces/settings-repository-interface.js";
+import type { User } from "@domain/user/user.js";
 import type { PutSettingsInput } from "@ou-ca/common/api/settings";
-import type { User } from "@sentry/node";
 import { Result, err, ok } from "neverthrow";
 import { logger } from "../../../utils/logger.js";
 import type { AgeService } from "../age/age-service.js";
@@ -14,7 +13,6 @@ import type { SexService } from "../sex/sex-service.js";
 import type { UserService } from "../user/user-service.js";
 
 type SettingsServiceDependencies = {
-  settingsRepository: SettingsRepository;
   userService: UserService;
   departmentService: DepartmentService;
   observerService: ObserverService;
@@ -24,7 +22,6 @@ type SettingsServiceDependencies = {
 };
 
 export const buildSettingsService = ({
-  settingsRepository,
   userService,
   departmentService,
   observerService,
@@ -107,35 +104,26 @@ export const buildSettingsService = ({
       return err("notAllowed");
     }
 
-    const updateSettingsInput = buildSettingsFromInputSettings(inputUpdateSettings);
-
     logger.trace(
       {
         userId: loggedUser.id,
-        updateSettingsInput,
+        inputUpdateSettings,
       },
       `Saving user settings of User=${loggedUser.id}`,
     );
 
-    await settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);
-
     // Temporary sync to user service settings
     const updatedSettingsUser = {
-      defaultObserverId:
-        updateSettingsInput.defaultObservateurId != null ? `${updateSettingsInput.defaultObservateurId}` : undefined,
-      defaultDepartmentId:
-        updateSettingsInput.defaultDepartementId != null ? `${updateSettingsInput.defaultDepartementId}` : undefined,
-      defaultAgeId: updateSettingsInput.defaultAgeId != null ? `${updateSettingsInput.defaultAgeId}` : undefined,
-      defaultSexId: updateSettingsInput.defaultSexeId != null ? `${updateSettingsInput.defaultSexeId}` : undefined,
-      defaultNumberEstimateId:
-        updateSettingsInput.defaultEstimationNombreId != null
-          ? `${updateSettingsInput.defaultEstimationNombreId}`
-          : undefined,
-      defaultNumber: updateSettingsInput.defaultNombre ?? undefined,
-      displayAssociates: updateSettingsInput.areAssociesDisplayed ?? undefined,
-      displayWeather: updateSettingsInput.isMeteoDisplayed ?? undefined,
-      displayDistance: updateSettingsInput.isDistanceDisplayed ?? undefined,
-      displayGrouping: updateSettingsInput.isRegroupementDisplayed ?? undefined,
+      defaultObserverId: inputUpdateSettings.defaultObserver ?? undefined,
+      defaultDepartmentId: inputUpdateSettings.defaultDepartment ?? undefined,
+      defaultAgeId: inputUpdateSettings.defaultAge ?? undefined,
+      defaultSexId: inputUpdateSettings.defaultSexe ?? undefined,
+      defaultNumberEstimateId: inputUpdateSettings.defaultEstimationNombre ?? undefined,
+      defaultNumber: inputUpdateSettings.defaultNombre ?? undefined,
+      displayAssociates: inputUpdateSettings.areAssociesDisplayed ?? undefined,
+      displayWeather: inputUpdateSettings.isMeteoDisplayed ?? undefined,
+      displayDistance: inputUpdateSettings.isDistanceDisplayed ?? undefined,
+      displayGrouping: inputUpdateSettings.isRegroupementDisplayed ?? undefined,
     } satisfies User["settings"];
 
     const { id, settings: updatedSettingsNew } = await userService.updateSettings(loggedUser.id, updatedSettingsUser);
@@ -207,24 +195,3 @@ export const buildSettingsService = ({
 };
 
 export type SettingsService = ReturnType<typeof buildSettingsService>;
-
-const buildSettingsFromInputSettings = (inputUpdateSettings: PutSettingsInput): UpdateSettingsInput => {
-  return {
-    defaultObservateurId: inputUpdateSettings.defaultObserver
-      ? Number.parseInt(inputUpdateSettings.defaultObserver)
-      : null,
-    defaultDepartementId: inputUpdateSettings.defaultDepartment
-      ? Number.parseInt(inputUpdateSettings.defaultDepartment)
-      : null,
-    defaultAgeId: inputUpdateSettings.defaultAge ? Number.parseInt(inputUpdateSettings.defaultAge) : null,
-    defaultSexeId: inputUpdateSettings.defaultSexe ? Number.parseInt(inputUpdateSettings.defaultSexe) : null,
-    defaultEstimationNombreId: inputUpdateSettings.defaultEstimationNombre
-      ? Number.parseInt(inputUpdateSettings.defaultEstimationNombre)
-      : null,
-    defaultNombre: inputUpdateSettings.defaultNombre,
-    areAssociesDisplayed: inputUpdateSettings.areAssociesDisplayed,
-    isMeteoDisplayed: inputUpdateSettings.isMeteoDisplayed,
-    isDistanceDisplayed: inputUpdateSettings.isDistanceDisplayed,
-    isRegroupementDisplayed: inputUpdateSettings.isRegroupementDisplayed,
-  };
-};

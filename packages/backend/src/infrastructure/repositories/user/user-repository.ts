@@ -1,7 +1,6 @@
 import { type User, userSchema } from "@domain/user/user.js";
 import { redis } from "@infrastructure/ioredis/redis.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
-import { settingsRepository } from "@infrastructure/repositories/settings/settings-repository.js";
 import { logger } from "../../../utils/logger.js";
 
 const EXTERNAL_USER_INTERNAL_USER_MAPPING_CACHE_PREFIX = "externalUserInternalUserMapping";
@@ -99,21 +98,15 @@ const createUser = async ({
   extProviderName: string;
   extProviderId: string;
 }): Promise<User> => {
-  const createdUser = await kysely.transaction().execute(async (transaction) => {
-    const createdUser = await transaction
-      .insertInto("user")
-      .values({
-        extProviderId,
-        extProviderName,
-        settings: null,
-      })
-      .returningAll()
-      .executeTakeFirstOrThrow();
-
-    await settingsRepository.createDefaultSettings(createdUser.id, transaction);
-
-    return createdUser;
-  });
+  const createdUser = await kysely
+    .insertInto("user")
+    .values({
+      extProviderId,
+      extProviderName,
+      settings: null,
+    })
+    .returningAll()
+    .executeTakeFirstOrThrow();
 
   return userSchema.parse(createdUser);
 };

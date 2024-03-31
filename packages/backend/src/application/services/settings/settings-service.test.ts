@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test, { beforeEach, describe } from "node:test";
-import { settingsFactory } from "@fixtures/domain/settings/settings.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { userFactory } from "@fixtures/domain/user/user.fixtures.js";
 import { ageServiceFactory } from "@fixtures/services/age/age-service.fixtures.js";
@@ -8,7 +7,6 @@ import { departmentServiceFactory } from "@fixtures/services/department/departme
 import { numberEstimateServiceFactory } from "@fixtures/services/number-estimate/number-estimate-service.fixtures.js";
 import { observerServiceFactory } from "@fixtures/services/observer/observer-service.fixtures.js";
 import { sexServiceFactory } from "@fixtures/services/sex/sex-service.fixtures.js";
-import type { SettingsRepository } from "@interfaces/settings-repository-interface.js";
 import type { PutSettingsInput } from "@ou-ca/common/api/settings";
 import { err, ok } from "neverthrow";
 import { mock } from "../../../utils/mock.js";
@@ -20,7 +18,6 @@ import type { SexService } from "../sex/sex-service.js";
 import type { UserService } from "../user/user-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
-const settingsRepository = mock<SettingsRepository>();
 const userService = mock<UserService>();
 const departmentService = mock<DepartmentService>();
 const observerService = mock<ObserverService>();
@@ -29,7 +26,6 @@ const ageService = mock<AgeService>();
 const numberEstimateService = mock<NumberEstimateService>();
 
 const settingsService = buildSettingsService({
-  settingsRepository,
   userService,
   departmentService,
   observerService,
@@ -41,7 +37,6 @@ const settingsService = buildSettingsService({
 beforeEach(() => {
   userService.getUser.mock.resetCalls();
   userService.updateSettings.mock.resetCalls();
-  settingsRepository.updateUserSettings.mock.resetCalls();
   departmentService.findDepartment.mock.resetCalls();
   observerService.findObserver.mock.resetCalls();
   sexService.findSex.mock.resetCalls();
@@ -129,11 +124,6 @@ test("should update settings with parameters for user", async () => {
 
   const loggedUser = loggedUserFactory.build();
 
-  const mockResolved = settingsFactory.build({
-    defaultDepartementId: "2",
-    defaultObservateurId: "5",
-  });
-
   const user = userFactory.build({
     settings: {
       defaultDepartmentId: "2",
@@ -141,7 +131,6 @@ test("should update settings with parameters for user", async () => {
     },
   });
 
-  settingsRepository.updateUserSettings.mock.mockImplementationOnce(() => Promise.resolve(mockResolved));
   userService.updateSettings.mock.mockImplementationOnce(() => Promise.resolve(user));
   departmentService.findDepartment.mock.mockImplementationOnce(() =>
     Promise.resolve(ok(departmentServiceFactory.build())),
@@ -155,20 +144,20 @@ test("should update settings with parameters for user", async () => {
 
   await settingsService.updateUserSettings(updatedAppConfiguration, loggedUser);
 
-  assert.strictEqual(settingsRepository.updateUserSettings.mock.callCount(), 1);
-  assert.deepStrictEqual(settingsRepository.updateUserSettings.mock.calls[0].arguments, [
+  assert.strictEqual(userService.updateSettings.mock.callCount(), 1);
+  assert.deepStrictEqual(userService.updateSettings.mock.calls[0].arguments, [
     loggedUser.id,
     {
-      areAssociesDisplayed: true,
-      defaultAgeId: 1,
-      defaultDepartementId: 2,
-      defaultEstimationNombreId: 3,
-      defaultNombre: 4,
-      defaultObservateurId: 5,
-      defaultSexeId: null,
-      isDistanceDisplayed: true,
-      isMeteoDisplayed: true,
-      isRegroupementDisplayed: true,
+      displayAssociates: true,
+      defaultAgeId: "1",
+      defaultDepartmentId: "2",
+      defaultNumberEstimateId: "3",
+      defaultNumber: 4,
+      defaultObserverId: "5",
+      defaultSexId: undefined,
+      displayDistance: true,
+      displayWeather: true,
+      displayGrouping: true,
     },
   ]);
   assert.strictEqual(departmentService.findDepartment.mock.callCount(), 1);
