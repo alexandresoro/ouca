@@ -223,16 +223,16 @@
     "resetCustomCoordinates": "Revenir aux coordonnées du lieu-dit",
     "maps": {
       "openStreetMap": {
-        "name": "OpenStreetMap",
-        "attribution": "&copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap contributors</a>"
+        "name": "OpenStreetMap"
       },
       "ign": {
-        "name": "IGN",
-        "attribution": "IGN-F/Géoportail"
+        "name": "IGN"
+      },
+      "ignClassique": {
+        "name": "IGN Classique"
       },
       "ignSatellite": {
-        "name": "IGN satellite",
-        "attribution": "IGN-F/Géoportail"
+        "name": "IGN satellite"
       }
     }
   },
