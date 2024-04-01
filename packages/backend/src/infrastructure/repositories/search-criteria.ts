@@ -127,6 +127,10 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
       expressions.push(eb("donnee_milieu.milieuId", "in", searchCriteria.environmentIds.map(Number.parseInt)));
     }
 
+    if (searchCriteria.ownerId != null) {
+      expressions.push(eb("inventaire.ownerId", "=", searchCriteria.ownerId));
+    }
+
     return eb.and(expressions);
   };
 };

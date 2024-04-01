@@ -27,4 +27,5 @@ export type SearchCriteria = {
   breeders?: BreederCode[];
   behaviorIds?: string[];
   environmentIds?: string[];
+  ownerId?: string;
 };

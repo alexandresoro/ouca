@@ -88,10 +88,9 @@ describe("Data paginated find by search criteria", () => {
       {
         orderBy: undefined,
         sortOrder: undefined,
-        searchCriteria: {},
+        searchCriteria: { ownerId: loggedUser.id },
         offset: 0,
         limit: 10,
-        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -119,12 +118,12 @@ describe("Data paginated find by search criteria", () => {
         searchCriteria: {
           number: 12,
           breeders: ["certain", "probable"],
+          ownerId: loggedUser.id,
         },
         orderBy: "department",
         sortOrder: "desc",
         offset: 0,
         limit: 10,
-        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -149,7 +148,6 @@ describe("Entities count by search criteria", () => {
     assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
     assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [
       {
-        criteria: {},
         ownerId: loggedUser.id,
       },
     ]);
@@ -170,10 +168,8 @@ describe("Entities count by search criteria", () => {
     assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
     assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [
       {
-        criteria: {
-          number: 12,
-          breeders: ["certain", "probable"],
-        },
+        number: 12,
+        breeders: ["certain", "probable"],
         ownerId: loggedUser.id,
       },
     ]);

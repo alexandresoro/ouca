@@ -5,7 +5,7 @@ export type EntryRepository = {
   findEntryById(id: string): Promise<Entry | null>;
   findExistingEntry(criteria: EntryCreateInput): Promise<Entry | null>;
   findEntries(options?: EntryFindManyInput): Promise<Entry[]>;
-  getCount({ criteria, ownerId }: { criteria?: SearchCriteria | null; ownerId: string | null }): Promise<number>;
+  getCount(criteria?: SearchCriteria): Promise<number>;
   createEntry(entryInput: EntryCreateInput): Promise<Entry>;
   updateEntry: (entryId: string, entryInput: EntryCreateInput) => Promise<Entry>;
   deleteEntryById: (entryId: string) => Promise<Entry | null>;

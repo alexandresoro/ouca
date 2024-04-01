@@ -127,7 +127,6 @@ const findEntries = async ({
   searchCriteria,
   offset,
   limit,
-  ownerId,
 }: EntryFindManyInput = {}): Promise<Entry[]> => {
   let queryEntry = kysely
     .selectFrom("donnee")
@@ -164,10 +163,6 @@ const findEntries = async ({
     queryEntry = queryEntry.where(withSearchCriteria(searchCriteria));
   }
 
-  if (ownerId != null) {
-    queryEntry = queryEntry.where("inventaire.ownerId", "=", ownerId);
-  }
-
   queryEntry = queryEntry.groupBy("donnee.id");
 
   const orderByIdentifier = getOrderByIdentifier(orderBy);
@@ -191,10 +186,7 @@ const findEntries = async ({
   return z.array(entrySchema).parse(entriesResult.map((entry) => reshapeRawEntry(entry)));
 };
 
-const getCount = async ({
-  criteria,
-  ownerId,
-}: { criteria?: SearchCriteria | null; ownerId: string | null }): Promise<number> => {
+const getCount = async (criteria?: SearchCriteria | null): Promise<number> => {
   let query = kysely
     .selectFrom("donnee")
     .leftJoin("espece", "donnee.especeId", "espece.id")
@@ -212,10 +204,6 @@ const getCount = async ({
 
   if (criteria != null) {
     query = query.where(withSearchCriteria(criteria));
-  }
-
-  if (ownerId != null) {
-    query = query.where("inventaire.ownerId", "=", ownerId);
   }
 
   const countResult = await query.executeTakeFirstOrThrow();
