@@ -40,7 +40,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       return err("notAllowed");
     }
 
-    const { orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+    const { orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
 
     let orderBy: EntryFindManyInput["orderBy"] | undefined;
     switch (orderByField) {
@@ -82,12 +82,13 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
         break;
     }
 
+    const reshapedSearchCriteria = {
+      ...searchCriteria,
+      ownerId: onlyOwnData ? loggedUser.id : undefined,
+    };
+
     const entries = await entryRepository.findEntries({
-      searchCriteria: {
-        ...searchCriteria,
-        // TODO: Right now we simply filter the entries by the owner ID
-        ownerId: loggedUser.id,
-      },
+      searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
         pageNumber,
         pageSize,
@@ -107,10 +108,14 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       return err("notAllowed");
     }
 
-    const { orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+    const { orderBy, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
 
-    // TODO: Right now we simply filter the entries by the owner ID
-    return ok(await entryRepository.getCount({ ...searchCriteria, ownerId: loggedUser.id }));
+    const reshapedSearchCriteria = {
+      ...searchCriteria,
+      ownerId: onlyOwnData ? loggedUser.id : undefined,
+    };
+
+    return ok(await entryRepository.getCount(reshapedSearchCriteria));
   };
 
   const findNextGrouping = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {

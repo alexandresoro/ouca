@@ -1,8 +1,9 @@
 import Switch from "@components/base/Switch";
 import { useUser } from "@hooks/useUser";
-import { useFeatures } from "@services/app-features/features";
-import { type FunctionComponent, useState } from "react";
+import { useAtom } from "jotai";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { searchEntriesOnlyOwnDataAtom } from "../searchEntriesCriteriaAtom";
 import SearchFilterAges from "./SearchFilterAges";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
 import SearchFilterBreeders from "./SearchFilterBreeders";
@@ -20,23 +21,19 @@ import SearchFilterTowns from "./SearchFilterTowns";
 const SearchFilterPanel: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const features = useFeatures();
-
   const user = useUser();
   const role = user?.role;
 
-  const [displayOnlyOwnObservations, setDisplayOnlyOwnObservations] = useState(
-    features.tmp_only_own_observations_filter && role === "admin",
-  );
+  const [onlyOwnData, setOnlyOwnData] = useAtom(searchEntriesOnlyOwnDataAtom);
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">{t("observationFilter.search")}</h2>
-      {features.tmp_only_own_observations_filter && role === "admin" && (
+      {role === "admin" && (
         <Switch
           label={t("observationFilter.displayOnlyMyObservations")}
-          checked={displayOnlyOwnObservations}
-          onChange={setDisplayOnlyOwnObservations}
+          checked={onlyOwnData}
+          onChange={setOnlyOwnData}
         />
       )}
       <div className="flex flex-col gap-2.5">

@@ -71,6 +71,8 @@ export const searchEntriesFilterEnvironmentsAtom = atom<Environment[]>([]);
 
 export const searchEntriesFilterCommentAtom = atom<string | null>(null);
 
+export const searchEntriesOnlyOwnDataAtom = atom<boolean>(true);
+
 export const searchEntriesCriteriaAtom = atom((get) => {
   const observerIds = get(searchEntriesFilterObserversAtom).map(({ id }) => id);
   const fromDate = get(searchEntriesFilterFromDateAtom) ?? undefined;
@@ -86,6 +88,7 @@ export const searchEntriesCriteriaAtom = atom((get) => {
   const breeders = get(searchEntriesFilterBreedersAtom);
   const environmentIds = get(searchEntriesFilterEnvironmentsAtom).map(({ id }) => id);
   const comment = get(searchEntriesFilterCommentAtom) ?? undefined;
+  const onlyOwnData = get(searchEntriesOnlyOwnDataAtom);
 
   return {
     observerIds,
@@ -102,5 +105,6 @@ export const searchEntriesCriteriaAtom = atom((get) => {
     breeders: breeders.length ? breeders : undefined,
     environmentIds,
     comment: comment?.length ? comment : undefined,
+    onlyOwnData,
   } satisfies SearchCriteriaParams;
 });

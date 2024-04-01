@@ -35,7 +35,6 @@ const SearchPage: FunctionComponent = () => {
       pageNumber: 1,
       pageSize: 1,
       ...searchCriteria,
-      onlyOwnData: true,
     },
     paused: selectedTab !== 1,
   });
