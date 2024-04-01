@@ -23,7 +23,7 @@ type UseApiQueryParams<T = unknown> = UseApiQueryCommonParams & {
 export type UseApiQuerySWROptions<T = unknown, E = unknown> = Omit<SWRConfiguration<T, E>, "fetcher">;
 
 export const useApiQuery = <T = unknown, E = unknown>(
-  path: string,
+  path: string | null,
   { queryParams, paused, schema, useApiPath = true }: UseApiQueryParams<T> = {},
   swrOptions?: UseApiQuerySWROptions<T, E>,
 ) => {
@@ -34,10 +34,10 @@ export const useApiQuery = <T = unknown, E = unknown>(
 
   const queryString = toUrlSearchParams(queryParams).toString();
 
-  const queryUrl = `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}`;
+  const queryUrl = path != null ? `${apiUrl}${path}${queryString.length ? `?${queryString}` : ""}` : null;
 
   return useSWR<T, E, ApiQueryKey>(
-    !paused ? { url: queryUrl, token: accessToken } : null,
+    !paused && queryUrl != null ? { url: queryUrl, token: accessToken } : null,
     ({ url, token }) => fetchApi({ url, token, schema }),
     swrOptions,
   );
