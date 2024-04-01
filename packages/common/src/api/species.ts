@@ -22,7 +22,7 @@ export type SpeciesOrderBy = (typeof SPECIES_ORDER_BY_ELEMENTS)[number];
 export const getSpeciesQueryParamsSchema = entitiesCommonQueryParamsSchema
   .extend({
     orderBy: z.enum(SPECIES_ORDER_BY_ELEMENTS).optional(),
-    onlyOwnData: z.boolean().optional(),
+    onlyOwnData: z.coerce.boolean().optional(),
   })
   .merge(getSearchCriteriaParamsSchema);
 
