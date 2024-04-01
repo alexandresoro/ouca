@@ -1,10 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUserSettings } from "@hooks/useUser";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { type UpsertEntryInput, upsertEntryInput } from "@ou-ca/common/api/entry";
+import { useApiAgeQuery } from "@services/api/age/api-age-queries";
+import { useApiNumberEstimateQuery } from "@services/api/number-estimate/api-number-estimate-queries";
+import { useApiSexQuery } from "@services/api/sex/api-sex-queries";
 import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import useUserSettingsContext from "../../../../hooks/useUserSettingsContext";
 import EntryFormBehaviors from "./EntryFormBehaviors";
 import EntryFormCharacteristics from "./EntryFormCharacteristics";
 import EntryFormComment from "./EntryFormComment";
@@ -33,7 +36,35 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
   const { submitFormText, disableIfNoChanges } = props;
   const { t } = useTranslation();
 
-  const { userSettings } = useUserSettingsContext();
+  const settings = useUserSettings();
+
+  const { data: defaultAge, isValidating: isValidatingAge } = useApiAgeQuery(settings?.defaultAgeId ?? null, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
+  const { data: defaultSex, isValidating: isValidatingSex } = useApiSexQuery(settings?.defaultSexId ?? null, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
+  const { data: defaultNumberEstimate, isValidating: isValidatingNumberEstimate } = useApiNumberEstimateQuery(
+    settings?.defaultNumberEstimateId ?? null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    },
+  );
+
+  const isDefaultAgeReady =
+    !isValidatingAge || settings === null || (settings !== undefined && settings.defaultAgeId == null);
+  const isDefaultSexReady =
+    !isValidatingSex || settings === null || (settings !== undefined && settings.defaultSexId == null);
+  const isDefaultNumberEstimateReady =
+    !isValidatingNumberEstimate ||
+    settings === null ||
+    (settings !== undefined && settings.defaultNumberEstimateId == null);
+
+  const areSettingsLoaded =
+    settings !== undefined && isDefaultAgeReady && isDefaultSexReady && isDefaultNumberEstimateReady;
 
   const defaultFormValues = (
     props.mode === "create"
@@ -41,10 +72,10 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
           // New entry
           inventoryId: props.initialData.inventoryId,
           speciesId: null,
-          sexId: userSettings.defaultSex?.id ?? null,
-          ageId: userSettings.defaultAge?.id ?? null,
-          numberEstimateId: userSettings.defaultNumberEstimate?.id ?? null,
-          number: userSettings.defaultNombre ?? null,
+          sexId: settings?.defaultSexId ?? null,
+          ageId: settings?.defaultAgeId ?? null,
+          numberEstimateId: settings?.defaultNumberEstimateId ?? null,
+          number: settings?.defaultNumber ?? null,
           distanceEstimateId: null,
           distance: null,
           regroupment: null,
@@ -98,6 +129,10 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
     }
   };
 
+  if (!areSettingsLoaded) {
+    return null;
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -116,30 +151,20 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
                   control={control}
                   register={register}
                   setValue={setValue}
-                  defaultNumber={userSettings?.defaultNombre ?? undefined}
+                  defaultNumber={settings?.defaultNumber ?? undefined}
                   defaultNumberEstimate={
-                    (props.mode === "update" ? props.initialData.numberEstimate : undefined) ??
-                    userSettings.defaultNumberEstimate ??
-                    undefined
+                    (props.mode === "update" ? props.initialData.numberEstimate : undefined) ?? defaultNumberEstimate
                   }
-                  defaultSex={
-                    (props.mode === "update" ? props.initialData.sex : undefined) ??
-                    userSettings.defaultSex ??
-                    undefined
-                  }
-                  defaultAge={
-                    (props.mode === "update" ? props.initialData.age : undefined) ??
-                    userSettings.defaultAge ??
-                    undefined
-                  }
+                  defaultSex={(props.mode === "update" ? props.initialData.sex : undefined) ?? defaultSex}
+                  defaultAge={(props.mode === "update" ? props.initialData.age : undefined) ?? defaultAge}
                 />
-                {(userSettings.isDistanceDisplayed || userSettings.isRegroupementDisplayed) && (
+                {(settings?.displayDistance || settings?.displayGrouping) && (
                   <EntryFormDistanceRegroupment
                     control={control}
                     register={register}
                     setValue={setValue}
-                    isDistanceDisplayed={userSettings.isDistanceDisplayed}
-                    isRegroupmentDisplayed={userSettings.isRegroupementDisplayed}
+                    isDistanceDisplayed={settings.displayDistance}
+                    isRegroupmentDisplayed={settings.displayGrouping}
                     defaultDistanceEstimate={
                       (props.mode === "update" ? props.initialData.distanceEstimate : undefined) ?? undefined
                     }

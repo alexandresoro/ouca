@@ -1,7 +1,6 @@
 import type * as Sentry from "@sentry/react";
 import { Fragment } from "react";
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
-import UserSettingsProvider from "../contexts/UserSettingsContext";
 import { AuthHandler } from "../features/AuthHandler";
 import ErrorBoundary from "../features/ErrorBoundary";
 import Layout from "../features/Layout";
@@ -20,9 +19,7 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
       element: (
         <GlobalErrorBoundary showDialog fallback={<ErrorBoundary />}>
           <AuthHandler>
-            <UserSettingsProvider>
-              <Layout />
-            </UserSettingsProvider>
+            <Layout />
           </AuthHandler>
         </GlobalErrorBoundary>
       ),

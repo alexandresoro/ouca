@@ -25,8 +25,6 @@ const settingsResponse = z.object({
  */
 export const getSettingsResponse = settingsResponse;
 
-export type GetSettingsResponse = z.infer<typeof getSettingsResponse>;
-
 /**
  * `PUT` `/settings`
  * Update of user settings
@@ -47,5 +45,3 @@ export const putSettingsInput = z.object({
 export type PutSettingsInput = z.infer<typeof putSettingsInput>;
 
 export const putSettingsResponse = settingsResponse;
-
-export type UpdateSettingsResponse = z.infer<typeof getSettingsResponse>;
