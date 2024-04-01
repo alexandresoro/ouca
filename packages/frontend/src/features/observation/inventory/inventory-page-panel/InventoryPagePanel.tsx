@@ -170,8 +170,8 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     });
   };
 
-  const previousInventoryId = previousInventoryData?.data?.[0].id ?? null;
-  const nextInventoryId = nextInventoryData?.data?.[0].id ?? null;
+  const previousInventoryId = previousInventoryData?.data?.[0]?.id ?? null;
+  const nextInventoryId = nextInventoryData?.data?.[0]?.id ?? null;
 
   const hasPreviousInventory = previousInventoryIndex != null && previousInventoryId != null;
   const hasNextInventory = nextInventoryIndex != null && nextInventoryId != null;
