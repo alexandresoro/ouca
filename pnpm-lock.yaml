@@ -87,8 +87,8 @@ importers:
         specifier: 6.1.0
         version: 6.1.0
       pg:
-        specifier: 8.11.3
-        version: 8.11.3
+        specifier: 8.11.4
+        version: 8.11.4
       pino:
         specifier: 8.19.0
         version: 8.19.0
@@ -3005,11 +3005,6 @@ packages:
     engines: {node: '>=0.10'}
     dev: false
 
-  /buffer-writer@2.0.0:
-    resolution: {integrity: sha512-a7ZpuTZU1TRtnwyCNW3I5dc0wWNC3VR9S++Ewyk2HHZdrO3CQJqSpd+95Us590V6AL7JqUAH2IwZ/398PmNFgw==}
-    engines: {node: '>=4'}
-    dev: false
-
   /buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
     dependencies:
@@ -5703,10 +5698,6 @@ packages:
       p-limit: 3.1.0
     dev: true
 
-  /packet-reader@1.0.0:
-    resolution: {integrity: sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==}
-    dev: false
-
   /pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
     dev: false
@@ -5796,12 +5787,12 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pg-pool@3.6.2(pg@8.11.3):
+  /pg-pool@3.6.2(pg@8.11.4):
     resolution: {integrity: sha512-Htjbg8BlwXqSBQ9V8Vjtc+vzf/6fVUuak/3/XXKA9oxZprwW3IMDQTGHP+KDmVL7rtd+R1QjbnCFPuTHm3G4hg==}
     peerDependencies:
       pg: '>=8.0'
     dependencies:
-      pg: 8.11.3
+      pg: 8.11.4
     dev: false
 
   /pg-protocol@1.6.1:
@@ -5831,8 +5822,8 @@ packages:
       postgres-range: 1.1.4
     dev: true
 
-  /pg@8.11.3:
-    resolution: {integrity: sha512-+9iuvG8QfaaUrrph+kpF24cXkH1YOOUeArRNYIxq1viYHZagBxrTno7cecY1Fa44tJeZvaoG+Djpkc3JwehN5g==}
+  /pg@8.11.4:
+    resolution: {integrity: sha512-pWb7JKPxGk1UFbtq7jQ0m3IfPpb7LLACCEyN8/u9DYEom+Q/BSKy+4TRl4+Hh003AOYhppB/z+QK87/hx/bk0w==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -5840,10 +5831,8 @@ packages:
       pg-native:
         optional: true
     dependencies:
-      buffer-writer: 2.0.0
-      packet-reader: 1.0.0
       pg-connection-string: 2.6.3
-      pg-pool: 3.6.2(pg@8.11.3)
+      pg-pool: 3.6.2(pg@8.11.4)
       pg-protocol: 1.6.1
       pg-types: 2.2.0
       pgpass: 1.0.5
