@@ -1,5 +1,7 @@
 import { useApiMe } from "@services/api/me/api-me-queries";
+import { settingsAtom } from "@services/api/me/settingsAtom";
 import { getFullName, getInitials } from "@utils/name-utils";
+import { useAtomValue } from "jotai";
 
 const ROLES = ["admin", "contributor", "user"] as const;
 
@@ -26,3 +28,5 @@ export const useUser = () => {
     role,
   };
 };
+
+export const useUserSettings = () => useAtomValue(settingsAtom);
