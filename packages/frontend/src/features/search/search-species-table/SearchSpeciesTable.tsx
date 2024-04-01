@@ -52,6 +52,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
         sortOrder,
         extended: true,
         ...searchCriteria,
+        onlyOwnData: true,
       },
       schema: getSpeciesExtendedResponse,
     },

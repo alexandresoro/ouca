@@ -90,11 +90,16 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
       return err("notAllowed");
     }
 
-    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
+
+    const reshapedSearchCriteria = {
+      ...searchCriteria,
+      ownerId: onlyOwnData ? loggedUser.id : undefined,
+    };
 
     const species = await speciesRepository.findSpecies({
       q,
-      searchCriteria,
+      searchCriteria: reshapedSearchCriteria,
       ...getSqlPagination({
         pageSize,
         pageNumber,
@@ -114,12 +119,17 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
       return err("notAllowed");
     }
 
-    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
+
+    const reshapedSearchCriteria = {
+      ...searchCriteria,
+      ownerId: onlyOwnData ? loggedUser.id : undefined,
+    };
 
     return ok(
       await speciesRepository.getCount({
         q: options.q,
-        searchCriteria,
+        searchCriteria: reshapedSearchCriteria,
       }),
     );
   };

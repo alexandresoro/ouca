@@ -128,7 +128,9 @@ describe("Entities paginated find by search criteria", () => {
         orderBy: undefined,
         q: undefined,
         sortOrder: undefined,
-        searchCriteria: {},
+        searchCriteria: {
+          ownerId: undefined,
+        },
       },
     ]);
   });
@@ -162,7 +164,9 @@ describe("Entities paginated find by search criteria", () => {
         sortOrder: "desc",
         offset: 0,
         limit: searchParams.pageSize,
-        searchCriteria: {},
+        searchCriteria: {
+          ownerId: undefined,
+        },
       },
     ]);
   });
@@ -207,6 +211,7 @@ describe("Entities paginated find by search criteria", () => {
           number: undefined,
           toDate: "2010-01-01",
           townIds: ["3", "6"],
+          ownerId: undefined,
         },
         orderBy: "code",
         sortOrder: "desc",
@@ -234,7 +239,9 @@ describe("Entities count by search criteria", () => {
     assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
       {
         q: undefined,
-        searchCriteria: {},
+        searchCriteria: {
+          ownerId: undefined,
+        },
       },
     ]);
   });
@@ -245,7 +252,14 @@ describe("Entities count by search criteria", () => {
     await speciesService.getSpeciesCount(loggedUser, { q: "test" });
 
     assert.strictEqual(speciesRepository.getCount.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [{ q: "test", searchCriteria: {} }]);
+    assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
+      {
+        q: "test",
+        searchCriteria: {
+          ownerId: undefined,
+        },
+      },
+    ]);
   });
 
   test("should handle to be called with some donnee criteria provided", async () => {
@@ -267,6 +281,7 @@ describe("Entities count by search criteria", () => {
           number: undefined,
           toDate: "2010-01-01",
           townIds: ["3", "6"],
+          ownerId: undefined,
         },
       },
     ]);
@@ -292,6 +307,7 @@ describe("Entities count by search criteria", () => {
           number: undefined,
           toDate: "2010-01-01",
           townIds: ["3", "6"],
+          ownerId: undefined,
         },
       },
     ]);

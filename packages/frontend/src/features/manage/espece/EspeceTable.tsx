@@ -52,6 +52,7 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
       orderBy,
       sortOrder,
       extended: true,
+      onlyOwnData: false,
     },
     schema: getSpeciesExtendedResponse,
   });
