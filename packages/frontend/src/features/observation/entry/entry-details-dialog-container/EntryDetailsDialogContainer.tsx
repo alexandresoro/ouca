@@ -26,7 +26,6 @@ const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainer
           entry.species.nomFrancais
         }`}</Dialog.Title>
         <div className="mb-2 text-[13px]">
-          {entry.inventory.date}
           {t("observationDetails.mainSubtitle", {
             owner: entry.inventory.observer.libelle,
             creationDate: new Intl.DateTimeFormat().format(new Date(entry.inventory.date)),
