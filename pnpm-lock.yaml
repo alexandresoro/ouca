@@ -271,6 +271,12 @@ importers:
       oidc-client-ts:
         specifier: 3.0.1
         version: 3.0.1
+      pmtiles:
+        specifier: 3.0.5
+        version: 3.0.5
+      protomaps-themes-base:
+        specifier: 2.0.0-alpha.5
+        version: 2.0.0-alpha.5
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -2310,6 +2316,12 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
+  /@types/leaflet@1.9.8:
+    resolution: {integrity: sha512-EXdsL4EhoUtGm2GC2ZYtXn+Fzc6pluVgagvo2VC1RHWToLGlTRwVYoDpqS/7QXa01rmDyBjJk3Catpf60VMkwg==}
+    dependencies:
+      '@types/geojson': 7946.0.14
+    dev: false
+
   /@types/mapbox-gl@3.1.0:
     resolution: {integrity: sha512-hI6cQDjw1bkJw7MC/eHMqq5TWUamLwsujnUUeiIX2KDRjxRNSYMjnHz07+LATz9I9XIsKumOtUz4gRYnZOJ/FA==}
     dependencies:
@@ -4110,6 +4122,10 @@ packages:
     dependencies:
       reusify: 1.0.4
 
+  /fflate@0.8.2:
+    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
+    dev: false
+
   /file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -5887,6 +5903,13 @@ packages:
       queue-lit: 1.5.2
     dev: true
 
+  /pmtiles@3.0.5:
+    resolution: {integrity: sha512-K6NxVvW/vXE3052VZKF2ppyjdyhLx41FidR5yV8L/+El+lcMJpXS0vHBSPFmjdag5zkYv2XGDdq+3VjB2K7l6w==}
+    dependencies:
+      '@types/leaflet': 1.9.8
+      fflate: 0.8.2
+    dev: false
+
   /point-in-polygon@1.1.0:
     resolution: {integrity: sha512-3ojrFwjnnw8Q9242TzgXuTD+eKiutbzyslcq1ydfu82Db2y+Ogbmyrkpv0Hgj31qwT3lbS9+QAAO/pIQM35XRw==}
     dev: false
@@ -6072,6 +6095,10 @@ packages:
 
   /protocol-buffers-schema@3.6.0:
     resolution: {integrity: sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw==}
+    dev: false
+
+  /protomaps-themes-base@2.0.0-alpha.5:
+    resolution: {integrity: sha512-IQ63JgClmJY89jyk+5qodvoTlpaAshmy8iJIze1UapPCo4Q+gEuErLrIqgsRWN1aXyL7pNm9CrhkKaNEUmWXBg==}
     dev: false
 
   /proxy-addr@2.0.7:

@@ -1,4 +1,5 @@
 import type { LayerProps } from "react-map-gl/maplibre";
+import { type MapProvider, getFontFamily } from "./map-style-providers";
 
 export const clusterLayer: LayerProps = {
   id: "clusters-localities",
@@ -22,16 +23,18 @@ export const clusterLayer: LayerProps = {
   },
 };
 
-export const clusterCountLayer: LayerProps = {
-  id: "cluster-locality-count",
-  type: "symbol",
-  source: "localities",
-  filter: ["has", "point_count"],
-  layout: {
-    "text-field": "{point_count_abbreviated}",
-    "text-font": ["Open Sans Regular"],
-    "text-size": 13,
-  },
+export const clusterCountLayer: (mapStyle: MapProvider) => LayerProps = (mapStyle) => {
+  return {
+    id: "cluster-locality-count",
+    type: "symbol",
+    source: "localities",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-font": [getFontFamily(mapStyle)],
+      "text-size": 13,
+    },
+  };
 };
 
 export const singleLocalityLayer: LayerProps = {
