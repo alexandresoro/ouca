@@ -62,7 +62,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.6.3",
     "@ou-ca/eslint-config": "workspace:*",
-    "@sentry/vite-plugin": "2.16.0",
+    "@sentry/vite-plugin": "2.16.1",
     "@tanstack/react-query-devtools": "4.29.25",
     "@testing-library/react": "14.2.2",
     "@testing-library/user-event": "14.5.2",
