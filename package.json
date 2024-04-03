@@ -23,7 +23,7 @@
     "build:ci": "pnpm -r run build"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.3",
+    "@biomejs/biome": "1.6.4",
     "lefthook": "1.6.8"
   },
   "engines": {
