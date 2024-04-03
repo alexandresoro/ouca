@@ -51,7 +51,7 @@
     "kysely": "0.27.3",
     "nanoid": "5.0.6",
     "neverthrow": "6.1.0",
-    "pg": "8.11.4",
+    "pg": "8.11.5",
     "pino": "8.19.0",
     "pino-pretty": "11.0.0",
     "serialize-error": "11.0.3",
