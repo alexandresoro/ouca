@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLocalityResponse } from "@ou-ca/common/api/locality";
 import type { GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
 import bbox from "@turf/bbox";
@@ -16,24 +14,20 @@ import type { GeoJSONSource } from "maplibre-gl";
 import { type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FullscreenControl,
   Layer,
   type MapLayerMouseEvent,
   type MapRef,
   Marker,
   type MarkerDragEvent,
-  NavigationControl,
   Popup,
-  Map as ReactMapGl,
-  ScaleControl,
   Source,
   type ViewState,
 } from "react-map-gl/maplibre";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
 import useApiFetch from "../../../../services/api/useApiFetch";
 import { boundingPolygon } from "../../../../utils/map/bounding-polygon";
+import MapInstance from "../../../maps/MapInstance";
 import { clusterCountLayer, clusterLayer, selectionLayer, singleLocalityLayer } from "../../../maps/localities-layers";
-import { MAP_STYLE_PROVIDERS } from "../../../maps/map-style-providers";
 import {
   areCoordinatesDifferentFromLocalityAtom,
   inventoryCoordinatesAtom,
@@ -205,7 +199,6 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
   }, [inventoryCoordinates]);
 
   const [viewState, setViewState] = useState<Partial<ViewState> | undefined>(initialMapState);
-  const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLE_PROVIDERS>("ign");
 
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
 
@@ -281,109 +274,83 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
   };
 
   return (
-    <div className="card border-2 border-primary shadow-xl mt-4">
-      <div className="h-80 lg:h-[500px]">
-        <ReactMapGl
-          ref={mapRef}
-          {...viewState}
-          onLoad={handleOnMapLoad}
-          onMove={(evt) => setViewState(evt.viewState)}
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          mapStyle={MAP_STYLE_PROVIDERS[mapStyle].mapboxStyle as any}
-          interactiveLayerIds={[clusterLayer.id!, singleLocalityLayer.id!]}
-          onMouseMove={onHoverMap}
-          onClick={onClickMap}
-          style={{
-            borderRadius: "14px",
-          }}
-        >
-          {localitiesGeoJson && (
-            <Source id="localities" type="geojson" data={localitiesGeoJson} cluster clusterMinPoints={3}>
-              <Layer {...clusterLayer} />
-              <Layer {...clusterCountLayer} />
-              <Layer {...singleLocalityLayer} />
-            </Source>
-          )}
-          {selectionFeatureCollectionPolygon && (
-            <Source id="selected-localities" type="geojson" data={selectionFeatureCollectionPolygon}>
-              {localitySelection != null && <Layer {...selectionLayer} beforeId={"clusters-localities"} />}
-            </Source>
-          )}
-          {selectedLocality != null && (
-            <Marker
-              longitude={selectedLocality.coordinates.longitude}
-              latitude={selectedLocality.coordinates.latitude}
-              color="#3FB1CE"
-            />
-          )}
-          {markerCoordinates != null && (
-            <>
-              {displayCoordinatesInfoPopup && (
-                <Popup
-                  longitude={markerCoordinates.lng}
-                  latitude={markerCoordinates.lat}
-                  offset={[-15, -5] as [number, number]}
-                  focusAfterOpen={false}
-                  onClose={() => setDisplayCoordinatesInfoPopup(false)}
-                  anchor="right"
-                >
-                  <div className="flex flex-col items-center text-gray-700">
-                    <div>{t("maps.currentPosition")}</div>
-                    {areCoordinatesCustomized && (
-                      <button className="link-primary" type="button" onClick={resetCustomCoordinates}>
-                        {t("maps.resetCustomCoordinates")}
-                      </button>
-                    )}
-                  </div>
-                </Popup>
-              )}
-              <Marker
-                longitude={markerCoordinates.lng}
-                latitude={markerCoordinates.lat}
-                draggable
-                color="#b9383c"
-                onDrag={onMarkerDrag}
-                onDragEnd={onMarkerDragEnd}
-                onClick={(e) => {
-                  // Prevent the event from bubbling to avoid closing directly the popup after open
-                  e.originalEvent.stopPropagation();
-                  // TODO add the delete custom point
-                  setDisplayCoordinatesInfoPopup(true);
-                }}
-              />
-            </>
-          )}
-          {hoverLocalityProperties && (
-            <div
-              className="bg-base-100 relative pointer-events-none w-max px-2 rounded border"
-              style={{ left: hoverLocalityProperties.x, top: hoverLocalityProperties.y + 12 }}
+    <MapInstance
+      ref={mapRef}
+      containerClassName="mt-4"
+      mapClassName="h-80 lg:h-[500px]"
+      {...viewState}
+      onLoad={handleOnMapLoad}
+      onMove={(evt) => setViewState(evt.viewState)}
+      interactiveLayerIds={[clusterLayer.id!, singleLocalityLayer.id!]}
+      onMouseMove={onHoverMap}
+      onClick={onClickMap}
+    >
+      {localitiesGeoJson && (
+        <Source id="localities" type="geojson" data={localitiesGeoJson} cluster clusterMinPoints={3}>
+          <Layer {...clusterLayer} />
+          <Layer {...clusterCountLayer} />
+          <Layer {...singleLocalityLayer} />
+        </Source>
+      )}
+      {selectionFeatureCollectionPolygon && (
+        <Source id="selected-localities" type="geojson" data={selectionFeatureCollectionPolygon}>
+          {localitySelection != null && <Layer {...selectionLayer} beforeId={"clusters-localities"} />}
+        </Source>
+      )}
+      {selectedLocality != null && (
+        <Marker
+          longitude={selectedLocality.coordinates.longitude}
+          latitude={selectedLocality.coordinates.latitude}
+          color="#3FB1CE"
+        />
+      )}
+      {markerCoordinates != null && (
+        <>
+          {displayCoordinatesInfoPopup && (
+            <Popup
+              longitude={markerCoordinates.lng}
+              latitude={markerCoordinates.lat}
+              offset={[-15, -5] as [number, number]}
+              focusAfterOpen={false}
+              onClose={() => setDisplayCoordinatesInfoPopup(false)}
+              anchor="right"
             >
-              <div className="font-semibold">{hoverLocalityProperties.locality.nom}</div>
-              <div className="">{`${hoverLocalityProperties.locality.townName} (${hoverLocalityProperties.locality.departmentCode})`}</div>
-            </div>
+              <div className="flex flex-col items-center text-gray-700">
+                <div>{t("maps.currentPosition")}</div>
+                {areCoordinatesCustomized && (
+                  <button className="link-primary" type="button" onClick={resetCustomCoordinates}>
+                    {t("maps.resetCustomCoordinates")}
+                  </button>
+                )}
+              </div>
+            </Popup>
           )}
-          <NavigationControl />
-          <FullscreenControl />
-          <ScaleControl unit="metric" />
-        </ReactMapGl>
-      </div>
-      <div className="absolute bottom-2.5 mx-auto left-0 right-0 flex flex-grow items-center justify-center opacity-90">
-        <div className="join">
-          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
-            return (
-              <button
-                type="button"
-                key={providerKey}
-                className={`join-item btn btn-xs uppercase ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
-                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
-              >
-                {t(providerConfig.nameKey)}
-              </button>
-            );
-          })}
+          <Marker
+            longitude={markerCoordinates.lng}
+            latitude={markerCoordinates.lat}
+            draggable
+            color="#b9383c"
+            onDrag={onMarkerDrag}
+            onDragEnd={onMarkerDragEnd}
+            onClick={(e) => {
+              // Prevent the event from bubbling to avoid closing directly the popup after open
+              e.originalEvent.stopPropagation();
+              // TODO add the delete custom point
+              setDisplayCoordinatesInfoPopup(true);
+            }}
+          />
+        </>
+      )}
+      {hoverLocalityProperties && (
+        <div
+          className="bg-base-100 relative pointer-events-none w-max px-2 rounded border"
+          style={{ left: hoverLocalityProperties.x, top: hoverLocalityProperties.y + 12 }}
+        >
+          <div className="font-semibold">{hoverLocalityProperties.locality.nom}</div>
+          <div className="">{`${hoverLocalityProperties.locality.townName} (${hoverLocalityProperties.locality.departmentCode})`}</div>
         </div>
-      </div>
-    </div>
+      )}
+    </MapInstance>
   );
 };
 
