@@ -2,7 +2,6 @@ import { getConfig } from "@services/config/config";
 import type { ParseKeys } from "i18next";
 import layers from "protomaps-themes-base";
 import type { MapStyle } from "react-map-gl/maplibre";
-import ignMapSatelliteStyle from "./ign-satellite.json";
 
 const osmProtoMaps = {
   version: 8,
@@ -38,8 +37,7 @@ export const mapStyleProviders = {
   },
   ignSatellite: {
     nameKey: "maps.maps.ignSatellite.name",
-    // FIXME: the direct link to the style is not working well - it complains about line-opacity stuff
-    mapboxStyle: ignMapSatelliteStyle as MapStyle,
+    mapboxStyle: "https://maps.ou-ca.app/ign-satellite.json",
   },
 } satisfies Record<
   MapProvider,
@@ -48,6 +46,9 @@ export const mapStyleProviders = {
     mapboxStyle: string | MapStyle;
   }
 >;
+
+export const ignSatelliteTileUrl =
+  "https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal";
 
 export const getFontFamily = (mapStyle: MapProvider) => {
   switch (mapStyle) {

@@ -14,7 +14,7 @@ import {
   Source,
 } from "react-map-gl/maplibre";
 import { mapStyleAtom } from "./map-style-atom";
-import { type MapProvider, mapStyleProviders } from "./map-style-providers";
+import { type MapProvider, ignSatelliteTileUrl, mapStyleProviders } from "./map-style-providers";
 
 type MapInstanceProps = {
   containerClassName?: string;
@@ -55,14 +55,7 @@ const MapInstance = forwardRef<MapRef, PropsWithChildren<MapInstanceProps>>((pro
           {...(restProps as any)}
         >
           {mapStyle === "ignSatellite" && (
-            <Source
-              type="raster"
-              tiles={[
-                "https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal",
-              ]}
-              tileSize={256}
-              attribution="IGN-F/Géoportail"
-            >
+            <Source type="raster" tiles={[ignSatelliteTileUrl]} tileSize={256} attribution="IGN-F/Géoportail">
               <Layer type="raster" beforeId={beforeIdForSatellite} />
             </Source>
           )}
