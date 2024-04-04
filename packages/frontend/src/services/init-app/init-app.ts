@@ -13,6 +13,7 @@ const fetchAppConfig = fetch("/appconfig", {
         authority: import.meta.env.VITE_OIDC_AUTH_URL as string,
         client_id: import.meta.env.VITE_OIDC_CLIENT_ID as string,
       },
+      protomapsOsmUrl: import.meta.env.VITE_PROTOMAPS_URL as string,
     } as AppConfig;
   });
 

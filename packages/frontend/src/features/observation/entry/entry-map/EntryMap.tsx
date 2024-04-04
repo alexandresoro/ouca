@@ -28,6 +28,7 @@ import useApiFetch from "../../../../services/api/useApiFetch";
 import { boundingPolygon } from "../../../../utils/map/bounding-polygon";
 import MapInstance from "../../../maps/MapInstance";
 import { clusterCountLayer, clusterLayer, selectionLayer, singleLocalityLayer } from "../../../maps/localities-layers";
+import { mapStyleAtom } from "../../../maps/map-style-atom";
 import {
   areCoordinatesDifferentFromLocalityAtom,
   inventoryCoordinatesAtom,
@@ -43,6 +44,8 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
   const { t } = useTranslation();
 
   const mapRef = useRef<MapRef>(null);
+
+  const mapStyle = useAtomValue(mapStyleAtom);
 
   const [inventoryCoordinates, setInventoryCoordinates] = useAtom(inventoryCoordinatesAtom);
   const [markerCoordinates, setMarkerCoordinates] = useState(inventoryCoordinates);
@@ -288,7 +291,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
       {localitiesGeoJson && (
         <Source id="localities" type="geojson" data={localitiesGeoJson} cluster clusterMinPoints={3}>
           <Layer {...clusterLayer} />
-          <Layer {...clusterCountLayer} />
+          <Layer {...clusterCountLayer(mapStyle)} />
           <Layer {...singleLocalityLayer} />
         </Source>
       )}

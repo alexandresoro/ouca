@@ -9,6 +9,7 @@ export type AppConfig = {
   umami?: UmamiConfig;
   oidc: Pick<UserManagerSettings, "authority" | "client_id">;
   sentry?: Sentry.BrowserOptions;
+  protomapsOsmUrl?: string;
 };
 
 export const configAtom = atom<AppConfig>(null as unknown as AppConfig);
@@ -16,4 +17,9 @@ export const configAtom = atom<AppConfig>(null as unknown as AppConfig);
 export const initConfig = (config: AppConfig) => {
   const defaultStore = getDefaultStore();
   defaultStore.set(configAtom, config);
+};
+
+export const getConfig = () => {
+  const defaultStore = getDefaultStore();
+  return defaultStore.get(configAtom);
 };

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { type PropsWithChildren, forwardRef, useState } from "react";
+import { useAtom } from "jotai";
+import { type PropsWithChildren, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FullscreenControl,
@@ -9,7 +10,8 @@ import {
   Map as ReactMapGl,
   ScaleControl,
 } from "react-map-gl/maplibre";
-import { MAP_STYLE_PROVIDERS } from "./map-style-providers";
+import { mapStyleAtom } from "./map-style-atom";
+import { type MapProvider, mapStyleProviders } from "./map-style-providers";
 
 type MapInstanceProps = {
   containerClassName?: string;
@@ -22,14 +24,14 @@ const MapInstance = forwardRef<MapRef, PropsWithChildren<MapInstanceProps>>((pro
 
   const { t } = useTranslation();
 
-  const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLE_PROVIDERS>("ign");
+  const [mapStyle, setMapStyle] = useAtom(mapStyleAtom);
 
   return (
     <div className={`card border-2 border-primary shadow-xl ${containerClassName ?? ""}`}>
       <div className={mapClassName ?? ""}>
         <ReactMapGl
           ref={ref}
-          mapStyle={MAP_STYLE_PROVIDERS[mapStyle].mapboxStyle}
+          mapStyle={mapStyleProviders[mapStyle].mapboxStyle}
           style={{
             borderRadius: "14px",
           }}
@@ -48,13 +50,13 @@ const MapInstance = forwardRef<MapRef, PropsWithChildren<MapInstanceProps>>((pro
         } mx-auto left-0 right-0 flex flex-grow items-center justify-center opacity-90`}
       >
         <div className="join">
-          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
+          {Object.entries(mapStyleProviders).map(([providerKey, providerConfig]) => {
             return (
               <button
                 type="button"
                 key={providerKey}
                 className={`join-item btn btn-xs uppercase ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
-                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
+                onClick={() => setMapStyle(providerKey as MapProvider)}
               >
                 {t(providerConfig.nameKey)}
               </button>
