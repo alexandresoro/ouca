@@ -38,6 +38,7 @@ export const mapStyleProviders = {
   },
   ignSatellite: {
     nameKey: "maps.maps.ignSatellite.name",
+    // FIXME: the direct link to the style is not working well - it complains about line-opacity stuff
     mapboxStyle: ignMapSatelliteStyle as MapStyle,
   },
 } satisfies Record<

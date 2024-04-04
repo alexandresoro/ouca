@@ -7,14 +7,6 @@
     "plan_ign": {
       "type": "vector",
       "tiles": ["https://data.geopf.fr/tms/1.0.0/PLAN.IGN/{z}/{x}/{y}.pbf"]
-    },
-    "ign-satellite": {
-      "type": "raster",
-      "tiles": [
-        "https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal"
-      ],
-      "tileSize": 256,
-      "attribution": "IGN-F/Géoportail"
     }
   },
   "transition": {
@@ -22,11 +14,6 @@
     "delay": 0
   },
   "layers": [
-    {
-      "id": "orthophotos",
-      "source": "ign-satellite",
-      "type": "raster"
-    },
     {
       "id": "Chemin souterrain - piste cyclable",
       "type": "line",

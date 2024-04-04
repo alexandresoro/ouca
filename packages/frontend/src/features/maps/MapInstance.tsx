@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAtom } from "jotai";
-import { type PropsWithChildren, forwardRef } from "react";
+import { type PropsWithChildren, forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FullscreenControl,
+  Layer,
   type MapProps,
   type MapRef,
+  type MapStyleDataEvent,
   NavigationControl,
   Map as ReactMapGl,
   ScaleControl,
+  Source,
 } from "react-map-gl/maplibre";
 import { mapStyleAtom } from "./map-style-atom";
 import { type MapProvider, mapStyleProviders } from "./map-style-providers";
@@ -26,6 +29,18 @@ const MapInstance = forwardRef<MapRef, PropsWithChildren<MapInstanceProps>>((pro
 
   const [mapStyle, setMapStyle] = useAtom(mapStyleAtom);
 
+  // Ugly workaround to have the satellite layer below the other layers in satellite mode
+  const [beforeIdForSatellite, setBeforeIdForSatellite] = useState<string | undefined>(undefined);
+  const handleOnStyleData = (event: MapStyleDataEvent) => {
+    const map = event.target;
+    if (mapStyle === "ignSatellite") {
+      const firstLayerId = map.getStyle().layers?.[0].id;
+      setBeforeIdForSatellite(firstLayerId);
+    } else {
+      setBeforeIdForSatellite(undefined);
+    }
+  };
+
   return (
     <div className={`card border-2 border-primary shadow-xl ${containerClassName ?? ""}`}>
       <div className={mapClassName ?? ""}>
@@ -35,9 +50,22 @@ const MapInstance = forwardRef<MapRef, PropsWithChildren<MapInstanceProps>>((pro
           style={{
             borderRadius: "14px",
           }}
+          onStyleData={handleOnStyleData}
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           {...(restProps as any)}
         >
+          {mapStyle === "ignSatellite" && (
+            <Source
+              type="raster"
+              tiles={[
+                "https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal",
+              ]}
+              tileSize={256}
+              attribution="IGN-F/Géoportail"
+            >
+              <Layer type="raster" beforeId={beforeIdForSatellite} />
+            </Source>
+          )}
           {children}
           <NavigationControl />
           <FullscreenControl />
