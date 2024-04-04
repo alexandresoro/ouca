@@ -55,7 +55,7 @@
     "pino": "8.19.0",
     "pino-pretty": "11.0.0",
     "serialize-error": "11.0.3",
-    "umzug": "3.7.0",
+    "umzug": "3.8.0",
     "zod": "3.22.4"
   },
   "devDependencies": {
