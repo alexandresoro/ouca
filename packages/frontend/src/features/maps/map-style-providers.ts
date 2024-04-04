@@ -1,5 +1,5 @@
 import type { ParseKeys } from "i18next";
-import type { MapStyle } from "react-map-gl";
+import type { MapStyle } from "react-map-gl/maplibre";
 import ignMapSatelliteStyle from "./ign-satellite.json";
 
 export const MAP_STYLE_PROVIDERS = {
@@ -19,7 +19,7 @@ export const MAP_STYLE_PROVIDERS = {
   },
   ignSatellite: {
     nameKey: "maps.maps.ignSatellite.name",
-    mapboxStyle: ignMapSatelliteStyle as unknown as MapStyle,
+    mapboxStyle: ignMapSatelliteStyle as MapStyle,
   },
 } satisfies Record<
   string,
