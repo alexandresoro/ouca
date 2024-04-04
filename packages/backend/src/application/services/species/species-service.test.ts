@@ -128,9 +128,7 @@ describe("Entities paginated find by search criteria", () => {
         orderBy: undefined,
         q: undefined,
         sortOrder: undefined,
-        searchCriteria: {
-          ownerId: undefined,
-        },
+        searchCriteria: {},
       },
     ]);
   });
@@ -164,9 +162,7 @@ describe("Entities paginated find by search criteria", () => {
         sortOrder: "desc",
         offset: 0,
         limit: searchParams.pageSize,
-        searchCriteria: {
-          ownerId: undefined,
-        },
+        searchCriteria: {},
       },
     ]);
   });
@@ -211,7 +207,6 @@ describe("Entities paginated find by search criteria", () => {
           number: undefined,
           toDate: "2010-01-01",
           townIds: ["3", "6"],
-          ownerId: undefined,
         },
         orderBy: "code",
         sortOrder: "desc",
@@ -239,9 +234,7 @@ describe("Entities count by search criteria", () => {
     assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
       {
         q: undefined,
-        searchCriteria: {
-          ownerId: undefined,
-        },
+        searchCriteria: {},
       },
     ]);
   });
@@ -255,9 +248,7 @@ describe("Entities count by search criteria", () => {
     assert.deepStrictEqual(speciesRepository.getCount.mock.calls[0].arguments, [
       {
         q: "test",
-        searchCriteria: {
-          ownerId: undefined,
-        },
+        searchCriteria: {},
       },
     ]);
   });
@@ -281,7 +272,6 @@ describe("Entities count by search criteria", () => {
           number: undefined,
           toDate: "2010-01-01",
           townIds: ["3", "6"],
-          ownerId: undefined,
         },
       },
     ]);
@@ -307,7 +297,6 @@ describe("Entities count by search criteria", () => {
           number: undefined,
           toDate: "2010-01-01",
           townIds: ["3", "6"],
-          ownerId: undefined,
         },
       },
     ]);

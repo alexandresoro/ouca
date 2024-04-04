@@ -92,10 +92,12 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
 
     const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
 
-    const reshapedSearchCriteria = {
-      ...searchCriteria,
-      ownerId: onlyOwnData ? loggedUser.id : undefined,
-    };
+    const reshapedSearchCriteria = onlyOwnData
+      ? {
+          ...searchCriteria,
+          ownerId: loggedUser.id,
+        }
+      : searchCriteria;
 
     const species = await speciesRepository.findSpecies({
       q,
@@ -121,10 +123,12 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
 
     const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
 
-    const reshapedSearchCriteria = {
-      ...searchCriteria,
-      ownerId: onlyOwnData ? loggedUser.id : undefined,
-    };
+    const reshapedSearchCriteria = onlyOwnData
+      ? {
+          ...searchCriteria,
+          ownerId: loggedUser.id,
+        }
+      : searchCriteria;
 
     return ok(
       await speciesRepository.getCount({

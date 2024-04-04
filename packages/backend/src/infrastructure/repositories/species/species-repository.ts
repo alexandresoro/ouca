@@ -68,150 +68,257 @@ const findSpecies = async ({
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let querySpecies;
 
-  switch (orderBy) {
-    case "nbDonnees":
-      querySpecies = kysely
-        .selectFrom("espece")
-        .leftJoin("classe", "espece.classeId", "classe.id")
-        .leftJoin("donnee", "donnee.especeId", "espece.id")
-        .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
-        .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
-        .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
-        .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
-        .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-        .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
-        .leftJoin("commune", "lieudit.communeId", "commune.id")
-        .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
-        .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
-        .select([
-          sql<string>`espece.id::text`.as("id"),
-          "espece.code",
-          "espece.nomFrancais",
-          "espece.nomLatin",
-          sql<string>`espece.classe_id::text`.as("classeId"),
-          "espece.ownerId",
-        ]);
+  if (searchCriteria == null || Object.keys(searchCriteria).length === 0) {
+    // Optimized query for the case where no search criteria is provided (e.g. autocomplete queries)
 
-      if (q?.length) {
-        querySpecies = querySpecies.where((eb) =>
-          eb.or([
-            eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-            eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-            eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-          ]),
-        );
-      }
+    switch (orderBy) {
+      case "nbDonnees":
+        querySpecies = kysely
+          .selectFrom("espece")
+          .leftJoin("donnee", "donnee.especeId", "espece.id")
+          .select([
+            sql<string>`espece.id::text`.as("id"),
+            "espece.code",
+            "espece.nomFrancais",
+            "espece.nomLatin",
+            sql<string>`espece.classe_id::text`.as("classeId"),
+            "espece.ownerId",
+          ]);
 
-      if (searchCriteria != null) {
-        querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
-      }
-
-      querySpecies = querySpecies
-        .groupBy("espece.id")
-        .orderBy((eb) => eb.fn.count("donnee.id").distinct(), sortOrder ?? undefined)
-        .orderBy("espece.code asc");
-
-      break;
-    case "nomClasse":
-      querySpecies = kysely
-        .selectFrom("espece")
-        .leftJoin("classe", "espece.classeId", "classe.id")
-        .leftJoin("donnee", "donnee.especeId", "espece.id")
-        .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
-        .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
-        .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
-        .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
-        .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-        .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
-        .leftJoin("commune", "lieudit.communeId", "commune.id")
-        .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
-        .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
-        .select([
-          sql<string>`espece.id::text`.as("id"),
-          "espece.code",
-          "espece.nomFrancais",
-          "espece.nomLatin",
-          sql<string>`espece.classe_id::text`.as("classeId"),
-          "espece.ownerId",
-        ]);
-
-      if (q?.length) {
-        querySpecies = querySpecies.where((eb) =>
-          eb.or([
-            eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-            eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-            eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-          ]),
-        );
-      }
-
-      if (searchCriteria != null) {
-        querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
-      }
-
-      querySpecies = querySpecies
-        .groupBy("espece.id")
-        .groupBy("classe.libelle")
-        .orderBy("classe.libelle", sortOrder ?? undefined)
-        .orderBy("espece.code asc");
-
-      break;
-    default:
-      querySpecies = kysely
-        .selectFrom("espece")
-        .leftJoin("classe", "espece.classeId", "classe.id")
-        .leftJoin("donnee", "donnee.especeId", "espece.id")
-        .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
-        .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
-        .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
-        .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
-        .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-        .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
-        .leftJoin("commune", "lieudit.communeId", "commune.id")
-        .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
-        .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
-        .select([
-          sql<string>`espece.id::text`.as("id"),
-          "espece.code",
-          "espece.nomFrancais",
-          "espece.nomLatin",
-          sql<string>`espece.classe_id::text`.as("classeId"),
-          "espece.ownerId",
-        ]);
-
-      if (q?.length) {
-        querySpecies = querySpecies.where((eb) =>
-          eb.or([
-            eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-            eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-            eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-          ]),
-        );
-      }
-
-      if (searchCriteria != null) {
-        querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
-      }
-
-      querySpecies = querySpecies.groupBy("espece.id");
-
-      if (orderBy) {
-        querySpecies = querySpecies.orderBy(orderBy, sortOrder ?? undefined);
-      } else {
-        // If no explicit order is requested and a query is provided, return the matches in the following order:
-        // The ones for which code starts with query
-        // Then the ones which code contains the query
         if (q?.length) {
-          querySpecies = querySpecies
-            .orderBy(sql`espece.code ~* ${`^${escapeStringRegexp(q)}`}`, "desc")
-            .orderBy(sql`espece.code ~* ${`${escapeStringRegexp(q)}`}`, "desc");
+          querySpecies = querySpecies.where((eb) =>
+            eb.or([
+              eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+            ]),
+          );
         }
 
-        // Finally the ones that don't match the code (i.e. nom francais or latin) sorted by code
-        querySpecies = querySpecies.orderBy("espece.code asc");
-      }
+        querySpecies = querySpecies
+          .groupBy("espece.id")
+          .orderBy((eb) => eb.fn.count("donnee.id").distinct(), sortOrder ?? undefined)
+          .orderBy("espece.code asc");
 
-      break;
+        break;
+      case "nomClasse":
+        querySpecies = kysely
+          .selectFrom("espece")
+          .leftJoin("classe", "espece.classeId", "classe.id")
+          .select([
+            sql<string>`espece.id::text`.as("id"),
+            "espece.code",
+            "espece.nomFrancais",
+            "espece.nomLatin",
+            sql<string>`espece.classe_id::text`.as("classeId"),
+            "espece.ownerId",
+          ]);
+
+        if (q?.length) {
+          querySpecies = querySpecies.where((eb) =>
+            eb.or([
+              eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+            ]),
+          );
+        }
+
+        querySpecies = querySpecies
+          .groupBy("espece.id")
+          .groupBy("classe.libelle")
+          .orderBy("classe.libelle", sortOrder ?? undefined)
+          .orderBy("espece.code asc");
+
+        break;
+      default:
+        querySpecies = kysely
+          .selectFrom("espece")
+          .select([
+            sql<string>`espece.id::text`.as("id"),
+            "espece.code",
+            "espece.nomFrancais",
+            "espece.nomLatin",
+            sql<string>`espece.classe_id::text`.as("classeId"),
+            "espece.ownerId",
+          ]);
+
+        if (q?.length) {
+          querySpecies = querySpecies.where((eb) =>
+            eb.or([
+              eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+            ]),
+          );
+        }
+
+        querySpecies = querySpecies.groupBy("espece.id");
+
+        if (orderBy) {
+          querySpecies = querySpecies.orderBy(orderBy, sortOrder ?? undefined);
+        } else {
+          // If no explicit order is requested and a query is provided, return the matches in the following order:
+          // The ones for which code starts with query
+          // Then the ones which code contains the query
+          if (q?.length) {
+            querySpecies = querySpecies
+              .orderBy(sql`espece.code ~* ${`^${escapeStringRegexp(q)}`}`, "desc")
+              .orderBy(sql`espece.code ~* ${`${escapeStringRegexp(q)}`}`, "desc");
+          }
+
+          // Finally the ones that don't match the code (i.e. nom francais or latin) sorted by code
+          querySpecies = querySpecies.orderBy("espece.code asc");
+        }
+
+        break;
+    }
+  } else {
+    switch (orderBy) {
+      case "nbDonnees":
+        querySpecies = kysely
+          .selectFrom("espece")
+          .leftJoin("classe", "espece.classeId", "classe.id")
+          .leftJoin("donnee", "donnee.especeId", "espece.id")
+          .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+          .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+          .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+          .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
+          .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+          .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+          .leftJoin("commune", "lieudit.communeId", "commune.id")
+          .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+          .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+          .select([
+            sql<string>`espece.id::text`.as("id"),
+            "espece.code",
+            "espece.nomFrancais",
+            "espece.nomLatin",
+            sql<string>`espece.classe_id::text`.as("classeId"),
+            "espece.ownerId",
+          ]);
+
+        if (q?.length) {
+          querySpecies = querySpecies.where((eb) =>
+            eb.or([
+              eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+            ]),
+          );
+        }
+
+        if (searchCriteria != null) {
+          querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
+        }
+
+        querySpecies = querySpecies
+          .groupBy("espece.id")
+          .orderBy((eb) => eb.fn.count("donnee.id").distinct(), sortOrder ?? undefined)
+          .orderBy("espece.code asc");
+
+        break;
+      case "nomClasse":
+        querySpecies = kysely
+          .selectFrom("espece")
+          .leftJoin("classe", "espece.classeId", "classe.id")
+          .leftJoin("donnee", "donnee.especeId", "espece.id")
+          .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+          .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+          .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+          .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
+          .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+          .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+          .leftJoin("commune", "lieudit.communeId", "commune.id")
+          .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+          .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+          .select([
+            sql<string>`espece.id::text`.as("id"),
+            "espece.code",
+            "espece.nomFrancais",
+            "espece.nomLatin",
+            sql<string>`espece.classe_id::text`.as("classeId"),
+            "espece.ownerId",
+          ]);
+
+        if (q?.length) {
+          querySpecies = querySpecies.where((eb) =>
+            eb.or([
+              eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+            ]),
+          );
+        }
+
+        if (searchCriteria != null) {
+          querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
+        }
+
+        querySpecies = querySpecies
+          .groupBy("espece.id")
+          .groupBy("classe.libelle")
+          .orderBy("classe.libelle", sortOrder ?? undefined)
+          .orderBy("espece.code asc");
+
+        break;
+      default:
+        querySpecies = kysely
+          .selectFrom("espece")
+          .leftJoin("classe", "espece.classeId", "classe.id")
+          .leftJoin("donnee", "donnee.especeId", "espece.id")
+          .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+          .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+          .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+          .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
+          .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+          .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+          .leftJoin("commune", "lieudit.communeId", "commune.id")
+          .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+          .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+          .select([
+            sql<string>`espece.id::text`.as("id"),
+            "espece.code",
+            "espece.nomFrancais",
+            "espece.nomLatin",
+            sql<string>`espece.classe_id::text`.as("classeId"),
+            "espece.ownerId",
+          ]);
+
+        if (q?.length) {
+          querySpecies = querySpecies.where((eb) =>
+            eb.or([
+              eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+              eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+              eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+            ]),
+          );
+        }
+
+        if (searchCriteria != null) {
+          querySpecies = querySpecies.where(withSearchCriteria(searchCriteria));
+        }
+
+        querySpecies = querySpecies.groupBy("espece.id");
+
+        if (orderBy) {
+          querySpecies = querySpecies.orderBy(orderBy, sortOrder ?? undefined);
+        } else {
+          // If no explicit order is requested and a query is provided, return the matches in the following order:
+          // The ones for which code starts with query
+          // Then the ones which code contains the query
+          if (q?.length) {
+            querySpecies = querySpecies
+              .orderBy(sql`espece.code ~* ${`^${escapeStringRegexp(q)}`}`, "desc")
+              .orderBy(sql`espece.code ~* ${`${escapeStringRegexp(q)}`}`, "desc");
+          }
+
+          // Finally the ones that don't match the code (i.e. nom francais or latin) sorted by code
+          querySpecies = querySpecies.orderBy("espece.code asc");
+        }
+
+        break;
+    }
   }
 
   if (offset) {
@@ -227,33 +334,50 @@ const findSpecies = async ({
 };
 
 const getCount = async ({ q, searchCriteria }: Pick<SpeciesFindManyInput, "q" | "searchCriteria">): Promise<number> => {
-  let query = kysely
-    .selectFrom("espece")
-    .leftJoin("classe", "espece.classeId", "classe.id")
-    .leftJoin("donnee", "donnee.especeId", "espece.id")
-    .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
-    .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
-    .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
-    .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
-    .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-    .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
-    .leftJoin("commune", "lieudit.communeId", "commune.id")
-    .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
-    .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
-    .select((eb) => eb.fn.count("espece.id").distinct().as("count"));
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+  let query;
 
-  if (q?.length) {
-    query = query.where((eb) =>
-      eb.or([
-        eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
-        eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-        eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
-      ]),
-    );
-  }
+  if (searchCriteria == null || Object.keys(searchCriteria).length === 0) {
+    // Optimized query for the case where no search criteria is provided (e.g. autocomplete queries)
 
-  if (searchCriteria != null) {
+    query = kysely.selectFrom("espece").select((eb) => eb.fn.count("espece.id").distinct().as("count"));
+
+    if (q?.length) {
+      query = query.where((eb) =>
+        eb.or([
+          eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+          eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+          eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+        ]),
+      );
+    }
+  } else {
+    query = kysely
+      .selectFrom("espece")
+      .leftJoin("classe", "espece.classeId", "classe.id")
+      .leftJoin("donnee", "donnee.especeId", "espece.id")
+      .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+      .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+      .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+      .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+      .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+      .leftJoin("commune", "lieudit.communeId", "commune.id")
+      .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
+      .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+      .select((eb) => eb.fn.count("espece.id").distinct().as("count"));
+
     query = query.where(withSearchCriteria(searchCriteria));
+
+    if (q?.length) {
+      query = query.where((eb) =>
+        eb.or([
+          eb("espece.code", "~*", sql<string>`${escapeStringRegexp(q)}`),
+          eb(sql`unaccent(espece.nom_francais)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+          eb(sql`unaccent(espece.nom_latin)`, "~*", sql`unaccent(${escapeStringRegexp(q)})`),
+        ]),
+      );
+    }
   }
 
   const countResult = await query.executeTakeFirstOrThrow();
