@@ -30,7 +30,13 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.observerIds?.length) {
-      expressions.push(eb("inventaire.observateurId", "in", searchCriteria.observerIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "inventaire.observateurId",
+          "in",
+          searchCriteria.observerIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.temperature != null) {
@@ -38,11 +44,23 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.weatherIds?.length) {
-      expressions.push(eb("inventaire_meteo.meteoId", "in", searchCriteria.weatherIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "inventaire_meteo.meteoId",
+          "in",
+          searchCriteria.weatherIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.associateIds?.length) {
-      expressions.push(eb("inventaire_associe.observateurId", "in", searchCriteria.associateIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "inventaire_associe.observateurId",
+          "in",
+          searchCriteria.associateIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.time != null) {
@@ -54,23 +72,53 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.classIds?.length) {
-      expressions.push(eb("espece.classeId", "in", searchCriteria.classIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "espece.classeId",
+          "in",
+          searchCriteria.classIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.speciesIds?.length) {
-      expressions.push(eb("donnee.especeId", "in", searchCriteria.speciesIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "donnee.especeId",
+          "in",
+          searchCriteria.speciesIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.departmentIds?.length) {
-      expressions.push(eb("commune.departementId", "in", searchCriteria.departmentIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "commune.departementId",
+          "in",
+          searchCriteria.departmentIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.townIds?.length) {
-      expressions.push(eb("lieudit.communeId", "in", searchCriteria.townIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "lieudit.communeId",
+          "in",
+          searchCriteria.townIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.localityIds?.length) {
-      expressions.push(eb("inventaire.lieuditId", "in", searchCriteria.localityIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "inventaire.lieuditId",
+          "in",
+          searchCriteria.localityIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.number != null) {
@@ -78,15 +126,33 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.numberEstimateIds?.length) {
-      expressions.push(eb("donnee.estimationNombreId", "in", searchCriteria.numberEstimateIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "donnee.estimationNombreId",
+          "in",
+          searchCriteria.numberEstimateIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.sexIds?.length) {
-      expressions.push(eb("donnee.sexeId", "in", searchCriteria.sexIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "donnee.sexeId",
+          "in",
+          searchCriteria.sexIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.ageIds?.length) {
-      expressions.push(eb("donnee.ageId", "in", searchCriteria.ageIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "donnee.ageId",
+          "in",
+          searchCriteria.ageIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.distance != null) {
@@ -95,7 +161,11 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
 
     if (searchCriteria.distanceEstimateIds?.length) {
       expressions.push(
-        eb("donnee.estimationDistanceId", "in", searchCriteria.distanceEstimateIds.map(Number.parseInt)),
+        eb(
+          "donnee.estimationDistanceId",
+          "in",
+          searchCriteria.distanceEstimateIds.map((elt) => Number.parseInt(elt)),
+        ),
       );
     }
 
@@ -120,11 +190,23 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.behaviorIds?.length) {
-      expressions.push(eb("donnee_comportement.comportementId", "in", searchCriteria.behaviorIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "donnee_comportement.comportementId",
+          "in",
+          searchCriteria.behaviorIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.environmentIds?.length) {
-      expressions.push(eb("donnee_milieu.milieuId", "in", searchCriteria.environmentIds.map(Number.parseInt)));
+      expressions.push(
+        eb(
+          "donnee_milieu.milieuId",
+          "in",
+          searchCriteria.environmentIds.map((elt) => Number.parseInt(elt)),
+        ),
+      );
     }
 
     if (searchCriteria.ownerId != null) {
