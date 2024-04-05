@@ -229,10 +229,7 @@ describe("Update of an observer", () => {
 
     const observerData = upsertObserverInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     observerRepository.findObserverById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

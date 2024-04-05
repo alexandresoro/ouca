@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test, { describe, beforeEach } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertSpeciesClassInputFactory } from "@fixtures/services/species-class/species-class-service.fixtures.js";
@@ -348,10 +347,7 @@ describe("Creation of a class", () => {
 
 describe("Deletion of a class", () => {
   test("should handle the deletion of an owned class", async () => {
-    const loggedUser: LoggedUser = {
-      id: "12",
-      role: "user",
-    };
+    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
 
     const speciesClass = speciesClassFactory.build({
       ownerId: loggedUser.id,

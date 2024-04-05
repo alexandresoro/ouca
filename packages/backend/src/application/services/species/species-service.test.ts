@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, test } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { speciesClassFactory } from "@fixtures/domain/species-class/species-class.fixtures.js";
 import { speciesCreateInputFactory, speciesFactory } from "@fixtures/domain/species/species.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
@@ -366,10 +365,7 @@ describe("Update of a species", () => {
 
     const speciesData = upsertSpeciesInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(ok(existingData)));
 
@@ -458,10 +454,7 @@ describe("Creation of a species", () => {
 
 describe("Deletion of a species", () => {
   test("should handle the deletion of an owned species", async () => {
-    const loggedUser: LoggedUser = {
-      id: "12",
-      role: "user",
-    };
+    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
 
     const speciesClass = speciesClassFactory.build();
     const species = speciesFactory.build({

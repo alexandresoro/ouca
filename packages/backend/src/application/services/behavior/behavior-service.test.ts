@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, test } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { behaviorFactory } from "@fixtures/domain/behavior/behavior.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertBehaviorInputFactory } from "@fixtures/services/behavior/behavior-service.fixtures.js";
@@ -253,10 +252,7 @@ describe("Update of a behavior", () => {
 
     const behaviorData = upsertBehaviorInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     behaviorRepository.findBehaviorById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
@@ -340,10 +336,7 @@ describe("Creation of a behavior", () => {
 
 describe("Deletion of a behavior", () => {
   test("should handle the deletion of an owned behavior", async () => {
-    const loggedUser: LoggedUser = {
-      id: "12",
-      role: "user",
-    };
+    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
 
     const behavior = behaviorFactory.build({
       ownerId: loggedUser.id,

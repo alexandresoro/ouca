@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test, { describe, beforeEach } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { departmentFactory } from "@fixtures/domain/department/department.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDepartmentInputFactory } from "@fixtures/services/department/department-service.fixtures.js";
@@ -276,10 +275,7 @@ describe("Update of a department", () => {
 
     const departmentData = upsertDepartmentInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     departmentRepository.findDepartmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
@@ -365,10 +361,7 @@ describe("Creation of a department", () => {
 
 describe("Deletion of a department", () => {
   test("hould handle the deletion of an owned department", async () => {
-    const loggedUser: LoggedUser = {
-      id: "12",
-      role: "user",
-    };
+    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
 
     const department = departmentFactory.build({
       ownerId: loggedUser.id,

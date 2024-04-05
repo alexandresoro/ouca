@@ -210,10 +210,7 @@ describe("Update of an age", () => {
 
     const ageData = upsertAgeInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

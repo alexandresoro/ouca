@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test, { describe, beforeEach } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { distanceEstimateFactory } from "@fixtures/domain/distance-estimate/distance-estimate.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertDistanceEstimateInputFactory } from "@fixtures/services/distance-estimate/distance-estimate-service.fixtures.js";
@@ -225,10 +224,7 @@ describe("Update of a distance estimate", () => {
 
     const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     distanceEstimateRepository.findDistanceEstimateById.mock.mockImplementationOnce(() =>
       Promise.resolve(existingData),
@@ -323,10 +319,7 @@ describe("Creation of a distance estimate", () => {
 
 describe("Deletion of a distance estimate", () => {
   test("should handle the deletion of an owned distance estimate", async () => {
-    const loggedUser: LoggedUser = {
-      id: "12",
-      role: "user",
-    };
+    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
 
     const distanceEstimate = distanceEstimateFactory.build({
       ownerId: loggedUser.id,

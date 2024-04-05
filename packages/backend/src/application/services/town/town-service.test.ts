@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, test } from "node:test";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import { townCreateInputFactory, townFactory } from "@fixtures/domain/town/town.fixtures.js";
 import { loggedUserFactory } from "@fixtures/domain/user/logged-user.fixtures.js";
 import { upsertTownInputFactory } from "@fixtures/services/town/town-service.fixtures.js";
@@ -258,10 +257,7 @@ describe("Update of a city", () => {
 
     const cityData = upsertTownInputFactory.build();
 
-    const user = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
 
     townRepository.findTownById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
@@ -345,10 +341,7 @@ describe("Creation of a city", () => {
 
 describe("Deletion of a city", () => {
   test("should handle the deletion of an owned city", async () => {
-    const loggedUser: LoggedUser = {
-      id: "12",
-      role: "user",
-    };
+    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
 
     const city = townFactory.build({
       ownerId: loggedUser.id,
