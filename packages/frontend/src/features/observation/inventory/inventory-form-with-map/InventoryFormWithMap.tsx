@@ -2,12 +2,11 @@ import type { Inventory, InventoryExtended } from "@ou-ca/common/api/entities/in
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
-import { type FunctionComponent, lazy, useEffect, useState } from "react";
+import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import EntryMap from "../../entry/entry-map/EntryMap";
 import { inventorySetAtom } from "../../inventoryFormAtoms";
 import InventoryForm from "../inventory-form/InventoryForm";
-
-const EntryMap = lazy(() => import("../../entry/entry-map/EntryMap"));
 
 type InventoryFormWithMapProps =
   | {

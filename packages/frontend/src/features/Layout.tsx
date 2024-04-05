@@ -1,17 +1,15 @@
 import { useDisplayNotification } from "@hooks/useNotifications";
-import { type FunctionComponent, Suspense, lazy } from "react";
+import type { FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
 import { SnackbarContext } from "../contexts/SnackbarContext";
-
-const Header = lazy(() => import("./header/Header"));
-const NotificationSnackbar = lazy(() => import("./notifications/NotificationSnackbar"));
+import Header from "./header/Header";
+import NotificationSnackbar from "./notifications/NotificationSnackbar";
 
 const Layout: FunctionComponent = () => {
   const displayNotification = useDisplayNotification();
 
   return (
-    // biome-ignore lint/complexity/noUselessFragments: <explanation>
-    <Suspense fallback={<></>}>
+    <>
       <SnackbarContext.Provider value={{ displayNotification }}>
         <div className="flex flex-col h-[100dvh]">
           <Header />
@@ -21,7 +19,7 @@ const Layout: FunctionComponent = () => {
         </div>
       </SnackbarContext.Provider>
       <NotificationSnackbar />
-    </Suspense>
+    </>
   );
 };
 

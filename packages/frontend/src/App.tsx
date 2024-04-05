@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAtomValue } from "jotai";
 import { addProtocol, removeProtocol } from "maplibre-gl";
 import { Protocol } from "pmtiles";
-import { type FunctionComponent, Suspense, useEffect } from "react";
+import { type FunctionComponent, useEffect } from "react";
 import { AuthProvider } from "react-oidc-context";
 import { RouterProvider, type createBrowserRouter } from "react-router-dom";
 
@@ -35,9 +35,7 @@ const App: FunctionComponent<AppProps> = ({ router }) => {
       >
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools />
-          <Suspense fallback="">
-            <RouterProvider router={router} />
-          </Suspense>
+          <RouterProvider router={router} />
         </QueryClientProvider>
       </AuthProvider>
     </div>
