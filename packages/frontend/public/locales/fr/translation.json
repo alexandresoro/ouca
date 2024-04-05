@@ -336,11 +336,6 @@
   "townEditionTitle": "Modification d'une commune",
   "towns": "Communes",
   "unspecified": "non renseigné",
-  "userRoles": {
-    "user": "Utilisateur",
-    "contributor": "Contributeur",
-    "admin": "Administrateur global"
-  },
   "view": {
     "tab": {
       "observations": "Observations",

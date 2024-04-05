@@ -28,9 +28,6 @@ const getMeUser = z.object({
   given_name: z.string().optional(),
   family_name: z.string().optional(),
   name: z.string().optional(),
-  // The following lines are non-standard claims
-  oidcProvider: z.string(),
-  roles: z.array(z.enum(["admin", "contributor", "user"])),
 });
 
 const entityPermissionSchema = z.object({

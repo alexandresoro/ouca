@@ -3,12 +3,6 @@ import { settingsAtom } from "@services/api/me/settingsAtom";
 import { getFullName, getInitials } from "@utils/name-utils";
 import { useAtomValue } from "jotai";
 
-const ROLES = ["admin", "contributor", "user"] as const;
-
-const getRole = (roles: string[]): (typeof ROLES)[number] | null => {
-  return ROLES.find((existingRole) => roles.includes(existingRole)) ?? null;
-};
-
 export const useUser = () => {
   const user = useApiMe();
 
@@ -19,13 +13,10 @@ export const useUser = () => {
   const fullName = getFullName([user.user.given_name ?? "", user.user.family_name ?? ""]);
   const initials = getInitials([user.user.given_name ?? "", user.user.family_name ?? ""]);
 
-  const role = getRole(user.user.roles ?? []);
-
   return {
     ...user,
     fullName,
     initials,
-    role,
   };
 };
 

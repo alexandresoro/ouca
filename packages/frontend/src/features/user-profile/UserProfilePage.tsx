@@ -41,7 +41,6 @@ const UserProfilePage: FunctionComponent = () => {
                   <span className="text-2xl md:text-6xl">{user.initials}</span>
                 </div>
                 <span className="text-base-content text-lg uppercase">{user.fullName}</span>
-                {user.role && <span className="badge badge-outline badge-accent">{t(`userRoles.${user.role}`)}</span>}
                 <span className="text-base-content text-center text-xs uppercase opacity-20 hover:opacity-60">
                   ID {user.id}
                 </span>

@@ -16,7 +16,8 @@ const Test: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-  const role = user?.role;
+
+  const canUseImport = user?.permissions.canImport;
 
   const [importType, setImportType] = useState<ImportType>(IMPORT_TYPE[0]);
 
@@ -83,7 +84,7 @@ const Test: FunctionComponent = () => {
     setIsImportOngoing(true);
   };
 
-  if (role !== "admin" && role !== "contributor") {
+  if (!canUseImport) {
     return <Navigate to="/" replace={true} />;
   }
 

@@ -22,14 +22,14 @@ const SearchFilterPanel: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-  const role = user?.role;
+  const canViewAllEntries = user?.permissions.canViewAllEntries;
 
   const [onlyOwnData, setOnlyOwnData] = useAtom(searchEntriesOnlyOwnDataAtom);
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">{t("observationFilter.search")}</h2>
-      {role === "admin" && (
+      {canViewAllEntries && (
         <Switch
           label={t("observationFilter.displayOnlyMyObservations")}
           checked={onlyOwnData}

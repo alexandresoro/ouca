@@ -38,9 +38,7 @@ const HeaderSettings: FunctionComponent = () => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { removeUser } = useAuth();
   const user = useUser();
-  const role = user?.role;
-
-  const enableImport = role === "admin" || role === "contributor";
+  const enableImport = user?.permissions.canImport ?? false;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-end",
