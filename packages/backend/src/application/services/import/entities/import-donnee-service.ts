@@ -1,6 +1,7 @@
 import type { Entry } from "@domain/entry/entry.js";
 import type { Inventory } from "@domain/inventory/inventory.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
+import { getPermissionsFromRole } from "@domain/user/user-role.js";
 import type { AgeSimple } from "@ou-ca/common/api/entities/age";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import type { Department } from "@ou-ca/common/api/entities/department";
@@ -245,6 +246,7 @@ export class ImportDonneeService extends ImportService {
     const dummyLoggedUser: LoggedUser = {
       id: "dummy",
       role: "admin",
+      permissions: getPermissionsFromRole("admin"),
     };
 
     // Check if already have a similar donnee in the database

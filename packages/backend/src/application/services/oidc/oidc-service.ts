@@ -1,7 +1,8 @@
 import type { OIDCIntrospectionResult } from "@domain/oidc/oidc-introspection.js";
 import type { OIDCUser } from "@domain/oidc/oidc-user.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import { type UserRole, userRoles } from "@domain/user/user-role.js";
+import { type Permissions, mergePermissions } from "@domain/user/permissions.js";
+import { type UserRole, getPermissionsFromRole, userRoles } from "@domain/user/user-role.js";
 import type { User } from "@domain/user/user.js";
 import {
   getIntrospectionResultFromCache,
@@ -103,6 +104,10 @@ export const buildOidcService = ({ userService }: OidcServiceDependencies) => {
     );
   };
 
+  const getPermissionsFromUser = (oidcUser: OIDCUser): Permissions => {
+    return mergePermissions(oidcUser.roles.map(getPermissionsFromRole));
+  };
+
   const getMatchingLoggedUser = async (
     oidcUser: OIDCUser,
   ): Promise<Result<LoggedUser, "internalUserNotFound" | "userHasNoRole">> => {
@@ -125,6 +130,7 @@ export const buildOidcService = ({ userService }: OidcServiceDependencies) => {
     return ok({
       id: internalUserId,
       role: roleFromToken,
+      permissions: getPermissionsFromUser(oidcUser),
     });
   };
 

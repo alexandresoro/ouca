@@ -33,10 +33,35 @@ const getMeUser = z.object({
   roles: z.array(z.enum(["admin", "contributor", "user"])),
 });
 
+const entityPermissionSchema = z.object({
+  canCreate: z.boolean(),
+  canEdit: z.boolean(),
+  canDelete: z.boolean(),
+});
+
+const permissionsSchema = z.object({
+  observer: entityPermissionSchema,
+  department: entityPermissionSchema,
+  town: entityPermissionSchema,
+  locality: entityPermissionSchema,
+  weather: entityPermissionSchema,
+  speciesClass: entityPermissionSchema,
+  species: entityPermissionSchema,
+  age: entityPermissionSchema,
+  sex: entityPermissionSchema,
+  numberEstimate: entityPermissionSchema,
+  distanceEstimate: entityPermissionSchema,
+  behavior: entityPermissionSchema,
+  environment: entityPermissionSchema,
+  canViewAllEntries: z.boolean(),
+  canImport: z.boolean(),
+});
+
 export const getMeResponse = z.object({
   id: z.string().uuid(),
   user: getMeUser,
   settings: userSettingsSchema,
+  permissions: permissionsSchema,
 });
 
 export type GetMeResponse = z.infer<typeof getMeResponse>;

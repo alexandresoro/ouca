@@ -28,6 +28,7 @@ export const meController: FastifyPluginCallback<{
       id,
       settings,
       user: req.user.oidcUser,
+      permissions: req.user.permissions,
     });
 
     return await reply.send(responseBody);
@@ -67,6 +68,7 @@ export const meController: FastifyPluginCallback<{
       id,
       settings,
       user: req.user.oidcUser,
+      permissions: req.user.permissions,
     });
 
     return await reply.send(responseBody);
