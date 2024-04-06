@@ -126,6 +126,7 @@ describe("Entities paginated find by search criteria", () => {
     assert.strictEqual(observerRepository.findObservers.mock.callCount(), 1);
     assert.deepStrictEqual(observerRepository.findObservers.mock.calls[0].arguments, [
       { limit: undefined, offset: undefined, orderBy: undefined, q: undefined, sortOrder: undefined },
+      loggedUser.id,
     ]);
   });
 
@@ -154,6 +155,7 @@ describe("Entities paginated find by search criteria", () => {
         offset: 0,
         limit: searchParams.pageSize,
       },
+      loggedUser.id,
     ]);
   });
 

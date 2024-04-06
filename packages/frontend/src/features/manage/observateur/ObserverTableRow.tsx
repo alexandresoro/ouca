@@ -1,6 +1,7 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
-import { useApiObserverQuery } from "@services/api/observer/api-observer-queries";
+import { useApiObserverInfoQuery, useApiObserverQuery } from "@services/api/observer/api-observer-queries";
 import type { FunctionComponent } from "react";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -12,19 +13,24 @@ type ObserverTableRowProps = {
 
 const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ id, onEditClicked, onDeleteClicked }) => {
   const { data: observer } = useApiObserverQuery(id);
+  const { data: observerInfo } = useApiObserverInfoQuery(id);
+
+  const user = useUser();
+
+  const isOwner = observer?.ownerId === user?.id;
 
   return (
     <tr className="hover:bg-base-200">
       <td>{observer?.libelle}</td>
-      <td>{observer?.entriesCount}</td>
+      <td>{observerInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
         <AvatarWithUniqueNameAvatar input={observer?.ownerId ?? null} />
       </td>
       <td align="center" className="w-32">
         {observer != null && (
           <TableCellActionButtons
-            disabledEdit={!observer.editable}
-            disabledDelete={!observer.editable || observer.inventoriesCount > 0}
+            disabledEdit={!isOwner && !user?.permissions.observer.canEdit}
+            disabledDelete={!user?.permissions.observer.canDelete || !observerInfo?.canBeDeleted}
             onEditClicked={() => onEditClicked?.(observer)}
             onDeleteClicked={() => onDeleteClicked?.(observer)}
           />

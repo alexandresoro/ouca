@@ -4,7 +4,7 @@ import {
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { observerSchema, observerSimpleSchema } from "./entities/observer.js";
+import { observerSchema } from "./entities/observer.js";
 
 /**
  * `GET` `/observer/:id`
@@ -13,6 +13,15 @@ import { observerSchema, observerSimpleSchema } from "./entities/observer.js";
 export const getObserverResponse = observerSchema;
 
 export type GetObserverResponse = z.infer<typeof getObserverResponse>;
+
+/**
+ * `GET` `/observer/:id/info`
+ *  Retrieve observer info
+ */
+export const observerInfoSchema = z.object({
+  canBeDeleted: z.boolean(),
+  ownEntriesCount: z.number(),
+});
 
 /**
  * `GET` `/observers`
@@ -24,7 +33,7 @@ export const getObserversQueryParamsSchema = entitiesCommonQueryParamsSchema.ext
 
 export type ObserversSearchParams = Omit<z.infer<typeof getObserversQueryParamsSchema>, "extended">;
 
-export const getObserversResponse = getPaginatedResponseSchema(observerSimpleSchema);
+export const getObserversResponse = getPaginatedResponseSchema(observerSchema);
 
 /**
  * `PUT` `/observer/:id` Update of observer entity
@@ -43,6 +52,6 @@ export type UpsertObserverResponse = z.infer<typeof upsertObserverResponse>;
 /**
  * `DELETE` `/observer/:id` Delete observer entity
  */
-export const deleteObserverResponse = observerSimpleSchema;
+export const deleteObserverResponse = observerSchema;
 
 export type DeleteObserverResponse = z.infer<typeof deleteObserverResponse>;

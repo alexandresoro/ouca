@@ -7,8 +7,6 @@ export const observerFactory = Factory.define<Observer>(() => {
     id: faker.string.sample(),
     libelle: faker.string.alpha(),
     ownerId: faker.string.uuid(),
-    inventoriesCount: faker.number.int(),
-    entriesCount: faker.number.int(),
   };
 });
 

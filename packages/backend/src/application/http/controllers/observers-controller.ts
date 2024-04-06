@@ -3,6 +3,7 @@ import {
   getObserverResponse,
   getObserversQueryParamsSchema,
   getObserversResponse,
+  observerInfoSchema,
   upsertObserverInput,
   upsertObserverResponse,
 } from "@ou-ca/common/api/observer";
@@ -41,6 +42,36 @@ export const observersController: FastifyPluginCallback<{
     }
 
     const response = getObserverResponse.parse(observer);
+    return await reply.send(response);
+  });
+
+  fastify.get<{
+    Params: {
+      id: number;
+    };
+  }>("/:id/info", async (req, reply) => {
+    const observerInfoResult = Result.combine([
+      await observerService.getEntriesCountByObserver(`${req.params.id}`, req.user),
+      await observerService.isObserverUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (observerInfoResult.isErr()) {
+      switch (observerInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+        default:
+          logger.error({ error: observerInfoResult.error }, "Unexpected error");
+          return await reply.status(500).send();
+      }
+    }
+
+    const [ownEntriesCount, isObserverUsed] = observerInfoResult.value;
+
+    const response = observerInfoSchema.parse({
+      canBeDeleted: !isObserverUsed,
+      ownEntriesCount,
+    });
+
     return await reply.send(response);
   });
 

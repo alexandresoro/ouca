@@ -176,7 +176,6 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
                     ? {
                         id: defaultObserver.id,
                         libelle: defaultObserver.libelle,
-                        editable: defaultObserver.editable,
                         ownerId: defaultObserver.ownerId,
                       }
                     : undefined)

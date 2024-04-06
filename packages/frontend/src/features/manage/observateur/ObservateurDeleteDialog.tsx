@@ -1,4 +1,5 @@
 import type { Observer } from "@ou-ca/common/api/entities/observer";
+import { useApiObserverInfoQuery } from "@services/api/observer/api-observer-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
@@ -16,6 +17,8 @@ const ObservateurDeleteDialog: FunctionComponent<ObservateurDeleteDialogProps> =
 }) => {
   const { t } = useTranslation();
 
+  const { data: observerInfo } = useApiObserverInfoQuery(observerToDelete?.id ?? null);
+
   const handleConfirmDeletion = (observerToDelete: Observer | null) => {
     if (observerToDelete != null) {
       onConfirmDeletion?.(observerToDelete);
@@ -29,7 +32,7 @@ const ObservateurDeleteDialog: FunctionComponent<ObservateurDeleteDialogProps> =
         name: observerToDelete?.libelle,
       })}
       impactedItemsMessage={t("deleteObserverDialogMsgImpactedData", {
-        nbOfObservations: observerToDelete?.entriesCount ?? 0,
+        nbOfObservations: observerInfo?.ownEntriesCount ?? 0,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(observerToDelete)}

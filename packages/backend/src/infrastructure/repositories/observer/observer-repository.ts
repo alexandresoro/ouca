@@ -2,9 +2,7 @@ import {
   type Observer,
   type ObserverCreateInput,
   type ObserverFindManyInput,
-  type ObserverSimple,
   observerSchema,
-  observerSimpleSchema,
 } from "@domain/observer/observer.js";
 import type { EntityFailureReason } from "@domain/shared/failure-reason.js";
 import { handleDatabaseError } from "@infrastructure/kysely/database-errors.js";
@@ -18,13 +16,8 @@ import { countSchema } from "../common.js";
 const findObserverById = async (id: number): Promise<Observer | null> => {
   const observerResult = await kysely
     .selectFrom("observateur")
-    .leftJoin("inventaire", "inventaire.observateurId", "observateur.id")
-    .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
     .select([sql<string>`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"])
-    .select((eb) => eb.fn.count("inventaire.id").distinct().as("inventoriesCount"))
-    .select((eb) => eb.fn.count("donnee.id").distinct().as("entriesCount"))
     .where("observateur.id", "=", id)
-    .groupBy("observateur.id")
     .executeTakeFirst();
 
   return observerResult ? observerSchema.parse(observerResult) : null;
@@ -33,48 +26,69 @@ const findObserverById = async (id: number): Promise<Observer | null> => {
 const findObserversById = async (ids: string[]): Promise<Observer[]> => {
   const observersResult = await kysely
     .selectFrom("observateur")
-    .leftJoin("inventaire", "inventaire.observateurId", "observateur.id")
-    .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
     .select([sql<string>`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"])
-    .select((eb) => eb.fn.count("inventaire.id").distinct().as("inventoriesCount"))
-    .select((eb) => eb.fn.count("donnee.id").distinct().as("entriesCount"))
     .where(
       "observateur.id",
       "in",
       ids.map((id) => Number.parseInt(id)),
     )
-    .groupBy("observateur.id")
     .execute();
 
   return z.array(observerSchema).parse(observersResult);
 };
 
-const findObservers = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: ObserverFindManyInput = {}): Promise<readonly ObserverSimple[]> => {
+const findObservers = async (
+  { orderBy, sortOrder, q, offset, limit }: ObserverFindManyInput = {},
+  ownerId?: string,
+): Promise<Observer[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let queryObs;
   if (isSortByNbDonnees) {
-    queryObs = kysely
+    const countFromDirectObserversAndAssociatesQuery = kysely
       .selectFrom("observateur")
       .leftJoin("inventaire", "inventaire.observateurId", "observateur.id")
       .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
-      .select([sql`basenaturaliste.observateur.id::text`.as("id"), "libelle", "observateur.ownerId"]);
+      .select((eb) => [
+        sql`basenaturaliste.observateur.id::text`.as("id"),
+        "libelle",
+        "observateur.ownerId",
+        ownerId
+          ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId).as("count")
+          : eb.fn.count("donnee.id").as("count"),
+      ])
+      .groupBy("observateur.id")
+      .union(
+        kysely
+          .selectFrom("observateur")
+          .leftJoin("inventaire_associe", "inventaire_associe.observateurId", "observateur.id")
+          .leftJoin("inventaire", "inventaire.id", "inventaire_associe.inventaireId")
+          .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
+          .select((eb) => [
+            sql`basenaturaliste.observateur.id::text`.as("id"),
+            "libelle",
+            "observateur.ownerId",
+            ownerId
+              ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId).as("count")
+              : eb.fn.count("donnee.id").as("count"),
+          ])
+          .groupBy("observateur.id"),
+      )
+      .as("res");
+
+    queryObs = kysely.selectFrom(countFromDirectObserversAndAssociatesQuery).select(["id", "libelle", "ownerId"]);
 
     if (q?.length) {
       queryObs = queryObs.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
     }
 
     queryObs = queryObs
-      .groupBy("observateur.id")
-      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
-      .orderBy("observateur.libelle asc");
+      .groupBy("id")
+      .groupBy("libelle")
+      .groupBy("ownerId")
+      .orderBy((eb) => eb.fn.sum("count"), sortOrder ?? undefined)
+      .orderBy("libelle asc");
   } else {
     queryObs = kysely
       .selectFrom("observateur")
@@ -106,7 +120,7 @@ const findObservers = async ({
 
   const observersResult = await queryObs.execute();
 
-  return z.array(observerSimpleSchema).parse(observersResult);
+  return z.array(observerSchema).parse(observersResult);
 };
 
 const getCount = async (q?: string | null): Promise<number> => {
@@ -117,6 +131,28 @@ const getCount = async (q?: string | null): Promise<number> => {
   }
 
   const countResult = await query.executeTakeFirstOrThrow();
+
+  return countSchema.parse(countResult).count;
+};
+
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
+  let countResultQuery = kysely
+    .selectFrom("donnee")
+    .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
+    .leftJoin("inventaire_associe", "inventaire_associe.inventaireId", "inventaire.id")
+    .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
+    .where((eb) =>
+      eb.or([
+        eb("inventaire.observateurId", "=", Number.parseInt(id)),
+        eb("inventaire_associe.observateurId", "=", Number.parseInt(id)),
+      ]),
+    );
+
+  if (ownerId) {
+    countResultQuery = countResultQuery.where("inventaire.ownerId", "=", ownerId);
+  }
+
+  const countResult = await countResultQuery.executeTakeFirstOrThrow();
 
   return countSchema.parse(countResult).count;
 };
@@ -132,10 +168,10 @@ const createObserver = async (observerInput: ObserverCreateInput): Promise<Resul
       .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
       .executeTakeFirstOrThrow(),
     handleDatabaseError,
-  ).map((createdObserver) => observerSchema.parse({ ...createdObserver, inventoriesCount: 0, entriesCount: 0 }));
+  ).map((createdObserver) => observerSchema.parse(createdObserver));
 };
 
-const createObservers = async (observerInputs: ObserverCreateInput[]): Promise<ObserverSimple[]> => {
+const createObservers = async (observerInputs: ObserverCreateInput[]): Promise<Observer[]> => {
   const createdObservers = await kysely
     .insertInto("observateur")
     .values(
@@ -149,7 +185,7 @@ const createObservers = async (observerInputs: ObserverCreateInput[]): Promise<O
     .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
     .execute();
 
-  return z.array(observerSimpleSchema).nonempty().parse(createdObservers);
+  return z.array(observerSchema).nonempty().parse(createdObservers);
 };
 
 const updateObserver = async (
@@ -157,49 +193,27 @@ const updateObserver = async (
   observateurInput: ObserverCreateInput,
 ): Promise<Result<Observer, EntityFailureReason>> => {
   return fromPromise(
-    kysely.transaction().execute(async (trx) => {
-      // Update observer
-      const updatedObserver = await trx
-        .updateTable("observateur")
-        .set({
-          libelle: observateurInput.libelle,
-          ownerId: observateurInput.ownerId,
-        })
-        .where("id", "=", observateurId)
-        .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
-        .executeTakeFirstOrThrow();
-
-      // Compute counts
-      const { inventoriesCount, entriesCount } = await trx
-        .selectFrom("observateur")
-        .leftJoin("inventaire", "inventaire.observateurId", "observateur.id")
-        .leftJoin("donnee", "donnee.inventaireId", "inventaire.id")
-        .select((eb) => eb.fn.count("inventaire.id").distinct().as("inventoriesCount"))
-        .select((eb) => eb.fn.count("donnee.id").distinct().as("entriesCount"))
-        .where("observateur.id", "=", observateurId)
-        .groupBy("observateur.id")
-        .executeTakeFirstOrThrow();
-
-      return {
-        ...updatedObserver,
-        inventoriesCount,
-        entriesCount,
-      };
-    }),
+    kysely
+      .updateTable("observateur")
+      .set({
+        libelle: observateurInput.libelle,
+        ownerId: observateurInput.ownerId,
+      })
+      .where("id", "=", observateurId)
+      .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
+      .executeTakeFirstOrThrow(),
     handleDatabaseError,
-  ).map((updatedObserver) => {
-    return observerSchema.parse(updatedObserver);
-  });
+  ).map((updatedObserver) => observerSchema.parse(updatedObserver));
 };
 
-const deleteObserverById = async (observerId: number): Promise<ObserverSimple | null> => {
+const deleteObserverById = async (observerId: number): Promise<Observer | null> => {
   const deletedObserver = await kysely
     .deleteFrom("observateur")
     .where("id", "=", observerId)
     .returning([sql`id::text`.as("id"), "libelle", "ownerId"])
     .executeTakeFirst();
 
-  return deletedObserver ? observerSimpleSchema.parse(deletedObserver) : null;
+  return deletedObserver ? observerSchema.parse(deletedObserver) : null;
 };
 
 export const observerRepository = {
@@ -207,6 +221,7 @@ export const observerRepository = {
   findObserversById,
   findObservers,
   getCount,
+  getEntriesCountById,
   createObserver,
   createObservers,
   updateObserver,

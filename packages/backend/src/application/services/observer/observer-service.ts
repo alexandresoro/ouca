@@ -3,7 +3,7 @@ import type { ObserverFailureReason } from "@domain/observer/observer.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { ObserverRepository } from "@interfaces/observer-repository-interface.js";
-import type { Observer, ObserverSimple } from "@ou-ca/common/api/entities/observer";
+import type { Observer } from "@ou-ca/common/api/entities/observer";
 import type { ObserversSearchParams, UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Result, err, ok } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
@@ -25,6 +25,30 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     return ok(enrichEntityWithEditableStatus(observer, loggedUser));
   };
 
+  const getEntriesCountByObserver = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<number, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    return ok(await observerRepository.getEntriesCountById(id, loggedUser.id));
+  };
+
+  const isObserverUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithObserver = await observerRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithObserver > 0);
+  };
+
   const findObservers = async (
     ids: string[],
     loggedUser: LoggedUser | null,
@@ -41,7 +65,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     return ok(observers.map((observer) => enrichEntityWithEditableStatus(observer, loggedUser)));
   };
 
-  const findAllObservers = async (): Promise<ObserverSimple[]> => {
+  const findAllObservers = async (): Promise<Observer[]> => {
     const observers = await observerRepository.findObservers({
       orderBy: "libelle",
     });
@@ -56,19 +80,22 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
   const findPaginatedObservers = async (
     loggedUser: LoggedUser | null,
     options: ObserversSearchParams,
-  ): Promise<Result<ObserverSimple[], AccessFailureReason>> => {
+  ): Promise<Result<Observer[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const observers = await observerRepository.findObservers({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const observers = await observerRepository.findObservers(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedObservers = observers.map((observer) => {
       return enrichEntityWithEditableStatus(observer, loggedUser);
@@ -136,7 +163,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
   const deleteObserver = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<ObserverSimple | null, AccessFailureReason>> => {
+  ): Promise<Result<Observer | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -157,7 +184,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
   const createObservers = async (
     observers: Omit<AgeCreateInput, "ownerId">[],
     loggedUser: LoggedUser,
-  ): Promise<readonly ObserverSimple[]> => {
+  ): Promise<Observer[]> => {
     const createdObservers = await observerRepository.createObservers(
       observers.map((observateur) => {
         return { ...observateur, ownerId: loggedUser.id };
@@ -173,6 +200,8 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
 
   return {
     findObserver,
+    getEntriesCountByObserver,
+    isObserverUsed,
     findObservers,
     findAllObservers,
     findPaginatedObservers,
