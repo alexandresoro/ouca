@@ -321,7 +321,12 @@ export class ImportDonneeService extends ImportService {
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     logger.info({ loggedUser }, `Inserting ${this.newDonnees.length} new entries`);
     for (const inputDonnee of this.newDonnees) {
-      await this.services.entryService.createEntry(inputDonnee, loggedUser);
+      const insertionResult = await this.services.entryService.createEntry(inputDonnee, loggedUser);
+
+      if (insertionResult.isErr()) {
+        logger.error({ loggedUser, inputDonnee }, `Error while inserting entry: ${insertionResult.error.type}`);
+        return Promise.reject(insertionResult.error);
+      }
     }
   };
 
