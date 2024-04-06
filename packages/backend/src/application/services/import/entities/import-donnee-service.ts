@@ -17,6 +17,7 @@ import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
+import { logger } from "../../../../utils/logger.js";
 import { getDateOnlyAsLocalISOString } from "../../../../utils/time-utils.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../../../utils/utils.js";
 import { ImportService } from "./import-service.js";
@@ -318,6 +319,7 @@ export class ImportDonneeService extends ImportService {
   };
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
+    logger.info({ loggedUser }, `Inserting ${this.newDonnees.length} new entries`);
     for (const inputDonnee of this.newDonnees) {
       await this.services.entryService.createEntry(inputDonnee, loggedUser);
     }
