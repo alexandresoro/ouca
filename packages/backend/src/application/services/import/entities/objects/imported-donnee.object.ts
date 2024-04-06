@@ -2,6 +2,7 @@ import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
+import { getDateOnlyAsLocalISOString } from "../../../../../utils/time-utils.js";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../../../../utils/utils.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
 
@@ -158,7 +159,7 @@ export class ImportedDonnee {
 
     return {
       observerId: observateurId,
-      date: formattedDate ? formattedDate.toISOString().slice(0, 10) : "null",
+      date: formattedDate ? getDateOnlyAsLocalISOString(formattedDate) : "null",
       time: getFormattedTime(this.heure),
       duration: this.duree.length ? getMinutesFromTime(this.duree) : null,
       localityId: lieuditId,
