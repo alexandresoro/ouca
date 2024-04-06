@@ -9,9 +9,9 @@ import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
 import { getAgesResponse } from "@ou-ca/common/api/age";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
+import { type PutMeInput, putMeInput } from "@ou-ca/common/api/me";
 import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
-import { type PutSettingsInput, putSettingsInput } from "@ou-ca/common/api/settings";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
 import { useApiSettingsUpdate } from "@services/api/me/api-me-queries";
 import { type FunctionComponent, useCallback, useEffect } from "react";
@@ -122,7 +122,7 @@ const SettingsPage: FunctionComponent = () => {
       isDistanceDisplayed: false,
       isRegroupementDisplayed: false,
     },
-    resolver: zodResolver(putSettingsInput),
+    resolver: zodResolver(putMeInput),
   });
 
   useEffect(() => {
@@ -141,7 +141,7 @@ const SettingsPage: FunctionComponent = () => {
   }, [settings, reset]);
 
   // Handle updated settings
-  const sendUpdatedSettings: SubmitHandler<PutSettingsInput> = useCallback(
+  const sendUpdatedSettings: SubmitHandler<PutMeInput> = useCallback(
     (values) => {
       if (settings === undefined) {
         return;

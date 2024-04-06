@@ -79,3 +79,5 @@ export const putMeInput = z.object({
   isDistanceDisplayed: z.boolean(),
   isRegroupementDisplayed: z.boolean(),
 });
+
+export type PutMeInput = z.infer<typeof putMeInput>;
