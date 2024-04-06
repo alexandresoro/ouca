@@ -17,6 +17,10 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
       return reply.code(401).send();
     }
 
+    if (!req.user.permissions.canImport) {
+      return reply.code(403).send();
+    }
+
     // Check that the import is a known one
     const parsedQueryResult = z
       .object({
@@ -48,6 +52,10 @@ export const importRoutes: FastifyPluginCallback<{ services: Services }> = (fast
   fastify.get("/import-status/:importId", async (req, reply) => {
     if (!req.user) {
       return reply.code(401).send();
+    }
+
+    if (!req.user.permissions.canImport) {
+      return reply.code(403).send();
     }
 
     const parsedQueryResult = z
