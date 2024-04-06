@@ -1,7 +1,6 @@
 import type { Entry } from "@domain/entry/entry.js";
 import type { Inventory } from "@domain/inventory/inventory.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import { getPermissionsFromRole } from "@domain/user/user-role.js";
 import type { AgeSimple } from "@ou-ca/common/api/entities/age";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import type { Department } from "@ou-ca/common/api/entities/department";
@@ -241,16 +240,8 @@ export class ImportDonneeService extends ImportService {
       );
     });
 
-    // FIXME: remove this ugly workaround
-    // not even sure it works
-    const dummyLoggedUser: LoggedUser = {
-      id: "dummy",
-      role: "admin",
-      permissions: getPermissionsFromRole("admin"),
-    };
-
     // Check if already have a similar donnee in the database
-    const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
+    const existingDonneeDatabase = this.existingDonnees.find((donnee) => {
       return (
         donnee.inventoryId === existingInventaire?.id &&
         donnee.speciesId === espece.id &&
@@ -262,22 +253,8 @@ export class ImportDonneeService extends ImportService {
         donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
         donnee.grouping === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
-        areSetsContainingSameValues(
-          new Set(
-            (await this.services.behaviorService.findBehaviors(donnee.behaviorIds, dummyLoggedUser))
-              ._unsafeUnwrap()
-              .map(({ id }) => id),
-          ),
-          comportementsIds,
-        ) &&
-        areSetsContainingSameValues(
-          new Set(
-            (await this.services.environmentService.findEnvironments(donnee.environmentIds, dummyLoggedUser))
-              ._unsafeUnwrap()
-              .map(({ id }) => id),
-          ),
-          milieuxIds,
-        )
+        areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
+        areSetsContainingSameValues(new Set(donnee.environmentIds), milieuxIds)
       );
     });
 
