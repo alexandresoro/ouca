@@ -2,23 +2,18 @@ import TextInput from "@components/base/TextInput";
 import FormSelect from "@components/form/FormSelect";
 import FormSwitch from "@components/form/FormSwitch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useApiMutation from "@hooks/api/useApiMutation";
 import useApiQuery from "@hooks/api/useApiQuery";
 import useSnackbar from "@hooks/useSnackbar";
+import { useUserSettings } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
 import { getAgesResponse } from "@ou-ca/common/api/age";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
-import {
-  type PutSettingsInput,
-  getSettingsResponse,
-  putSettingsInput,
-  putSettingsResponse,
-} from "@ou-ca/common/api/settings";
+import { type PutSettingsInput, putSettingsInput } from "@ou-ca/common/api/settings";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
-import { useQueryClient } from "@tanstack/react-query";
+import { useApiSettingsUpdate } from "@services/api/me/api-me-queries";
 import { type FunctionComponent, useCallback, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -41,17 +36,7 @@ const SettingsPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const queryClient = useQueryClient();
-
-  const {
-    data: settings,
-    isError,
-    isFetching,
-    refetch,
-  } = useApiQuery({
-    path: "/settings",
-    schema: getSettingsResponse,
-  });
+  const settings = useUserSettings();
 
   const {
     data: ages,
@@ -99,38 +84,23 @@ const SettingsPage: FunctionComponent = () => {
   });
 
   const fetching =
-    isFetching ||
-    isFetchingAges ||
-    isFetchingDepartments ||
-    isFetchingNumberEstimates ||
-    isFetchingObservers ||
-    isFetchingSexes;
-  const error =
-    isError || isErrorAges || isErrorDepartments || isErrorNumberEstimates || isErrorObservers || isErrorSexes;
+    isFetchingAges || isFetchingDepartments || isFetchingNumberEstimates || isFetchingObservers || isFetchingSexes;
+  const error = isErrorAges || isErrorDepartments || isErrorNumberEstimates || isErrorObservers || isErrorSexes;
 
-  const { mutate } = useApiMutation(
-    {
-      path: "/settings",
-      method: "PUT",
-      schema: putSettingsResponse,
+  const { trigger } = useApiSettingsUpdate({
+    onSuccess: () => {
+      displayNotification({
+        type: "success",
+        message: t("saveSettingsSuccess"),
+      });
     },
-    {
-      onSuccess: (updatedSettings) => {
-        queryClient.setQueryData(["API", "/settings"], updatedSettings);
-        displayNotification({
-          type: "success",
-          message: t("saveSettingsSuccess"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("saveSettingsError"),
-        });
-        void refetch();
-      },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("saveSettingsError"),
+      });
     },
-  );
+  });
 
   const {
     register,
@@ -157,40 +127,39 @@ const SettingsPage: FunctionComponent = () => {
 
   useEffect(() => {
     reset({
-      defaultObserver: settings?.defaultObserver?.id ?? null,
-      defaultDepartment: settings?.defaultDepartment?.id ?? null,
-      defaultEstimationNombre: settings?.defaultNumberEstimate?.id ?? null,
-      defaultNombre: settings?.defaultNombre ? `${settings.defaultNombre}` : "",
-      defaultSexe: settings?.defaultSex?.id ?? null,
-      defaultAge: settings?.defaultAge?.id ?? null,
-      areAssociesDisplayed: !!settings?.areAssociesDisplayed,
-      isMeteoDisplayed: !!settings?.isMeteoDisplayed,
-      isDistanceDisplayed: !!settings?.isDistanceDisplayed,
-      isRegroupementDisplayed: !!settings?.isRegroupementDisplayed,
+      defaultObserver: settings?.defaultObserverId ?? null,
+      defaultDepartment: settings?.defaultDepartmentId ?? null,
+      defaultEstimationNombre: settings?.defaultNumberEstimateId ?? null,
+      defaultNombre: settings?.defaultNumber != null ? `${settings.defaultNumber}` : "",
+      defaultSexe: settings?.defaultSexId ?? null,
+      defaultAge: settings?.defaultAgeId ?? null,
+      areAssociesDisplayed: !!settings?.displayAssociates,
+      isMeteoDisplayed: !!settings?.displayWeather,
+      isDistanceDisplayed: !!settings?.displayDistance,
+      isRegroupementDisplayed: !!settings?.displayGrouping,
     });
   }, [settings, reset]);
 
   // Handle updated settings
   const sendUpdatedSettings: SubmitHandler<PutSettingsInput> = useCallback(
     (values) => {
-      if (!settings) {
+      if (settings === undefined) {
         return;
       }
-
-      mutate({ body: values });
+      void trigger({ body: values });
     },
-    [mutate, settings],
+    [trigger, settings],
   );
 
   // Watch inputs for changes, and submit the form if any
   useEffect(() => {
     const subscription = watch(() => {
-      if (!isFetching) {
+      if (settings !== undefined) {
         void handleSubmit(sendUpdatedSettings as unknown as SubmitHandler<SettingsInputs>)();
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, handleSubmit, sendUpdatedSettings, isFetching]);
+  }, [watch, handleSubmit, sendUpdatedSettings, settings]);
 
   // Display a generic error message when something wrong happened while retrieving the settings
   useEffect(() => {
@@ -201,6 +170,10 @@ const SettingsPage: FunctionComponent = () => {
       });
     }
   }, [t, displayNotification, error]);
+
+  if (settings === undefined) {
+    return null;
+  }
 
   return (
     <>

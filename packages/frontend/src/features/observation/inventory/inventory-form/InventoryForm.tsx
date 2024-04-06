@@ -1,13 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUserSettings } from "@hooks/useUser";
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, upsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
+import { useApiDepartmentQuery } from "@services/api/department/api-department-queries";
+import { useApiObserverQuery } from "@services/api/observer/api-observer-queries";
 import { useAtomValue } from "jotai";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import useUserSettingsContext from "../../../../hooks/useUserSettingsContext";
 import {
   inventoryAltitudeAtom,
   inventoryLatitudeAtom,
@@ -54,13 +56,36 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { userSettings } = useUserSettingsContext();
+  const settings = useUserSettings();
+
+  const { data: defaultObserver, isValidating: isValidatingObserver } = useApiObserverQuery(
+    settings?.defaultObserverId ?? null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    },
+  );
+  const { data: defaultDepartment, isValidating: isValidatingDepartment } = useApiDepartmentQuery(
+    settings?.defaultDepartmentId ?? null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    },
+  );
+
+  const isDefaultObserverReady =
+    !isValidatingObserver || settings === null || (settings !== undefined && settings.defaultObserverId == null);
+
+  const isDefaultDepartmentReady =
+    !isValidatingDepartment || settings === null || (settings !== undefined && settings.defaultDepartmentId == null);
+
+  const areSettingsLoaded = settings !== undefined && isDefaultObserverReady && isDefaultDepartmentReady;
 
   const defaultFormValues = (
     initialData === undefined
       ? {
           // Brand new inventory
-          observerId: userSettings.defaultObserver?.id ?? null,
+          observerId: settings?.defaultObserverId ?? null,
           associateIds: [],
           date: new Date().toISOString().slice(0, 10),
           time: null,
@@ -132,6 +157,10 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
     onSubmitForm?.(inventoryFormData as z.infer<typeof upsertInventoryFormInput>);
   };
 
+  if (!areSettingsLoaded) {
+    return null;
+  }
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
@@ -141,9 +170,19 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
             <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <InventoryFormObserver
                 control={control}
-                defaultObserver={initialData?.observer ?? userSettings.defaultObserver ?? undefined}
+                defaultObserver={
+                  initialData?.observer ??
+                  (defaultObserver != null
+                    ? {
+                        id: defaultObserver.id,
+                        libelle: defaultObserver.libelle,
+                        editable: defaultObserver.editable,
+                        ownerId: defaultObserver.ownerId,
+                      }
+                    : undefined)
+                }
                 defaultAssociates={initialData?.associates ?? []}
-                areAssociesDisplayed={userSettings.areAssociesDisplayed}
+                areAssociesDisplayed={settings?.displayAssociates}
                 autofocusOnObserver={true}
               />
             </div>
@@ -154,10 +193,10 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
               <InventoryFormLocation
                 register={register}
                 control={control}
-                defaultDepartment={initialData != null ? undefined : userSettings.defaultDepartment ?? undefined}
+                defaultDepartment={initialData != null ? undefined : defaultDepartment ?? undefined}
               />
             </div>
-            {userSettings.isMeteoDisplayed && (
+            {settings?.displayWeather && (
               <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
                 <InventoryFormWeather
                   control={control}

@@ -1,8 +1,8 @@
 import useApiMutation from "@hooks/api/useApiMutation";
-import useApiQuery from "@hooks/api/useApiQuery";
-import { getSettingsResponse } from "@ou-ca/common/api/settings";
+import { useApiMe } from "@services/api/me/api-me-queries";
 import { useQueryClient } from "@tanstack/react-query";
-import { type FunctionComponent, useEffect, useState } from "react";
+import { FetchError } from "@utils/fetch-api";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -13,22 +13,21 @@ const NewAccount: FunctionComponent = () => {
 
   const queryClient = useQueryClient();
 
-  const [enabledQuery, setEnabledQuery] = useState(true);
-  const { data: userSettings, isLoading } = useApiQuery(
-    {
-      path: "/settings",
-      schema: getSettingsResponse,
+  const [isNewAccountRequested, setIsNewAccountRequested] = useState(false);
+
+  const { isLoading, mutate: mutateUser } = useApiMe({
+    revalidateIfStale: true,
+    shouldRetryOnError: (err) => {
+      // If we receive a 404, we don't want to retry as we assume the user doesn't exist
+      return !(err instanceof FetchError && err.status === 404);
     },
-    {
-      retry: 0,
-      refetchOnWindowFocus: false,
-      enabled: enabledQuery,
+    onSuccess: () => {
+      // Retrieval of user data was successful, user exists
+      // Redirect to settings page if it was thanks to the user trying to create an account
+      // Otherwise, redirect to the home page
+      navigate(isNewAccountRequested ? "/settings" : "/", { replace: true });
     },
-  );
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    setEnabledQuery(false);
-  }, [userSettings]);
+  });
 
   const { mutate } = useApiMutation(
     {
@@ -39,20 +38,15 @@ const NewAccount: FunctionComponent = () => {
       onSuccess: async () => {
         await queryClient.invalidateQueries(["API", "/settings"]);
 
-        // Redirect to settings page when account has been created
-        navigate("/settings", { replace: true });
+        await mutateUser();
       },
     },
   );
 
-  useEffect(() => {
-    if (userSettings) {
-      // User has tried to reach the creation page, but already has an account
-      navigate("/", { replace: true });
-    }
-  }, [userSettings, navigate]);
-
-  const onCreateAccountRequested = () => mutate({});
+  const onCreateAccountRequested = () => {
+    setIsNewAccountRequested(true);
+    mutate({});
+  };
 
   if (isLoading) {
     return <progress className="progress progress-primary w-56" />;

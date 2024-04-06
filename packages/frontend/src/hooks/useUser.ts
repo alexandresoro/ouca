@@ -1,10 +1,8 @@
 import { useApiMe } from "@services/api/me/api-me-queries";
-import { settingsAtom } from "@services/api/me/settingsAtom";
 import { getFullName, getInitials } from "@utils/name-utils";
-import { useAtomValue } from "jotai";
 
 export const useUser = () => {
-  const user = useApiMe();
+  const { data: user } = useApiMe();
 
   if (user === undefined) {
     return undefined;
@@ -20,4 +18,12 @@ export const useUser = () => {
   };
 };
 
-export const useUserSettings = () => useAtomValue(settingsAtom);
+/**
+ * Hook to get the user settings.
+ * can be `undefined` if the settings are not loaded yet,
+ * can be `null` if the user has no settings
+ */
+export const useUserSettings = () => {
+  const { data: user } = useApiMe();
+  return user?.settings;
+};
