@@ -1,28 +1,38 @@
 import assert from "node:assert";
 import test from "node:test";
-import { areCoordinatesCustomized } from "./coordinates-helper.js";
-import type { CoordinatesSystemType } from "./coordinates-system.object.js";
+import type { Locality } from "../api/entities/locality.js";
+import { areCoordinatesCustom } from "./coordinates-helper.js";
 
 test("should correctly validate non-customized coordinated", () => {
-  const lieudit = {
-    id: 1,
-    coordinatesSystem: "gps" as CoordinatesSystemType,
-    longitude: 10,
-    latitude: -4,
-    altitude: 45,
+  const locality: Locality = {
+    id: "1",
+    coordinates: {
+      longitude: 10,
+      latitude: -4,
+      altitude: 45,
+    },
+    nom: "test",
+    ownerId: "1",
+    townId: "1",
+    editable: true,
   };
 
-  assert.strictEqual(areCoordinatesCustomized(lieudit, 45, 10, -4, "gps"), false);
+  assert.strictEqual(areCoordinatesCustom(locality, 45, 10, -4), false);
 });
 
 test("should correctly validate customized coordinated", () => {
-  const lieudit = {
-    id: 1,
-    coordinatesSystem: "gps" as CoordinatesSystemType,
-    longitude: 10,
-    latitude: -4,
-    altitude: 45,
+  const locality: Locality = {
+    id: "1",
+    coordinates: {
+      longitude: 10,
+      latitude: -4,
+      altitude: 45,
+    },
+    nom: "test",
+    ownerId: "1",
+    townId: "1",
+    editable: true,
   };
 
-  assert.strictEqual(areCoordinatesCustomized(lieudit, 33, 22, 11, "gps"), true);
+  assert.strictEqual(areCoordinatesCustom(locality, 33, 22, 11), true);
 });

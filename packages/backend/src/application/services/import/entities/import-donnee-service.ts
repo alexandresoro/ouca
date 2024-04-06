@@ -14,7 +14,7 @@ import type { Species } from "@ou-ca/common/api/entities/species";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
-import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
+import { areCoordinatesCustom } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import type { Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { logger } from "../../../../utils/logger.js";
@@ -124,7 +124,7 @@ export class ImportDonneeService extends ImportService {
     coordinates.longitude = +coordinates.longitude.toFixed(GPS_COORDINATES.decimalPlaces);
     coordinates.latitude = +coordinates.latitude.toFixed(GPS_COORDINATES.decimalPlaces);
 
-    if (!areCoordinatesCustomized(lieudit, altitude, coordinates.longitude, coordinates.latitude, "gps")) {
+    if (!areCoordinatesCustom(lieudit, altitude, coordinates.longitude, coordinates.latitude)) {
       altitude = null;
       coordinates = null;
     }
