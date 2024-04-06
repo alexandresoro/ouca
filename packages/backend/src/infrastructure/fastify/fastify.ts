@@ -30,6 +30,7 @@ export const buildServer = async (
   // Server
   const server = fastify.default({
     logger: loggerParent,
+    bodyLimit: 1048576 * 10, // 10 MB
     trustProxy: true,
   });
 
