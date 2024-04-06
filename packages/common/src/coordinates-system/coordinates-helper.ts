@@ -32,8 +32,7 @@ export const areCoordinatesCustomized = (
           latitude: lieudit.latitude!,
           // biome-ignore lint/style/noNonNullAssertion: <explanation>
           longitude: lieudit.longitude!,
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
-          system: lieudit.coordinatesSystem!,
+          system: "gps",
         },
       },
       system,
