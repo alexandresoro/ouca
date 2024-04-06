@@ -160,7 +160,7 @@ export class ImportedDonnee {
       observerId: observateurId,
       date: formattedDate ? formattedDate.toISOString().slice(0, 10) : "null",
       time: getFormattedTime(this.heure),
-      duration: getMinutesFromTime(this.duree),
+      duration: this.duree.length ? getMinutesFromTime(this.duree) : null,
       localityId: lieuditId,
       coordinates: customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
