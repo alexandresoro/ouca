@@ -62,7 +62,9 @@ const ImportStatusPanel: FunctionComponent<ImportStatusPanelProps> = ({ importTy
                 <div className="stat place-items-center">
                   <div className="stat-title">{t("importPage.importStats.progress")}</div>
                   <div className="stat-value">{`${
-                    status.validEntries ? Math.floor(status.validatedEntries / status.validEntries) : 0
+                    status.validEntries && status.errors.length
+                      ? Math.floor(status.validatedEntries + status.errors.length / status.validEntries)
+                      : 0
                   }%`}</div>
                   <div className="stat-desc">
                     {t("importPage.importStats.progressDescription", { count: status.validEntries })}
