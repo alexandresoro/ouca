@@ -15,10 +15,10 @@ export class ImportEspeceService extends ImportService {
     return 4;
   };
 
-  protected init = async (): Promise<void> => {
+  protected init = async (loggedUser: LoggedUser): Promise<void> => {
     this.especesToInsert = [];
     this.classes = await this.services.classService.findAllSpeciesClasses();
-    this.especes = (await this.services.speciesService.findAllSpecies())._unsafeUnwrap();
+    this.especes = (await this.services.speciesService.findAllSpecies(loggedUser))._unsafeUnwrap();
   };
 
   protected validateAndPrepareEntity = (especeTab: string[]): string | null => {

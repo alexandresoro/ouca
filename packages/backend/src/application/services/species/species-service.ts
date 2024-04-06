@@ -69,12 +69,12 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
     return ok(await speciesRepository.getEntriesCountById(id, searchCriteria));
   };
 
-  const findAllSpecies = async (): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
+  const findAllSpecies = async (loggedUser: LoggedUser): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
     const species = await speciesRepository.findSpecies({
       orderBy: "code",
     });
 
-    return enrichSpeciesMultiple([...species], null);
+    return enrichSpeciesMultiple([...species], loggedUser);
   };
 
   const findAllSpeciesWithClasses = async (): Promise<(Species & { classLabel: string })[]> => {

@@ -46,7 +46,7 @@ export class ImportDonneeService extends ImportService {
     return 32;
   };
 
-  protected init = async (): Promise<void> => {
+  protected init = async (loggedUser: LoggedUser): Promise<void> => {
     this.newDonnees = [];
 
     this.observateurs = await this.services.observerService.findAllObservers();
@@ -54,7 +54,7 @@ export class ImportDonneeService extends ImportService {
     this.communes = await this.services.townService.findAllTowns();
     this.lieuxDits = await this.services.localityService.findAllLocalities();
     this.meteos = await this.services.weatherService.findAllWeathers();
-    this.especes = (await this.services.speciesService.findAllSpecies())._unsafeUnwrap();
+    this.especes = (await this.services.speciesService.findAllSpecies(loggedUser))._unsafeUnwrap();
     this.sexes = await this.services.sexService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await this.services.numberEstimateService.findAllNumberEstimates();
