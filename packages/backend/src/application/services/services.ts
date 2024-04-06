@@ -35,7 +35,6 @@ import { type LocalityService, buildLocalityService } from "./locality/locality-
 import { type NumberEstimateService, buildNumberEstimateService } from "./number-estimate/number-estimate-service.js";
 import { type ObserverService, buildObserverService } from "./observer/observer-service.js";
 import { type OidcService, buildOidcService } from "./oidc/oidc-service.js";
-import { type SettingsService, buildSettingsService } from "./settings/settings-service.js";
 import { type SexService, buildSexService } from "./sex/sex-service.js";
 import { type SpeciesClassService, buildSpeciesClassService } from "./species-class/species-class-service.js";
 import { type SpeciesService, buildSpeciesService } from "./species/species-service.js";
@@ -60,7 +59,6 @@ export type Services = {
   speciesService: SpeciesService;
   townService: TownService;
   weatherService: WeatherService;
-  settingsService: SettingsService;
   userService: UserService;
   geojsonService: GeoJSONService;
   exportService: ExportService;
@@ -144,15 +142,6 @@ export const buildServices = (): Services => {
     userRepository,
   });
 
-  const settingsService = buildSettingsService({
-    userService,
-    departmentService,
-    observerService,
-    sexService,
-    ageService,
-    numberEstimateService,
-  });
-
   const geojsonService = buildGeoJSONService({
     localityRepository,
     localitiesGeoJSONRepository: localityGeojsonRepository,
@@ -204,7 +193,6 @@ export const buildServices = (): Services => {
     speciesService,
     townService,
     weatherService,
-    settingsService,
     userService,
     geojsonService,
     oidcService,

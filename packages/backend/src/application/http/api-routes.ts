@@ -14,7 +14,6 @@ import { localitiesController } from "./controllers/localities-controller.js";
 import { meController } from "./controllers/me-controller.js";
 import { numberEstimatesController } from "./controllers/number-estimates-controller.js";
 import { observersController } from "./controllers/observers-controller.js";
-import { settingsController } from "./controllers/settings-controller.js";
 import { sexesController } from "./controllers/sexes-controller.js";
 import { speciesController } from "./controllers/species-controller.js";
 import { townsController } from "./controllers/towns-controller.js";
@@ -43,8 +42,6 @@ export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fast
   await fastify.register(speciesController, { services, prefix: "/species" });
   await fastify.register(townsController, { services, prefix: "/towns" });
   await fastify.register(weathersController, { services, prefix: "/weathers" });
-
-  await fastify.register(settingsController, { services, prefix: "/settings" });
 
   await fastify.register(generateExportController, { services, prefix: "/generate-export" });
 
