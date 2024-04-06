@@ -13,7 +13,10 @@ export const startImportWorker = ({ importService }: WorkerImportDependencies): 
     useWorkerThreads: false,
   });
 
-  importWorker.on("progress", (_, progress) => {
+  importWorker.on("progress", (job, progress) => {
+    if (job.id) {
+      void job.extendLock(job.id, 1000 * 60); // Extend lock for 1 minute after each progress update
+    }
     void importService.writeImportStatus(progress as ImportStatus);
   });
 };
