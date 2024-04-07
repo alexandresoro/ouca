@@ -24,6 +24,7 @@ beforeEach(() => {
   observerRepository.updateObserver.mock.resetCalls();
   observerRepository.deleteObserverById.mock.resetCalls();
   observerRepository.getCount.mock.resetCalls();
+  observerRepository.getEntriesCountById.mock.resetCalls();
 });
 
 describe("Find observer", () => {
@@ -193,10 +194,10 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of an observer", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canEdit: true } } });
 
     observerRepository.updateObserver.mock.mockImplementationOnce(() => Promise.resolve(ok(observerFactory.build())));
 
@@ -224,14 +225,14 @@ describe("Update of an observer", () => {
     assert.deepStrictEqual(observerRepository.updateObserver.mock.calls[0].arguments, [12, observerData]);
   });
 
-  test("should not be allowed when requested by an use that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an use that is nor owner nor has permission", async () => {
     const existingData = observerFactory.build({
       ownerId: "notAdmin",
     });
 
     const observerData = upsertObserverInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     observerRepository.findObserverById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
@@ -244,7 +245,7 @@ describe("Update of an observer", () => {
   test("should not be allowed when trying to update to an observer that exists", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canEdit: true } } });
 
     observerRepository.updateObserver.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -266,10 +267,10 @@ describe("Update of an observer", () => {
 });
 
 describe("Creation of an observer", () => {
-  test("should create new observer", async () => {
+  test("should create new observer if has permission", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canCreate: true } } });
 
     observerRepository.createObserver.mock.mockImplementationOnce(() => Promise.resolve(ok(observerFactory.build())));
 
@@ -284,10 +285,23 @@ describe("Creation of an observer", () => {
     ]);
   });
 
+  test("should not be allowed if user has no permission", async () => {
+    const observerData = upsertObserverInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canCreate: false } } });
+
+    observerRepository.createObserver.mock.mockImplementationOnce(() => Promise.resolve(ok(observerFactory.build())));
+
+    const createResult = await observerService.createObserver(observerData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(observerRepository.createObserver.mock.callCount(), 0);
+  });
+
   test("should not be allowed when trying to create an observer that already exists", async () => {
     const observerData = upsertObserverInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canCreate: true } } });
 
     observerRepository.createObserver.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -330,8 +344,8 @@ describe("Deletion of an observer", () => {
     assert.deepStrictEqual(observerRepository.deleteObserverById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any observer if admin", async () => {
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+  test("should handle the deletion of any observer if has permission", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canDelete: true } } });
 
     await observerService.deleteObserver(11, loggedUser);
 
@@ -339,10 +353,8 @@ describe("Deletion of an observer", () => {
     assert.deepStrictEqual(observerRepository.deleteObserverById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when trying to delete a non-owned observer as non-admin", async () => {
-    const loggedUser = loggedUserFactory.build({
-      id: "12",
-    });
+  test("should not be allowed when trying to delete a non-owned observer and no permission", async () => {
+    const loggedUser = loggedUserFactory.build();
 
     const deleteResult = await observerService.deleteObserver(11, loggedUser);
 
@@ -354,6 +366,17 @@ describe("Deletion of an observer", () => {
     const deleteResult = await observerService.deleteObserver(11, null);
 
     assert.deepStrictEqual(deleteResult, err("notAllowed"));
+    assert.strictEqual(observerRepository.deleteObserverById.mock.callCount(), 0);
+  });
+
+  test("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { observer: { canDelete: true } } });
+
+    observerRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await observerService.deleteObserver(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
     assert.strictEqual(observerRepository.deleteObserverById.mock.callCount(), 0);
   });
 });

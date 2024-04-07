@@ -1,6 +1,6 @@
 import type { AgeCreateInput } from "@domain/age/age.js";
 import type { ObserverFailureReason } from "@domain/observer/observer.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { ObserverRepository } from "@interfaces/observer-repository-interface.js";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
@@ -119,7 +119,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     input: UpsertObserverInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Observer, ObserverFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.observer.canCreate) {
       return err("notAllowed");
     }
 
@@ -144,7 +144,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser.role !== "admin") {
+    if (!loggedUser.permissions.observer.canEdit) {
       const existingData = await observerRepository.findObserverById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -163,18 +163,29 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
   const deleteObserver = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Observer | null, AccessFailureReason>> => {
+  ): Promise<Result<Observer | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser.role !== "admin") {
+    if (!loggedUser.permissions.observer.canDelete) {
       const existingData = await observerRepository.findObserverById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
         return err("notAllowed");
       }
+    }
+
+    const isEntityUsedResult = await isObserverUsed(`${id}`, loggedUser);
+
+    if (isEntityUsedResult.isErr()) {
+      return err(isEntityUsedResult.error);
+    }
+
+    const isEntityUsed = isEntityUsedResult.value;
+    if (isEntityUsed) {
+      return err("isUsed");
     }
 
     const deletedObserver = await observerRepository.deleteObserverById(id);

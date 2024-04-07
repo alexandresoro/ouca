@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/observer";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const observersController: FastifyPluginCallback<{
       switch (observerResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: observerResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -59,9 +55,6 @@ export const observersController: FastifyPluginCallback<{
       switch (observerInfoResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: observerInfoResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -95,9 +88,6 @@ export const observersController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -128,9 +118,6 @@ export const observersController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: observerCreateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -159,9 +146,6 @@ export const observersController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: observerUpdateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -180,9 +164,8 @@ export const observersController: FastifyPluginCallback<{
       switch (deletedObserverResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedObserverResult.error }, "Unexpected error");
-          return await reply.status(500).send();
+        case "isUsed":
+          return await reply.status(409).send();
       }
     }
 
