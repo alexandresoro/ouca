@@ -15,29 +15,6 @@ type CommuneTableProps = {
   onClickDeleteTown: (town: TownExtended) => void;
 };
 
-const COLUMNS = [
-  {
-    key: "departement",
-    locKey: "department",
-  },
-  {
-    key: "code",
-    locKey: "code",
-  },
-  {
-    key: "nom",
-    locKey: "name",
-  },
-  {
-    key: "nbLieuxDits",
-    locKey: "numberOfLocalities",
-  },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
-  },
-] as const;
-
 const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown, onClickDeleteTown }) => {
   const { t } = useTranslation();
 
@@ -76,20 +53,52 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
       <InfiniteTable
         tableHead={
           <>
-            {COLUMNS.map((column) => (
-              <th key={column.key}>
-                <TableSortLabel
-                  active={orderBy === column.key}
-                  direction={orderBy === column.key ? sortOrder : "asc"}
-                  onClick={() => handleRequestSort(column.key)}
-                >
-                  {t(column.locKey)}
-                </TableSortLabel>
-              </th>
-            ))}
-            <th align="center" className="w-32 first-letter:capitalize">
-              {t("owner")}
+            <th>
+              <TableSortLabel
+                active={orderBy === "departement"}
+                direction={orderBy === "departement" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("departement")}
+              >
+                {t("department")}
+              </TableSortLabel>
             </th>
+            <th>
+              <TableSortLabel
+                active={orderBy === "code"}
+                direction={orderBy === "code" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("code")}
+              >
+                {t("code")}
+              </TableSortLabel>
+            </th>
+            <th>
+              <TableSortLabel
+                active={orderBy === "nom"}
+                direction={orderBy === "nom" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nom")}
+              >
+                {t("name")}
+              </TableSortLabel>
+            </th>
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbLieuxDits"}
+                direction={orderBy === "nbLieuxDits" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbLieuxDits")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfLocalities")}</span>
+              </TableSortLabel>
+            </th>
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbDonnees"}
+                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbDonnees")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+              </TableSortLabel>
+            </th>
+            <th className="w-32 first-letter:capitalize">{t("owner")}</th>
             <th align="center" className="w-32">
               {t("actions")}
             </th>
@@ -106,10 +115,10 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
                     <td>{commune.nom}</td>
                     <td>{commune.localitiesCount}</td>
                     <td>{commune.entriesCount}</td>
-                    <td align="center" className="w-32">
+                    <td align="center">
                       <AvatarWithUniqueNameAvatar input={commune.ownerId} />
                     </td>
-                    <td align="center" className="w-32">
+                    <td align="center">
                       <TableCellActionButtons
                         disabledEdit={!commune.editable}
                         disabledDelete={!commune.editable || commune.localitiesCount > 0}

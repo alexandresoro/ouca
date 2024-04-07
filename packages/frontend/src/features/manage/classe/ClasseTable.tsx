@@ -20,14 +20,6 @@ const COLUMNS = [
     key: "libelle",
     locKey: "label",
   },
-  {
-    key: "nbEspeces",
-    locKey: "numberOfSpecies",
-  },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
-  },
 ] as const;
 
 const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass, onClickDeleteSpeciesClass }) => {
@@ -79,6 +71,24 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
                 </TableSortLabel>
               </th>
             ))}
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbEspeces"}
+                direction={orderBy === "nbEspeces" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbEspeces")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfSpecies")}</span>
+              </TableSortLabel>
+            </th>
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbDonnees"}
+                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbDonnees")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+              </TableSortLabel>
+            </th>
             <th align="center" className="w-32 first-letter:capitalize">
               {t("owner")}
             </th>

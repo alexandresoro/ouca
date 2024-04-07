@@ -21,10 +21,6 @@ const COLUMNS = [
     key: "libelle",
     locKey: "label",
   },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
-  },
 ] as const;
 
 const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({
@@ -78,6 +74,15 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
                 </TableSortLabel>
               </th>
             ))}
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbDonnees"}
+                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbDonnees")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+              </TableSortLabel>
+            </th>
             <th align="center" className="w-32 first-letter:capitalize">
               {t("owner")}
             </th>

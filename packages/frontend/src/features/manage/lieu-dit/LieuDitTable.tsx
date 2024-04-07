@@ -44,10 +44,6 @@ const COLUMNS = [
     key: "altitude",
     locKey: "altitude",
   },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
-  },
 ] as const;
 
 const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality, onClickDeleteLocality }) => {
@@ -99,6 +95,15 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
                 </TableSortLabel>
               </th>
             ))}
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbDonnees"}
+                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbDonnees")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+              </TableSortLabel>
+            </th>
             <th align="center" className="w-32 first-letter:capitalize">
               {t("owner")}
             </th>

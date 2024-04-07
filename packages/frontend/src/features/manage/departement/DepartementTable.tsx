@@ -18,19 +18,7 @@ type DepartementTableProps = {
 const COLUMNS = [
   {
     key: "code",
-    locKey: "code",
-  },
-  {
-    key: "nbCommunes",
-    locKey: "numberOfCities",
-  },
-  {
-    key: "nbLieuxDits",
-    locKey: "numberOfLocalities",
-  },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
+    locKey: "department",
   },
 ] as const;
 
@@ -86,6 +74,33 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
                 </TableSortLabel>
               </th>
             ))}
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbCommunes"}
+                direction={orderBy === "nbCommunes" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbCommunes")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfCities")}</span>
+              </TableSortLabel>
+            </th>
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbLieuxDits"}
+                direction={orderBy === "nbLieuxDits" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbLieuxDits")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfLocalities")}</span>
+              </TableSortLabel>
+            </th>
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbDonnees"}
+                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbDonnees")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+              </TableSortLabel>
+            </th>
             <th align="center" className="w-32 first-letter:capitalize">
               {t("owner")}
             </th>

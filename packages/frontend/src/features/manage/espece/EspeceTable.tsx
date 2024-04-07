@@ -32,10 +32,6 @@ const COLUMNS = [
     key: "nomLatin",
     locKey: "scientificName",
   },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
-  },
 ] as const;
 
 const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies, onClickDeleteSpecies }) => {
@@ -88,6 +84,15 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
                 </TableSortLabel>
               </th>
             ))}
+            <th className="w-32">
+              <TableSortLabel
+                active={orderBy === "nbDonnees"}
+                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+                onClick={() => handleRequestSort("nbDonnees")}
+              >
+                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+              </TableSortLabel>
+            </th>
             <th align="center" className="w-32 first-letter:capitalize">
               {t("owner")}
             </th>
