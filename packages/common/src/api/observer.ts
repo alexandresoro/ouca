@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { observerSchema } from "./entities/observer.js";
 
@@ -18,10 +19,7 @@ export type GetObserverResponse = z.infer<typeof getObserverResponse>;
  * `GET` `/observer/:id/info`
  *  Retrieve observer info
  */
-export const observerInfoSchema = z.object({
-  canBeDeleted: z.boolean(),
-  ownEntriesCount: z.number(),
-});
+export const observerInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/observers`

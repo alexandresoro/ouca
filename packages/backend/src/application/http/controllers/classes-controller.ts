@@ -41,6 +41,14 @@ export const classesController: FastifyPluginCallback<{
     return await reply.send(response);
   });
 
+  fastify.get<{
+    Params: {
+      id: number;
+    };
+  }>("/:id/info", async (req, reply) => {
+    return await reply.status(501).send();
+  });
+
   fastify.get("/", async (req, reply) => {
     const parsedQueryParamsResult = getClassesQueryParamsSchema.safeParse(req.query);
 
