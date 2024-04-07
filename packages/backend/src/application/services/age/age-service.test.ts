@@ -172,7 +172,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of an age", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const ageData = upsertAgeInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -203,7 +203,7 @@ describe("Update of an age", () => {
     assert.deepStrictEqual(ageRepository.updateAge.mock.calls[0].arguments, [12, ageData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = ageFactory.build({
       ownerId: "notAdmin",
     });
@@ -309,7 +309,7 @@ describe("Deletion of an age", () => {
     assert.deepStrictEqual(ageRepository.deleteAgeById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any age if admin", async () => {
+  test("should handle the deletion of any age if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -322,7 +322,7 @@ describe("Deletion of an age", () => {
     assert.deepStrictEqual(ageRepository.deleteAgeById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned age as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned age and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
     });

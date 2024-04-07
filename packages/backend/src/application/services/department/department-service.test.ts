@@ -233,7 +233,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a department", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -268,7 +268,7 @@ describe("Update of a department", () => {
     assert.deepStrictEqual(departmentRepository.updateDepartment.mock.calls[0].arguments, [12, departmentData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = departmentFactory.build({
       ownerId: "notAdmin",
     });
@@ -375,7 +375,7 @@ describe("Deletion of a department", () => {
     assert.deepStrictEqual(departmentRepository.deleteDepartmentById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any department if admin", async () => {
+  test("should handle the deletion of any department if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -390,7 +390,7 @@ describe("Deletion of a department", () => {
     assert.deepStrictEqual(departmentRepository.deleteDepartmentById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned department as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned department and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
     });

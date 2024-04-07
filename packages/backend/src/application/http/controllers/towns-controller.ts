@@ -164,6 +164,8 @@ export const townsController: FastifyPluginCallback<{
       switch (deletedTownResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
+        case "isUsed":
+          return await reply.status(409).send();
       }
     }
 

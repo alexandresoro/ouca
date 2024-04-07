@@ -1,5 +1,5 @@
 import type { EnvironmentCreateInput, EnvironmentFailureReason } from "@domain/environment/environment.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { EnvironmentRepository } from "@interfaces/environment-repository-interface.js";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
@@ -144,7 +144,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
   const deleteEnvironment = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Environment | null, AccessFailureReason>> => {
+  ): Promise<Result<Environment | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

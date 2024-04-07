@@ -1,4 +1,4 @@
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { TownCreateInput, TownFailureReason } from "@domain/town/town.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
@@ -158,7 +158,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
   const deleteTown = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Town | null, AccessFailureReason>> => {
+  ): Promise<Result<Town | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

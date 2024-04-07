@@ -210,7 +210,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of an environment", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -245,7 +245,7 @@ describe("Update of an environment", () => {
     assert.deepStrictEqual(environmentRepository.updateEnvironment.mock.calls[0].arguments, [12, environmentData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = environmentFactory.build({
       ownerId: "notAdmin",
     });
@@ -355,7 +355,7 @@ describe("Deletion of an environment", () => {
     assert.deepStrictEqual(environmentRepository.deleteEnvironmentById.mock.calls[0].arguments, [11]);
   });
 
-  test("hould handle the deletion of any environment if admin", async () => {
+  test("hould handle the deletion of any environment if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -370,7 +370,7 @@ describe("Deletion of an environment", () => {
     assert.deepStrictEqual(environmentRepository.deleteEnvironmentById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned environment as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned environment and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "user",
     });

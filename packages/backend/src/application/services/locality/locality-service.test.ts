@@ -220,7 +220,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a locality", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const localityData = upsertLocalityInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -250,7 +250,7 @@ describe("Update of a locality", () => {
     assert.deepStrictEqual(localityRepository.updateLocality.mock.calls[0].arguments, [12, localityData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = localityFactory.build({
       ownerId: "notAdmin",
     });
@@ -351,7 +351,7 @@ describe("Deletion of a locality", () => {
     assert.deepStrictEqual(localityRepository.deleteLocalityById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any locality if admin", async () => {
+  test("should handle the deletion of any locality if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -365,7 +365,7 @@ describe("Deletion of a locality", () => {
     assert.deepStrictEqual(localityRepository.deleteLocalityById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned locality as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned locality and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "user",
     });

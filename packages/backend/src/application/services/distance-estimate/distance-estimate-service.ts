@@ -1,5 +1,5 @@
 import type { DistanceEstimateFailureReason } from "@domain/distance-estimate/distance-estimate.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { DistanceEstimateRepository } from "@interfaces/distance-estimate-repository-interface.js";
 import type { DistanceEstimatesSearchParams, UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
@@ -128,7 +128,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
   const deleteDistanceEstimate = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<DistanceEstimate | null, AccessFailureReason>> => {
+  ): Promise<Result<DistanceEstimate | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

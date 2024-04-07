@@ -310,7 +310,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a species", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -358,7 +358,7 @@ describe("Update of a species", () => {
     assert.deepStrictEqual(speciesRepository.updateSpecies.mock.calls[0].arguments, [12, speciesData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = speciesFactory.build({
       ownerId: "notAdmin",
     });
@@ -472,7 +472,7 @@ describe("Deletion of a species", () => {
     assert.deepStrictEqual(speciesRepository.deleteSpeciesById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any species if admin", async () => {
+  test("should handle the deletion of any species if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -490,7 +490,7 @@ describe("Deletion of a species", () => {
     assert.deepStrictEqual(speciesRepository.deleteSpeciesById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned species as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned species and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "user",
     });

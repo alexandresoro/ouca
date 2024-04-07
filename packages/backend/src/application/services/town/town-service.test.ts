@@ -219,7 +219,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a city", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const cityData = upsertTownInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -250,7 +250,7 @@ describe("Update of a city", () => {
     assert.deepStrictEqual(townRepository.updateTown.mock.calls[0].arguments, [12, cityData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = townFactory.build({
       ownerId: "notAdmin",
     });
@@ -355,7 +355,7 @@ describe("Deletion of a city", () => {
     assert.deepStrictEqual(townRepository.deleteTownById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any city if admin", async () => {
+  test("should handle the deletion of any city if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -368,7 +368,7 @@ describe("Deletion of a city", () => {
     assert.deepStrictEqual(townRepository.deleteTownById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned city as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned city and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "user",
     });

@@ -215,7 +215,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of an weather", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const weatherData = upsertWeatherInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -246,7 +246,7 @@ describe("Update of an weather", () => {
     assert.deepStrictEqual(weatherRepository.updateWeather.mock.calls[0].arguments, [12, weatherData]);
   });
 
-  test("should not be allowed when requested by an use that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an use that is nor owner nor has permission", async () => {
     const existingData = weatherFactory.build({
       ownerId: "notAdmin",
     });
@@ -354,7 +354,7 @@ describe("Deletion of an weather", () => {
     assert.deepStrictEqual(weatherRepository.deleteWeatherById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any weather if admin", async () => {
+  test("should handle the deletion of any weather if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -367,7 +367,7 @@ describe("Deletion of an weather", () => {
     assert.deepStrictEqual(weatherRepository.deleteWeatherById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when trying to delete a non-owned weather as non-admin", async () => {
+  test("should not be allowed when trying to delete a non-owned weather and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
     });

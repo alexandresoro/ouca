@@ -1,5 +1,5 @@
 import type { NumberEstimateFailureReason } from "@domain/number-estimate/number-estimate.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { NumberEstimateRepository } from "@interfaces/number-estimate-repository-interface.js";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
@@ -127,7 +127,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
   const deleteNumberEstimate = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<NumberEstimate | null, AccessFailureReason>> => {
+  ): Promise<Result<NumberEstimate | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

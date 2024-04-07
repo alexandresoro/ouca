@@ -1,5 +1,5 @@
 import type { SexCreateInput, SexFailureReason } from "@domain/sex/sex.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { SexRepository } from "@interfaces/sex-repository-interface.js";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
@@ -128,7 +128,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
   const deleteSex = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Sex | null, AccessFailureReason>> => {
+  ): Promise<Result<Sex | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

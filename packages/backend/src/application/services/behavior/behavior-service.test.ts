@@ -214,7 +214,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a behavior", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const behaviorData = upsertBehaviorInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -245,7 +245,7 @@ describe("Update of a behavior", () => {
     assert.deepStrictEqual(behaviorRepository.updateBehavior.mock.calls[0].arguments, [12, behaviorData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = behaviorFactory.build({
       ownerId: "notAdmin",
     });
@@ -350,7 +350,7 @@ describe("Deletion of a behavior", () => {
     assert.deepStrictEqual(behaviorRepository.deleteBehaviorById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any behavior if admin", async () => {
+  test("should handle the deletion of any behavior if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -363,7 +363,7 @@ describe("Deletion of a behavior", () => {
     assert.deepStrictEqual(behaviorRepository.deleteBehaviorById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned behavior as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned behavior and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "user",
     });

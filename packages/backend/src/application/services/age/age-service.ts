@@ -1,5 +1,5 @@
 import type { AgeCreateInput, AgeFailureReason } from "@domain/age/age.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { AgeRepository } from "@interfaces/age-repository-interface.js";
 import type { AgesSearchParams, UpsertAgeInput } from "@ou-ca/common/api/age";
@@ -128,7 +128,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const deleteAge = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
+  ): Promise<Result<AgeSimple | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

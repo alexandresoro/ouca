@@ -1,5 +1,5 @@
 import type { Locality as LocalityDomain, LocalityFailureReason } from "@domain/locality/locality.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { InventoryRepository } from "@interfaces/inventory-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
@@ -165,7 +165,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
   const deleteLocality = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Locality | null, AccessFailureReason>> => {
+  ): Promise<Result<Locality | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

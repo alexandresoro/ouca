@@ -1,5 +1,5 @@
 import type { DepartmentCreateInput, DepartmentFailureReason } from "@domain/department/department.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { DepartmentRepository } from "@interfaces/department-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
@@ -172,7 +172,7 @@ export const buildDepartmentService = ({
   const deleteDepartment = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Department | null, AccessFailureReason>> => {
+  ): Promise<Result<Department | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

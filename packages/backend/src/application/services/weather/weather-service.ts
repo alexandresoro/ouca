@@ -1,4 +1,4 @@
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { WeatherCreateInput, WeatherFailureReason } from "@domain/weather/weather.js";
 import type { WeatherRepository } from "@interfaces/weather-repository-interface.js";
@@ -146,7 +146,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
   const deleteWeather = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Weather | null, AccessFailureReason>> => {
+  ): Promise<Result<Weather | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

@@ -166,6 +166,8 @@ export const speciesController: FastifyPluginCallback<{
       switch (deletedSpeciesResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
+        case "isUsed":
+          return await reply.status(409).send();
       }
     }
 

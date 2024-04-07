@@ -1,5 +1,5 @@
 import type { BehaviorCreateInput, BehaviorFailureReason } from "@domain/behavior/behavior.js";
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { BehaviorRepository } from "@interfaces/behavior-repository-interface.js";
 import type { BehaviorsSearchParams, UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
@@ -144,7 +144,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
   const deleteBehavior = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Behavior | null, AccessFailureReason>> => {
+  ): Promise<Result<Behavior | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

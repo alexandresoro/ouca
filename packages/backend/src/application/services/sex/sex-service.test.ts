@@ -166,7 +166,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of a sex", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when user has permission", async () => {
     const sexData = upsertSexInputFactory.build();
 
     const loggedUser = loggedUserFactory.build({ role: "admin" });
@@ -197,7 +197,7 @@ describe("Update of a sex", () => {
     assert.deepStrictEqual(sexRepository.updateSex.mock.calls[0].arguments, [12, sexData]);
   });
 
-  test("should not be allowed when requested by an user that is nor owner nor admin", async () => {
+  test("should not be allowed when requested by an user that is nor owner nor has permission", async () => {
     const existingData = sexFactory.build({
       ownerId: "notAdmin",
     });
@@ -305,7 +305,7 @@ describe("Deletion of a sex", () => {
     assert.deepStrictEqual(sexRepository.deleteSexById.mock.calls[0].arguments, [11]);
   });
 
-  test("should handle the deletion of any sex if admin", async () => {
+  test("should handle the deletion of any sex if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
       role: "admin",
     });
@@ -318,7 +318,7 @@ describe("Deletion of a sex", () => {
     assert.deepStrictEqual(sexRepository.deleteSexById.mock.calls[0].arguments, [11]);
   });
 
-  test("should not be allowed when deleting a non-owned sex as non-admin", async () => {
+  test("should not be allowed when deleting a non-owned sex and no permission", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
     });

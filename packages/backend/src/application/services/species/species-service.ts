@@ -1,4 +1,4 @@
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
+import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/failure-reason.js";
 import type { Species, SpeciesCreateInput, SpeciesFailureReason } from "@domain/species/species.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { SpeciesRepository } from "@interfaces/species-repository-interface.js";
@@ -188,7 +188,7 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
   const deleteSpecies = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<SpeciesCommon | null, AccessFailureReason>> => {
+  ): Promise<Result<SpeciesCommon | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
