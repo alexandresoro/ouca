@@ -5,9 +5,12 @@ import type { Result } from "neverthrow";
 export type DepartmentRepository = {
   findDepartmentById: (id: number) => Promise<Department | null>;
   findDepartmentByTownId: (townId: number | undefined) => Promise<Department | null>;
-  findDepartments: ({ orderBy, sortOrder, q, offset, limit }: DepartmentFindManyInput) => Promise<Department[]>;
+  findDepartments: (
+    { orderBy, sortOrder, q, offset, limit }: DepartmentFindManyInput,
+    ownerId?: string,
+  ) => Promise<Department[]>;
   getCount: (q?: string | null) => Promise<number>;
-  getEntriesCountById: (id: string) => Promise<number>;
+  getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createDepartment: (departmentInput: DepartmentCreateInput) => Promise<Result<Department, EntityFailureReason>>;
   createDepartments: (departmentInputs: DepartmentCreateInput[]) => Promise<Department[]>;
   updateDepartment: (

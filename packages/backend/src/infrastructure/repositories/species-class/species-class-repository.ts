@@ -37,13 +37,10 @@ const findSpeciesClassBySpeciesId = async (speciesId: number | undefined): Promi
   return speciesClassResult ? speciesClassSchema.parse(speciesClassResult) : null;
 };
 
-const findSpeciesClasses = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: SpeciesClassFindManyInput = {}): Promise<SpeciesClass[]> => {
+const findSpeciesClasses = async (
+  { orderBy, sortOrder, q, offset, limit }: SpeciesClassFindManyInput = {},
+  ownerId?: string,
+): Promise<SpeciesClass[]> => {
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let querySpeciesClass;
 
@@ -124,7 +121,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .leftJoin("espece", "espece.id", "donnee.especeId")

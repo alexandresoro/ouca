@@ -59,14 +59,10 @@ const findLocalityByInventoryId = async (inventoryId: string | undefined): Promi
   return localityResult ? localitySchema.parse(reshapeRawLocality(localityResult)) : null;
 };
 
-const findLocalities = async ({
-  orderBy,
-  sortOrder,
-  q,
-  townId,
-  offset,
-  limit,
-}: LocalityFindManyInput = {}): Promise<Locality[]> => {
+const findLocalities = async (
+  { orderBy, sortOrder, q, townId, offset, limit }: LocalityFindManyInput = {},
+  ownerId?: string,
+): Promise<Locality[]> => {
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let queryLocality;
 
@@ -228,7 +224,7 @@ const getCount = async (q?: string | null, townId?: string | null, departmentId?
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")

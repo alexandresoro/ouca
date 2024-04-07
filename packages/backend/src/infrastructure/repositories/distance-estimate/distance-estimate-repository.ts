@@ -22,13 +22,10 @@ const findDistanceEstimateById = async (id: number): Promise<DistanceEstimate | 
   return distanceEstimateResult ? distanceEstimateSchema.parse(distanceEstimateResult) : null;
 };
 
-const findDistanceEstimates = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: DistanceEstimateFindManyInput = {}): Promise<DistanceEstimate[]> => {
+const findDistanceEstimates = async (
+  { orderBy, sortOrder, q, offset, limit }: DistanceEstimateFindManyInput = {},
+  ownerId?: string,
+): Promise<DistanceEstimate[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -87,7 +84,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .select((eb) => eb.fn.countAll().as("count"))

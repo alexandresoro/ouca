@@ -17,7 +17,10 @@ const findSexById = async (id: number): Promise<Sex | null> => {
   return sexResult ? sexSchema.parse(sexResult) : null;
 };
 
-const findSexes = async ({ orderBy, sortOrder, q, offset, limit }: SexFindManyInput = {}): Promise<readonly Sex[]> => {
+const findSexes = async (
+  { orderBy, sortOrder, q, offset, limit }: SexFindManyInput = {},
+  ownerId?: string,
+): Promise<readonly Sex[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -75,7 +78,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .select((eb) => eb.fn.countAll().as("count"))

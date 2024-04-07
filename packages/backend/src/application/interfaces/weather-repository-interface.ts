@@ -5,9 +5,12 @@ import type { Result } from "neverthrow";
 export type WeatherRepository = {
   findWeatherById: (id: number) => Promise<Weather | null>;
   findWeathersById: (ids: string[]) => Promise<Weather[]>;
-  findWeathers: ({ orderBy, sortOrder, q, offset, limit }: WeatherFindManyInput) => Promise<readonly Weather[]>;
+  findWeathers: (
+    { orderBy, sortOrder, q, offset, limit }: WeatherFindManyInput,
+    ownerId?: string,
+  ) => Promise<readonly Weather[]>;
   getCount: (q?: string | null) => Promise<number>;
-  getEntriesCountById: (id: string) => Promise<number>;
+  getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createWeather: (weatherInput: WeatherCreateInput) => Promise<Result<Weather, EntityFailureReason>>;
   createWeathers: (weatherInputs: WeatherCreateInput[]) => Promise<Weather[]>;
   updateWeather: (weatherId: number, weatherInput: WeatherCreateInput) => Promise<Result<Weather, EntityFailureReason>>;

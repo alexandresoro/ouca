@@ -40,7 +40,7 @@ export const buildDepartmentService = ({
       return err("notAllowed");
     }
 
-    return ok(await departmentRepository.getEntriesCountById(id));
+    return ok(await departmentRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const getLocalitiesCountByDepartment = async (
@@ -101,12 +101,15 @@ export const buildDepartmentService = ({
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const departments = await departmentRepository.findDepartments({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const departments = await departmentRepository.findDepartments(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedDepartments = departments.map((department) => {
       return enrichEntityWithEditableStatus(department, loggedUser);

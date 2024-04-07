@@ -4,9 +4,9 @@ import type { Result } from "neverthrow";
 
 export type AgeRepository = {
   findAgeById: (id: number) => Promise<Age | null>;
-  findAges: ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput) => Promise<readonly Age[]>;
+  findAges: ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput, ownerId?: string) => Promise<readonly Age[]>;
   getCount: (q?: string | null) => Promise<number>;
-  getEntriesCountById: (id: string) => Promise<number>;
+  getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createAge: (ageInput: AgeCreateInput) => Promise<Result<Age, EntityFailureReason>>;
   createAges: (ageInputs: AgeCreateInput[]) => Promise<Age[]>;
   updateAge: (ageId: number, ageInput: AgeCreateInput) => Promise<Result<Age, EntityFailureReason>>;

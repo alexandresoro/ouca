@@ -32,7 +32,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
       return err("notAllowed");
     }
 
-    return ok(await distanceEstimateRepository.getEntriesCountById(id));
+    return ok(await distanceEstimateRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllDistanceEstimates = async (): Promise<DistanceEstimate[]> => {
@@ -57,12 +57,15 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const distanceEstimates = await distanceEstimateRepository.findDistanceEstimates({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const distanceEstimates = await distanceEstimateRepository.findDistanceEstimates(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedDistanceEstimates = distanceEstimates.map((age) => {
       return enrichEntityWithEditableStatus(age, loggedUser);

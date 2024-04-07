@@ -48,7 +48,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
       return err("notAllowed");
     }
 
-    return ok(await environmentRepository.getEntriesCountById(id));
+    return ok(await environmentRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllEnvironments = async (): Promise<Environment[]> => {
@@ -73,12 +73,15 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const environments = await environmentRepository.findEnvironments({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const environments = await environmentRepository.findEnvironments(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedEnvironments = environments.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);

@@ -86,7 +86,7 @@ describe("Data count per entity", () => {
     await localityService.getEntriesCountByLocality("12", loggedUser);
 
     assert.strictEqual(localityRepository.getEntriesCountById.mock.callCount(), 1);
-    assert.deepStrictEqual(localityRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
+    assert.deepStrictEqual(localityRepository.getEntriesCountById.mock.calls[0].arguments, ["12", loggedUser.id]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -154,6 +154,7 @@ describe("Entities paginated find by search criteria", () => {
         limit: undefined,
         townId: undefined,
       },
+      loggedUser.id,
     ]);
   });
 
@@ -183,6 +184,7 @@ describe("Entities paginated find by search criteria", () => {
         limit: searchParams.pageSize,
         townId: undefined,
       },
+      loggedUser.id,
     ]);
   });
 

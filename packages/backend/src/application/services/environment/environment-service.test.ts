@@ -106,7 +106,7 @@ describe("Data count per entity", () => {
     await environmentService.getEntriesCountByEnvironment("12", loggedUser);
 
     assert.strictEqual(environmentRepository.getEntriesCountById.mock.callCount(), 1);
-    assert.deepStrictEqual(environmentRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
+    assert.deepStrictEqual(environmentRepository.getEntriesCountById.mock.calls[0].arguments, ["12", loggedUser.id]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -145,6 +145,7 @@ describe("Entities paginated find by search criteria", () => {
         q: undefined,
         sortOrder: undefined,
       },
+      loggedUser.id,
     ]);
   });
 
@@ -173,6 +174,7 @@ describe("Entities paginated find by search criteria", () => {
         offset: 0,
         limit: searchParams.pageSize,
       },
+      loggedUser.id,
     ]);
   });
 

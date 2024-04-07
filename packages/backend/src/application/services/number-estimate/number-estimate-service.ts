@@ -32,7 +32,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
       return err("notAllowed");
     }
 
-    return ok(await numberEstimateRepository.getEntriesCountById(id));
+    return ok(await numberEstimateRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {
@@ -57,12 +57,15 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
 
     const { q, orderBy, sortOrder, ...pagination } = options;
 
-    const numberEstimates = await numberEstimateRepository.findNumberEstimates({
-      q: q,
-      ...getSqlPagination(pagination),
-      orderBy,
-      sortOrder,
-    });
+    const numberEstimates = await numberEstimateRepository.findNumberEstimates(
+      {
+        q: q,
+        ...getSqlPagination(pagination),
+        orderBy,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedNumberEstimates = numberEstimates.map((numberEstimate) => {
       return enrichEntityWithEditableStatus(numberEstimate, loggedUser);

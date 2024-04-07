@@ -22,13 +22,10 @@ const findNumberEstimateById = async (id: number): Promise<NumberEstimate | null
   return numberEstimateResult ? numberEstimateSchema.parse(numberEstimateResult) : null;
 };
 
-const findNumberEstimates = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: NumberEstimateFindManyInput = {}): Promise<NumberEstimate[]> => {
+const findNumberEstimates = async (
+  { orderBy, sortOrder, q, offset, limit }: NumberEstimateFindManyInput = {},
+  ownerId?: string,
+): Promise<NumberEstimate[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -87,7 +84,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .select((eb) => eb.fn.countAll().as("count"))

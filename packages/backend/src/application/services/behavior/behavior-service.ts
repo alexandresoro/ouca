@@ -48,7 +48,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
       return err("notAllowed");
     }
 
-    return ok(await behaviorRepository.getEntriesCountById(id));
+    return ok(await behaviorRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllBehaviors = async (): Promise<Behavior[]> => {
@@ -73,12 +73,15 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const behaviors = await behaviorRepository.findBehaviors({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const behaviors = await behaviorRepository.findBehaviors(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedBehaviors = behaviors.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, loggedUser);

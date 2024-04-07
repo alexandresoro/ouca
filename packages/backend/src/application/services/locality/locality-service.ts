@@ -46,7 +46,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
       return err("notAllowed");
     }
 
-    return ok(await localityRepository.getEntriesCountById(id));
+    return ok(await localityRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findLocalityOfInventoryId = async (
@@ -83,13 +83,16 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
 
     const { q, townId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const localities = await localityRepository.findLocalities({
-      q,
-      ...getSqlPagination(pagination),
-      townId: townId,
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const localities = await localityRepository.findLocalities(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        townId: townId,
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedLocalities = localities.map((locality) => {
       return reshapeLocalityRepositoryToApi(locality, loggedUser);

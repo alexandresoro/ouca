@@ -37,13 +37,10 @@ const findBehaviorsById = async (ids: string[]): Promise<Behavior[]> => {
   return z.array(behaviorSchema).parse(behaviorsResult);
 };
 
-const findBehaviors = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: BehaviorFindManyInput = {}): Promise<Behavior[]> => {
+const findBehaviors = async (
+  { orderBy, sortOrder, q, offset, limit }: BehaviorFindManyInput = {},
+  ownerId?: string,
+): Promise<Behavior[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -132,7 +129,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee_comportement")
     .select((eb) => eb.fn.count("donnee_comportement.donneeId").distinct().as("count"))

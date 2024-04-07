@@ -32,7 +32,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
       return err("notAllowed");
     }
 
-    return ok(await sexRepository.getEntriesCountById(id));
+    return ok(await sexRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllSexes = async (): Promise<Sex[]> => {
@@ -57,12 +57,15 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const sexes = await sexRepository.findSexes({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const sexes = await sexRepository.findSexes(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedSexes = sexes.map((sex) => {
       return enrichEntityWithEditableStatus(sex, loggedUser);

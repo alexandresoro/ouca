@@ -129,6 +129,7 @@ describe("Entities paginated find by search criteria", () => {
         sortOrder: undefined,
         searchCriteria: {},
       },
+      loggedUser.id,
     ]);
   });
 
@@ -163,6 +164,7 @@ describe("Entities paginated find by search criteria", () => {
         limit: searchParams.pageSize,
         searchCriteria: {},
       },
+      loggedUser.id,
     ]);
   });
 
@@ -212,6 +214,7 @@ describe("Entities paginated find by search criteria", () => {
         offset: 0,
         limit: searchParams.pageSize,
       },
+      loggedUser.id,
     ]);
   });
 

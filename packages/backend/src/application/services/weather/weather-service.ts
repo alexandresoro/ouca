@@ -48,7 +48,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
       return err("notAllowed");
     }
 
-    return ok(await weatherRepository.getEntriesCountById(id));
+    return ok(await weatherRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllWeathers = async (): Promise<Weather[]> => {
@@ -73,12 +73,15 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const weathers = await weatherRepository.findWeathers({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const weathers = await weatherRepository.findWeathers(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedWeathers = weathers.map((weather) => {
       return enrichEntityWithEditableStatus(weather, loggedUser);

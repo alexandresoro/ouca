@@ -36,13 +36,10 @@ const findWeathersById = async (ids: string[]): Promise<Weather[]> => {
   return z.array(weatherSchema).parse(weathersResult);
 };
 
-const findWeathers = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: WeatherFindManyInput = {}): Promise<Weather[]> => {
+const findWeathers = async (
+  { orderBy, sortOrder, q, offset, limit }: WeatherFindManyInput = {},
+  ownerId?: string,
+): Promise<Weather[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -102,7 +99,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")

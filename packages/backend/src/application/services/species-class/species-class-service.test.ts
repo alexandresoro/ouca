@@ -92,7 +92,7 @@ describe("Data count per entity", () => {
     await speciesClassService.getEntriesCountBySpeciesClass("12", loggedUser);
 
     assert.strictEqual(classRepository.getEntriesCountById.mock.callCount(), 1);
-    assert.deepStrictEqual(classRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
+    assert.deepStrictEqual(classRepository.getEntriesCountById.mock.calls[0].arguments, ["12", loggedUser.id]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -151,6 +151,7 @@ describe("Entities paginated find by search criteria", () => {
     assert.strictEqual(classRepository.findSpeciesClasses.mock.callCount(), 1);
     assert.deepStrictEqual(classRepository.findSpeciesClasses.mock.calls[0].arguments, [
       { limit: undefined, offset: undefined, orderBy: undefined, q: undefined, sortOrder: undefined },
+      loggedUser.id,
     ]);
   });
 
@@ -179,6 +180,7 @@ describe("Entities paginated find by search criteria", () => {
         offset: 0,
         limit: searchParams.pageSize,
       },
+      loggedUser.id,
     ]);
   });
 

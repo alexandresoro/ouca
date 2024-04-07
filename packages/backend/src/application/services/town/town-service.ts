@@ -33,7 +33,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
       return err("notAllowed");
     }
 
-    return ok(await townRepository.getEntriesCountById(id));
+    return ok(await townRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const getLocalitiesCountByTown = async (
@@ -81,13 +81,16 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
 
     const { q, departmentId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const towns = await townRepository.findTowns({
-      q,
-      ...getSqlPagination(pagination),
-      departmentId: departmentId,
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const towns = await townRepository.findTowns(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        departmentId: departmentId,
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedTowns = towns.map((town) => {
       return enrichEntityWithEditableStatus(town, loggedUser);

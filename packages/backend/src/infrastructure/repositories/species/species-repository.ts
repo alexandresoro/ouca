@@ -57,14 +57,10 @@ const findAllSpeciesWithClassLabel = async (): Promise<(Species & { classLabel: 
     );
 };
 
-const findSpecies = async ({
-  orderBy,
-  sortOrder,
-  q,
-  searchCriteria,
-  offset,
-  limit,
-}: SpeciesFindManyInput = {}): Promise<Species[]> => {
+const findSpecies = async (
+  { orderBy, sortOrder, q, searchCriteria, offset, limit }: SpeciesFindManyInput = {},
+  ownerId?: string,
+): Promise<Species[]> => {
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let querySpecies;
 

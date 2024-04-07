@@ -36,13 +36,10 @@ const findEnvironmentsById = async (ids: string[]): Promise<Environment[]> => {
   return z.array(environmentSchema).parse(environmentsResult);
 };
 
-const findEnvironments = async ({
-  orderBy,
-  sortOrder,
-  q,
-  offset,
-  limit,
-}: EnvironmentFindManyInput = {}): Promise<Environment[]> => {
+const findEnvironments = async (
+  { orderBy, sortOrder, q, offset, limit }: EnvironmentFindManyInput = {},
+  ownerId?: string,
+): Promise<Environment[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -119,7 +116,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee_milieu")
     .select((eb) => eb.fn.count("donnee_milieu.donneeId").distinct().as("count"))

@@ -17,7 +17,10 @@ const findAgeById = async (id: number): Promise<Age | null> => {
   return ageResult ? ageSchema.parse(ageResult) : null;
 };
 
-const findAges = async ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {}): Promise<readonly Age[]> => {
+const findAges = async (
+  { orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {},
+  ownerId?: string,
+): Promise<readonly Age[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -73,7 +76,7 @@ const getCount = async (q?: string | null): Promise<number> => {
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string): Promise<number> => {
+const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .select((eb) => eb.fn.countAll().as("count"))

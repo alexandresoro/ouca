@@ -99,16 +99,19 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
         }
       : searchCriteria;
 
-    const species = await speciesRepository.findSpecies({
-      q,
-      searchCriteria: reshapedSearchCriteria,
-      ...getSqlPagination({
-        pageSize,
-        pageNumber,
-      }),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const species = await speciesRepository.findSpecies(
+      {
+        q,
+        searchCriteria: reshapedSearchCriteria,
+        ...getSqlPagination({
+          pageSize,
+          pageNumber,
+        }),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     return enrichSpeciesMultiple([...species], loggedUser);
   };

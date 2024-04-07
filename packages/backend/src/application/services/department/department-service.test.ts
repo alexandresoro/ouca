@@ -107,7 +107,7 @@ describe("Data count per entity", () => {
     await departmentService.getEntriesCountByDepartment("12", loggedUser);
 
     assert.strictEqual(departmentRepository.getEntriesCountById.mock.callCount(), 1);
-    assert.deepStrictEqual(departmentRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
+    assert.deepStrictEqual(departmentRepository.getEntriesCountById.mock.calls[0].arguments, ["12", loggedUser.id]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -168,6 +168,7 @@ describe("Entities paginated find by search criteria", () => {
     assert.strictEqual(departmentRepository.findDepartments.mock.callCount(), 1);
     assert.deepStrictEqual(departmentRepository.findDepartments.mock.calls[0].arguments, [
       { limit: undefined, offset: undefined, orderBy: undefined, q: undefined, sortOrder: undefined },
+      loggedUser.id,
     ]);
   });
 
@@ -196,6 +197,7 @@ describe("Entities paginated find by search criteria", () => {
         offset: 0,
         limit: searchParams.pageSize,
       },
+      loggedUser.id,
     ]);
   });
 

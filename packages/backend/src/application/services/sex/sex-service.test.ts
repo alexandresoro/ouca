@@ -64,7 +64,7 @@ describe("Data count per entity", () => {
     await sexService.getEntriesCountBySex("12", loggedUser);
 
     assert.strictEqual(sexRepository.getEntriesCountById.mock.callCount(), 1);
-    assert.deepStrictEqual(sexRepository.getEntriesCountById.mock.calls[0].arguments, ["12"]);
+    assert.deepStrictEqual(sexRepository.getEntriesCountById.mock.calls[0].arguments, ["12", loggedUser.id]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {
@@ -101,6 +101,7 @@ describe("Entities paginated find by search criteria", () => {
     assert.strictEqual(sexRepository.findSexes.mock.callCount(), 1);
     assert.deepStrictEqual(sexRepository.findSexes.mock.calls[0].arguments, [
       { limit: undefined, offset: undefined, orderBy: undefined, q: undefined, sortOrder: undefined },
+      loggedUser.id,
     ]);
   });
 
@@ -129,6 +130,7 @@ describe("Entities paginated find by search criteria", () => {
         offset: 0,
         limit: 10,
       },
+      loggedUser.id,
     ]);
   });
 

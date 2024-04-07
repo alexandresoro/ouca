@@ -6,7 +6,7 @@ import type { Result } from "neverthrow";
 export type SpeciesRepository = {
   findSpeciesById(id: number): Promise<Species | null>;
   findAllSpeciesWithClassLabel(): Promise<(Species & { classLabel: string })[]>;
-  findSpecies(options?: SpeciesFindManyInput): Promise<Species[]>;
+  findSpecies(options?: SpeciesFindManyInput, ownerId?: string): Promise<Species[]>;
   getCount(options?: Pick<SpeciesFindManyInput, "q" | "searchCriteria">): Promise<number>;
   getEntriesCountById: (id: string, searchCriteria?: SearchCriteria | null) => Promise<number>;
   createSpecies(speciesInput: SpeciesCreateInput): Promise<Result<Species, EntityFailureReason>>;

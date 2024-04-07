@@ -8,15 +8,12 @@ import type { Result } from "neverthrow";
 
 export type DistanceEstimateRepository = {
   findDistanceEstimateById: (id: number) => Promise<DistanceEstimate | null>;
-  findDistanceEstimates: ({
-    orderBy,
-    sortOrder,
-    q,
-    offset,
-    limit,
-  }: DistanceEstimateFindManyInput) => Promise<DistanceEstimate[]>;
+  findDistanceEstimates: (
+    { orderBy, sortOrder, q, offset, limit }: DistanceEstimateFindManyInput,
+    ownerId?: string,
+  ) => Promise<DistanceEstimate[]>;
   getCount: (q?: string | null) => Promise<number>;
-  getEntriesCountById: (id: string) => Promise<number>;
+  getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createDistanceEstimate: (
     distanceEstimateInput: DistanceEstimateCreateInput,
   ) => Promise<Result<DistanceEstimate, EntityFailureReason>>;

@@ -8,15 +8,12 @@ import type { Result } from "neverthrow";
 
 export type NumberEstimateRepository = {
   findNumberEstimateById: (id: number) => Promise<NumberEstimate | null>;
-  findNumberEstimates: ({
-    orderBy,
-    sortOrder,
-    q,
-    offset,
-    limit,
-  }: NumberEstimateFindManyInput) => Promise<NumberEstimate[]>;
+  findNumberEstimates: (
+    { orderBy, sortOrder, q, offset, limit }: NumberEstimateFindManyInput,
+    ownerId?: string,
+  ) => Promise<NumberEstimate[]>;
   getCount: (q?: string | null) => Promise<number>;
-  getEntriesCountById: (id: string) => Promise<number>;
+  getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createNumberEstimate: (
     numberEstimateInput: NumberEstimateCreateInput,
   ) => Promise<Result<NumberEstimate, EntityFailureReason>>;

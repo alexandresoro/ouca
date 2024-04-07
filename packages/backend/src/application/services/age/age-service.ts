@@ -32,7 +32,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
       return err("notAllowed");
     }
 
-    return ok(await ageRepository.getEntriesCountById(id));
+    return ok(await ageRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findAllAges = async (): Promise<AgeSimple[]> => {
@@ -57,12 +57,15 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const ages = await ageRepository.findAges({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const ages = await ageRepository.findAges(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedAges = ages.map((age) => {
       return enrichEntityWithEditableStatus(age, loggedUser);

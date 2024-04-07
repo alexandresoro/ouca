@@ -9,9 +9,12 @@ import type { Result } from "neverthrow";
 export type SpeciesClassRepository = {
   findSpeciesClassById: (id: number) => Promise<SpeciesClass | null>;
   findSpeciesClassBySpeciesId: (speciesId: number | undefined) => Promise<SpeciesClass | null>;
-  findSpeciesClasses: ({ orderBy, sortOrder, q, offset, limit }: SpeciesClassFindManyInput) => Promise<SpeciesClass[]>;
+  findSpeciesClasses: (
+    { orderBy, sortOrder, q, offset, limit }: SpeciesClassFindManyInput,
+    ownerId?: string,
+  ) => Promise<SpeciesClass[]>;
   getCount: (q?: string | null) => Promise<number>;
-  getEntriesCountById: (id: string) => Promise<number>;
+  getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createSpeciesClass: (
     speciesClassInput: SpeciesClassCreateInput,
   ) => Promise<Result<SpeciesClass, EntityFailureReason>>;

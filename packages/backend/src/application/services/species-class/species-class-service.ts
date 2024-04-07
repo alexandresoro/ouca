@@ -51,7 +51,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
       return err("notAllowed");
     }
 
-    return ok(await classRepository.getEntriesCountById(id));
+    return ok(await classRepository.getEntriesCountById(id, loggedUser.id));
   };
 
   const findSpeciesClassOfSpecies = async (
@@ -90,12 +90,15 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
 
     const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
-    const classes = await classRepository.findSpeciesClasses({
-      q,
-      ...getSqlPagination(pagination),
-      orderBy: orderByField,
-      sortOrder,
-    });
+    const classes = await classRepository.findSpeciesClasses(
+      {
+        q,
+        ...getSqlPagination(pagination),
+        orderBy: orderByField,
+        sortOrder,
+      },
+      loggedUser.id,
+    );
 
     const enrichedClasses = classes.map((speciesClass) => {
       return enrichEntityWithEditableStatus(speciesClass, loggedUser);
