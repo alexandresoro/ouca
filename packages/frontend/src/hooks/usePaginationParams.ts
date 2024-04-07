@@ -10,10 +10,10 @@ export type PaginationParams<T> = {
   setSortOrder: (sortOrder: SortOrder) => void;
 };
 
-const usePaginationParams = <T>(): PaginationParams<T> => {
+const usePaginationParams = <T>(options?: { orderBy?: T; sortOrder?: SortOrder }): PaginationParams<T> => {
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState<T | undefined>(undefined);
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [orderBy, setOrderBy] = useState<T | undefined>(options?.orderBy);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(options?.sortOrder ?? "asc");
 
   return {
     query,

@@ -33,7 +33,9 @@ const COLUMNS = [
 const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass, onClickDeleteSpeciesClass }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>({
+    orderBy: "libelle",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/classes",

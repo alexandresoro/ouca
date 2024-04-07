@@ -40,7 +40,9 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>({
+    orderBy: "code",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/behaviors",

@@ -41,7 +41,9 @@ const COLUMNS = [
 const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown, onClickDeleteTown }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>({
+    orderBy: "nom",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/towns",

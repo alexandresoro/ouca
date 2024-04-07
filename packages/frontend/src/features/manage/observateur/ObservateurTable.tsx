@@ -33,7 +33,7 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginationParams<EntitiesWithLabelOrderBy>();
+    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/observers",

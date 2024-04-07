@@ -40,7 +40,9 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>({
+    orderBy: "code",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/departments",

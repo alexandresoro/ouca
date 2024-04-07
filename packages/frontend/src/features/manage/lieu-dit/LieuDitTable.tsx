@@ -53,7 +53,9 @@ const COLUMNS = [
 const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality, onClickDeleteLocality }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>({
+    orderBy: "nom",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/localities",

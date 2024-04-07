@@ -33,7 +33,9 @@ const COLUMNS = [
 const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment, onClickDeleteEnvironment }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>({
+    orderBy: "code",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/environments",

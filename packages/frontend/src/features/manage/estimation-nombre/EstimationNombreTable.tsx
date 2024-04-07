@@ -36,8 +36,9 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginationParams<NumberEstimatesOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<NumberEstimatesOrderBy>(
+    { orderBy: "libelle" },
+  );
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/number-estimates",

@@ -41,7 +41,9 @@ const COLUMNS = [
 const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies, onClickDeleteSpecies }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({
+    orderBy: "nomFrancais",
+  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/species",
