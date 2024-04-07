@@ -9,7 +9,6 @@ import {
 import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const agesController: FastifyPluginCallback<{
       switch (ageResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: ageResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const agesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -112,9 +105,6 @@ export const agesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: ageCreateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -143,9 +133,6 @@ export const agesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: ageUpdateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -164,9 +151,6 @@ export const agesController: FastifyPluginCallback<{
       switch (deletedAgeResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedAgeResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

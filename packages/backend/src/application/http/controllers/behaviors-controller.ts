@@ -9,7 +9,6 @@ import {
 import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const behaviorsController: FastifyPluginCallback<{
       switch (behaviorResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: behaviorResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const behaviorsController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -114,9 +107,6 @@ export const behaviorsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: behaviorResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -145,9 +135,6 @@ export const behaviorsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: behaviorResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -166,9 +153,6 @@ export const behaviorsController: FastifyPluginCallback<{
       switch (deletedBehaviorResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedBehaviorResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

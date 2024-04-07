@@ -128,7 +128,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
   const deleteSex = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<Sex | null, SexFailureReason>> => {
+  ): Promise<Result<Sex | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }

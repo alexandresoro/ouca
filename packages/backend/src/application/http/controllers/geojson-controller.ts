@@ -1,7 +1,6 @@
 import { fastifyCaching } from "@fastify/caching";
 import type { FastifyPluginAsync } from "fastify";
 import { sha256 } from "../../../utils/crypto.js";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 
 export const geojsonController: FastifyPluginAsync<{
@@ -22,9 +21,6 @@ export const geojsonController: FastifyPluginAsync<{
       switch (geoJsonLocalitiesResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: geoJsonLocalitiesResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

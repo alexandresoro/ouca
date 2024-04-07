@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/town";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const townsController: FastifyPluginCallback<{
       switch (townResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: townResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const townsController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -117,9 +110,6 @@ export const townsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: townCreateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -148,9 +138,6 @@ export const townsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: townUpdateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -169,9 +156,6 @@ export const townsController: FastifyPluginCallback<{
       switch (deletedTownResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedTownResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

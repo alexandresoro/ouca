@@ -30,9 +30,6 @@ export const inventoriesController: FastifyPluginCallback<{
       switch (inventoryResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: inventoryResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -50,9 +47,6 @@ export const inventoriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "extendedDataNotFound":
           return await reply.status(404).send();
-        default:
-          logger.error({ error: inventoryEnrichedResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -81,9 +75,6 @@ export const inventoriesController: FastifyPluginCallback<{
       switch (inventoryIndexResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: inventoryIndexResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -114,9 +105,6 @@ export const inventoriesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -171,9 +159,6 @@ export const inventoriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "extendedDataNotFound":
           return await reply.status(404).send();
-        default:
-          logger.error({ error: inventoryEnrichedResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -225,9 +210,6 @@ export const inventoriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "extendedDataNotFound":
           return await reply.status(404).send();
-        default:
-          logger.error({ error: inventoryEnrichedResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -250,9 +232,6 @@ export const inventoriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "inventoryStillInUse":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: deletedInventoryResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

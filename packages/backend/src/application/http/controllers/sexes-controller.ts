@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/sex";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const sexesController: FastifyPluginCallback<{
       switch (sexResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: sexResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const sexesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -112,9 +105,6 @@ export const sexesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: sexCreateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -143,9 +133,6 @@ export const sexesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: sexUpdateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -164,9 +151,6 @@ export const sexesController: FastifyPluginCallback<{
       switch (deletedSexResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedSexResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

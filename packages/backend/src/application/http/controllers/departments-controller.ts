@@ -9,7 +9,6 @@ import {
 import type { Department, DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const departmentsController: FastifyPluginCallback<{
       switch (departmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: departmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const departmentsController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -122,9 +115,6 @@ export const departmentsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: departmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -153,9 +143,6 @@ export const departmentsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: departmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -174,9 +161,6 @@ export const departmentsController: FastifyPluginCallback<{
       switch (deletedDepartmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedDepartmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

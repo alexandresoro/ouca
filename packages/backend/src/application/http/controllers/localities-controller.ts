@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/locality";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const localitiesController: FastifyPluginCallback<{
       switch (localityResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: localityResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const localitiesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -126,9 +119,6 @@ export const localitiesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: localityCreateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -157,9 +147,6 @@ export const localitiesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: localityUpdateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -178,9 +165,6 @@ export const localitiesController: FastifyPluginCallback<{
       switch (deletedLocalityResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedLocalityResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

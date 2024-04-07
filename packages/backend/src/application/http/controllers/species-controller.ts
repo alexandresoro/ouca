@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/species";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const speciesController: FastifyPluginCallback<{
       switch (speciesResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: speciesResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const speciesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -119,9 +112,6 @@ export const speciesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: speciesResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -150,9 +140,6 @@ export const speciesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: speciesResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -171,9 +158,6 @@ export const speciesController: FastifyPluginCallback<{
       switch (deletedSpeciesResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedSpeciesResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

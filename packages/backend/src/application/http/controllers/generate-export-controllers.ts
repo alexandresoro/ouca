@@ -1,5 +1,4 @@
 import type { FastifyPluginCallback, FastifyRequest } from "fastify";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 
 const getExportUrl = (req: FastifyRequest, exportId: string) => {
@@ -18,9 +17,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -34,9 +30,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -50,9 +43,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -66,9 +56,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -82,9 +69,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -98,9 +82,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -114,9 +95,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -130,9 +108,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -146,9 +121,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -162,9 +134,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -178,9 +147,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -194,9 +160,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -210,9 +173,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -227,9 +187,6 @@ export const generateExportController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/entry";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedEntry } from "./entries-enricher.js";
@@ -31,9 +30,6 @@ export const entriesController: FastifyPluginCallback<{
       switch (entryResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: entryResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -51,9 +47,6 @@ export const entriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "extendedDataNotFound":
           return await reply.status(404).send();
-        default:
-          logger.error({ error: entryEnrichedResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -81,9 +74,6 @@ export const entriesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -147,9 +137,6 @@ export const entriesController: FastifyPluginCallback<{
           return await reply.status(409).send({
             correspondingEntryFound: entryResult.error.correspondingEntryFound,
           });
-        default:
-          logger.error({ error: entryResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -163,9 +150,6 @@ export const entriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "extendedDataNotFound":
           return await reply.status(404).send();
-        default:
-          logger.error({ error: entryEnrichedResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -198,9 +182,6 @@ export const entriesController: FastifyPluginCallback<{
           return await reply.status(409).send({
             correspondingEntryFound: entryResult.error.correspondingEntryFound,
           });
-        default:
-          logger.error({ error: entryResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -214,9 +195,6 @@ export const entriesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "extendedDataNotFound":
           return await reply.status(404).send();
-        default:
-          logger.error({ error: entryEnrichedResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -237,9 +215,6 @@ export const entriesController: FastifyPluginCallback<{
       switch (deletedEntryResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedEntryResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -259,9 +234,6 @@ export const entriesController: FastifyPluginCallback<{
       switch (idResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: idResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

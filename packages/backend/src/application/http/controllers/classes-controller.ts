@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/species-class";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const classesController: FastifyPluginCallback<{
       switch (speciesClassResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: speciesClassResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const classesController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -118,9 +111,6 @@ export const classesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: speciesClassCreateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -149,9 +139,6 @@ export const classesController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: speciesClassUpdateResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -170,9 +157,6 @@ export const classesController: FastifyPluginCallback<{
       switch (deletedSpeciesClassResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedSpeciesClassResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 

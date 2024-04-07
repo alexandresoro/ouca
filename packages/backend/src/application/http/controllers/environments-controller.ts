@@ -9,7 +9,6 @@ import {
 } from "@ou-ca/common/api/environment";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
-import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
@@ -29,9 +28,6 @@ export const environmentsController: FastifyPluginCallback<{
       switch (environmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: environmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -65,9 +61,6 @@ export const environmentsController: FastifyPluginCallback<{
       switch (paginatedResults.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: paginatedResults.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -114,9 +107,6 @@ export const environmentsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: environmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -145,9 +135,6 @@ export const environmentsController: FastifyPluginCallback<{
           return await reply.status(403).send();
         case "alreadyExists":
           return await reply.status(409).send();
-        default:
-          logger.error({ error: environmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
@@ -166,9 +153,6 @@ export const environmentsController: FastifyPluginCallback<{
       switch (deletedEnvironmentResult.error) {
         case "notAllowed":
           return await reply.status(403).send();
-        default:
-          logger.error({ error: deletedEnvironmentResult.error }, "Unexpected error");
-          return await reply.status(500).send();
       }
     }
 
