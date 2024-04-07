@@ -42,7 +42,10 @@ const COLUMNS = [
 const SearchEntriesTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EntriesOrderBy>();
+  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EntriesOrderBy>({
+    orderBy: "date",
+    sortOrder: "desc",
+  });
 
   const queryClient = useQueryClient();
 
