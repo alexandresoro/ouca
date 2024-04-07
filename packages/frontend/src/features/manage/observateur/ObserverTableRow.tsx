@@ -17,7 +17,7 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ id, onEdit
 
   const user = useUser();
 
-  const isOwner = observer?.ownerId === user?.id;
+  const isOwner = user != null && observer?.ownerId === user.id;
 
   return (
     <tr className="hover:bg-base-200">
@@ -29,8 +29,8 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ id, onEdit
       <td align="center" className="w-32">
         {observer != null && (
           <TableCellActionButtons
-            disabledEdit={!isOwner && !user?.permissions.observer.canEdit}
-            disabledDelete={!user?.permissions.observer.canDelete || !observerInfo?.canBeDeleted}
+            canEdit={isOwner || user?.permissions.observer.canEdit}
+            canDelete={observerInfo?.canBeDeleted && user?.permissions.observer.canDelete}
             onEditClicked={() => onEditClicked?.(observer)}
             onDeleteClicked={() => onDeleteClicked?.(observer)}
           />

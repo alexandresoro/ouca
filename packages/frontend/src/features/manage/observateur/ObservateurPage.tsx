@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
 import type { UpsertObserverInput } from "@ou-ca/common/api/observer";
 import {
@@ -21,6 +22,8 @@ import ObservateurUpdate from "./ObservateurUpdate";
 
 const ObservateurPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -136,7 +139,12 @@ const ObservateurPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("observers")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("observers")}
+        enableCreate={user?.permissions.observer.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <ObservateurTable onClickUpdateObserver={handleUpdateClick} onClickDeleteObserver={setObserverToDelete} />
       </ContentContainerLayout>

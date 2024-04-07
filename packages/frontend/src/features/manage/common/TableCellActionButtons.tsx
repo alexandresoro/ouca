@@ -4,21 +4,30 @@ import { useTranslation } from "react-i18next";
 import IconButton from "../../../components/base/IconButton";
 
 type TableCellActionButtonsProps = {
+  canEdit?: boolean;
+  canDelete?: boolean;
+  /**
+   * @deprecated Use `canEdit` instead
+   */
   disabledEdit?: boolean;
+  /**
+   * @deprecated Use `canDelete` instead
+   */
   disabledDelete?: boolean;
   onEditClicked?: () => void;
   onDeleteClicked?: () => void;
 };
 
 const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (props) => {
-  const { disabledEdit, disabledDelete, onEditClicked, onDeleteClicked } = props;
+  const { disabledEdit, disabledDelete, canEdit, canDelete, onEditClicked, onDeleteClicked } = props;
   const { t } = useTranslation();
 
   return (
     <>
       <IconButton
         className="mx-1 text-primary dark:text-white"
-        disabled={disabledEdit}
+        // TODO: Remove `disabledEdit` once all components are updated and use !`canEdit` instead
+        disabled={disabledEdit ?? canEdit === false}
         aria-label={t("aria-editButton")}
         onClick={onEditClicked}
       >
@@ -26,7 +35,8 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
       </IconButton>
       <IconButton
         className="mx-1 text-error"
-        disabled={disabledDelete}
+        // TODO: Remove `disabledDelete` once all components are updated and use !`canDelete` instead
+        disabled={disabledDelete ?? canDelete === false}
         aria-label={t("aria-deleteButton")}
         onClick={onDeleteClicked}
       >
