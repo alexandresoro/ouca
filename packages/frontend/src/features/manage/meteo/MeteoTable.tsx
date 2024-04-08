@@ -2,6 +2,7 @@ import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName"
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
+import { Cloud, Wind } from "@styled-icons/boxicons-regular";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -57,6 +58,16 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
         }}
         count={data?.pages?.[0].meta.count}
       />
+
+      <div role="alert" className="alert bg-secondary-content border-secondary-content mb-2">
+        <Cloud className="h-6 w-6" />
+        {t("weather.cloudCoverLegend")}
+      </div>
+      <div role="alert" className="alert bg-secondary-content border-secondary-content">
+        <Wind className="h-6 w-6" />
+        {t("weather.windLegend")}
+      </div>
+
       <InfiniteTable
         tableHead={
           <>

@@ -349,6 +349,10 @@
   "weathers": "Météos",
   "weathers_one": "Météo",
   "weathers_other": "Météos",
+  "weather": {
+    "windLegend": "La vitesse du vent est exprimée selon l'échelle de Beaufort.",
+    "cloudCoverLegend": "La couverture nuageuse est exprimée en octas."
+  },
   "createAction": "Créer",
   "exportAction": "Exporter",
   "filter": {
