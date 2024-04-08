@@ -149,12 +149,23 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.numberEstimate.canDelete) {
       const existingData = await numberEstimateRepository.findNumberEstimateById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
+    }
+
+    const isEntityUsedResult = await isNumberEstimateUsed(`${id}`, loggedUser);
+
+    if (isEntityUsedResult.isErr()) {
+      return err(isEntityUsedResult.error);
+    }
+
+    const isEntityUsed = isEntityUsedResult.value;
+    if (isEntityUsed) {
+      return err("isUsed");
     }
 
     const deletedNumberEstimate = await numberEstimateRepository.deleteNumberEstimateById(id);

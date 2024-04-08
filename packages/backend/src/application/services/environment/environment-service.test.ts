@@ -369,9 +369,7 @@ describe("Deletion of an environment", () => {
   });
 
   test("hould handle the deletion of any environment if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canDelete: true } } });
 
     environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() =>
       Promise.resolve(environmentFactory.build()),
@@ -398,7 +396,7 @@ describe("Deletion of an environment", () => {
     assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { environment: { canDelete: true } } });
 
     environmentRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

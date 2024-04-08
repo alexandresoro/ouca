@@ -210,12 +210,23 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.species.canDelete) {
       const existingData = await speciesRepository.findSpeciesById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
+    }
+
+    const isEntityUsedResult = await isSpeciesUsed(`${id}`, loggedUser);
+
+    if (isEntityUsedResult.isErr()) {
+      return err(isEntityUsedResult.error);
+    }
+
+    const isEntityUsed = isEntityUsedResult.value;
+    if (isEntityUsed) {
+      return err("isUsed");
     }
 
     const speciesClassResult = await classService.findSpeciesClassOfSpecies(`${id}`, loggedUser);

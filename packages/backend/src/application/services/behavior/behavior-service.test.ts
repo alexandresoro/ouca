@@ -363,9 +363,7 @@ describe("Deletion of a behavior", () => {
   });
 
   test("should handle the deletion of any behavior if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canDelete: true } } });
 
     behaviorRepository.findBehaviorById.mock.mockImplementationOnce(() => Promise.resolve(behaviorFactory.build()));
 
@@ -388,7 +386,7 @@ describe("Deletion of a behavior", () => {
     assert.strictEqual(behaviorRepository.deleteBehaviorById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canDelete: true } } });
 
     behaviorRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

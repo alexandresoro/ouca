@@ -368,9 +368,7 @@ describe("Deletion of an weather", () => {
   });
 
   test("should handle the deletion of any weather if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canDelete: true } } });
 
     weatherRepository.findWeatherById.mock.mockImplementationOnce(() => Promise.resolve(weatherFactory.build()));
 
@@ -391,7 +389,7 @@ describe("Deletion of an weather", () => {
     assert.strictEqual(weatherRepository.deleteWeatherById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { weather: { canDelete: true } } });
 
     weatherRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

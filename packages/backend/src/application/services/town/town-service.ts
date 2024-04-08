@@ -180,12 +180,23 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.town.canDelete) {
       const existingData = await townRepository.findTownById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
+    }
+
+    const isEntityUsedResult = await isTownUsed(`${id}`, loggedUser);
+
+    if (isEntityUsedResult.isErr()) {
+      return err(isEntityUsedResult.error);
+    }
+
+    const isEntityUsed = isEntityUsedResult.value;
+    if (isEntityUsed) {
+      return err("isUsed");
     }
 
     const deletedTown = await townRepository.deleteTownById(id);

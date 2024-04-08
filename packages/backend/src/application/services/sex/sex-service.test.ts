@@ -319,9 +319,7 @@ describe("Deletion of a sex", () => {
   });
 
   test("should handle the deletion of any sex if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { sex: { canDelete: true } } });
 
     sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(sexFactory.build()));
 
@@ -342,7 +340,7 @@ describe("Deletion of a sex", () => {
     assert.strictEqual(sexRepository.deleteSexById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { sex: { canDelete: true } } });
 
     sexRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

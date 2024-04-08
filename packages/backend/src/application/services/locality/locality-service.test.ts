@@ -365,9 +365,7 @@ describe("Deletion of a locality", () => {
   });
 
   test("should handle the deletion of any locality if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canDelete: true } } });
 
     localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
     localityRepository.deleteLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
@@ -390,7 +388,7 @@ describe("Deletion of a locality", () => {
     assert.strictEqual(localityRepository.deleteLocalityById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { locality: { canDelete: true } } });
 
     inventoryRepository.getCountByLocality.mock.mockImplementationOnce(() => Promise.resolve(1));

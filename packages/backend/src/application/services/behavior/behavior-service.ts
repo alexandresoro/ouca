@@ -166,12 +166,23 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.behavior.canDelete) {
       const existingData = await behaviorRepository.findBehaviorById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
+    }
+
+    const isEntityUsedResult = await isBehaviorUsed(`${id}`, loggedUser);
+
+    if (isEntityUsedResult.isErr()) {
+      return err(isEntityUsedResult.error);
+    }
+
+    const isEntityUsed = isEntityUsedResult.value;
+    if (isEntityUsed) {
+      return err("isUsed");
     }
 
     const deletedBehavior = await behaviorRepository.deleteBehaviorById(id);

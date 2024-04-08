@@ -370,9 +370,7 @@ describe("Deletion of a city", () => {
   });
 
   test("should handle the deletion of any city if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canDelete: true } } });
 
     townRepository.findTownById.mock.mockImplementationOnce(() => Promise.resolve(townFactory.build()));
 
@@ -395,7 +393,7 @@ describe("Deletion of a city", () => {
     assert.strictEqual(townRepository.deleteTownById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { town: { canDelete: true } } });
 
     localityRepository.getCount.mock.mockImplementationOnce(() => Promise.resolve(1));

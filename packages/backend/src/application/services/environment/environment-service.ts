@@ -166,12 +166,23 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.environment.canDelete) {
       const existingData = await environmentRepository.findEnvironmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         return err("notAllowed");
       }
+    }
+
+    const isEntityUsedResult = await isEnvironmentUsed(`${id}`, loggedUser);
+
+    if (isEntityUsedResult.isErr()) {
+      return err(isEntityUsedResult.error);
+    }
+
+    const isEntityUsed = isEntityUsedResult.value;
+    if (isEntityUsed) {
+      return err("isUsed");
     }
 
     const deletedEnvironment = await environmentRepository.deleteEnvironmentById(id);

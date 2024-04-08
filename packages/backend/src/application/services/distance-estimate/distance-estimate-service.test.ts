@@ -352,9 +352,7 @@ describe("Deletion of a distance estimate", () => {
   });
 
   test("should handle the deletion of any distance estimate if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canDelete: true } } });
 
     distanceEstimateRepository.findDistanceEstimateById.mock.mockImplementationOnce(() =>
       Promise.resolve(distanceEstimateFactory.build()),
@@ -381,7 +379,7 @@ describe("Deletion of a distance estimate", () => {
     assert.strictEqual(distanceEstimateRepository.deleteDistanceEstimateById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canDelete: true } } });
 
     distanceEstimateRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

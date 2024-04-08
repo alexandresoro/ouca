@@ -487,9 +487,7 @@ describe("Deletion of a species", () => {
   });
 
   test("should handle the deletion of any species if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canDelete: true } } });
 
     const speciesClass = speciesClassFactory.build();
 
@@ -516,7 +514,7 @@ describe("Deletion of a species", () => {
     assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { species: { canDelete: true } } });
 
     speciesRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

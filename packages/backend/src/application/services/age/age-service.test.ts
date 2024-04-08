@@ -323,9 +323,7 @@ describe("Deletion of an age", () => {
   });
 
   test("should handle the deletion of any age if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canDelete: true } } });
 
     ageRepository.findAgeById.mock.mockImplementationOnce(() => Promise.resolve(ageFactory.build()));
 
@@ -346,7 +344,7 @@ describe("Deletion of an age", () => {
     assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { age: { canDelete: true } } });
 
     ageRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));

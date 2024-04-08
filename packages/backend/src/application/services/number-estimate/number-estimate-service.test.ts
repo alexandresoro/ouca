@@ -347,9 +347,7 @@ describe("Deletion of a number estimate", () => {
   });
 
   test("should handle the deletion of any number estimate if has permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "admin",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canDelete: true } } });
 
     numberEstimateRepository.findNumberEstimateById.mock.mockImplementationOnce(() =>
       Promise.resolve(numberEstimateFactory.build()),
@@ -376,7 +374,7 @@ describe("Deletion of a number estimate", () => {
     assert.strictEqual(numberEstimateRepository.deleteNumberEstimateById.mock.callCount(), 0);
   });
 
-  test.skip("should not be allowed when the entity is used", async () => {
+  test("should not be allowed when the entity is used", async () => {
     const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canDelete: true } } });
 
     numberEstimateRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
