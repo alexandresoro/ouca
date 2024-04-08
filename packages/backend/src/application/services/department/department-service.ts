@@ -146,7 +146,7 @@ export const buildDepartmentService = ({
     input: UpsertDepartmentInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Department, DepartmentFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.department.canCreate) {
       return err("notAllowed");
     }
 

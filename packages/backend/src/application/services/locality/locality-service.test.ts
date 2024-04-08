@@ -294,7 +294,7 @@ describe("Creation of a locality", () => {
   test("should create new locality", async () => {
     const localityData = upsertLocalityInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canCreate: true } } });
 
     localityRepository.createLocality.mock.mockImplementationOnce(() => Promise.resolve(ok(localityFactory.build())));
 
@@ -312,7 +312,7 @@ describe("Creation of a locality", () => {
   test("should not be allowed when trying to create a locality that already exists", async () => {
     const localityData = upsertLocalityInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canCreate: true } } });
 
     localityRepository.createLocality.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

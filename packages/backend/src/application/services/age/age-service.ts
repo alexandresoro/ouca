@@ -102,7 +102,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     input: UpsertAgeInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<AgeSimple, AgeFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.age.canCreate) {
       return err("notAllowed");
     }
 

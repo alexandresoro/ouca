@@ -139,7 +139,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     input: UpsertLocalityInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Locality, LocalityFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.locality.canCreate) {
       return err("notAllowed");
     }
 

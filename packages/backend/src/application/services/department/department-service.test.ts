@@ -315,7 +315,7 @@ describe("Creation of a department", () => {
   test("should create new department", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { department: { canCreate: true } } });
 
     departmentRepository.createDepartment.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(departmentFactory.build())),
@@ -335,7 +335,7 @@ describe("Creation of a department", () => {
   test("should not be allowed when trying to create a department that already exists", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { department: { canCreate: true } } });
 
     departmentRepository.createDepartment.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

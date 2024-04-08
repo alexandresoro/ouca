@@ -298,7 +298,7 @@ describe("Creation of a city", () => {
   test("should create new city", async () => {
     const cityData = upsertTownInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canCreate: true } } });
 
     townRepository.createTown.mock.mockImplementationOnce(() => Promise.resolve(ok(townFactory.build())));
 
@@ -316,7 +316,7 @@ describe("Creation of a city", () => {
   test("should not be allowed when trying to create a city that already exists", async () => {
     const cityData = upsertTownInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canCreate: true } } });
 
     townRepository.createTown.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

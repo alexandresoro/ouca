@@ -102,7 +102,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<NumberEstimate, NumberEstimateFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.numberEstimate.canCreate) {
       return err("notAllowed");
     }
 

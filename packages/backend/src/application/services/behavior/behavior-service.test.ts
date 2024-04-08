@@ -292,7 +292,7 @@ describe("Creation of a behavior", () => {
   test("should create new behavior", async () => {
     const behaviorData = upsertBehaviorInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canCreate: true } } });
 
     behaviorRepository.createBehavior.mock.mockImplementationOnce(() => Promise.resolve(ok(behaviorFactory.build())));
 
@@ -310,7 +310,7 @@ describe("Creation of a behavior", () => {
   test("should not be allowed when trying to create a behavior that already exists", async () => {
     const behaviorData = upsertBehaviorInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canCreate: true } } });
 
     behaviorRepository.createBehavior.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

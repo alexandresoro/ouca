@@ -118,7 +118,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     input: UpsertBehaviorInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Behavior, BehaviorFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.behavior.canCreate) {
       return err("notAllowed");
     }
 

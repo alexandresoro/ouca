@@ -404,7 +404,7 @@ describe("Creation of a species", () => {
   test("should create new species", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canCreate: true } } });
 
     const speciesClass = speciesClassFactory.build();
     classService.findSpeciesClassOfSpecies.mock.mockImplementationOnce(() =>
@@ -430,7 +430,7 @@ describe("Creation of a species", () => {
   test("should not be allowed when trying to create a species that already exists", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canCreate: true } } });
 
     speciesRepository.createSpecies.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

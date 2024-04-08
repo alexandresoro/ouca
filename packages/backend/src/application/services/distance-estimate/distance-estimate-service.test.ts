@@ -274,7 +274,7 @@ describe("Creation of a distance estimate", () => {
   test("should create new distance estimate", async () => {
     const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canCreate: true } } });
 
     distanceEstimateRepository.createDistanceEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(distanceEstimateFactory.build())),
@@ -294,7 +294,7 @@ describe("Creation of a distance estimate", () => {
   test("should not be allowed when trying to create a distance estimate that already exists", async () => {
     const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canCreate: true } } });
 
     distanceEstimateRepository.createDistanceEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(err("alreadyExists")),

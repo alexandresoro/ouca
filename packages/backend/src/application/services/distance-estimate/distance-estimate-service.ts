@@ -102,7 +102,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
     input: UpsertDistanceEstimateInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<DistanceEstimate, DistanceEstimateFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.distanceEstimate.canCreate) {
       return err("notAllowed");
     }
 

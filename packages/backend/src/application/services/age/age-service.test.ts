@@ -250,7 +250,7 @@ describe("Creation of an age", () => {
   test("should create new age", async () => {
     const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canCreate: true } } });
 
     ageRepository.createAge.mock.mockImplementationOnce(() => Promise.resolve(ok(ageFactory.build())));
 
@@ -268,7 +268,7 @@ describe("Creation of an age", () => {
   test("should not be allowed when trying to create an age that already exists", async () => {
     const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canCreate: true } } });
 
     ageRepository.createAge.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

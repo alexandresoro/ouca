@@ -268,7 +268,7 @@ describe("Creation of a number estimate", () => {
   test("should create new number estimate", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canCreate: true } } });
 
     numberEstimateRepository.createNumberEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(numberEstimateFactory.build())),
@@ -288,7 +288,7 @@ describe("Creation of a number estimate", () => {
   test("should not be allowed when trying to create a number estimate that already exists", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canCreate: true } } });
 
     numberEstimateRepository.createNumberEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(err("alreadyExists")),

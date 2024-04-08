@@ -118,7 +118,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     input: UpsertEnvironmentInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Environment, EnvironmentFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.environment.canCreate) {
       return err("notAllowed");
     }
 

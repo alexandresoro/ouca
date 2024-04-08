@@ -292,7 +292,7 @@ describe("Creation of an environment", () => {
   test("should create new environment", async () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canCreate: true } } });
 
     environmentRepository.createEnvironment.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(environmentFactory.build())),
@@ -312,7 +312,7 @@ describe("Creation of an environment", () => {
   test("should not be allowed when trying to create an environment that already exists", async () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canCreate: true } } });
 
     environmentRepository.createEnvironment.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

@@ -298,7 +298,7 @@ describe("Creation of a class", () => {
   test("should create new class", async () => {
     const classData = upsertSpeciesClassInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { speciesClass: { canCreate: true } } });
 
     classRepository.createSpeciesClass.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(speciesClassFactory.build())),
@@ -318,7 +318,7 @@ describe("Creation of a class", () => {
   test("should not be allowed when trying to create a class that already exists", async () => {
     const classData = upsertSpeciesClassInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ id: "a" });
+    const loggedUser = loggedUserFactory.build({ permissions: { speciesClass: { canCreate: true } } });
 
     classRepository.createSpeciesClass.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

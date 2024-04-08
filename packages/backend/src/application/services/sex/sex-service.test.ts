@@ -244,7 +244,7 @@ describe("Creation of a sex", () => {
   test("should create new sex", async () => {
     const sexData = upsertSexInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { sex: { canCreate: true } } });
 
     sexRepository.createSex.mock.mockImplementationOnce(() => Promise.resolve(ok(sexFactory.build())));
 
@@ -262,7 +262,7 @@ describe("Creation of a sex", () => {
   test("should not be allowed when trying to create a sex that already exists", async () => {
     const sexData = upsertSexInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { sex: { canCreate: true } } });
 
     sexRepository.createSex.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

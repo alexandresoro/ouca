@@ -118,7 +118,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     input: UpsertWeatherInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Weather, WeatherFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.weather.canCreate) {
       return err("notAllowed");
     }
 

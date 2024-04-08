@@ -158,7 +158,7 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
     input: UpsertSpeciesInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesCommon, SpeciesFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.species.canCreate) {
       return err("notAllowed");
     }
 

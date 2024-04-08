@@ -102,7 +102,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
     input: UpsertSexInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Sex, SexFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.sex.canCreate) {
       return err("notAllowed");
     }
 

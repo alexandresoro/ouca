@@ -293,7 +293,7 @@ describe("Creation of an weather", () => {
   test("should create new weather", async () => {
     const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canCreate: true } } });
 
     weatherRepository.createWeather.mock.mockImplementationOnce(() => Promise.resolve(ok(weatherFactory.build())));
 
@@ -311,7 +311,7 @@ describe("Creation of an weather", () => {
   test("should not be allowed when trying to create an weather that already exists", async () => {
     const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build();
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canCreate: true } } });
 
     weatherRepository.createWeather.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 

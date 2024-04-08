@@ -132,7 +132,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     input: UpsertTownInput,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Town, TownFailureReason>> => {
-    if (!loggedUser) {
+    if (!loggedUser?.permissions.town.canCreate) {
       return err("notAllowed");
     }
 
