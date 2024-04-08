@@ -239,7 +239,6 @@ describe("Deletion of a data", () => {
     test("when the inventory exists", async () => {
       const loggedUser = loggedUserFactory.build({
         id: "12",
-        role: "user",
       });
 
       const matchingInventory = inventoryFactory.build({
@@ -260,10 +259,7 @@ describe("Deletion of a data", () => {
     });
 
     test("unless no matching inventory has been found", async () => {
-      const loggedUser = loggedUserFactory.build({
-        id: "12",
-        role: "user",
-      });
+      const loggedUser = loggedUserFactory.build();
 
       const deletedEntry = entryFactory.build();
 
@@ -275,13 +271,13 @@ describe("Deletion of a data", () => {
     });
   });
 
-  test("should not be allowed when trying to deletre a data belonging to a non-owned inventory", async () => {
+  test("should not be allowed when trying to delete a data belonging to a non-owned inventory", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "user",
+      id: "notOwner",
     });
 
     inventoryRepository.findInventoryByEntryId.mock.mockImplementationOnce(() =>
-      Promise.resolve(inventoryFactory.build()),
+      Promise.resolve(inventoryFactory.build({ ownerId: "owner" })),
     );
 
     assert.deepStrictEqual(await entryService.deleteEntry("11", loggedUser), err("notAllowed"));

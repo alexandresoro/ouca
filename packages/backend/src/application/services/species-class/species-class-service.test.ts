@@ -357,7 +357,7 @@ describe("Creation of a class", () => {
 
 describe("Deletion of a class", () => {
   test("should handle the deletion of an owned class", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const speciesClass = speciesClassFactory.build({
       ownerId: loggedUser.id,
@@ -385,9 +385,7 @@ describe("Deletion of a class", () => {
   });
 
   test("should not be allowed when deleting a non-owned class and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { speciesClass: { canDelete: false } } });
 
     classRepository.findSpeciesClassById.mock.mockImplementationOnce(() =>
       Promise.resolve(speciesClassFactory.build()),

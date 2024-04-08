@@ -335,7 +335,7 @@ describe("Creation of a distance estimate", () => {
 
 describe("Deletion of a distance estimate", () => {
   test("should handle the deletion of an owned distance estimate", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const distanceEstimate = distanceEstimateFactory.build({
       ownerId: loggedUser.id,
@@ -365,9 +365,7 @@ describe("Deletion of a distance estimate", () => {
   });
 
   test("should not be allowed when deleting a non-owned distance estimate and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canDelete: false } } });
 
     distanceEstimateRepository.findDistanceEstimateById.mock.mockImplementationOnce(() =>
       Promise.resolve(distanceEstimateFactory.build()),

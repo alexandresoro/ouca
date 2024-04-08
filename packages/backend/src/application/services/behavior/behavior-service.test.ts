@@ -348,7 +348,7 @@ describe("Creation of a behavior", () => {
 
 describe("Deletion of a behavior", () => {
   test("should handle the deletion of an owned behavior", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const behavior = behaviorFactory.build({
       ownerId: loggedUser.id,
@@ -374,9 +374,7 @@ describe("Deletion of a behavior", () => {
   });
 
   test("should not be allowed when deleting a non-owned behavior and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canDelete: false } } });
 
     behaviorRepository.findBehaviorById.mock.mockImplementationOnce(() => Promise.resolve(behaviorFactory.build()));
 

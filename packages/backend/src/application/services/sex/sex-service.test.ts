@@ -303,7 +303,6 @@ describe("Deletion of a sex", () => {
   test("should handle the deletion of an owned sex", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "user",
     });
 
     const sex = sexFactory.build({

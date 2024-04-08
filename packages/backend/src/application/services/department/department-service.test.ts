@@ -374,7 +374,7 @@ describe("Creation of a department", () => {
 
 describe("Deletion of a department", () => {
   test("hould handle the deletion of an owned department", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const department = departmentFactory.build({
       ownerId: loggedUser.id,

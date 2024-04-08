@@ -331,7 +331,6 @@ describe("Deletion of a number estimate", () => {
   test("should handle the deletion of an owned number estimate", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "user",
     });
 
     const numberEstimate = numberEstimateFactory.build({
@@ -360,9 +359,7 @@ describe("Deletion of a number estimate", () => {
   });
 
   test("should not be allowed when deleting a non-owned number estimate and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canDelete: false } } });
 
     numberEstimateRepository.findNumberEstimateById.mock.mockImplementationOnce(() =>
       Promise.resolve(numberEstimateFactory.build()),

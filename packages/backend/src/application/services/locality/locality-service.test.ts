@@ -349,7 +349,7 @@ describe("Creation of a locality", () => {
 
 describe("Deletion of a locality", () => {
   test("should handle the deletion of an owned locality", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const locality = localityFactory.build({
       ownerId: loggedUser.id,
@@ -377,9 +377,7 @@ describe("Deletion of a locality", () => {
   });
 
   test("should not be allowed when deleting a non-owned locality and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canDelete: false } } });
 
     localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(localityFactory.build()));
 

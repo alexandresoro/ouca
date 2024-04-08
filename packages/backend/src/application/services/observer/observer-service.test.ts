@@ -329,7 +329,6 @@ describe("Deletion of an observer", () => {
   test("should handle the deletion of an owned observer", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "user",
     });
 
     const observer = observerFactory.build({ ownerId: loggedUser.id });

@@ -353,7 +353,6 @@ describe("Deletion of an environment", () => {
   test("should handle the deletion of an owned environment", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "user",
     });
 
     const environment = environmentFactory.build({
@@ -382,9 +381,7 @@ describe("Deletion of an environment", () => {
   });
 
   test("should not be allowed when deleting a non-owned environment and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canDelete: false } } });
 
     environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() =>
       Promise.resolve(environmentFactory.build()),

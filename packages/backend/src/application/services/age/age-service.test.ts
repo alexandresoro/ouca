@@ -309,7 +309,6 @@ describe("Deletion of an age", () => {
   test("should handle the deletion of an owned age", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "user",
     });
 
     const age = ageFactory.build({ ownerId: loggedUser.id });

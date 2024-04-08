@@ -355,7 +355,7 @@ describe("Creation of a city", () => {
 
 describe("Deletion of a city", () => {
   test("should handle the deletion of an owned city", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const city = townFactory.build({
       ownerId: loggedUser.id,
@@ -381,9 +381,7 @@ describe("Deletion of a city", () => {
   });
 
   test("should not be allowed when deleting a non-owned city and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canDelete: false } } });
 
     townRepository.findTownById.mock.mockImplementationOnce(() => Promise.resolve(townFactory.build()));
 

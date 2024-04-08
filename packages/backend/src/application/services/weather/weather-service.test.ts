@@ -352,7 +352,6 @@ describe("Deletion of an weather", () => {
   test("should handle the deletion of an owned weather", async () => {
     const loggedUser = loggedUserFactory.build({
       id: "12",
-      role: "user",
     });
 
     const weather = weatherFactory.build({

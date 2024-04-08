@@ -333,10 +333,7 @@ describe("Deletion of an inventory", () => {
   });
 
   test("when deletion of inventory is done by a non-admin owner", async () => {
-    const loggedUser = loggedUserFactory.build({
-      id: "12",
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build();
 
     const inventory = inventoryFactory.build({
       ownerId: loggedUser.id,
@@ -353,10 +350,7 @@ describe("Deletion of an inventory", () => {
   });
 
   test("should not be allowed when trying to delete an inventory still used", async () => {
-    const loggedUser = loggedUserFactory.build({
-      id: "12",
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build();
 
     const inventory = inventoryFactory.build({
       ownerId: loggedUser.id,
@@ -372,10 +366,12 @@ describe("Deletion of an inventory", () => {
 
   test("should not be allowed when trying to delete an inventory belonging to a non-owned inventory", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "user",
+      id: "notOwner",
     });
 
-    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventoryFactory.build()));
+    inventoryRepository.findInventoryById.mock.mockImplementationOnce(() =>
+      Promise.resolve(inventoryFactory.build({ id: "owner" })),
+    );
 
     assert.deepStrictEqual(await inventaireService.deleteInventory("11", loggedUser), err("notAllowed"));
     assert.strictEqual(inventoryRepository.deleteInventoryById.mock.callCount(), 0);

@@ -468,7 +468,7 @@ describe("Creation of a species", () => {
 
 describe("Deletion of a species", () => {
   test("should handle the deletion of an owned species", async () => {
-    const loggedUser = loggedUserFactory.build({ id: "12", role: "user" });
+    const loggedUser = loggedUserFactory.build({ id: "12" });
 
     const speciesClass = speciesClassFactory.build();
     const species = speciesFactory.build({
@@ -503,9 +503,7 @@ describe("Deletion of a species", () => {
   });
 
   test("should not be allowed when deleting a non-owned species and no permission", async () => {
-    const loggedUser = loggedUserFactory.build({
-      role: "user",
-    });
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canDelete: false } } });
 
     speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(speciesFactory.build()));
 

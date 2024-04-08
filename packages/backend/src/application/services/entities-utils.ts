@@ -6,6 +6,9 @@ type PaginationOptions = Partial<{
   pageSize: number | null;
 }>;
 
+/**
+ * @deprecated use permissions instead as it's more reliable
+ */
 export function enrichEntityWithEditableStatus<E>(entity: E, user: LoggedUser | null): E & { editable: boolean };
 export function enrichEntityWithEditableStatus(entity: null, user: LoggedUser | null): null;
 export function enrichEntityWithEditableStatus<E>(
