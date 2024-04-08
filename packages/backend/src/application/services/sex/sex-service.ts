@@ -126,7 +126,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.sex.canEdit) {
       const existingData = await sexRepository.findSexById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

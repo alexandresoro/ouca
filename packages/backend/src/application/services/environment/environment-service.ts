@@ -142,7 +142,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.environment.canEdit) {
       const existingData = await environmentRepository.findEnvironmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

@@ -219,7 +219,7 @@ describe("Update of a behavior", () => {
   test("should be allowed when user has permission", async () => {
     const behaviorData = upsertBehaviorInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canEdit: true } } });
 
     behaviorRepository.updateBehavior.mock.mockImplementationOnce(() => Promise.resolve(ok(behaviorFactory.build())));
 
@@ -267,7 +267,7 @@ describe("Update of a behavior", () => {
   test("should not be allowed when trying to update to a behavior that exists", async () => {
     const behaviorData = upsertBehaviorInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canEdit: true } } });
 
     behaviorRepository.updateBehavior.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -324,6 +324,16 @@ describe("Creation of a behavior", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+  test("should not be allowed if user has no permission", async () => {
+    const behaviorData = upsertBehaviorInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canCreate: false } } });
+
+    const createResult = await behaviorService.createBehavior(behaviorData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(behaviorRepository.createBehavior.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

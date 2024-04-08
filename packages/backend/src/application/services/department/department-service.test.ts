@@ -238,7 +238,7 @@ describe("Update of a department", () => {
   test("should be allowed when user has permission", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { department: { canEdit: true } } });
 
     departmentRepository.updateDepartment.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(departmentFactory.build())),
@@ -290,7 +290,7 @@ describe("Update of a department", () => {
   test("should not be allowed when trying to update to a department that exists", async () => {
     const departmentData = upsertDepartmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { department: { canEdit: true } } });
 
     departmentRepository.updateDepartment.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -349,6 +349,17 @@ describe("Creation of a department", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const departmentData = upsertDepartmentInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { department: { canCreate: false } } });
+
+    const createResult = await departmentService.createDepartment(departmentData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(departmentRepository.createDepartment.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

@@ -316,7 +316,7 @@ describe("Update of a species", () => {
   test("should be allowed when user has permission", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canEdit: true } } });
 
     const speciesClass = speciesClassFactory.build();
     classService.findSpeciesClassOfSpecies.mock.mockImplementationOnce(() =>
@@ -380,7 +380,7 @@ describe("Update of a species", () => {
   test("should not be allowed when trying to update to a species that exists", async () => {
     const speciesData = upsertSpeciesInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canEdit: true } } });
 
     speciesRepository.updateSpecies.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -443,6 +443,17 @@ describe("Creation of a species", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const speciesData = upsertSpeciesInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canCreate: false } } });
+
+    const createResult = await speciesService.createSpecies(speciesData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(speciesRepository.createSpecies.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

@@ -126,7 +126,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.numberEstimate.canEdit) {
       const existingData = await numberEstimateRepository.findNumberEstimateById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

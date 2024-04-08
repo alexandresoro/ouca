@@ -177,7 +177,7 @@ describe("Update of an age", () => {
   test("should be allowed when user has permission", async () => {
     const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canEdit: true } } });
 
     ageRepository.updateAge.mock.mockImplementationOnce(() => Promise.resolve(ok(ageFactory.build())));
 
@@ -225,7 +225,7 @@ describe("Update of an age", () => {
   test("should not be allowed when trying to update to an age that exists", async () => {
     const ageData = upsertAgeInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canEdit: true } } });
 
     ageRepository.updateAge.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -282,6 +282,17 @@ describe("Creation of an age", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const ageData = upsertAgeInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canCreate: false } } });
+
+    const createResult = await ageService.createAge(ageData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(ageRepository.createAge.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

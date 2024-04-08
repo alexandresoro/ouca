@@ -225,7 +225,8 @@ describe("Update of a locality", () => {
   test("should be allowed when user has permission", async () => {
     const localityData = upsertLocalityInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canEdit: true } } });
+
     localityRepository.updateLocality.mock.mockImplementationOnce(() => Promise.resolve(ok(localityFactory.build())));
 
     await localityService.updateLocality(12, localityData, loggedUser);
@@ -271,7 +272,7 @@ describe("Update of a locality", () => {
   test("should not be allowed when trying to update to a locality that exists", async () => {
     const localityData = upsertLocalityInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canEdit: true } } });
 
     localityRepository.updateLocality.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -325,6 +326,16 @@ describe("Creation of a locality", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const localityData = upsertLocalityInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canCreate: false } } });
+
+    const createResult = await localityService.createLocality(localityData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
   });
 
   test("should not be allowed when the requester is not logged", async () => {

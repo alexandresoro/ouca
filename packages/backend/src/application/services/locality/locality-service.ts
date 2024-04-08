@@ -163,7 +163,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.locality.canEdit) {
       const existingData = await localityRepository.findLocalityById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

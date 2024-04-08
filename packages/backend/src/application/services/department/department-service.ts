@@ -170,7 +170,7 @@ export const buildDepartmentService = ({
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.department.canEdit) {
       const existingData = await departmentRepository.findDepartmentById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

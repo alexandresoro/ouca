@@ -156,7 +156,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.town.canEdit) {
       const existingData = await townRepository.findTownById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

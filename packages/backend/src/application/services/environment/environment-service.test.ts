@@ -215,7 +215,7 @@ describe("Update of an environment", () => {
   test("should be allowed when user has permission", async () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canEdit: true } } });
 
     environmentRepository.updateEnvironment.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(environmentFactory.build())),
@@ -267,7 +267,7 @@ describe("Update of an environment", () => {
   test("should not be allowed when trying to update to an environment that exists", async () => {
     const environmentData = upsertEnvironmentInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canEdit: true } } });
 
     environmentRepository.updateEnvironment.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -326,6 +326,17 @@ describe("Creation of an environment", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const environmentData = upsertEnvironmentInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canCreate: false } } });
+
+    const createResult = await environmentService.createEnvironment(environmentData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(environmentRepository.createEnvironment.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

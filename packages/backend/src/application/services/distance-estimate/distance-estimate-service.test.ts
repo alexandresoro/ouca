@@ -182,7 +182,7 @@ describe("Update of a distance estimate", () => {
   test("should be allowed when user has permission", async () => {
     const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canEdit: true } } });
 
     distanceEstimateRepository.updateDistanceEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(distanceEstimateFactory.build())),
@@ -244,7 +244,7 @@ describe("Update of a distance estimate", () => {
   test("should not be allowed when trying to update to a distance estimate that exists", async () => {
     const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canEdit: true } } });
 
     distanceEstimateRepository.updateDistanceEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(err("alreadyExists")),
@@ -310,6 +310,17 @@ describe("Creation of a distance estimate", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { distanceEstimate: { canCreate: false } } });
+
+    const createResult = await distanceEstimateService.createDistanceEstimate(distanceEstimateData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(distanceEstimateRepository.createDistanceEstimate.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

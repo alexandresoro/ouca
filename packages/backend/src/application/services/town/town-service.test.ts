@@ -225,7 +225,7 @@ describe("Update of a city", () => {
   test("should be allowed when user has permission", async () => {
     const cityData = upsertTownInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canEdit: true } } });
 
     townRepository.updateTown.mock.mockImplementationOnce(() => Promise.resolve(ok(townFactory.build())));
 
@@ -273,7 +273,7 @@ describe("Update of a city", () => {
   test("should not be allowed when trying to update to a city that exists", async () => {
     const cityData = upsertTownInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canEdit: true } } });
 
     townRepository.updateTown.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -330,6 +330,17 @@ describe("Creation of a city", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const cityData = upsertTownInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { town: { canCreate: false } } });
+
+    const createResult = await townService.createTown(cityData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(townRepository.createTown.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

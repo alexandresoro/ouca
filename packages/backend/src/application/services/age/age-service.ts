@@ -126,7 +126,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.age.canEdit) {
       const existingData = await ageRepository.findAgeById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

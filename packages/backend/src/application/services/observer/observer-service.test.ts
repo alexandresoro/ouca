@@ -290,8 +290,6 @@ describe("Creation of an observer", () => {
 
     const loggedUser = loggedUserFactory.build({ permissions: { observer: { canCreate: false } } });
 
-    observerRepository.createObserver.mock.mockImplementationOnce(() => Promise.resolve(ok(observerFactory.build())));
-
     const createResult = await observerService.createObserver(observerData, loggedUser);
 
     assert.deepStrictEqual(createResult, err("notAllowed"));

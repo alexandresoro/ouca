@@ -142,7 +142,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.behavior.canEdit) {
       const existingData = await behaviorRepository.findBehaviorById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {

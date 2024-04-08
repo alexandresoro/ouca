@@ -220,7 +220,7 @@ describe("Update of an weather", () => {
   test("should be allowed when user has permission", async () => {
     const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canEdit: true } } });
 
     weatherRepository.updateWeather.mock.mockImplementationOnce(() => Promise.resolve(ok(weatherFactory.build())));
 
@@ -268,7 +268,7 @@ describe("Update of an weather", () => {
   test("should not be allowed when trying to update to an weather that exists", async () => {
     const weatherData = upsertWeatherInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canEdit: true } } });
 
     weatherRepository.updateWeather.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -325,6 +325,17 @@ describe("Creation of an weather", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const weatherData = upsertWeatherInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canCreate: false } } });
+
+    const createResult = await weatherService.createWeather(weatherData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(weatherRepository.createWeather.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

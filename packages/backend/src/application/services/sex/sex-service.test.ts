@@ -171,7 +171,7 @@ describe("Update of a sex", () => {
   test("should be allowed when user has permission", async () => {
     const sexData = upsertSexInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { sex: { canEdit: true } } });
 
     sexRepository.updateSex.mock.mockImplementationOnce(() => Promise.resolve(ok(sexFactory.build())));
 
@@ -219,7 +219,7 @@ describe("Update of a sex", () => {
   test("should not be allowed when trying to update to a sex that exists", async () => {
     const sexData = upsertSexInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { sex: { canEdit: true } } });
 
     sexRepository.updateSex.mock.mockImplementationOnce(() => Promise.resolve(err("alreadyExists")));
 
@@ -276,6 +276,17 @@ describe("Creation of a sex", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const sexData = upsertSexInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { sex: { canCreate: false } } });
+
+    const createResult = await sexService.createSex(sexData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(sexRepository.createSex.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

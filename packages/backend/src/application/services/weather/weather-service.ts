@@ -143,7 +143,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser.role !== "admin") {
+    if (!loggedUser.permissions.weather.canEdit) {
       const existingData = await weatherRepository.findWeatherById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {

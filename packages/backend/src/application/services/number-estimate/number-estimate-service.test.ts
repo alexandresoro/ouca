@@ -180,7 +180,7 @@ describe("Update of a number estimate", () => {
   test("should be allowed when user has permission", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canEdit: true } } });
 
     numberEstimateRepository.updateNumberEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(ok(numberEstimateFactory.build())),
@@ -238,7 +238,7 @@ describe("Update of a number estimate", () => {
   test("should not be allowed when trying to update to a number estimate that exists", async () => {
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const loggedUser = loggedUserFactory.build({ role: "admin" });
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canEdit: true } } });
 
     numberEstimateRepository.updateNumberEstimate.mock.mockImplementationOnce(() =>
       Promise.resolve(err("alreadyExists")),
@@ -304,6 +304,17 @@ describe("Creation of a number estimate", () => {
         ownerId: loggedUser.id,
       },
     ]);
+  });
+
+  test("should not be allowed if user has no permission", async () => {
+    const numberEstimateData = upsertNumberEstimateInputFactory.build();
+
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canCreate: false } } });
+
+    const createResult = await numberEstimateService.createNumberEstimate(numberEstimateData, loggedUser);
+
+    assert.deepStrictEqual(createResult, err("notAllowed"));
+    assert.strictEqual(numberEstimateRepository.createNumberEstimate.mock.callCount(), 0);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

@@ -163,7 +163,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
     }
 
     // Check that the user is allowed to modify the existing data
-    if (loggedUser.role !== "admin") {
+    if (!loggedUser.permissions.speciesClass.canEdit) {
       const existingData = await classRepository.findSpeciesClassById(id);
 
       if (existingData?.ownerId !== loggedUser.id) {
