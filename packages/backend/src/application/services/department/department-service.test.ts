@@ -403,6 +403,17 @@ describe("Deletion of a department", () => {
     assert.strictEqual(departmentRepository.deleteDepartmentById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { department: { canDelete: true } } });
+
+    townRepository.getCount.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await departmentService.deleteDepartment(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(departmentRepository.deleteDepartmentById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await departmentService.deleteDepartment(11, null);
 

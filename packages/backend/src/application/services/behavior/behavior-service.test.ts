@@ -378,6 +378,17 @@ describe("Deletion of a behavior", () => {
     assert.strictEqual(behaviorRepository.deleteBehaviorById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { behavior: { canDelete: true } } });
+
+    behaviorRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await behaviorService.deleteBehavior(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(behaviorRepository.deleteBehaviorById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await behaviorService.deleteBehavior(11, null);
 

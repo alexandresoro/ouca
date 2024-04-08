@@ -365,6 +365,17 @@ describe("Deletion of a number estimate", () => {
     assert.strictEqual(numberEstimateRepository.deleteNumberEstimateById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { numberEstimate: { canDelete: true } } });
+
+    numberEstimateRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await numberEstimateService.deleteNumberEstimate(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(numberEstimateRepository.deleteNumberEstimateById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await numberEstimateService.deleteNumberEstimate(11, null);
 

@@ -379,6 +379,17 @@ describe("Deletion of a locality", () => {
     assert.strictEqual(localityRepository.deleteLocalityById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { locality: { canDelete: true } } });
+
+    inventoryRepository.getCountByLocality.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await localityService.deleteLocality(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(localityRepository.deleteLocalityById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await localityService.deleteLocality(11, null);
 

@@ -387,6 +387,17 @@ describe("Deletion of an environment", () => {
     assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { environment: { canDelete: true } } });
+
+    environmentRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await environmentService.deleteEnvironment(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(environmentRepository.deleteEnvironmentById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await environmentService.deleteEnvironment(11, null);
 

@@ -505,6 +505,17 @@ describe("Deletion of a species", () => {
     assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { species: { canDelete: true } } });
+
+    speciesRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await speciesService.deleteSpecies(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(speciesRepository.deleteSpeciesById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await speciesService.deleteSpecies(11, null);
 

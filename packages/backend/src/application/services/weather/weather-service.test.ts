@@ -380,6 +380,17 @@ describe("Deletion of an weather", () => {
     assert.strictEqual(weatherRepository.deleteWeatherById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { weather: { canDelete: true } } });
+
+    weatherRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await weatherService.deleteWeather(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(weatherRepository.deleteWeatherById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await weatherService.deleteWeather(11, null);
 

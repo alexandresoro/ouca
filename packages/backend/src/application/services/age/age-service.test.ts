@@ -335,6 +335,17 @@ describe("Deletion of an age", () => {
     assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 0);
   });
 
+  test.skip("should not be allowed when the entity is used", async () => {
+    const loggedUser = loggedUserFactory.build({ permissions: { age: { canDelete: true } } });
+
+    ageRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(1));
+
+    const deleteResult = await ageService.deleteAge(11, loggedUser);
+
+    assert.deepStrictEqual(deleteResult, err("isUsed"));
+    assert.strictEqual(ageRepository.deleteAgeById.mock.callCount(), 0);
+  });
+
   test("should not be allowed when the requester is not logged", async () => {
     const deleteResult = await ageService.deleteAge(11, null);
 
