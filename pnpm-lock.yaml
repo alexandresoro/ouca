@@ -275,8 +275,8 @@ importers:
         specifier: 3.0.5
         version: 3.0.5
       protomaps-themes-base:
-        specifier: 2.0.0-alpha.5
-        version: 2.0.0-alpha.5
+        specifier: 2.0.0-alpha.6
+        version: 2.0.0-alpha.6
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -6128,8 +6128,8 @@ packages:
     resolution: {integrity: sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw==}
     dev: false
 
-  /protomaps-themes-base@2.0.0-alpha.5:
-    resolution: {integrity: sha512-IQ63JgClmJY89jyk+5qodvoTlpaAshmy8iJIze1UapPCo4Q+gEuErLrIqgsRWN1aXyL7pNm9CrhkKaNEUmWXBg==}
+  /protomaps-themes-base@2.0.0-alpha.6:
+    resolution: {integrity: sha512-J1jHgAJaKYoIGyKZWxqpQ0oRzoWH9O7zbHdYFkK995vIb3s3P1BPbUrWGYmAwUv8fRYoI5WaMtnYeRBuQWJqZg==}
     dev: false
 
   /proxy-addr@2.0.7:
