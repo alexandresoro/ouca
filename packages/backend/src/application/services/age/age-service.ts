@@ -35,6 +35,19 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     return ok(await ageRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isAgeUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithAge = await ageRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithAge > 0);
+  };
+
   const findAllAges = async (): Promise<AgeSimple[]> => {
     const ages = await ageRepository.findAges({
       orderBy: "libelle",
@@ -169,6 +182,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   return {
     findAge,
     getEntriesCountByAge,
+    isAgeUsed,
     findAllAges,
     findPaginatedAges,
     getAgesCount,

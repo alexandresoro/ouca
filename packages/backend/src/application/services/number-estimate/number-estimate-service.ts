@@ -35,6 +35,19 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     return ok(await numberEstimateRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isNumberEstimateUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithNumberEstimate = await numberEstimateRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithNumberEstimate > 0);
+  };
+
   const findAllNumberEstimates = async (): Promise<NumberEstimate[]> => {
     const numberEstimates = await numberEstimateRepository.findNumberEstimates({
       orderBy: "libelle",
@@ -168,6 +181,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
   return {
     findNumberEstimate,
     getEntriesCountByNumberEstimate,
+    isNumberEstimateUsed,
     findAllNumberEstimates,
     findPaginatesNumberEstimates,
     getNumberEstimatesCount,

@@ -51,6 +51,19 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     return ok(await behaviorRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isBehaviorUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithBehavior = await behaviorRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithBehavior > 0);
+  };
+
   const findAllBehaviors = async (): Promise<Behavior[]> => {
     const behaviors = await behaviorRepository.findBehaviors({
       orderBy: "code",
@@ -186,6 +199,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     findBehavior,
     findBehaviors,
     getEntriesCountByBehavior,
+    isBehaviorUsed,
     findAllBehaviors,
     findPaginatedBehaviors,
     getBehaviorsCount,

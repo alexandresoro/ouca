@@ -54,6 +54,23 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
     return ok(await classRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isSpeciesClassUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalSpeciesWithSpeciesClass = await speciesRepository.getCount({
+      searchCriteria: {
+        classIds: [id],
+      },
+    });
+
+    return ok(totalSpeciesWithSpeciesClass > 0);
+  };
+
   const findSpeciesClassOfSpecies = async (
     especeId: string | undefined,
     loggedUser: LoggedUser | null,
@@ -203,6 +220,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
     findSpeciesClass,
     getSpeciesCountBySpeciesClass,
     getEntriesCountBySpeciesClass,
+    isSpeciesClassUsed,
     findSpeciesClassOfSpecies,
     findAllSpeciesClasses,
     findPaginatedSpeciesClasses,

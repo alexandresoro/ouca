@@ -49,6 +49,19 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     return ok(await localityRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isLocalityUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalInventoriesWithLocality = await inventoryRepository.getCountByLocality(id);
+
+    return ok(totalInventoriesWithLocality > 0);
+  };
+
   const findLocalityOfInventoryId = async (
     inventoryId: string | undefined,
     loggedUser: LoggedUser | null,
@@ -207,6 +220,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     findLocality,
     getInventoriesCountByLocality,
     getEntriesCountByLocality,
+    isLocalityUsed,
     findLocalityOfInventoryId,
     findAllLocalities,
     findAllLocalitiesWithTownAndDepartment,

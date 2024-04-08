@@ -51,6 +51,19 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     return ok(await environmentRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isEnvironmentUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithEnvironment = await environmentRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithEnvironment > 0);
+  };
+
   const findAllEnvironments = async (): Promise<Environment[]> => {
     const environments = await environmentRepository.findEnvironments({
       orderBy: "libelle",
@@ -186,6 +199,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     findEnvironment,
     findEnvironments,
     getEntriesCountByEnvironment,
+    isEnvironmentUsed,
     findAllEnvironments,
     findPaginatedEnvironments,
     getEnvironmentsCount,

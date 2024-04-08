@@ -35,6 +35,19 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
     return ok(await sexRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isSexUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithSex = await sexRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithSex > 0);
+  };
+
   const findAllSexes = async (): Promise<Sex[]> => {
     const sexes = await sexRepository.findSexes({
       orderBy: "libelle",
@@ -169,6 +182,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
   return {
     findSex,
     getEntriesCountBySex,
+    isSexUsed,
     findAllSexes,
     findPaginatedSexes,
     getSexesCount,

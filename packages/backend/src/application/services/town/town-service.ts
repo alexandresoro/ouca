@@ -59,6 +59,19 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     return ok(enrichEntityWithEditableStatus(town, loggedUser));
   };
 
+  const isTownUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalLocalitiesWithTown = await localityRepository.getCount(undefined, id);
+
+    return ok(totalLocalitiesWithTown > 0);
+  };
+
   const findAllTowns = async (): Promise<Town[]> => {
     const towns = await townRepository.findTowns({
       orderBy: "nom",
@@ -197,6 +210,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     findTown,
     getEntriesCountByTown,
     getLocalitiesCountByTown,
+    isTownUsed,
     findTownOfLocalityId,
     findAllTowns,
     findAllTownsWithDepartments,

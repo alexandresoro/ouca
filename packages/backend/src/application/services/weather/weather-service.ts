@@ -51,6 +51,19 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     return ok(await weatherRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isWeatherUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithWeather = await weatherRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithWeather > 0);
+  };
+
   const findAllWeathers = async (): Promise<Weather[]> => {
     const weathers = await weatherRepository.findWeathers({
       orderBy: "libelle",
@@ -188,6 +201,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     findWeather,
     findWeathers,
     getEntriesCountByWeather,
+    isWeatherUsed,
     findAllWeathers,
     findPaginatedWeathers,
     getWeathersCount,

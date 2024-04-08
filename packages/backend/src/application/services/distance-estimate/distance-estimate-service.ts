@@ -35,6 +35,19 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
     return ok(await distanceEstimateRepository.getEntriesCountById(id, loggedUser.id));
   };
 
+  const isDistanceEstimateUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalEntriesWithDistanceEstimate = await distanceEstimateRepository.getEntriesCountById(id);
+
+    return ok(totalEntriesWithDistanceEstimate > 0);
+  };
+
   const findAllDistanceEstimates = async (): Promise<DistanceEstimate[]> => {
     const distanceEstimates = await distanceEstimateRepository.findDistanceEstimates({
       orderBy: "libelle",
@@ -169,6 +182,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
   return {
     findDistanceEstimate,
     getEntriesCountByDistanceEstimate,
+    isDistanceEstimateUsed,
     findAllDistanceEstimates,
     findPaginatedDistanceEstimates,
     getDistanceEstimatesCount,

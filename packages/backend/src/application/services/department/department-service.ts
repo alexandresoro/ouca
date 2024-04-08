@@ -65,6 +65,19 @@ export const buildDepartmentService = ({
     return ok(await townRepository.getCount(undefined, id));
   };
 
+  const isDepartmentUsed = async (
+    id: string,
+    loggedUser: LoggedUser | null,
+  ): Promise<Result<boolean, AccessFailureReason>> => {
+    if (!loggedUser) {
+      return err("notAllowed");
+    }
+
+    const totalTownsWithDepartment = await townRepository.getCount(id);
+
+    return ok(totalTownsWithDepartment > 0);
+  };
+
   const findDepartmentOfTownId = async (
     communeId: string | undefined,
     loggedUser: LoggedUser | null,
@@ -215,6 +228,7 @@ export const buildDepartmentService = ({
     getEntriesCountByDepartment,
     getLocalitiesCountByDepartment,
     getTownsCountByDepartment,
+    isDepartmentUsed,
     findDepartmentOfTownId,
     findAllDepartments,
     findPaginatedDepartments,
