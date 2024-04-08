@@ -313,14 +313,12 @@ describe("Creation of an inventory", () => {
 });
 
 describe("Deletion of an inventory", () => {
-  test("when deletion of inventory is done by an admin", async () => {
+  test("when deletion of inventory is done by someone with permission", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "admin",
+      permissions: { canManageAllEntries: true },
     });
 
-    const inventory = inventoryFactory.build({
-      ownerId: loggedUser.id,
-    });
+    const inventory = inventoryFactory.build();
 
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventory));
     inventoryRepository.getEntriesCountById.mock.mockImplementationOnce(() => Promise.resolve(0));

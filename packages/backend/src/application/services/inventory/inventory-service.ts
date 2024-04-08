@@ -227,7 +227,7 @@ export const buildInventoryService = ({
     }
 
     // Check that the user is allowed to modify the existing inventory
-    if (loggedUser?.role !== "admin") {
+    if (!loggedUser.permissions.canManageAllEntries) {
       const existingInventory = await inventoryRepository.findInventoryById(Number.parseInt(id));
 
       if (existingInventory?.ownerId !== loggedUser?.id) {

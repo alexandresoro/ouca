@@ -163,7 +163,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
     // First get the corresponding inventory
     const inventory = await inventoryRepository.findInventoryByEntryId(id);
 
-    if (loggedUser.role !== "admin" && inventory?.ownerId !== loggedUser.id) {
+    if (!loggedUser.permissions.canManageAllEntries && inventory?.ownerId !== loggedUser.id) {
       return err({ type: "notAllowed" });
     }
 
@@ -193,7 +193,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
     // First get the corresponding inventaire
     const inventaire = await inventoryRepository.findInventoryByEntryId(id);
 
-    if (loggedUser.role !== "admin" && inventaire?.ownerId !== loggedUser.id) {
+    if (!loggedUser.permissions.canManageAllEntries && inventaire?.ownerId !== loggedUser.id) {
       return err("notAllowed");
     }
 

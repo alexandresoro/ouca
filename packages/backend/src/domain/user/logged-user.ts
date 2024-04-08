@@ -6,6 +6,6 @@ export type LoggedUser = {
   /**
    * @deprecated rely on permissions instead
    */
-  role: UserRole;
+  role?: UserRole;
   permissions: Permissions;
 };

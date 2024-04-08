@@ -6,7 +6,6 @@ import { Factory } from "fishery";
 export const loggedUserFactory = Factory.define<LoggedUser>(() => {
   return {
     id: faker.string.uuid(),
-    role: "user",
     permissions: {
       observer: NO_ENTITY_PERMISSION,
       department: NO_ENTITY_PERMISSION,
@@ -22,6 +21,7 @@ export const loggedUserFactory = Factory.define<LoggedUser>(() => {
       behavior: NO_ENTITY_PERMISSION,
       environment: NO_ENTITY_PERMISSION,
       canViewAllEntries: false,
+      canManageAllEntries: false,
       canImport: false,
     },
   };

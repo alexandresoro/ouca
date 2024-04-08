@@ -215,9 +215,9 @@ describe("Get next group", () => {
 });
 
 describe("Deletion of a data", () => {
-  test("should handle the deletion of any data if admin", async () => {
+  test("should handle the deletion of any data if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
-      role: "admin",
+      permissions: { canManageAllEntries: true },
     });
 
     const matchingInventory = inventoryFactory.build();
