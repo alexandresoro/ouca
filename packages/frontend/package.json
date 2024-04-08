@@ -66,7 +66,7 @@
     "@ou-ca/eslint-config": "workspace:*",
     "@sentry/vite-plugin": "2.16.1",
     "@tanstack/react-query-devtools": "4.29.25",
-    "@testing-library/react": "14.2.2",
+    "@testing-library/react": "14.3.0",
     "@testing-library/user-event": "14.5.2",
     "@types/geojson": "7946.0.14",
     "@types/node": "20.12.4",
