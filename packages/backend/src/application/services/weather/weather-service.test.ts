@@ -255,7 +255,7 @@ describe("Update of an weather", () => {
 
     const weatherData = upsertWeatherInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     weatherRepository.findWeatherById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

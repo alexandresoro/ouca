@@ -260,7 +260,7 @@ describe("Update of a city", () => {
 
     const cityData = upsertTownInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     townRepository.findTownById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

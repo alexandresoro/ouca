@@ -206,7 +206,7 @@ describe("Update of a sex", () => {
 
     const sexData = upsertSexInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     sexRepository.findSexById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

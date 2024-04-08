@@ -260,10 +260,7 @@ describe("Update of a class", () => {
 
     const classData = upsertSpeciesClassInputFactory.build();
 
-    const loggedUser = {
-      id: "Bob",
-      role: "user",
-    } as const;
+    const loggedUser = loggedUserFactory.build();
 
     classRepository.findSpeciesClassById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

@@ -254,7 +254,7 @@ describe("Update of a behavior", () => {
 
     const behaviorData = upsertBehaviorInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     behaviorRepository.findBehaviorById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

@@ -277,7 +277,7 @@ describe("Update of a department", () => {
 
     const departmentData = upsertDepartmentInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     departmentRepository.findDepartmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

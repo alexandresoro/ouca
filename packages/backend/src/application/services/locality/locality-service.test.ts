@@ -259,7 +259,7 @@ describe("Update of a locality", () => {
 
     const localityData = upsertLocalityInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     localityRepository.findLocalityById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

@@ -229,7 +229,7 @@ describe("Update of a distance estimate", () => {
 
     const distanceEstimateData = upsertDistanceEstimateInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     distanceEstimateRepository.findDistanceEstimateById.mock.mockImplementationOnce(() =>
       Promise.resolve(existingData),

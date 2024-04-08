@@ -254,7 +254,7 @@ describe("Update of an environment", () => {
 
     const environmentData = upsertEnvironmentInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     environmentRepository.findEnvironmentById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 

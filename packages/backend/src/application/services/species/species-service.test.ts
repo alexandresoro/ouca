@@ -368,7 +368,7 @@ describe("Update of a species", () => {
 
     const speciesData = upsertSpeciesInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     speciesRepository.findSpeciesById.mock.mockImplementationOnce(() => Promise.resolve(ok(existingData)));
 

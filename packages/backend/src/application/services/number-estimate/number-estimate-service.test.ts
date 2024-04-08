@@ -225,7 +225,7 @@ describe("Update of a number estimate", () => {
 
     const numberEstimateData = upsertNumberEstimateInputFactory.build();
 
-    const user = loggedUserFactory.build({ id: "Bob", role: "user" });
+    const user = loggedUserFactory.build();
 
     numberEstimateRepository.findNumberEstimateById.mock.mockImplementationOnce(() => Promise.resolve(existingData));
 
