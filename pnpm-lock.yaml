@@ -145,8 +145,8 @@ importers:
         specifier: 1.6.4
         version: 1.6.4
       '@cloudflare/workers-types':
-        specifier: 4.20240404.0
-        version: 4.20240404.0
+        specifier: 4.20240405.0
+        version: 4.20240405.0
       typescript:
         specifier: 5.4.4
         version: 5.4.4
@@ -732,8 +732,8 @@ packages:
       '@bull-board/api': 5.15.3(@bull-board/ui@5.15.3)
     dev: false
 
-  /@cloudflare/workers-types@4.20240404.0:
-    resolution: {integrity: sha512-lfnYnjX4/65MrVeMF/k3C7BzaLoU1fEIdzCs04ofrx7J6rH7LK3DHRNcnuchoSxKuzG2xVf940MKZ1XieGRCLQ==}
+  /@cloudflare/workers-types@4.20240405.0:
+    resolution: {integrity: sha512-sEVOhyOgXUwfLkgHqbLZa/sfkSYrh7/zLmI6EZNibPaVPvAnAcItbNNl3SAlLyLKuwf8m4wAIAgu9meKWCvXjg==}
     dev: true
 
   /@emotion/is-prop-valid@1.2.1:
