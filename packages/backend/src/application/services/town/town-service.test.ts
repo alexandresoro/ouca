@@ -28,6 +28,7 @@ beforeEach(() => {
   townRepository.getCount.mock.resetCalls();
   townRepository.getEntriesCountById.mock.resetCalls();
   townRepository.findTownByLocalityId.mock.resetCalls();
+  localityRepository.getCount.mock.resetCalls();
 });
 
 describe("Find city", () => {
