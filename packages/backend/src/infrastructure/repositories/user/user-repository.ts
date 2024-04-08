@@ -111,16 +111,10 @@ const createUser = async ({
   return userSchema.parse(createdUser);
 };
 
-const deleteUserById = async (userId: string): Promise<boolean> => {
-  const deletedUsers = await kysely.deleteFrom("user").where("id", "=", userId).returningAll().execute();
-  return deletedUsers.length === 1;
-};
-
 export const userRepository = {
   getUserInfoById,
   findUserIdByExternalIdWithCache,
   findUserByExternalId,
   updateUserSettings,
   createUser,
-  deleteUserById,
 };

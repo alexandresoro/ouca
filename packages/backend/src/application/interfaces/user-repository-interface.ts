@@ -22,5 +22,4 @@ export type UserRepository = {
     extProviderName: string;
     extProviderId: string;
   }) => Promise<User>;
-  deleteUserById: (userId: string) => Promise<boolean>;
 };

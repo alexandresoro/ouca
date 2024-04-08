@@ -1,8 +1,6 @@
-import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
-import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { CreateUserInput, User } from "@domain/user/user.js";
 import type { UserRepository } from "@interfaces/user-repository-interface.js";
-import { type Result, err, ok } from "neverthrow";
+import {} from "neverthrow";
 import { logger } from "../../../utils/logger.js";
 
 type UserServiceDependencies = {
@@ -45,30 +43,12 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
       extProviderId: extProviderUserId,
     });
 
-  // Not used, not sure if still needed with IDP
-  const deleteUser = async (userId: string, loggedUser: LoggedUser): Promise<Result<boolean, AccessFailureReason>> => {
-    if (loggedUser.id !== userId && loggedUser.role !== "admin") {
-      // Only a user can delete itself
-      // With admin role, admin can delete anyone
-      return err("notAllowed");
-    }
-
-    const isSuccess = await userRepository.deleteUserById(userId);
-
-    if (isSuccess) {
-      logger.info(`User with id ${userId} has been deleted. Request has been initiated by ID ${loggedUser.id}`);
-    }
-
-    return ok(isSuccess);
-  };
-
   return {
     getUser,
     findUserIdByExternalIdWithCache,
     findUserByExternalId,
     updateSettings,
     createUser,
-    deleteUser,
   };
 };
 
