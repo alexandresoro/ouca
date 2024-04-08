@@ -73,6 +73,7 @@ describe("mergePermissions", () => {
         canDelete: false,
       },
       canViewAllEntries: false,
+      canManageAllEntries: false,
       canImport: false,
     });
   });
@@ -168,6 +169,7 @@ describe("mergePermissions", () => {
         canDelete: false,
       },
       canViewAllEntries: false,
+      canManageAllEntries: false,
       canImport: false,
     });
   });

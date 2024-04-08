@@ -20,6 +20,7 @@ export type Permissions = {
   environment: EntityPermission;
 
   canViewAllEntries: boolean;
+  canManageAllEntries: boolean;
 
   canImport: boolean;
 };
@@ -51,6 +52,7 @@ const NO_PERMISSIONS = Object.freeze({
   behavior: NO_ENTITY_PERMISSION,
   environment: NO_ENTITY_PERMISSION,
   canViewAllEntries: false,
+  canManageAllEntries: false,
   canImport: false,
 }) satisfies Permissions;
 
@@ -129,6 +131,7 @@ export const mergePermissions = (permissions: DeepPartial<Permissions>[]): Permi
         canDelete: acc.environment.canDelete || (permission.environment?.canDelete ?? false),
       },
       canViewAllEntries: acc.canViewAllEntries || (permission.canViewAllEntries ?? false),
+      canManageAllEntries: acc.canManageAllEntries || (permission.canManageAllEntries ?? false),
       canImport: acc.canImport || (permission.canImport ?? false),
     };
   }, NO_PERMISSIONS);

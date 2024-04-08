@@ -67,5 +67,6 @@ export const CONTRIBUTOR_PERMISSIONS = Object.freeze({
     canDelete: false,
   },
   canViewAllEntries: false,
+  canManageAllEntries: false,
   canImport: true,
 }) satisfies Permissions;

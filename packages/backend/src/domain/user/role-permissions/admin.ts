@@ -15,5 +15,6 @@ export const ADMIN_PERMISSIONS = Object.freeze({
   behavior: ALL_ENTITY_PERMISSIONS,
   environment: ALL_ENTITY_PERMISSIONS,
   canViewAllEntries: true,
+  canManageAllEntries: true,
   canImport: true,
 }) satisfies Permissions;

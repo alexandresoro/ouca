@@ -19,5 +19,6 @@ export const USER_PERMISSIONS = Object.freeze({
   behavior: NO_ENTITY_PERMISSION,
   environment: NO_ENTITY_PERMISSION,
   canViewAllEntries: false,
+  canManageAllEntries: false,
   canImport: false,
 }) satisfies Permissions;
