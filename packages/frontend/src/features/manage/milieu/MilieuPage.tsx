@@ -138,7 +138,7 @@ const MilieuPage: FunctionComponent = () => {
     updateEnvironment({ path: `/environments/${id}`, body: input });
   };
 
-  const handleDeleteEnvironment = (environmentToDelete: EnvironmentExtended) => {
+  const handleDeleteEnvironment = (environmentToDelete: Environment) => {
     deleteEnvironment({ path: `/environments/${environmentToDelete.id}` });
   };
 
