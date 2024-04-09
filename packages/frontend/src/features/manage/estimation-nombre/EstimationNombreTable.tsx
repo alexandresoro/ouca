@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesOrderBy, getNumberEstimatesExtendedResponse } from "@ou-ca/common/api/number-estimate";
 import { Fragment, type FunctionComponent } from "react";
@@ -31,6 +32,8 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
   onClickDeleteNumberEstimate,
 }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<NumberEstimatesOrderBy>(
     { orderBy: "libelle" },
@@ -98,21 +101,22 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((estimationNombre) => {
+              {page.data.map((numberEstimate) => {
+                const isOwner = user != null && numberEstimate?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={estimationNombre?.id}>
-                    <td>{estimationNombre.libelle}</td>
-                    <td>{estimationNombre.nonCompte ? "Oui" : ""}</td>
-                    <td>{estimationNombre.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={numberEstimate?.id}>
+                    <td>{numberEstimate.libelle}</td>
+                    <td>{numberEstimate.nonCompte ? "Oui" : ""}</td>
+                    <td>{numberEstimate.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={estimationNombre.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={numberEstimate.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!estimationNombre.editable}
-                        disabledDelete={!estimationNombre.editable || estimationNombre.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateNumberEstimate(estimationNombre)}
-                        onDeleteClicked={() => onClickDeleteNumberEstimate(estimationNombre)}
+                        canEdit={isOwner || user?.permissions.numberEstimate.canEdit}
+                        disabledDelete={!numberEstimate.editable || numberEstimate.entriesCount > 0}
+                        onEditClicked={() => onClickUpdateNumberEstimate(numberEstimate)}
+                        onDeleteClicked={() => onClickDeleteNumberEstimate(numberEstimate)}
                       />
                     </td>
                   </tr>

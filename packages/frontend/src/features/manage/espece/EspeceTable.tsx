@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
 import { Fragment, type FunctionComponent } from "react";
@@ -36,6 +37,8 @@ const COLUMNS = [
 
 const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies, onClickDeleteSpecies }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({
     orderBy: "nomFrancais",
@@ -104,23 +107,24 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((espece) => {
+              {page.data.map((species) => {
+                const isOwner = user != null && species?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={espece?.id}>
-                    <td>{espece.speciesClass?.libelle}</td>
-                    <td>{espece.code}</td>
-                    <td>{espece.nomFrancais}</td>
-                    <td>{espece.nomLatin}</td>
-                    <td>{espece.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={species?.id}>
+                    <td>{species.speciesClass?.libelle}</td>
+                    <td>{species.code}</td>
+                    <td>{species.nomFrancais}</td>
+                    <td>{species.nomLatin}</td>
+                    <td>{species.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={espece.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={species.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!espece.editable}
-                        disabledDelete={!espece.editable || espece.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateSpecies(espece)}
-                        onDeleteClicked={() => onClickDeleteSpecies(espece)}
+                        canEdit={isOwner || user?.permissions.species.canEdit}
+                        disabledDelete={!species.editable || species.entriesCount > 0}
+                        onEditClicked={() => onClickUpdateSpecies(species)}
+                        onDeleteClicked={() => onClickDeleteSpecies(species)}
                       />
                     </td>
                   </tr>

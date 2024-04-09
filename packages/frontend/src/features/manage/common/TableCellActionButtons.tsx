@@ -7,10 +7,6 @@ type TableCellActionButtonsProps = {
   canEdit?: boolean;
   canDelete?: boolean;
   /**
-   * @deprecated Use `canEdit` instead
-   */
-  disabledEdit?: boolean;
-  /**
    * @deprecated Use `canDelete` instead
    */
   disabledDelete?: boolean;
@@ -19,15 +15,14 @@ type TableCellActionButtonsProps = {
 };
 
 const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (props) => {
-  const { disabledEdit, disabledDelete, canEdit, canDelete, onEditClicked, onDeleteClicked } = props;
+  const { disabledDelete, canEdit, canDelete, onEditClicked, onDeleteClicked } = props;
   const { t } = useTranslation();
 
   return (
     <>
       <IconButton
         className="mx-1 text-primary dark:text-white"
-        // TODO: Remove `disabledEdit` once all components are updated and use !`canEdit` instead
-        disabled={disabledEdit ?? canEdit === false}
+        disabled={canEdit === false}
         aria-label={t("aria-editButton")}
         onClick={onEditClicked}
       >

@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
 import { type ClassesOrderBy, getClassesExtendedResponse } from "@ou-ca/common/api/species-class";
 import { Fragment, type FunctionComponent } from "react";
@@ -24,6 +25,8 @@ const COLUMNS = [
 
 const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass, onClickDeleteSpeciesClass }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>({
     orderBy: "libelle",
@@ -100,21 +103,22 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((classe) => {
+              {page.data.map((speciesClass) => {
+                const isOwner = user != null && speciesClass?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={classe?.id}>
-                    <td>{classe.libelle}</td>
-                    <td>{classe.speciesCount}</td>
-                    <td>{classe.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={speciesClass?.id}>
+                    <td>{speciesClass.libelle}</td>
+                    <td>{speciesClass.speciesCount}</td>
+                    <td>{speciesClass.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={classe.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={speciesClass.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!classe.editable}
-                        disabledDelete={!classe.editable || classe.speciesCount > 0}
-                        onEditClicked={() => onClickUpdateSpeciesClass(classe)}
-                        onDeleteClicked={() => onClickDeleteSpeciesClass(classe)}
+                        canEdit={isOwner || user?.permissions.speciesClass.canEdit}
+                        disabledDelete={!speciesClass.editable || speciesClass.speciesCount > 0}
+                        onEditClicked={() => onClickUpdateSpeciesClass(speciesClass)}
+                        onDeleteClicked={() => onClickDeleteSpeciesClass(speciesClass)}
                       />
                     </td>
                   </tr>

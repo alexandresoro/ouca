@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { SexExtended } from "@ou-ca/common/api/entities/sex";
 import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
@@ -25,6 +26,8 @@ const COLUMNS = [
 
 const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClickDeleteSex }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
@@ -91,20 +94,21 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((sexe) => {
+              {page.data.map((sex) => {
+                const isOwner = user != null && sex?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={sexe?.id}>
-                    <td>{sexe?.libelle}</td>
-                    <td>{sexe?.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={sex?.id}>
+                    <td>{sex?.libelle}</td>
+                    <td>{sex?.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={sexe.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={sex.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!sexe.editable}
-                        disabledDelete={!sexe.editable || sexe.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateSex(sexe)}
-                        onDeleteClicked={() => onClickDeleteSex(sexe)}
+                        canEdit={isOwner || user?.permissions.sex.canEdit}
+                        disabledDelete={!sex.editable || sex.entriesCount > 0}
+                        onEditClicked={() => onClickUpdateSex(sex)}
+                        onDeleteClicked={() => onClickDeleteSex(sex)}
                       />
                     </td>
                   </tr>

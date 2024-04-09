@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import { type BehaviorsOrderBy, getBehaviorsExtendedResponse } from "@ou-ca/common/api/behavior";
 import type { BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { Fragment, type FunctionComponent } from "react";
@@ -35,6 +36,8 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
   onClickDeleteBehavior,
 }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>({
     orderBy: "code",
@@ -102,22 +105,23 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((comportement) => {
+              {page.data.map((behavior) => {
+                const isOwner = user != null && behavior?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={comportement?.id}>
-                    <td>{comportement.code}</td>
-                    <td>{comportement.libelle}</td>
-                    <td>{comportement.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
-                    <td>{comportement.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={behavior?.id}>
+                    <td>{behavior.code}</td>
+                    <td>{behavior.libelle}</td>
+                    <td>{behavior.nicheur ? t(`breedingStatus.${behavior?.nicheur}`) : ""}</td>
+                    <td>{behavior.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={comportement.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={behavior.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!comportement.editable}
-                        disabledDelete={!comportement.editable}
-                        onEditClicked={() => onClickUpdateBehavior(comportement)}
-                        onDeleteClicked={() => onClickDeleteBehavior(comportement)}
+                        canEdit={isOwner || user?.permissions.behavior.canEdit}
+                        disabledDelete={!behavior.editable}
+                        onEditClicked={() => onClickUpdateBehavior(behavior)}
+                        onDeleteClicked={() => onClickDeleteBehavior(behavior)}
                       />
                     </td>
                   </tr>

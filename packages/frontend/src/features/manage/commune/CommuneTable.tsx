@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { TownExtended } from "@ou-ca/common/api/entities/town";
 import { type TownsOrderBy, getTownsExtendedResponse } from "@ou-ca/common/api/town";
 import { Fragment, type FunctionComponent } from "react";
@@ -17,6 +18,8 @@ type CommuneTableProps = {
 
 const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown, onClickDeleteTown }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>({
     orderBy: "nom",
@@ -107,23 +110,24 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((commune) => {
+              {page.data.map((town) => {
+                const isOwner = user != null && town?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={commune?.id}>
-                    <td>{commune.departmentCode}</td>
-                    <td>{commune.code}</td>
-                    <td>{commune.nom}</td>
-                    <td>{commune.localitiesCount}</td>
-                    <td>{commune.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={town?.id}>
+                    <td>{town.departmentCode}</td>
+                    <td>{town.code}</td>
+                    <td>{town.nom}</td>
+                    <td>{town.localitiesCount}</td>
+                    <td>{town.entriesCount}</td>
                     <td align="center">
-                      <AvatarWithUniqueNameAvatar input={commune.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={town.ownerId} />
                     </td>
                     <td align="center">
                       <TableCellActionButtons
-                        disabledEdit={!commune.editable}
-                        disabledDelete={!commune.editable || commune.localitiesCount > 0}
-                        onEditClicked={() => onClickUpdateTown(commune)}
-                        onDeleteClicked={() => onClickDeleteTown(commune)}
+                        canEdit={isOwner || user?.permissions.town.canEdit}
+                        disabledDelete={!town.editable || town.localitiesCount > 0}
+                        onEditClicked={() => onClickUpdateTown(town)}
+                        onDeleteClicked={() => onClickDeleteTown(town)}
                       />
                     </td>
                   </tr>

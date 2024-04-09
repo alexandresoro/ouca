@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import { type EnvironmentsOrderBy, getEnvironmentsExtendedResponse } from "@ou-ca/common/api/environment";
 import { Fragment, type FunctionComponent } from "react";
@@ -28,6 +29,8 @@ const COLUMNS = [
 
 const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment, onClickDeleteEnvironment }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>({
     orderBy: "code",
@@ -95,21 +98,22 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((milieu) => {
+              {page.data.map((environment) => {
+                const isOwner = user != null && environment?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={milieu?.id}>
-                    <td>{milieu.code}</td>
-                    <td>{milieu.libelle}</td>
-                    <td>{milieu.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={environment?.id}>
+                    <td>{environment.code}</td>
+                    <td>{environment.libelle}</td>
+                    <td>{environment.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={milieu.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={environment.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!milieu.editable}
-                        disabledDelete={!milieu.editable}
-                        onEditClicked={() => onClickUpdateEnvironment(milieu)}
-                        onDeleteClicked={() => onClickDeleteEnvironment(milieu)}
+                        canEdit={isOwner || user?.permissions.environment.canEdit}
+                        disabledDelete={!environment.editable}
+                        onEditClicked={() => onClickUpdateEnvironment(environment)}
+                        onDeleteClicked={() => onClickDeleteEnvironment(environment)}
                       />
                     </td>
                   </tr>

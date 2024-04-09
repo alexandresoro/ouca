@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import { type DepartmentsOrderBy, getDepartmentsExtendedResponse } from "@ou-ca/common/api/department";
 import type { DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { Fragment, type FunctionComponent } from "react";
@@ -27,6 +28,8 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
   onClickDeleteDepartment,
 }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>({
     orderBy: "code",
@@ -112,22 +115,23 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((departement) => {
+              {page.data.map((department) => {
+                const isOwner = user != null && department?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={departement?.id}>
-                    <td>{departement.code}</td>
-                    <td>{departement.townsCount}</td>
-                    <td>{departement.localitiesCount}</td>
-                    <td>{departement.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={department?.id}>
+                    <td>{department.code}</td>
+                    <td>{department.townsCount}</td>
+                    <td>{department.localitiesCount}</td>
+                    <td>{department.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={departement.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={department.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!departement.editable}
-                        disabledDelete={!departement.editable || departement.townsCount > 0}
-                        onEditClicked={() => onClickUpdateDepartment(departement)}
-                        onDeleteClicked={() => onClickDeleteDepartment(departement)}
+                        canEdit={isOwner || user?.permissions.department.canEdit}
+                        disabledDelete={!department.editable || department.townsCount > 0}
+                        onEditClicked={() => onClickUpdateDepartment(department)}
+                        onDeleteClicked={() => onClickDeleteDepartment(department)}
                       />
                     </td>
                   </tr>

@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesOrderBy, getLocalitiesExtendedResponse } from "@ou-ca/common/api/locality";
 import { Fragment, type FunctionComponent } from "react";
@@ -48,6 +49,8 @@ const COLUMNS = [
 
 const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality, onClickDeleteLocality }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>({
     orderBy: "nom",
@@ -115,26 +118,27 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((lieuDit) => {
+              {page.data.map((locality) => {
+                const isOwner = user != null && locality?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={lieuDit?.id}>
-                    <td>{lieuDit.departmentCode}</td>
-                    <td>{lieuDit.townCode}</td>
-                    <td>{lieuDit.townName}</td>
-                    <td>{lieuDit.nom}</td>
-                    <td>{lieuDit.coordinates.latitude}</td>
-                    <td>{lieuDit.coordinates.longitude}</td>
-                    <td>{lieuDit.coordinates.altitude}</td>
-                    <td>{lieuDit.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={locality?.id}>
+                    <td>{locality.departmentCode}</td>
+                    <td>{locality.townCode}</td>
+                    <td>{locality.townName}</td>
+                    <td>{locality.nom}</td>
+                    <td>{locality.coordinates.latitude}</td>
+                    <td>{locality.coordinates.longitude}</td>
+                    <td>{locality.coordinates.altitude}</td>
+                    <td>{locality.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={lieuDit.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={locality.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!lieuDit.editable}
-                        disabledDelete={!lieuDit.editable || lieuDit.inventoriesCount > 0}
-                        onEditClicked={() => onClickUpdateLocality(lieuDit)}
-                        onDeleteClicked={() => onClickDeleteLocality(lieuDit)}
+                        canEdit={isOwner || user?.permissions.locality.canEdit}
+                        disabledDelete={!locality.editable || locality.inventoriesCount > 0}
+                        onEditClicked={() => onClickUpdateLocality(locality)}
+                        onDeleteClicked={() => onClickDeleteLocality(locality)}
                       />
                     </td>
                   </tr>

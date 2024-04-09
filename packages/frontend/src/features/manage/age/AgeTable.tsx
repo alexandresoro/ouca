@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
@@ -25,6 +26,8 @@ const COLUMNS = [
 
 const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickDeleteAge }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
@@ -92,6 +95,7 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
           return (
             <Fragment key={page.meta.pageNumber}>
               {page.data.map((age) => {
+                const isOwner = user != null && age?.ownerId === user.id;
                 return (
                   <tr className="hover:bg-base-200" key={age.id}>
                     <td>{age.libelle}</td>
@@ -101,7 +105,7 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!age.editable}
+                        canEdit={isOwner || user?.permissions.age.canEdit}
                         disabledDelete={!age.editable || age.entriesCount > 0}
                         onEditClicked={() => onClickUpdateAge(age)}
                         onDeleteClicked={() => onClickDeleteAge(age)}

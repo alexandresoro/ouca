@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
@@ -26,6 +27,8 @@ const COLUMNS = [
 
 const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, onClickDeleteWeather }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
@@ -102,20 +105,21 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((meteo) => {
+              {page.data.map((weather) => {
+                const isOwner = user != null && weather?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={meteo?.id}>
-                    <td>{meteo.libelle}</td>
-                    <td>{meteo.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={weather?.id}>
+                    <td>{weather.libelle}</td>
+                    <td>{weather.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={meteo.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={weather.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!meteo.editable}
-                        disabledDelete={!meteo.editable}
-                        onEditClicked={() => onClickUpdateWeather(meteo)}
-                        onDeleteClicked={() => onClickDeleteWeather(meteo)}
+                        canEdit={isOwner || user?.permissions.weather.canEdit}
+                        disabledDelete={!weather.editable}
+                        onEditClicked={() => onClickUpdateWeather(weather)}
+                        onDeleteClicked={() => onClickDeleteWeather(weather)}
                       />
                     </td>
                   </tr>

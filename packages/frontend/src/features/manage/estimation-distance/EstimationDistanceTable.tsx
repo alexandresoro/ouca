@@ -1,4 +1,5 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
+import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
@@ -28,6 +29,8 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
   onClickDeleteDistanceEstimate,
 }) => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
@@ -94,20 +97,21 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((estimationDistance) => {
+              {page.data.map((distanceEstimate) => {
+                const isOwner = user != null && distanceEstimate?.ownerId === user.id;
                 return (
-                  <tr className="hover:bg-base-200" key={estimationDistance?.id}>
-                    <td>{estimationDistance.libelle}</td>
-                    <td>{estimationDistance.entriesCount}</td>
+                  <tr className="hover:bg-base-200" key={distanceEstimate?.id}>
+                    <td>{distanceEstimate.libelle}</td>
+                    <td>{distanceEstimate.entriesCount}</td>
                     <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={estimationDistance.ownerId} />
+                      <AvatarWithUniqueNameAvatar input={distanceEstimate.ownerId} />
                     </td>
                     <td align="center" className="w-32">
                       <TableCellActionButtons
-                        disabledEdit={!estimationDistance.editable}
-                        disabledDelete={!estimationDistance.editable || estimationDistance.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance)}
-                        onDeleteClicked={() => onClickDeleteDistanceEstimate(estimationDistance)}
+                        canEdit={isOwner || user?.permissions.distanceEstimate.canEdit}
+                        disabledDelete={!distanceEstimate.editable || distanceEstimate.entriesCount > 0}
+                        onEditClicked={() => onClickUpdateDistanceEstimate(distanceEstimate)}
+                        onDeleteClicked={() => onClickDeleteDistanceEstimate(distanceEstimate)}
                       />
                     </td>
                   </tr>
