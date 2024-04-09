@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { townExtendedSchema, townSchema } from "./entities/town.js";
 
@@ -10,6 +11,14 @@ import { townExtendedSchema, townSchema } from "./entities/town.js";
 export const getTownResponse = townSchema;
 
 export type GetTownResponse = z.infer<typeof getTownResponse>;
+
+/**
+ * `GET` `/towns/:id/info`
+ *  Retrieve town info
+ */
+export const townInfoSchema = entityInfoSchema.extend({
+  localitiesCount: z.number(),
+});
 
 /**
  * `GET` `/towns`

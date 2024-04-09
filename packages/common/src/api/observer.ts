@@ -16,7 +16,7 @@ export const getObserverResponse = observerSchema;
 export type GetObserverResponse = z.infer<typeof getObserverResponse>;
 
 /**
- * `GET` `/observer/:id/info`
+ * `GET` `/observers/:id/info`
  *  Retrieve observer info
  */
 export const observerInfoSchema = entityInfoSchema;

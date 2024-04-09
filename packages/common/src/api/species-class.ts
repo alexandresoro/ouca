@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { speciesClassExtendedSchema, speciesClassSchema } from "./entities/species-class.js";
 
@@ -13,6 +14,14 @@ import { speciesClassExtendedSchema, speciesClassSchema } from "./entities/speci
 export const getClassResponse = speciesClassSchema;
 
 export type GetClassResponse = z.infer<typeof getClassResponse>;
+
+/**
+ * `GET` `/classes/:id/info`
+ *  Retrieve species class info
+ */
+export const speciesClassInfoSchema = entityInfoSchema.extend({
+  speciesCount: z.number(),
+});
 
 /**
  * `GET` `/classes`

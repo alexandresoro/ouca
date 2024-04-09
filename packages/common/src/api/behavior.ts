@@ -4,6 +4,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { behaviorExtendedSchema, behaviorSchema } from "./entities/behavior.js";
 
@@ -14,6 +15,12 @@ import { behaviorExtendedSchema, behaviorSchema } from "./entities/behavior.js";
 export const getBehaviorResponse = behaviorSchema;
 
 export type GetBehaviorResponse = z.infer<typeof getBehaviorResponse>;
+
+/**
+ * `GET` `/behavior/:id/info`
+ *  Retrieve behavior info
+ */
+export const behaviorInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/behaviors`

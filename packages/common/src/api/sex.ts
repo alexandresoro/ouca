@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { sexExtendedSchema, sexSchema } from "./entities/sex.js";
 
@@ -13,6 +14,12 @@ import { sexExtendedSchema, sexSchema } from "./entities/sex.js";
 export const getSexResponse = sexSchema;
 
 export type GetSexResponse = z.infer<typeof getSexResponse>;
+
+/**
+ * `GET` `/sexes/:id/info`
+ *  Retrieve sex info
+ */
+export const sexInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/sexes`

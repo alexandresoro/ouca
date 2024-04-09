@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { localityExtendedSchema, localitySchema } from "./entities/locality.js";
 
@@ -10,6 +11,12 @@ import { localityExtendedSchema, localitySchema } from "./entities/locality.js";
 export const getLocalityResponse = localitySchema;
 
 export type GetLocalityResponse = z.infer<typeof getLocalityResponse>;
+
+/**
+ * `GET` `/locality/:id/info`
+ *  Retrieve locality info
+ */
+export const localityInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/localities`

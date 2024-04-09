@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { weatherExtendedSchema, weatherSchema } from "./entities/weather.js";
 
@@ -13,6 +14,12 @@ import { weatherExtendedSchema, weatherSchema } from "./entities/weather.js";
 export const getWeatherResponse = weatherSchema;
 
 export type GetWeatherResponse = z.infer<typeof getWeatherResponse>;
+
+/**
+ * `GET` `/weathers/:id/info`
+ *  Retrieve weather info
+ */
+export const observerInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/weathers`

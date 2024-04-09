@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { distanceEstimateExtendedSchema, distanceEstimateSchema } from "./entities/distance-estimate.js";
 
@@ -13,6 +14,12 @@ import { distanceEstimateExtendedSchema, distanceEstimateSchema } from "./entiti
 export const getDistanceEstimateResponse = distanceEstimateSchema;
 
 export type GetDistanceEstimateResponse = z.infer<typeof getDistanceEstimateResponse>;
+
+/**
+ * `GET` `/distance-estimates/:id/info`
+ *  Retrieve distance estimate info
+ */
+export const distanceEstimateInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/distance-estimates`

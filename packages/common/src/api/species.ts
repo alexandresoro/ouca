@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
 import { speciesExtendedSchema, speciesSchema } from "./entities/species.js";
@@ -11,6 +12,12 @@ import { speciesExtendedSchema, speciesSchema } from "./entities/species.js";
 export const getSpeciesResponse = speciesSchema;
 
 export type GetSpeciesResponse = z.infer<typeof getSpeciesResponse>;
+
+/**
+ * `GET` `/species/:id/info`
+ *  Retrieve species info
+ */
+export const speciesInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/species`

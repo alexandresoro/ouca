@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { ageSchema, ageSimpleSchema } from "./entities/age.js";
 
@@ -13,6 +14,12 @@ import { ageSchema, ageSimpleSchema } from "./entities/age.js";
 export const getAgeResponse = ageSimpleSchema;
 
 export type GetAgeResponse = z.infer<typeof getAgeResponse>;
+
+/**
+ * `GET` `/ages/:id/info`
+ *  Retrieve age info
+ */
+export const ageInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/ages`

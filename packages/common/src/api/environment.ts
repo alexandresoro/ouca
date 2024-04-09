@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { environmentExtendedSchema, environmentSchema } from "./entities/environment.js";
 
@@ -13,6 +14,12 @@ import { environmentExtendedSchema, environmentSchema } from "./entities/environ
 export const getEnvironmentResponse = environmentSchema;
 
 export type GetEnvironmentResponse = z.infer<typeof getEnvironmentResponse>;
+
+/**
+ * `GET` `/environments/:id/info`
+ *  Retrieve environment info
+ */
+export const environmentInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/environments`

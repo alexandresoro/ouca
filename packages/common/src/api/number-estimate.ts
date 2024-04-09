@@ -3,6 +3,7 @@ import {
   ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS,
   entitiesCommonQueryParamsSchema,
 } from "./common/entitiesSearchParams.js";
+import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { numberEstimateExtendedSchema, numberEstimateSchema } from "./entities/number-estimate.js";
 
@@ -13,6 +14,12 @@ import { numberEstimateExtendedSchema, numberEstimateSchema } from "./entities/n
 export const getNumberEstimateResponse = numberEstimateSchema;
 
 export type GetNumberEstimateResponse = z.infer<typeof getNumberEstimateResponse>;
+
+/**
+ * `GET` `/number-estimates/:id/info`
+ *  Retrieve number estimate info
+ */
+export const numberEstimateInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/number-estimates`
