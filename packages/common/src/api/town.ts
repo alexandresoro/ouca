@@ -17,6 +17,7 @@ export type GetTownResponse = z.infer<typeof getTownResponse>;
  *  Retrieve town info
  */
 export const townInfoSchema = entityInfoSchema.extend({
+  departmentCode: z.string(),
   localitiesCount: z.number(),
 });
 

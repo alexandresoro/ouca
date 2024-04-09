@@ -16,7 +16,11 @@ export type GetLocalityResponse = z.infer<typeof getLocalityResponse>;
  * `GET` `/locality/:id/info`
  *  Retrieve locality info
  */
-export const localityInfoSchema = entityInfoSchema;
+export const localityInfoSchema = entityInfoSchema.extend({
+  townCode: z.number(),
+  townName: z.string(),
+  departmentCode: z.string(),
+});
 
 /**
  * `GET` `/localities`

@@ -51,6 +51,7 @@ export const townsController: FastifyPluginCallback<{
       await townService.getEntriesCountByTown(`${req.params.id}`, req.user),
       await townService.isTownUsed(`${req.params.id}`, req.user),
       await townService.getLocalitiesCountByTown(`${req.params.id}`, req.user),
+      await departmentService.findDepartmentOfTownId(`${req.params.id}`, req.user),
     ]);
 
     if (townInfoResult.isErr()) {
@@ -60,11 +61,16 @@ export const townsController: FastifyPluginCallback<{
       }
     }
 
-    const [ownEntriesCount, isTownUsed, localitiesCount] = townInfoResult.value;
+    const [ownEntriesCount, isTownUsed, localitiesCount, department] = townInfoResult.value;
+
+    if (!department) {
+      return await reply.status(404).send();
+    }
 
     const response = townInfoSchema.parse({
       canBeDeleted: !isTownUsed,
       ownEntriesCount,
+      departmentCode: department.code,
       localitiesCount,
     });
 

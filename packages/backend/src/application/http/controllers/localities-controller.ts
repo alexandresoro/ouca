@@ -50,6 +50,7 @@ export const localitiesController: FastifyPluginCallback<{
     const localityInfoResult = Result.combine([
       await localityService.getEntriesCountByLocality(`${req.params.id}`, req.user),
       await localityService.isLocalityUsed(`${req.params.id}`, req.user),
+      await townService.findTownOfLocalityId(`${req.params.id}`, req.user),
     ]);
 
     if (localityInfoResult.isErr()) {
@@ -59,11 +60,31 @@ export const localitiesController: FastifyPluginCallback<{
       }
     }
 
-    const [ownEntriesCount, isLocalityUsed] = localityInfoResult.value;
+    const [ownEntriesCount, isLocalityUsed, town] = localityInfoResult.value;
+
+    if (!town) {
+      return await reply.status(404).send();
+    }
+
+    const departmentResult = await departmentService.findDepartmentOfTownId(town.id, req.user);
+
+    if (departmentResult.isErr()) {
+      switch (departmentResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    if (!departmentResult.value) {
+      return await reply.status(404).send();
+    }
 
     const response = localityInfoSchema.parse({
       canBeDeleted: !isLocalityUsed,
       ownEntriesCount,
+      townCode: town.code,
+      townName: town.nom,
+      departmentCode: departmentResult.value.code,
     });
 
     return await reply.send(response);
