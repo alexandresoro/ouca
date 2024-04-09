@@ -19,7 +19,7 @@ export type GetWeatherResponse = z.infer<typeof getWeatherResponse>;
  * `GET` `/weathers/:id/info`
  *  Retrieve weather info
  */
-export const observerInfoSchema = entityInfoSchema;
+export const weatherInfoSchema = entityInfoSchema;
 
 /**
  * `GET` `/weathers`
