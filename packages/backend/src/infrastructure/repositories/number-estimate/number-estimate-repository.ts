@@ -36,7 +36,12 @@ const findNumberEstimates = async (
       .selectFrom("estimation_nombre")
       .leftJoin("donnee", "donnee.estimationNombreId", "estimation_nombre.id")
       .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-      .select([sql`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"]);
+      .select([
+        sql`basenaturaliste.estimation_nombre.id::text`.as("id"),
+        "estimation_nombre.libelle",
+        "estimation_nombre.nonCompte",
+        "estimation_nombre.ownerId",
+      ]);
 
     if (q?.length) {
       queryNumberEstimate = queryNumberEstimate.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);

@@ -36,7 +36,11 @@ const findDistanceEstimates = async (
       .selectFrom("estimation_distance")
       .leftJoin("donnee", "donnee.estimationDistanceId", "estimation_distance.id")
       .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-      .select([sql`basenaturaliste.estimation_distance.id::text`.as("id"), "libelle", "ownerId"]);
+      .select([
+        sql`basenaturaliste.estimation_distance.id::text`.as("id"),
+        "estimation_distance.libelle",
+        "estimation_distance.ownerId",
+      ]);
 
     if (q?.length) {
       queryDistanceEstimate = queryDistanceEstimate.where(sql`unaccent(libelle)`, "ilike", sql`unaccent(${`%${q}%`})`);
