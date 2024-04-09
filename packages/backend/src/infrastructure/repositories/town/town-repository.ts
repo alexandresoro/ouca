@@ -82,7 +82,13 @@ const findTowns = async (
 
       queryTown = queryTown
         .groupBy("commune.id")
-        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy(
+          (eb) =>
+            ownerId
+              ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
+              : eb.fn.count("donnee.id"),
+          sortOrder ?? undefined,
+        )
         .orderBy("commune.nom asc");
 
       break;

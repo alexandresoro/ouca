@@ -50,6 +50,7 @@ const findSpeciesClasses = async (
         .selectFrom("classe")
         .leftJoin("espece", "espece.classeId", "classe.id")
         .leftJoin("donnee", "donnee.especeId", "espece.id")
+        .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
         .select([sql`basenaturaliste.classe.id::text`.as("id"), "classe.libelle", "classe.ownerId"]);
 
       if (q?.length) {
@@ -58,7 +59,13 @@ const findSpeciesClasses = async (
 
       querySpeciesClass = querySpeciesClass
         .groupBy("classe.id")
-        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy(
+          (eb) =>
+            ownerId
+              ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
+              : eb.fn.count("donnee.id"),
+          sortOrder ?? undefined,
+        )
         .orderBy("classe.libelle asc");
 
       break;

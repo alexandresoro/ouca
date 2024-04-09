@@ -72,6 +72,7 @@ const findSpecies = async (
         querySpecies = kysely
           .selectFrom("espece")
           .leftJoin("donnee", "donnee.especeId", "espece.id")
+          .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
           .select([
             sql<string>`espece.id::text`.as("id"),
             "espece.code",
@@ -93,7 +94,13 @@ const findSpecies = async (
 
         querySpecies = querySpecies
           .groupBy("espece.id")
-          .orderBy((eb) => eb.fn.count("donnee.id").distinct(), sortOrder ?? undefined)
+          .orderBy(
+            (eb) =>
+              ownerId
+                ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
+                : eb.fn.count("donnee.id"),
+            sortOrder ?? undefined,
+          )
           .orderBy("espece.code asc");
 
         break;
@@ -210,7 +217,13 @@ const findSpecies = async (
 
         querySpecies = querySpecies
           .groupBy("espece.id")
-          .orderBy((eb) => eb.fn.count("donnee.id").distinct(), sortOrder ?? undefined)
+          .orderBy(
+            (eb) =>
+              ownerId
+                ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
+                : eb.fn.count("donnee.id"),
+            sortOrder ?? undefined,
+          )
           .orderBy("espece.code asc");
 
         break;

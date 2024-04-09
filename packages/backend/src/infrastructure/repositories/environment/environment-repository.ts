@@ -49,6 +49,8 @@ const findEnvironments = async (
     queryEnvironment = kysely
       .selectFrom("milieu")
       .leftJoin("donnee_milieu", "milieu.id", "donnee_milieu.milieuId")
+      .leftJoin("donnee", "donnee_milieu.donneeId", "donnee.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
       .select([sql`basenaturaliste.milieu.id::text`.as("id"), "milieu.code", "milieu.libelle", "milieu.ownerId"]);
 
     if (q?.length) {
@@ -62,7 +64,11 @@ const findEnvironments = async (
 
     queryEnvironment = queryEnvironment
       .groupBy("milieu.id")
-      .orderBy((eb) => eb.fn.count("donnee_milieu.donneeId"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("milieu.code asc");
   } else {
     queryEnvironment = kysely

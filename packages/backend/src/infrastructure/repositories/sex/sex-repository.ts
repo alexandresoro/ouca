@@ -30,6 +30,7 @@ const findSexes = async (
     querySex = kysely
       .selectFrom("sexe")
       .leftJoin("donnee", "donnee.sexeId", "sexe.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
       .select([sql`basenaturaliste.sexe.id::text`.as("id"), "libelle", "sexe.ownerId"]);
 
     if (q?.length) {
@@ -38,7 +39,11 @@ const findSexes = async (
 
     querySex = querySex
       .groupBy("sexe.id")
-      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("sexe.libelle asc");
   } else {
     querySex = kysely

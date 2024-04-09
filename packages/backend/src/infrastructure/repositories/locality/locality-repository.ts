@@ -92,7 +92,13 @@ const findLocalities = async (
 
       queryLocality = queryLocality
         .groupBy("lieudit.id")
-        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy(
+          (eb) =>
+            ownerId
+              ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
+              : eb.fn.count("donnee.id"),
+          sortOrder ?? undefined,
+        )
         .orderBy("lieudit.nom asc");
 
       break;

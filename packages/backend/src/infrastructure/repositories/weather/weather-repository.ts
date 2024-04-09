@@ -59,7 +59,11 @@ const findWeathers = async (
 
     queryWeather = queryWeather
       .groupBy("meteo.id")
-      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("meteo.libelle asc");
   } else {
     queryWeather = kysely

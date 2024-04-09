@@ -50,6 +50,8 @@ const findBehaviors = async (
     queryBehavior = kysely
       .selectFrom("comportement")
       .leftJoin("donnee_comportement", "comportement.id", "donnee_comportement.comportementId")
+      .leftJoin("donnee", "donnee_comportement.donneeId", "donnee.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
       .select([
         sql`basenaturaliste.comportement.id::text`.as("id"),
         "comportement.code",
@@ -69,7 +71,11 @@ const findBehaviors = async (
 
     queryBehavior = queryBehavior
       .groupBy("comportement.id")
-      .orderBy((eb) => eb.fn.count("donnee_comportement.donneeId"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("comportement.code asc");
   } else {
     queryBehavior = kysely

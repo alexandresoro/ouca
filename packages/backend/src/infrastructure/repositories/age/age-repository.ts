@@ -30,6 +30,7 @@ const findAges = async (
     queryAge = kysely
       .selectFrom("age")
       .leftJoin("donnee", "donnee.ageId", "age.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
       .select([sql`basenaturaliste.age.id::text`.as("id"), "libelle", "age.ownerId"]);
 
     if (q?.length) {
@@ -38,7 +39,11 @@ const findAges = async (
 
     queryAge = queryAge
       .groupBy("age.id")
-      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("age.libelle asc");
   } else {
     queryAge = kysely.selectFrom("age").select([sql`basenaturaliste.age.id::text`.as("id"), "libelle", "age.ownerId"]);

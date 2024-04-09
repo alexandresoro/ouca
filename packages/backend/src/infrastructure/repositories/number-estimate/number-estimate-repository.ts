@@ -35,6 +35,7 @@ const findNumberEstimates = async (
     queryNumberEstimate = kysely
       .selectFrom("estimation_nombre")
       .leftJoin("donnee", "donnee.estimationNombreId", "estimation_nombre.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
       .select([sql`basenaturaliste.estimation_nombre.id::text`.as("id"), "libelle", "nonCompte", "ownerId"]);
 
     if (q?.length) {
@@ -43,7 +44,11 @@ const findNumberEstimates = async (
 
     queryNumberEstimate = queryNumberEstimate
       .groupBy("estimation_nombre.id")
-      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("estimation_nombre.libelle asc");
   } else {
     queryNumberEstimate = kysely

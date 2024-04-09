@@ -35,6 +35,7 @@ const findDistanceEstimates = async (
     queryDistanceEstimate = kysely
       .selectFrom("estimation_distance")
       .leftJoin("donnee", "donnee.estimationDistanceId", "estimation_distance.id")
+      .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
       .select([sql`basenaturaliste.estimation_distance.id::text`.as("id"), "libelle", "ownerId"]);
 
     if (q?.length) {
@@ -43,7 +44,11 @@ const findDistanceEstimates = async (
 
     queryDistanceEstimate = queryDistanceEstimate
       .groupBy("estimation_distance.id")
-      .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+      .orderBy(
+        (eb) =>
+          ownerId ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId) : eb.fn.count("donnee.id"),
+        sortOrder ?? undefined,
+      )
       .orderBy("estimation_distance.libelle asc");
   } else {
     queryDistanceEstimate = kysely

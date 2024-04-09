@@ -61,7 +61,13 @@ const findDepartments = async (
 
       queryDepartment = queryDepartment
         .groupBy("departement.id")
-        .orderBy((eb) => eb.fn.count("donnee.id"), sortOrder ?? undefined)
+        .orderBy(
+          (eb) =>
+            ownerId
+              ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
+              : eb.fn.count("donnee.id"),
+          sortOrder ?? undefined,
+        )
         .orderBy("departement.code asc");
 
       break;
