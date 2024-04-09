@@ -17,7 +17,9 @@ export type GetSpeciesResponse = z.infer<typeof getSpeciesResponse>;
  * `GET` `/species/:id/info`
  *  Retrieve species info
  */
-export const speciesInfoSchema = entityInfoSchema;
+export const speciesInfoSchema = entityInfoSchema.extend({
+  totalEntriesCount: z.number().optional(),
+});
 
 /**
  * `GET` `/species`

@@ -59,11 +59,31 @@ export const speciesController: FastifyPluginCallback<{
       }
     }
 
+    let totalEntriesCount: number | undefined = undefined;
+    if (req.user?.permissions.canViewAllEntries) {
+      // TODO: this should be better handled in the service
+      const totalEntriesCountResult = await speciesService.getEntriesCountBySpecies(
+        `${req.params.id}`,
+        { onlyOwnData: false },
+        req.user,
+      );
+
+      if (totalEntriesCountResult.isErr()) {
+        switch (totalEntriesCountResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
+      }
+
+      totalEntriesCount = totalEntriesCountResult.value;
+    }
+
     const [ownEntriesCount, isSpeciesUsed] = speciesInfoResult.value;
 
     const response = speciesInfoSchema.parse({
       canBeDeleted: !isSpeciesUsed,
       ownEntriesCount,
+      totalEntriesCount,
     });
 
     return await reply.send(response);

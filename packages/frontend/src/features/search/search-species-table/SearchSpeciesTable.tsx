@@ -1,12 +1,13 @@
 import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "@hooks/usePaginationParams";
-import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
+import { type SpeciesOrderBy, getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
 import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import { searchEntriesCriteriaAtom } from "../searchEntriesCriteriaAtom";
+import SearchSpeciesTableRow from "./SearchSpeciesTableRow";
 
 const COLUMNS = [
   {
@@ -50,10 +51,9 @@ const SearchSpeciesTable: FunctionComponent = () => {
         pageSize: 10,
         orderBy,
         sortOrder,
-        extended: true,
         ...searchCriteria,
       },
-      schema: getSpeciesExtendedResponse,
+      schema: getSpeciesPaginatedResponse,
     },
     {
       staleTime: Number.POSITIVE_INFINITY,
@@ -88,15 +88,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
         return (
           <Fragment key={page.meta.pageNumber}>
             {page.data.map((espece) => {
-              return (
-                <tr className="hover:bg-base-200" key={espece.id}>
-                  <td>{espece.speciesClass?.libelle}</td>
-                  <td>{espece.code}</td>
-                  <td>{espece.nomFrancais}</td>
-                  <td>{espece.nomLatin}</td>
-                  <td>{espece.entriesCount}</td>
-                </tr>
-              );
+              return <SearchSpeciesTableRow species={espece} />;
             })}
           </Fragment>
         );
