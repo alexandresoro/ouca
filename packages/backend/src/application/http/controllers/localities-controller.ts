@@ -4,6 +4,7 @@ import {
   getLocalitiesQueryParamsSchema,
   getLocalitiesResponse,
   getLocalityResponse,
+  localityInfoSchema,
   upsertLocalityInput,
   upsertLocalityResponse,
 } from "@ou-ca/common/api/locality";
@@ -46,7 +47,26 @@ export const localitiesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const localityInfoResult = Result.combine([
+      await localityService.getEntriesCountByLocality(`${req.params.id}`, req.user),
+      await localityService.isLocalityUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (localityInfoResult.isErr()) {
+      switch (localityInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isLocalityUsed] = localityInfoResult.value;
+
+    const response = localityInfoSchema.parse({
+      canBeDeleted: !isLocalityUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

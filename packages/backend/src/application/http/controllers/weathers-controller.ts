@@ -6,6 +6,7 @@ import {
   getWeathersResponse,
   upsertWeatherInput,
   upsertWeatherResponse,
+  weatherInfoSchema,
 } from "@ou-ca/common/api/weather";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
@@ -46,7 +47,26 @@ export const weathersController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const weatherInfoResult = Result.combine([
+      await weatherService.getEntriesCountByWeather(`${req.params.id}`, req.user),
+      await weatherService.isWeatherUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (weatherInfoResult.isErr()) {
+      switch (weatherInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isWeatherUsed] = weatherInfoResult.value;
+
+    const response = weatherInfoSchema.parse({
+      canBeDeleted: !isWeatherUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

@@ -1,4 +1,5 @@
 import {
+  behaviorInfoSchema,
   getBehaviorResponse,
   getBehaviorsExtendedResponse,
   getBehaviorsQueryParamsSchema,
@@ -46,7 +47,26 @@ export const behaviorsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const behaviorInfoResult = Result.combine([
+      await behaviorService.getEntriesCountByBehavior(`${req.params.id}`, req.user),
+      await behaviorService.isBehaviorUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (behaviorInfoResult.isErr()) {
+      switch (behaviorInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isBehaviorUsed] = behaviorInfoResult.value;
+
+    const response = behaviorInfoSchema.parse({
+      canBeDeleted: !isBehaviorUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

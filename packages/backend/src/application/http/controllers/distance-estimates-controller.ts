@@ -1,4 +1,5 @@
 import {
+  distanceEstimateInfoSchema,
   getDistanceEstimateResponse,
   getDistanceEstimatesExtendedResponse,
   getDistanceEstimatesQueryParamsSchema,
@@ -46,7 +47,26 @@ export const distanceEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const distanceEstimateInfoResult = Result.combine([
+      await distanceEstimateService.getEntriesCountByDistanceEstimate(`${req.params.id}`, req.user),
+      await distanceEstimateService.isDistanceEstimateUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (distanceEstimateInfoResult.isErr()) {
+      switch (distanceEstimateInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isDistanceEstimateUsed] = distanceEstimateInfoResult.value;
+
+    const response = distanceEstimateInfoSchema.parse({
+      canBeDeleted: !isDistanceEstimateUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

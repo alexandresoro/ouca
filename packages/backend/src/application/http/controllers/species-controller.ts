@@ -4,6 +4,7 @@ import {
   getSpeciesPaginatedResponse,
   getSpeciesQueryParamsSchema,
   getSpeciesResponse,
+  speciesInfoSchema,
   upsertSpeciesInput,
   upsertSpeciesResponse,
 } from "@ou-ca/common/api/species";
@@ -46,7 +47,26 @@ export const speciesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const speciesInfoResult = Result.combine([
+      await speciesService.getEntriesCountBySpecies(`${req.params.id}`, {}, req.user),
+      await speciesService.isSpeciesUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (speciesInfoResult.isErr()) {
+      switch (speciesInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isSpeciesUsed] = speciesInfoResult.value;
+
+    const response = speciesInfoSchema.parse({
+      canBeDeleted: !isSpeciesUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

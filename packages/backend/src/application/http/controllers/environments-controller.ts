@@ -1,5 +1,6 @@
 import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import {
+  environmentInfoSchema,
   getEnvironmentResponse,
   getEnvironmentsExtendedResponse,
   getEnvironmentsQueryParamsSchema,
@@ -46,7 +47,26 @@ export const environmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const environmentInfoResult = Result.combine([
+      await environmentService.getEntriesCountByEnvironment(`${req.params.id}`, req.user),
+      await environmentService.isEnvironmentUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (environmentInfoResult.isErr()) {
+      switch (environmentInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isEnvironmentUsed] = environmentInfoResult.value;
+
+    const response = environmentInfoSchema.parse({
+      canBeDeleted: !isEnvironmentUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

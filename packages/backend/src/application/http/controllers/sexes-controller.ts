@@ -4,6 +4,7 @@ import {
   getSexesExtendedResponse,
   getSexesQueryParamsSchema,
   getSexesResponse,
+  sexInfoSchema,
   upsertSexInput,
   upsertSexResponse,
 } from "@ou-ca/common/api/sex";
@@ -46,7 +47,26 @@ export const sexesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const sexInfoResult = Result.combine([
+      await sexService.getEntriesCountBySex(`${req.params.id}`, req.user),
+      await sexService.isSexUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (sexInfoResult.isErr()) {
+      switch (sexInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isSexUsed] = sexInfoResult.value;
+
+    const response = sexInfoSchema.parse({
+      canBeDeleted: !isSexUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

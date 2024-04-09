@@ -4,6 +4,7 @@ import {
   getNumberEstimatesExtendedResponse,
   getNumberEstimatesQueryParamsSchema,
   getNumberEstimatesResponse,
+  numberEstimateInfoSchema,
   upsertNumberEstimateInput,
   upsertNumberEstimateResponse,
 } from "@ou-ca/common/api/number-estimate";
@@ -46,7 +47,26 @@ export const numberEstimatesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const numberEstimateInfoResult = Result.combine([
+      await numberEstimateService.getEntriesCountByNumberEstimate(`${req.params.id}`, req.user),
+      await numberEstimateService.isNumberEstimateUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (numberEstimateInfoResult.isErr()) {
+      switch (numberEstimateInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isNumberEstimateUsed] = numberEstimateInfoResult.value;
+
+    const response = numberEstimateInfoSchema.parse({
+      canBeDeleted: !isNumberEstimateUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

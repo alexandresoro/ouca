@@ -4,6 +4,7 @@ import {
   getClassesExtendedResponse,
   getClassesQueryParamsSchema,
   getClassesResponse,
+  speciesClassInfoSchema,
   upsertClassInput,
   upsertClassResponse,
 } from "@ou-ca/common/api/species-class";
@@ -46,7 +47,28 @@ export const classesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const speciesClassInfoResult = Result.combine([
+      await classService.getEntriesCountBySpeciesClass(`${req.params.id}`, req.user),
+      await classService.isSpeciesClassUsed(`${req.params.id}`, req.user),
+      await classService.getSpeciesCountBySpeciesClass(`${req.params.id}`, req.user),
+    ]);
+
+    if (speciesClassInfoResult.isErr()) {
+      switch (speciesClassInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isSpeciesClassUsed, speciesCount] = speciesClassInfoResult.value;
+
+    const response = speciesClassInfoSchema.parse({
+      canBeDeleted: !isSpeciesClassUsed,
+      ownEntriesCount,
+      speciesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

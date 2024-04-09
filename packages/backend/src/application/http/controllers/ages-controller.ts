@@ -1,4 +1,5 @@
 import {
+  ageInfoSchema,
   getAgeResponse,
   getAgesExtendedResponse,
   getAgesQueryParamsSchema,
@@ -46,7 +47,26 @@ export const agesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const ageInfoResult = Result.combine([
+      await ageService.getEntriesCountByAge(`${req.params.id}`, req.user),
+      await ageService.isAgeUsed(`${req.params.id}`, req.user),
+    ]);
+
+    if (ageInfoResult.isErr()) {
+      switch (ageInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isAgeUsed] = ageInfoResult.value;
+
+    const response = ageInfoSchema.parse({
+      canBeDeleted: !isAgeUsed,
+      ownEntriesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

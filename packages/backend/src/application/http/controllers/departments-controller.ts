@@ -1,4 +1,5 @@
 import {
+  departmentInfoSchema,
   getDepartmentResponse,
   getDepartmentsExtendedResponse,
   getDepartmentsQueryParamsSchema,
@@ -46,7 +47,30 @@ export const departmentsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const departmentInfoResult = Result.combine([
+      await departmentService.getEntriesCountByDepartment(`${req.params.id}`, req.user),
+      await departmentService.isDepartmentUsed(`${req.params.id}`, req.user),
+      await departmentService.getLocalitiesCountByDepartment(`${req.params.id}`, req.user),
+      await departmentService.getTownsCountByDepartment(`${req.params.id}`, req.user),
+    ]);
+
+    if (departmentInfoResult.isErr()) {
+      switch (departmentInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isDepartmentUsed, localitiesCount, townsCount] = departmentInfoResult.value;
+
+    const response = departmentInfoSchema.parse({
+      canBeDeleted: !isDepartmentUsed,
+      ownEntriesCount,
+      localitiesCount,
+      townsCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {

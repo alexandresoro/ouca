@@ -4,6 +4,7 @@ import {
   getTownsExtendedResponse,
   getTownsQueryParamsSchema,
   getTownsResponse,
+  townInfoSchema,
   upsertTownInput,
   upsertTownResponse,
 } from "@ou-ca/common/api/town";
@@ -46,7 +47,28 @@ export const townsController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
-    return await reply.status(501).send();
+    const townInfoResult = Result.combine([
+      await townService.getEntriesCountByTown(`${req.params.id}`, req.user),
+      await townService.isTownUsed(`${req.params.id}`, req.user),
+      await townService.getLocalitiesCountByTown(`${req.params.id}`, req.user),
+    ]);
+
+    if (townInfoResult.isErr()) {
+      switch (townInfoResult.error) {
+        case "notAllowed":
+          return await reply.status(403).send();
+      }
+    }
+
+    const [ownEntriesCount, isTownUsed, localitiesCount] = townInfoResult.value;
+
+    const response = townInfoSchema.parse({
+      canBeDeleted: !isTownUsed,
+      ownEntriesCount,
+      localitiesCount,
+    });
+
+    return await reply.send(response);
   });
 
   fastify.get("/", async (req, reply) => {
