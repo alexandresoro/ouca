@@ -1,12 +1,12 @@
-import type { SexExtended } from "@ou-ca/common/api/entities/sex";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type SexeDeleteDialogProps = {
-  sexToDelete: SexExtended | null;
+  sexToDelete: Sex | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (sex: SexExtended) => void;
+  onConfirmDeletion?: (sex: Sex) => void;
 };
 
 const SexeDeleteDialog: FunctionComponent<SexeDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const SexeDeleteDialog: FunctionComponent<SexeDeleteDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (sexToDelete: SexExtended | null) => {
+  const handleConfirmDeletion = (sexToDelete: Sex | null) => {
     if (sexToDelete != null) {
       onConfirmDeletion?.(sexToDelete);
     }
@@ -27,9 +27,6 @@ const SexeDeleteDialog: FunctionComponent<SexeDeleteDialogProps> = ({
       open={sexToDelete != null}
       messageContent={t("deleteGenderDialogMsg", {
         name: sexToDelete?.libelle,
-      })}
-      impactedItemsMessage={t("deleteGenderDialogMsgImpactedData", {
-        nbOfObservations: sexToDelete?.entriesCount ?? 0,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(sexToDelete)}

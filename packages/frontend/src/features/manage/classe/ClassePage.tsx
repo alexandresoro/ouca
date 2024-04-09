@@ -138,7 +138,7 @@ const ClassePage: FunctionComponent = () => {
     updateSpeciesClass({ path: `/classes/${id}`, body: input });
   };
 
-  const handleDeleteSpeciesClass = (speciesClassToDelete: SpeciesClassExtended) => {
+  const handleDeleteSpeciesClass = (speciesClassToDelete: SpeciesClass) => {
     deleteSpeciesClass({ path: `/classes/${speciesClassToDelete.id}` });
   };
 

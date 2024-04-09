@@ -1,12 +1,12 @@
-import type { SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
+import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type ClasseDeleteDialogProps = {
-  speciesClassToDelete: SpeciesClassExtended | null;
+  speciesClassToDelete: SpeciesClass | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (speciesClass: SpeciesClassExtended) => void;
+  onConfirmDeletion?: (speciesClass: SpeciesClass) => void;
 };
 
 const ClasseDeleteDialog: FunctionComponent<ClasseDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const ClasseDeleteDialog: FunctionComponent<ClasseDeleteDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (speciesClassToDelete: SpeciesClassExtended | null) => {
+  const handleConfirmDeletion = (speciesClassToDelete: SpeciesClass | null) => {
     if (speciesClassToDelete != null) {
       onConfirmDeletion?.(speciesClassToDelete);
     }
@@ -27,10 +27,6 @@ const ClasseDeleteDialog: FunctionComponent<ClasseDeleteDialogProps> = ({
       open={speciesClassToDelete != null}
       messageContent={t("deleteClassDialogMsg", {
         name: speciesClassToDelete?.libelle,
-      })}
-      impactedItemsMessage={t("deleteClassDialogMsgImpactedData", {
-        nbOfObservations: speciesClassToDelete?.entriesCount ?? 0,
-        nbOfSpecies: speciesClassToDelete?.speciesCount ?? 0,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(speciesClassToDelete)}

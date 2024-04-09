@@ -1,12 +1,12 @@
-import type { EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type MilieuDeleteDialogProps = {
-  environmentToDelete: EnvironmentExtended | null;
+  environmentToDelete: Environment | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (environment: EnvironmentExtended) => void;
+  onConfirmDeletion?: (environment: Environment) => void;
 };
 
 const MilieuDeleteDialog: FunctionComponent<MilieuDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const MilieuDeleteDialog: FunctionComponent<MilieuDeleteDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (environmentToDelete: EnvironmentExtended | null) => {
+  const handleConfirmDeletion = (environmentToDelete: Environment | null) => {
     if (environmentToDelete != null) {
       onConfirmDeletion?.(environmentToDelete);
     }
@@ -28,7 +28,6 @@ const MilieuDeleteDialog: FunctionComponent<MilieuDeleteDialogProps> = ({
       messageContent={t("deleteEnvironmentDialogMsg", {
         name: environmentToDelete?.libelle,
       })}
-      impactedItemsMessage={t("deleteEnvironmentDialogMsgImpactedData")}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(environmentToDelete)}
     />

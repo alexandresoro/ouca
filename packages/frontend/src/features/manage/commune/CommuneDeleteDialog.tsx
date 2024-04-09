@@ -29,10 +29,6 @@ const CommuneDeleteDialog: FunctionComponent<CommuneDeleteDialogProps> = ({
         name: townToDelete?.nom,
         department: townToDelete?.departmentCode,
       })}
-      impactedItemsMessage={t("deleteCityDialogMsgImpactedData", {
-        nbOfObservations: townToDelete?.entriesCount ?? 0,
-        nbOfLocalities: townToDelete?.localitiesCount ?? 0,
-      })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(townToDelete)}
     />

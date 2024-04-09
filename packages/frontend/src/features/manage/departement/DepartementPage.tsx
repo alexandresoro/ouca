@@ -138,7 +138,7 @@ const DepartementPage: FunctionComponent = () => {
     updateDepartment({ path: `/departments/${id}`, body: input });
   };
 
-  const handleDeleteDepartment = (departmentToDelete: DepartmentExtended) => {
+  const handleDeleteDepartment = (departmentToDelete: Department) => {
     deleteDepartment({ path: `/departments/${departmentToDelete.id}` });
   };
 

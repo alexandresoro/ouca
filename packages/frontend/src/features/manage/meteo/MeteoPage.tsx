@@ -138,7 +138,7 @@ const MeteoPage: FunctionComponent = () => {
     updateWeather({ path: `/weathers/${id}`, body: input });
   };
 
-  const handleDeleteWeather = (weatherToDelete: WeatherExtended) => {
+  const handleDeleteWeather = (weatherToDelete: Weather) => {
     deleteWeather({ path: `/weathers/${weatherToDelete.id}` });
   };
 

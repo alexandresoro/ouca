@@ -138,7 +138,7 @@ const EspecePage: FunctionComponent = () => {
     updateSpecies({ path: `/species/${id}`, body: input });
   };
 
-  const handleDeleteSpecies = (speciesToDelete: SpeciesExtended) => {
+  const handleDeleteSpecies = (speciesToDelete: Species) => {
     deleteSpecies({ path: `/species/${speciesToDelete.id}` });
   };
 

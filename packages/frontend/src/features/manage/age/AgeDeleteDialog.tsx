@@ -28,9 +28,6 @@ const AgeDeleteDialog: FunctionComponent<AgeDeleteDialogProps> = ({
       messageContent={t("deleteAgeDialogMsg", {
         name: ageToDelete?.libelle,
       })}
-      impactedItemsMessage={t("deleteAgeDialogMsgImpactedData", {
-        nbOfObservations: ageToDelete?.entriesCount ?? 0,
-      })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(ageToDelete)}
     />

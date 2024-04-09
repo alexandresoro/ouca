@@ -138,7 +138,7 @@ const SexePage: FunctionComponent = () => {
     updateSex({ path: `/sexes/${id}`, body: input });
   };
 
-  const handleDeleteSex = (sexToDelete: SexExtended) => {
+  const handleDeleteSex = (sexToDelete: Sex) => {
     deleteSex({ path: `/sexes/${sexToDelete.id}` });
   };
 

@@ -1,12 +1,12 @@
-import type { NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type EstimationNombreDeleteDialogProps = {
-  numberEstimateToDelete: NumberEstimateExtended | null;
+  numberEstimateToDelete: NumberEstimate | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (numberestimate: NumberEstimateExtended) => void;
+  onConfirmDeletion?: (numberestimate: NumberEstimate) => void;
 };
 
 const EstimationNombreDeleteDialog: FunctionComponent<EstimationNombreDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const EstimationNombreDeleteDialog: FunctionComponent<EstimationNombreDeleteDial
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (numberEstimateToDelete: NumberEstimateExtended | null) => {
+  const handleConfirmDeletion = (numberEstimateToDelete: NumberEstimate | null) => {
     if (numberEstimateToDelete != null) {
       onConfirmDeletion?.(numberEstimateToDelete);
     }
@@ -27,9 +27,6 @@ const EstimationNombreDeleteDialog: FunctionComponent<EstimationNombreDeleteDial
       open={numberEstimateToDelete != null}
       messageContent={t("deleteNumberPrecisionDialogMsg", {
         name: numberEstimateToDelete?.libelle,
-      })}
-      impactedItemsMessage={t("deleteNumberPrecisionDialogMsgImpactedData", {
-        nbOfObservations: numberEstimateToDelete?.entriesCount ?? 0,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(numberEstimateToDelete)}

@@ -1,12 +1,12 @@
-import type { DepartmentExtended } from "@ou-ca/common/api/entities/department";
+import type { Department } from "@ou-ca/common/api/entities/department";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type DepartementDeleteDialogProps = {
-  departmentToDelete: DepartmentExtended | null;
+  departmentToDelete: Department | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (department: DepartmentExtended) => void;
+  onConfirmDeletion?: (department: Department) => void;
 };
 
 const DepartementDeleteDialog: FunctionComponent<DepartementDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const DepartementDeleteDialog: FunctionComponent<DepartementDeleteDialogProps> =
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (departmentToDelete: DepartmentExtended | null) => {
+  const handleConfirmDeletion = (departmentToDelete: Department | null) => {
     if (departmentToDelete != null) {
       onConfirmDeletion?.(departmentToDelete);
     }
@@ -27,11 +27,6 @@ const DepartementDeleteDialog: FunctionComponent<DepartementDeleteDialogProps> =
       open={departmentToDelete != null}
       messageContent={t("deleteDepartmentDialogMsg", {
         code: departmentToDelete?.code,
-      })}
-      impactedItemsMessage={t("deleteDepartmentDialogMsgImpactedData", {
-        nbOfObservations: departmentToDelete?.entriesCount ?? 0,
-        nbOfCities: departmentToDelete?.townsCount ?? 0,
-        nbOfLocalities: departmentToDelete?.localitiesCount ?? 0,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(departmentToDelete)}

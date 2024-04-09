@@ -138,7 +138,7 @@ const ComportementPage: FunctionComponent = () => {
     updateBehavior({ path: `/behaviors/${id}`, body: input });
   };
 
-  const handleDeleteBehavior = (behaviorToDelete: BehaviorExtended) => {
+  const handleDeleteBehavior = (behaviorToDelete: Behavior) => {
     deleteBehavior({ path: `/behaviors/${behaviorToDelete.id}` });
   };
 

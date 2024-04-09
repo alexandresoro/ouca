@@ -1,12 +1,12 @@
-import type { DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
+import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type EstimationDistanceDeleteDialogProps = {
-  distanceEstimateToDelete: DistanceEstimateExtended | null;
+  distanceEstimateToDelete: DistanceEstimate | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (distanceestimate: DistanceEstimateExtended) => void;
+  onConfirmDeletion?: (distanceestimate: DistanceEstimate) => void;
 };
 
 const EstimationDistanceDeleteDialog: FunctionComponent<EstimationDistanceDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const EstimationDistanceDeleteDialog: FunctionComponent<EstimationDistanceDelete
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (distanceEstimateToDelete: DistanceEstimateExtended | null) => {
+  const handleConfirmDeletion = (distanceEstimateToDelete: DistanceEstimate | null) => {
     if (distanceEstimateToDelete != null) {
       onConfirmDeletion?.(distanceEstimateToDelete);
     }
@@ -27,9 +27,6 @@ const EstimationDistanceDeleteDialog: FunctionComponent<EstimationDistanceDelete
       open={distanceEstimateToDelete != null}
       messageContent={t("deleteDistancePrecisionDialogMsg", {
         name: distanceEstimateToDelete?.libelle,
-      })}
-      impactedItemsMessage={t("deleteDistancePrecisionDialogMsgImpactedData", {
-        nbOfObservations: distanceEstimateToDelete?.entriesCount ?? 0,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(distanceEstimateToDelete)}

@@ -138,7 +138,7 @@ const EstimationNombrePage: FunctionComponent = () => {
     updateNumberEstimate({ path: `/number-estimates/${id}`, body: input });
   };
 
-  const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimateExtended) => {
+  const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimate) => {
     deleteNumberEstimate({ path: `/number-estimates/${numberEstimateToDelete.id}` });
   };
 

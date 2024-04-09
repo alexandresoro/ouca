@@ -138,7 +138,7 @@ const EstimationDistancePage: FunctionComponent = () => {
     updateDistanceEstimate({ path: `/distance-estimates/${id}`, body: input });
   };
 
-  const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimateExtended) => {
+  const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimate) => {
     deleteDistanceEstimate({ path: `/distance-estimates/${distanceEstimateToDelete.id}` });
   };
 

@@ -1,12 +1,12 @@
-import type { BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type ComportementDeleteDialogProps = {
-  behaviorToDelete: BehaviorExtended | null;
+  behaviorToDelete: Behavior | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (behavior: BehaviorExtended) => void;
+  onConfirmDeletion?: (behavior: Behavior) => void;
 };
 
 const ComportementDeleteDialog: FunctionComponent<ComportementDeleteDialogProps> = ({
@@ -16,7 +16,7 @@ const ComportementDeleteDialog: FunctionComponent<ComportementDeleteDialogProps>
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (behaviorToDelete: BehaviorExtended | null) => {
+  const handleConfirmDeletion = (behaviorToDelete: Behavior | null) => {
     if (behaviorToDelete != null) {
       onConfirmDeletion?.(behaviorToDelete);
     }
@@ -28,7 +28,6 @@ const ComportementDeleteDialog: FunctionComponent<ComportementDeleteDialogProps>
       messageContent={t("deleteBehaviorDialogMsg", {
         name: behaviorToDelete?.libelle,
       })}
-      impactedItemsMessage={t("deleteBehaviorDialogMsgImpactedData")}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(behaviorToDelete)}
     />

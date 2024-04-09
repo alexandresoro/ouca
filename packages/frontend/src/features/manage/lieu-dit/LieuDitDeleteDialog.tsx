@@ -30,9 +30,6 @@ const LieuDitDeleteDialog: FunctionComponent<LieuDitDeleteDialogProps> = ({
         city: localityToDelete?.townName,
         department: localityToDelete?.departmentCode,
       })}
-      impactedItemsMessage={t("deleteLieuDitDialogMsgImpactedData", {
-        nbOfObservations: localityToDelete?.entriesCount ?? 0,
-      })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(localityToDelete)}
     />

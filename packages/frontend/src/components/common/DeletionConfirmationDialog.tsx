@@ -5,13 +5,12 @@ import { useTranslation } from "react-i18next";
 type DeletionConfirmationDialogProps = {
   open: boolean;
   messageContent: string;
-  impactedItemsMessage?: string;
   onCancelAction: () => void;
   onConfirmAction: () => void;
 };
 
 const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogProps> = (props) => {
-  const { open, messageContent, impactedItemsMessage, onCancelAction, onConfirmAction } = props;
+  const { open, messageContent, onCancelAction, onConfirmAction } = props;
 
   const confirmButtonRef = useRef(null);
 
@@ -28,7 +27,6 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
         <Dialog.Title className="text-2xl font-semibold">{t("deleteConfirmationDialogTitle")}</Dialog.Title>
         <Dialog.Description as={"div"} className="flex flex-col gap-4 mt-4 mb-2">
           <div>{messageContent}</div>
-          {impactedItemsMessage && <div>{impactedItemsMessage}</div>}
         </Dialog.Description>
         <div className="modal-action">
           <button type="button" className="btn btn-primary btn-outline" onClick={onCancelAction}>
