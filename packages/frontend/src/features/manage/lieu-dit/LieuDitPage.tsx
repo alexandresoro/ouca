@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Locality, LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import LieuDitUpdate from "./LieuDitUpdate";
 
 const LieuDitPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const LieuDitPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("localities")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("localities")}
+        enableCreate={user?.permissions.locality.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <LieuDitTable onClickUpdateLocality={handleUpdateClick} onClickDeleteLocality={setLocalityToDelete} />
       </ContentContainerLayout>

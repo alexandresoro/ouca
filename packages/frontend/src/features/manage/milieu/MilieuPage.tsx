@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import { type UpsertEnvironmentInput, upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import MilieuUpdate from "./MilieuUpdate";
 
 const MilieuPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const MilieuPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("environments")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("environments")}
+        enableCreate={user?.permissions.environment.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <MilieuTable onClickUpdateEnvironment={handleUpdateClick} onClickDeleteEnvironment={setEnvironmentToDelete} />
       </ContentContainerLayout>

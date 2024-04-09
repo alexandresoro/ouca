@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Weather, WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import MeteoUpdate from "./MeteoUpdate";
 
 const MeteoPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const MeteoPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("weathers")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("weathers")}
+        enableCreate={user?.permissions.weather.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <MeteoTable onClickUpdateWeather={handleUpdateClick} onClickDeleteWeather={setWeatherToDelete} />
       </ContentContainerLayout>

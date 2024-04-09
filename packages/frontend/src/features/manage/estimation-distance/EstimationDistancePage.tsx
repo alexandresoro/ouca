@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate, DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import EstimationDistanceUpdate from "./EstimationDistanceUpdate";
 
 const EstimationDistancePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -143,6 +146,7 @@ const EstimationDistancePage: FunctionComponent = () => {
     <>
       <ManageTopBar
         title={t("distancePrecisions")}
+        enableCreate={user?.permissions.distanceEstimate.canCreate}
         onClickCreate={handleCreateClick}
         onClickExport={handleExportClick}
       />

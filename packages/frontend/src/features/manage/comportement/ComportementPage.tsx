@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import { type UpsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
 import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import ComportementUpdate from "./ComportementUpdate";
 
 const ComportementPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const ComportementPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("behaviors")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("behaviors")}
+        enableCreate={user?.permissions.behavior.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <ComportementTable onClickUpdateBehavior={handleUpdateClick} onClickDeleteBehavior={setBehaviorToDelete} />
       </ContentContainerLayout>

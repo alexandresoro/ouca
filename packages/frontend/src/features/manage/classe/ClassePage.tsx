@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { SpeciesClass, SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
 import { type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import ClasseUpdate from "./ClasseUpdate";
 
 const ClassePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const ClassePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("speciesClasses")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("speciesClasses")}
+        enableCreate={user?.permissions.speciesClass.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <ClasseTable
           onClickUpdateSpeciesClass={handleUpdateClick}

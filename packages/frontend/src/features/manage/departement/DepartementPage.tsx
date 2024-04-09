@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import { type UpsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
 import type { Department, DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import DepartementUpdate from "./DepartementUpdate";
 
 const DepartementPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const DepartementPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("departments")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("departments")}
+        enableCreate={user?.permissions.department.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <DepartementTable onClickUpdateDepartment={handleUpdateClick} onClickDeleteDepartment={setDepartmentToDelete} />
       </ContentContainerLayout>

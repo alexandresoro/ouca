@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Town, TownExtended } from "@ou-ca/common/api/entities/town";
 import { type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import CommuneUpdate from "./CommuneUpdate";
 
 const CommunePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const CommunePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("towns")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("towns")}
+        enableCreate={user?.permissions.town.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <CommuneTable onClickUpdateTown={handleUpdateClick} onClickDeleteTown={setTownToDelete} />
       </ContentContainerLayout>

@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { NumberEstimate, NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import { type UpsertNumberEstimateInput, upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import EstimationNombreUpdate from "./EstimationNombreUpdate";
 
 const EstimationNombrePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,13 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("numberPrecisions")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("numberPrecisions")}
+        enableCreate={user?.permissions.numberEstimate.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
+
       <ContentContainerLayout>
         <EstimationNombreTable
           onClickUpdateNumberEstimate={handleUpdateClick}

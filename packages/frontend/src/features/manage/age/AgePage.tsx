@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import { type UpsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
 import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import AgeUpdate from "./AgeUpdate";
 
 const AgePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const AgePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("ages")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("ages")}
+        enableCreate={user?.permissions.age.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <AgeTable onClickUpdateAge={handleUpdateClick} onClickDeleteAge={setAgeToDelete} />
       </ContentContainerLayout>

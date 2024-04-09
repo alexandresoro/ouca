@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Sex, SexExtended } from "@ou-ca/common/api/entities/sex";
 import { type UpsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import SexeUpdate from "./SexeUpdate";
 
 const SexePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,12 @@ const SexePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("genders")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("genders")}
+        enableCreate={user?.permissions.sex.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
       <ContentContainerLayout>
         <SexeTable onClickUpdateSex={handleUpdateClick} onClickDeleteSex={setSexToDelete} />
       </ContentContainerLayout>

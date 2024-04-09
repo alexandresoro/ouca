@@ -1,3 +1,4 @@
+import { useUser } from "@hooks/useUser";
 import type { Species, SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import { type UpsertSpeciesInput, upsertSpeciesResponse } from "@ou-ca/common/api/species";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import EspeceUpdate from "./EspeceUpdate";
 
 const EspecePage: FunctionComponent = () => {
   const { t } = useTranslation();
+
+  const user = useUser();
 
   const queryClient = useQueryClient();
 
@@ -141,7 +144,13 @@ const EspecePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("species")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
+      <ManageTopBar
+        title={t("species")}
+        enableCreate={user?.permissions.species.canCreate}
+        onClickCreate={handleCreateClick}
+        onClickExport={handleExportClick}
+      />
+
       <ContentContainerLayout>
         <EspeceTable onClickUpdateSpecies={handleUpdateClick} onClickDeleteSpecies={setSpeciesToDelete} />
       </ContentContainerLayout>

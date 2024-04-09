@@ -36,8 +36,4 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
   );
 };
 
-ManageTopBar.defaultProps = {
-  enableCreate: true, // TODO: Clean this up once all components are updated
-};
-
 export default ManageTopBar;
