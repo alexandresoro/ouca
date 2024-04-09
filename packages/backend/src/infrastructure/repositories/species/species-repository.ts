@@ -96,7 +96,7 @@ const findSpecies = async (
           .groupBy("espece.id")
           .orderBy(
             (eb) =>
-              ownerId
+              ownerId && searchCriteria?.ownerId
                 ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
                 : eb.fn.count("donnee.id"),
             sortOrder ?? undefined,
@@ -219,7 +219,7 @@ const findSpecies = async (
           .groupBy("espece.id")
           .orderBy(
             (eb) =>
-              ownerId
+              ownerId && searchCriteria?.ownerId
                 ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
                 : eb.fn.count("donnee.id"),
             sortOrder ?? undefined,
