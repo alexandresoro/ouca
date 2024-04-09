@@ -48,7 +48,7 @@ export const speciesController: FastifyPluginCallback<{
     };
   }>("/:id/info", async (req, reply) => {
     const speciesInfoResult = Result.combine([
-      await speciesService.getEntriesCountBySpecies(`${req.params.id}`, {}, req.user),
+      await speciesService.getEntriesCountBySpecies(`${req.params.id}`, { onlyOwnData: true }, req.user),
       await speciesService.isSpeciesUsed(`${req.params.id}`, req.user),
     ]);
 

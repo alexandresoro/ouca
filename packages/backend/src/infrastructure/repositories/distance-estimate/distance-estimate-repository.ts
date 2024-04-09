@@ -85,11 +85,17 @@ const getCount = async (q?: string | null): Promise<number> => {
 };
 
 const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
-  const countResult = await kysely
+  let countResultQuery = kysely
     .selectFrom("donnee")
+    .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
     .select((eb) => eb.fn.countAll().as("count"))
-    .where("estimationDistanceId", "=", Number.parseInt(id))
-    .executeTakeFirstOrThrow();
+    .where("estimationDistanceId", "=", Number.parseInt(id));
+
+  if (ownerId) {
+    countResultQuery = countResultQuery.where("inventaire.ownerId", "=", ownerId);
+  }
+
+  const countResult = await countResultQuery.executeTakeFirstOrThrow();
 
   return countSchema.parse(countResult).count;
 };

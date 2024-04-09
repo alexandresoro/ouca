@@ -225,12 +225,17 @@ const getCount = async (q?: string | null, townId?: string | null, departmentId?
 };
 
 const getEntriesCountById = async (id: string, ownerId?: string): Promise<number> => {
-  const countResult = await kysely
+  let countResultQuery = kysely
     .selectFrom("donnee")
     .leftJoin("inventaire", "inventaire.id", "donnee.inventaireId")
     .select((eb) => eb.fn.count("donnee.id").distinct().as("count"))
-    .where("inventaire.lieuditId", "=", Number.parseInt(id))
-    .executeTakeFirstOrThrow();
+    .where("inventaire.lieuditId", "=", Number.parseInt(id));
+
+  if (ownerId) {
+    countResultQuery = countResultQuery.where("inventaire.ownerId", "=", ownerId);
+  }
+
+  const countResult = await countResultQuery.executeTakeFirstOrThrow();
 
   return countSchema.parse(countResult).count;
 };

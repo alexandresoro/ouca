@@ -64,9 +64,16 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
       return err("notAllowed");
     }
 
-    const { q, orderBy, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+    const { q, orderBy, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
 
-    return ok(await speciesRepository.getEntriesCountById(id, searchCriteria));
+    const reshapedSearchCriteria = onlyOwnData
+      ? {
+          ...searchCriteria,
+          ownerId: loggedUser.id,
+        }
+      : searchCriteria;
+
+    return ok(await speciesRepository.getEntriesCountById(id, reshapedSearchCriteria));
   };
 
   const isSpeciesUsed = async (
