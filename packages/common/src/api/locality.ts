@@ -44,6 +44,9 @@ export type LocalitiesSearchParams = Omit<z.infer<typeof getLocalitiesQueryParam
 
 export const getLocalitiesResponse = getPaginatedResponseSchema(localitySchema);
 
+/**
+ * @deprecated use `getLocalitiesResponse` instead
+ */
 export const getLocalitiesExtendedResponse = getPaginatedResponseSchema(localityExtendedSchema);
 
 /**

@@ -36,6 +36,9 @@ export type SpeciesSearchParams = Omit<z.infer<typeof getSpeciesQueryParamsSchem
 
 export const getSpeciesPaginatedResponse = getPaginatedResponseSchema(speciesSchema);
 
+/**
+ * @deprecated use `getSpeciesPaginatedResponse` instead
+ */
 export const getSpeciesExtendedResponse = getPaginatedResponseSchema(speciesExtendedSchema);
 
 /**

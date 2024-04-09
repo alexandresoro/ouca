@@ -12,8 +12,14 @@ export const behaviorSchema = z.object({
 
 export type Behavior = z.infer<typeof behaviorSchema>;
 
+/**
+ * @deprecated Use `behaviorSchema` instead.
+ */
 export const behaviorExtendedSchema = behaviorSchema.extend({
   entriesCount: z.number(),
 });
 
+/**
+ * @deprecated Use `Behavior` instead.
+ */
 export type BehaviorExtended = z.infer<typeof behaviorExtendedSchema>;

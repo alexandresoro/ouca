@@ -38,6 +38,9 @@ export type ClassesSearchParams = Omit<z.infer<typeof getClassesQueryParamsSchem
 
 export const getClassesResponse = getPaginatedResponseSchema(speciesClassSchema);
 
+/**
+ * @deprecated use `getClassesResponse` instead
+ */
 export const getClassesExtendedResponse = getPaginatedResponseSchema(speciesClassExtendedSchema);
 
 /**

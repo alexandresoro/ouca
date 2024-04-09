@@ -33,6 +33,9 @@ export type WeathersSearchParams = Omit<z.infer<typeof getWeathersQueryParamsSch
 
 export const getWeathersResponse = getPaginatedResponseSchema(weatherSchema);
 
+/**
+ * @deprecated use `getWeathersResponse` instead
+ */
 export const getWeathersExtendedResponse = getPaginatedResponseSchema(weatherExtendedSchema);
 
 /**

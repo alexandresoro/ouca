@@ -33,6 +33,9 @@ export type DistanceEstimatesSearchParams = Omit<z.infer<typeof getDistanceEstim
 
 export const getDistanceEstimatesResponse = getPaginatedResponseSchema(distanceEstimateSchema);
 
+/**
+ * @deprecated use `getDistanceEstimatesResponse` instead
+ */
 export const getDistanceEstimatesExtendedResponse = getPaginatedResponseSchema(distanceEstimateExtendedSchema);
 
 /**

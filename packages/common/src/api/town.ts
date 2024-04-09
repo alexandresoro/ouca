@@ -36,6 +36,9 @@ export type TownsSearchParams = Omit<z.infer<typeof getTownsQueryParamsSchema>, 
 
 export const getTownsResponse = getPaginatedResponseSchema(townSchema);
 
+/**
+ * @deprecated use `getTownsResponse` instead
+ */
 export const getTownsExtendedResponse = getPaginatedResponseSchema(townExtendedSchema);
 
 /**

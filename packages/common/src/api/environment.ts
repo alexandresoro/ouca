@@ -36,6 +36,9 @@ export type EnvironmentsSearchParams = Omit<z.infer<typeof getEnvironmentsQueryP
 
 export const getEnvironmentsResponse = getPaginatedResponseSchema(environmentSchema);
 
+/**
+ * @deprecated use `getEnvironmentsResponse` instead
+ */
 export const getEnvironmentsExtendedResponse = getPaginatedResponseSchema(environmentExtendedSchema);
 
 /**

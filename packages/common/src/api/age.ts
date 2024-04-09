@@ -33,6 +33,9 @@ export type AgesSearchParams = Omit<z.infer<typeof getAgesQueryParamsSchema>, "e
 
 export const getAgesResponse = getPaginatedResponseSchema(ageSimpleSchema);
 
+/**
+ * @deprecated use `getAgesResponse` instead
+ */
 export const getAgesExtendedResponse = getPaginatedResponseSchema(ageSchema);
 
 /**

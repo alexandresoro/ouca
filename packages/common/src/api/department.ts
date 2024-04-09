@@ -36,6 +36,9 @@ export type DepartmentsSearchParams = Omit<z.infer<typeof getDepartmentsQueryPar
 
 export const getDepartmentsResponse = getPaginatedResponseSchema(departmentSchema);
 
+/**
+ * @deprecated use `getDepartmentsResponse` instead
+ */
 export const getDepartmentsExtendedResponse = getPaginatedResponseSchema(departmentExtendedSchema);
 
 /**

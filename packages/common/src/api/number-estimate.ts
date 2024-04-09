@@ -36,6 +36,9 @@ export type NumberEstimatesSearchParams = Omit<z.infer<typeof getNumberEstimates
 
 export const getNumberEstimatesResponse = getPaginatedResponseSchema(numberEstimateSchema);
 
+/**
+ * @deprecated use `getNumberEstimatesResponse` instead
+ */
 export const getNumberEstimatesExtendedResponse = getPaginatedResponseSchema(numberEstimateExtendedSchema);
 
 /**

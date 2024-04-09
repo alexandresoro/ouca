@@ -14,8 +14,14 @@ export const speciesSchema = z.object({
 
 export type Species = z.infer<typeof speciesSchema>;
 
+/**
+ * @deprecated Use `speciesSchema` instead.
+ */
 export const speciesExtendedSchema = speciesSchema.extend({
   entriesCount: z.number(),
 });
 
+/**
+ * @deprecated Use `Species` instead.
+ */
 export type SpeciesExtended = z.infer<typeof speciesExtendedSchema>;

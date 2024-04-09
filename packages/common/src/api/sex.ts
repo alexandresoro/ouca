@@ -33,6 +33,9 @@ export type SexesSearchParams = Omit<z.infer<typeof getSexesQueryParamsSchema>, 
 
 export const getSexesResponse = getPaginatedResponseSchema(sexSchema);
 
+/**
+ * @deprecated use `getSexesResponse` instead
+ */
 export const getSexesExtendedResponse = getPaginatedResponseSchema(sexExtendedSchema);
 
 /**

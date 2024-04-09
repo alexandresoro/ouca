@@ -37,6 +37,9 @@ export type BehaviorsSearchParams = Omit<z.infer<typeof getBehaviorsQueryParamsS
 
 export const getBehaviorsResponse = getPaginatedResponseSchema(behaviorSchema);
 
+/**
+ * @deprecated use `getBehaviorsResponse` instead
+ */
 export const getBehaviorsExtendedResponse = getPaginatedResponseSchema(behaviorExtendedSchema);
 
 /**

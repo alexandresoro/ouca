@@ -11,10 +11,16 @@ export const townSchema = z.object({
 
 export type Town = z.infer<typeof townSchema>;
 
+/**
+ * @deprecated Use `townSchema` instead.
+ */
 export const townExtendedSchema = townSchema.extend({
   departmentCode: z.string(),
   localitiesCount: z.number(),
   entriesCount: z.number(),
 });
 
+/**
+ * @deprecated Use `Town` instead.
+ */
 export type TownExtended = z.infer<typeof townExtendedSchema>;
