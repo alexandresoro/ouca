@@ -1,12 +1,13 @@
-import type { TownExtended } from "@ou-ca/common/api/entities/town";
+import type { Town } from "@ou-ca/common/api/entities/town";
+import { useApiTownInfoQuery } from "@services/api/town/api-town-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type CommuneDeleteDialogProps = {
-  townToDelete: TownExtended | null;
+  townToDelete: Town | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (town: TownExtended) => void;
+  onConfirmDeletion?: (town: Town) => void;
 };
 
 const CommuneDeleteDialog: FunctionComponent<CommuneDeleteDialogProps> = ({
@@ -16,7 +17,9 @@ const CommuneDeleteDialog: FunctionComponent<CommuneDeleteDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (townToDelete: TownExtended | null) => {
+  const { data: townInfo } = useApiTownInfoQuery(townToDelete?.id ?? null);
+
+  const handleConfirmDeletion = (townToDelete: Town | null) => {
     if (townToDelete != null) {
       onConfirmDeletion?.(townToDelete);
     }
@@ -27,7 +30,7 @@ const CommuneDeleteDialog: FunctionComponent<CommuneDeleteDialogProps> = ({
       open={townToDelete != null}
       messageContent={t("deleteCityDialogMsg", {
         name: townToDelete?.nom,
-        department: townToDelete?.departmentCode,
+        department: townInfo?.departmentCode,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(townToDelete)}

@@ -1,12 +1,13 @@
-import type { LocalityExtended } from "@ou-ca/common/api/entities/locality";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
+import { useApiLocalityInfoQuery } from "@services/api/locality/api-locality-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type LieuDitDeleteDialogProps = {
-  localityToDelete: LocalityExtended | null;
+  localityToDelete: Locality | null;
   onCancelDeletion?: () => void;
-  onConfirmDeletion?: (locality: LocalityExtended) => void;
+  onConfirmDeletion?: (locality: Locality) => void;
 };
 
 const LieuDitDeleteDialog: FunctionComponent<LieuDitDeleteDialogProps> = ({
@@ -16,7 +17,9 @@ const LieuDitDeleteDialog: FunctionComponent<LieuDitDeleteDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleConfirmDeletion = (localityToDelete: LocalityExtended | null) => {
+  const { data: localityInfo } = useApiLocalityInfoQuery(localityToDelete?.id ?? null);
+
+  const handleConfirmDeletion = (localityToDelete: Locality | null) => {
     if (localityToDelete != null) {
       onConfirmDeletion?.(localityToDelete);
     }
@@ -27,8 +30,8 @@ const LieuDitDeleteDialog: FunctionComponent<LieuDitDeleteDialogProps> = ({
       open={localityToDelete != null}
       messageContent={t("deleteLieuDitDialogMsg", {
         name: localityToDelete?.nom,
-        city: localityToDelete?.townName,
-        department: localityToDelete?.departmentCode,
+        city: localityInfo?.townName,
+        department: localityInfo?.departmentCode,
       })}
       onCancelAction={() => onCancelDeletion?.()}
       onConfirmAction={() => handleConfirmDeletion(localityToDelete)}

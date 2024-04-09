@@ -138,7 +138,7 @@ const LieuDitPage: FunctionComponent = () => {
     updateLocality({ path: `/localities/${id}`, body: input });
   };
 
-  const handleDeleteLocality = (localityToDelete: LocalityExtended) => {
+  const handleDeleteLocality = (localityToDelete: Locality) => {
     deleteLocality({ path: `/localities/${localityToDelete.id}` });
   };
 

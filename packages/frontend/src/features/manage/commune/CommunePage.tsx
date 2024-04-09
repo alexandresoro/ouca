@@ -138,7 +138,7 @@ const CommunePage: FunctionComponent = () => {
     updateTown({ path: `/towns/${id}`, body: input });
   };
 
-  const handleDeleteTown = (townToDelete: TownExtended) => {
+  const handleDeleteTown = (townToDelete: Town) => {
     deleteTown({ path: `/towns/${townToDelete.id}` });
   };
 
