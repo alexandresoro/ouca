@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { NumberEstimate, NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type UpsertNumberEstimateInput, upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const EstimationNombrePage: FunctionComponent = () => {
   const [upsertNumberEstimateDialog, setUpsertNumberEstimateDialog] = useState<
     null | { mode: "create" } | { mode: "update"; numberEstimate: NumberEstimate }
   >(null);
-  const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimateExtended | null>(null);
+  const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimate | null>(null);
 
   const { mutate: createNumberEstimate } = useApiMutation(
     {

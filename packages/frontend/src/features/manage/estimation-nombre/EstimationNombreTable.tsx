@@ -1,6 +1,4 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
-import { useUser } from "@hooks/useUser";
-import type { NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
+import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesOrderBy, getNumberEstimatesExtendedResponse } from "@ou-ca/common/api/number-estimate";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,11 +7,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import NumberEstimateTableRow from "./NumberEstimateTableRow";
 
 type EstimationNombreTableProps = {
-  onClickUpdateNumberEstimate: (numberEstimate: NumberEstimateExtended) => void;
-  onClickDeleteNumberEstimate: (numberEstimate: NumberEstimateExtended) => void;
+  onClickUpdateNumberEstimate: (numberEstimate: NumberEstimate) => void;
+  onClickDeleteNumberEstimate: (numberEstimate: NumberEstimate) => void;
 };
 
 const COLUMNS = [
@@ -32,8 +30,6 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
   onClickDeleteNumberEstimate,
 }) => {
   const { t } = useTranslation();
-
-  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<NumberEstimatesOrderBy>(
     { orderBy: "libelle" },
@@ -101,27 +97,14 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((numberEstimate) => {
-                const isOwner = user != null && numberEstimate?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={numberEstimate?.id}>
-                    <td>{numberEstimate.libelle}</td>
-                    <td>{numberEstimate.nonCompte ? "Oui" : ""}</td>
-                    <td>{numberEstimate.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={numberEstimate.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.numberEstimate.canEdit}
-                        disabledDelete={!numberEstimate.editable || numberEstimate.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateNumberEstimate(numberEstimate)}
-                        onDeleteClicked={() => onClickDeleteNumberEstimate(numberEstimate)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((numberEstimate) => (
+                <NumberEstimateTableRow
+                  key={numberEstimate.id}
+                  numberEstimate={numberEstimate}
+                  onEditClicked={onClickUpdateNumberEstimate}
+                  onDeleteClicked={onClickDeleteNumberEstimate}
+                />
+              ))}
             </Fragment>
           );
         })}
