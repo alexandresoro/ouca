@@ -1,7 +1,7 @@
 import type { Entry } from "@domain/entry/entry.js";
 import type { Inventory } from "@domain/inventory/inventory.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age } from "@ou-ca/common/api/entities/age";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
@@ -29,7 +29,7 @@ export class ImportDonneeService extends ImportService {
   private communes!: Town[];
   private lieuxDits!: Locality[];
   private especes!: Species[];
-  private ages!: AgeSimple[];
+  private ages!: Age[];
   private sexes!: Sex[];
   private estimationsNombre!: NumberEstimate[];
   private estimationsDistance!: DistanceEstimate[];
@@ -377,7 +377,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findAge = (libelleMeteo: string): AgeSimple | undefined => {
+  private findAge = (libelleMeteo: string): Age | undefined => {
     return this.ages.find((age) => {
       return this.compareStrings(age.libelle, libelleMeteo);
     });
