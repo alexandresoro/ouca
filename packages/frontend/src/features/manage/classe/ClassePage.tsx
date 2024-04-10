@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { SpeciesClass, SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
+import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const ClassePage: FunctionComponent = () => {
   const [upsertSpeciesClassDialog, setUpsertSpeciesClassDialog] = useState<
     null | { mode: "create" } | { mode: "update"; speciesClass: SpeciesClass }
   >(null);
-  const [speciesClassToDelete, setSpeciesClassToDelete] = useState<SpeciesClassExtended | null>(null);
+  const [speciesClassToDelete, setSpeciesClassToDelete] = useState<SpeciesClass | null>(null);
 
   const { mutate: createSpeciesClass } = useApiMutation(
     {
