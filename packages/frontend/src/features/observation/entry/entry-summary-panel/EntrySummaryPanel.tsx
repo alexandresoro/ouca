@@ -1,4 +1,3 @@
-import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, CalendarPlus, Comment, MaleSign, PieChartAlt2 } from "@styled-icons/boxicons-regular";
@@ -14,10 +13,7 @@ type EntrySummaryPanelProps = {
 const EntrySummaryPanel: FunctionComponent<EntrySummaryPanelProps> = ({ entry }) => {
   const { t } = useTranslation();
 
-  const getNicheurStatusStr = (comportements: Behavior[]): string => {
-    const statusCode = getHighestNicheurStatus(comportements);
-    return statusCode ? t(`breedingStatus.${statusCode}`) : "";
-  };
+  const nicheurStatus = getHighestNicheurStatus(entry.behaviors);
 
   return (
     <div className="card border-2 border-primary shadow-xl py-4">
@@ -49,15 +45,28 @@ const EntrySummaryPanel: FunctionComponent<EntrySummaryPanelProps> = ({ entry })
       {entry.behaviors.length > 0 && (
         <ItemWithAvatar
           icon={<Angry className="h-6" />}
-          primary={`${entry.behaviors.map(({ libelle }) => libelle).join(", ")}`}
-          secondary={getNicheurStatusStr(entry.behaviors)}
+          primary={
+            <>
+              {entry.behaviors.map(({ libelle }) => (
+                <span className="badge badge-outline m-1 p-3 text-base">{libelle}</span>
+              ))}
+              {nicheurStatus && (
+                <span className="badge badge-outline badge-accent m-1 p-3 text-base">
+                  {t(`breedingStatus.${nicheurStatus}`)}
+                </span>
+              )}
+            </>
+          }
+          // secondary={getNicheurStatusStr(entry.behaviors)}
         />
       )}
 
       {entry.environments.length > 0 && (
         <ItemWithAvatar
           icon={<Tree className="h-6" />}
-          primary={`${entry.environments.map(({ libelle }) => libelle).join(", ")}`}
+          primary={entry.environments.map(({ libelle }) => (
+            <span className="badge badge-outline m-1 p-3 text-base">{libelle}</span>
+          ))}
         />
       )}
 
