@@ -1,7 +1,5 @@
-import type { Weather, WeatherExtended } from "@ou-ca/common/api/entities/weather";
 import {
   getWeatherResponse,
-  getWeathersExtendedResponse,
   getWeathersQueryParamsSchema,
   getWeathersResponse,
   upsertWeatherInput,
@@ -76,9 +74,7 @@ export const weathersController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await weatherService.findPaginatedWeathers(req.user, queryParams),
@@ -92,25 +88,9 @@ export const weathersController: FastifyPluginCallback<{
       }
     }
 
-    const [weathersData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Weather[] | WeatherExtended[] = weathersData;
-    if (extended) {
-      data = await Promise.all(
-        weathersData.map(async (weatherData) => {
-          const entriesCount = (
-            await weatherService.getEntriesCountByWeather(weatherData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...weatherData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getWeathersExtendedResponse : getWeathersResponse;
-    const response = responseParser.parse({
+    const response = getWeathersResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

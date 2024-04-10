@@ -5,7 +5,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { distanceEstimateExtendedSchema, distanceEstimateSchema } from "./entities/distance-estimate.js";
+import { distanceEstimateSchema } from "./entities/distance-estimate.js";
 
 /**
  * `GET` `/distance-estimate/:id`
@@ -29,14 +29,9 @@ export const getDistanceEstimatesQueryParamsSchema = entitiesCommonQueryParamsSc
   orderBy: z.enum(ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type DistanceEstimatesSearchParams = Omit<z.infer<typeof getDistanceEstimatesQueryParamsSchema>, "extended">;
+export type DistanceEstimatesSearchParams = z.infer<typeof getDistanceEstimatesQueryParamsSchema>;
 
 export const getDistanceEstimatesResponse = getPaginatedResponseSchema(distanceEstimateSchema);
-
-/**
- * @deprecated use `getDistanceEstimatesResponse` instead
- */
-export const getDistanceEstimatesExtendedResponse = getPaginatedResponseSchema(distanceEstimateExtendedSchema);
 
 /**
  * `PUT` `/distance-estimate/:id` Update of distance estimate entity

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { townExtendedSchema, townSchema } from "./entities/town.js";
+import { townSchema } from "./entities/town.js";
 
 /**
  * `GET` `/town/:id`
@@ -33,14 +33,9 @@ export const getTownsQueryParamsSchema = entitiesCommonQueryParamsSchema.extend(
   departmentId: z.string().optional(),
 });
 
-export type TownsSearchParams = Omit<z.infer<typeof getTownsQueryParamsSchema>, "extended">;
+export type TownsSearchParams = z.infer<typeof getTownsQueryParamsSchema>;
 
 export const getTownsResponse = getPaginatedResponseSchema(townSchema);
-
-/**
- * @deprecated use `getTownsResponse` instead
- */
-export const getTownsExtendedResponse = getPaginatedResponseSchema(townExtendedSchema);
 
 /**
  * `PUT` `/town/:id` Update of town entity

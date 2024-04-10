@@ -2,7 +2,7 @@ import { z } from "zod";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { departmentExtendedSchema, departmentSchema } from "./entities/department.js";
+import { departmentSchema } from "./entities/department.js";
 
 /**
  * `GET` `/department/:id`
@@ -32,14 +32,9 @@ export const getDepartmentsQueryParamsSchema = entitiesCommonQueryParamsSchema.e
   orderBy: z.enum(DEPARTMENTS_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type DepartmentsSearchParams = Omit<z.infer<typeof getDepartmentsQueryParamsSchema>, "extended">;
+export type DepartmentsSearchParams = z.infer<typeof getDepartmentsQueryParamsSchema>;
 
 export const getDepartmentsResponse = getPaginatedResponseSchema(departmentSchema);
-
-/**
- * @deprecated use `getDepartmentsResponse` instead
- */
-export const getDepartmentsExtendedResponse = getPaginatedResponseSchema(departmentExtendedSchema);
 
 /**
  * `PUT` `/department/:id` Update of department entity

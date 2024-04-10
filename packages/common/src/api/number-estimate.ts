@@ -5,7 +5,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { numberEstimateExtendedSchema, numberEstimateSchema } from "./entities/number-estimate.js";
+import { numberEstimateSchema } from "./entities/number-estimate.js";
 
 /**
  * `GET` `/number-estimate/:id`
@@ -32,14 +32,9 @@ export const getNumberEstimatesQueryParamsSchema = entitiesCommonQueryParamsSche
   orderBy: z.enum(NUMBER_ESTIMATES_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type NumberEstimatesSearchParams = Omit<z.infer<typeof getNumberEstimatesQueryParamsSchema>, "extended">;
+export type NumberEstimatesSearchParams = z.infer<typeof getNumberEstimatesQueryParamsSchema>;
 
 export const getNumberEstimatesResponse = getPaginatedResponseSchema(numberEstimateSchema);
-
-/**
- * @deprecated use `getNumberEstimatesResponse` instead
- */
-export const getNumberEstimatesExtendedResponse = getPaginatedResponseSchema(numberEstimateExtendedSchema);
 
 /**
  * `PUT` `/number-estimate/:id` Update of number estimate entity

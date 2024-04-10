@@ -5,7 +5,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { sexExtendedSchema, sexSchema } from "./entities/sex.js";
+import { sexSchema } from "./entities/sex.js";
 
 /**
  * `GET` `/sex/:id`
@@ -29,14 +29,9 @@ export const getSexesQueryParamsSchema = entitiesCommonQueryParamsSchema.extend(
   orderBy: z.enum(ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type SexesSearchParams = Omit<z.infer<typeof getSexesQueryParamsSchema>, "extended">;
+export type SexesSearchParams = z.infer<typeof getSexesQueryParamsSchema>;
 
 export const getSexesResponse = getPaginatedResponseSchema(sexSchema);
-
-/**
- * @deprecated use `getSexesResponse` instead
- */
-export const getSexesExtendedResponse = getPaginatedResponseSchema(sexExtendedSchema);
 
 /**
  * `PUT` `/sex/:id` Update of sex entity

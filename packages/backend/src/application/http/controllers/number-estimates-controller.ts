@@ -1,7 +1,5 @@
-import type { NumberEstimate, NumberEstimateExtended } from "@ou-ca/common/api/entities/number-estimate";
 import {
   getNumberEstimateResponse,
-  getNumberEstimatesExtendedResponse,
   getNumberEstimatesQueryParamsSchema,
   getNumberEstimatesResponse,
   numberEstimateInfoSchema,
@@ -76,9 +74,7 @@ export const numberEstimatesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await numberEstimateService.findPaginatesNumberEstimates(req.user, queryParams),
@@ -92,25 +88,9 @@ export const numberEstimatesController: FastifyPluginCallback<{
       }
     }
 
-    const [numberEstimatesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: NumberEstimate[] | NumberEstimateExtended[] = numberEstimatesData;
-    if (extended) {
-      data = await Promise.all(
-        numberEstimatesData.map(async (numberEstimateData) => {
-          const entriesCount = (
-            await numberEstimateService.getEntriesCountByNumberEstimate(numberEstimateData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...numberEstimateData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getNumberEstimatesExtendedResponse : getNumberEstimatesResponse;
-    const response = responseParser.parse({
+    const response = getNumberEstimatesResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

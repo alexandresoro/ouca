@@ -1,7 +1,5 @@
-import type { Sex, SexExtended } from "@ou-ca/common/api/entities/sex";
 import {
   getSexResponse,
-  getSexesExtendedResponse,
   getSexesQueryParamsSchema,
   getSexesResponse,
   sexInfoSchema,
@@ -76,9 +74,7 @@ export const sexesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await sexService.findPaginatedSexes(req.user, queryParams),
@@ -92,23 +88,9 @@ export const sexesController: FastifyPluginCallback<{
       }
     }
 
-    const [sexesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Sex[] | SexExtended[] = sexesData;
-    if (extended) {
-      data = await Promise.all(
-        sexesData.map(async (sexData) => {
-          const entriesCount = (await sexService.getEntriesCountBySex(sexData.id, req.user))._unsafeUnwrap();
-          return {
-            ...sexData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getSexesExtendedResponse : getSexesResponse;
-    const response = responseParser.parse({
+    const response = getSexesResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

@@ -1,5 +1,5 @@
 import type { Species } from "@ou-ca/common/api/entities/species";
-import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
+import { type SpeciesOrderBy, getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -48,9 +48,8 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getSpeciesExtendedResponse,
+    schema: getSpeciesPaginatedResponse,
   });
 
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {

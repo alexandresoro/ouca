@@ -12,8 +12,4 @@ export type SortOrder = (typeof sortOrder)[number];
 export const entitiesCommonQueryParamsSchema = paginationQueryParamsSchema.extend({
   q: z.string().optional(),
   sortOrder: z.enum(sortOrder).optional(),
-  /**
-   * @deprecated
-   */
-  extended: z.coerce.boolean().default(false),
 });

@@ -3,7 +3,7 @@ import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.j
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
 import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
-import { speciesExtendedSchema, speciesSchema } from "./entities/species.js";
+import { speciesSchema } from "./entities/species.js";
 
 /**
  * `GET` `/species/:id`
@@ -34,14 +34,9 @@ export const getSpeciesQueryParamsSchema = entitiesCommonQueryParamsSchema
   })
   .merge(getSearchCriteriaParamsSchema);
 
-export type SpeciesSearchParams = Omit<z.infer<typeof getSpeciesQueryParamsSchema>, "extended">;
+export type SpeciesSearchParams = z.infer<typeof getSpeciesQueryParamsSchema>;
 
 export const getSpeciesPaginatedResponse = getPaginatedResponseSchema(speciesSchema);
-
-/**
- * @deprecated use `getSpeciesPaginatedResponse` instead
- */
-export const getSpeciesExtendedResponse = getPaginatedResponseSchema(speciesExtendedSchema);
 
 /**
  * `PUT` `/species/:id` Update of species entity

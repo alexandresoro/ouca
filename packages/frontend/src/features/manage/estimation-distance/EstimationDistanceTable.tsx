@@ -1,5 +1,5 @@
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
+import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,9 +39,8 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getDistanceEstimatesExtendedResponse,
+    schema: getDistanceEstimatesResponse,
   });
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {

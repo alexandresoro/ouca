@@ -5,7 +5,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { speciesClassExtendedSchema, speciesClassSchema } from "./entities/species-class.js";
+import { speciesClassSchema } from "./entities/species-class.js";
 
 /**
  * `GET` `/class/:id`
@@ -34,14 +34,9 @@ export const getClassesQueryParamsSchema = entitiesCommonQueryParamsSchema.exten
   orderBy: z.enum(CLASSES_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type ClassesSearchParams = Omit<z.infer<typeof getClassesQueryParamsSchema>, "extended">;
+export type ClassesSearchParams = z.infer<typeof getClassesQueryParamsSchema>;
 
 export const getClassesResponse = getPaginatedResponseSchema(speciesClassSchema);
-
-/**
- * @deprecated use `getClassesResponse` instead
- */
-export const getClassesExtendedResponse = getPaginatedResponseSchema(speciesClassExtendedSchema);
 
 /**
  * `PUT` `/class/:id` Update of class entity

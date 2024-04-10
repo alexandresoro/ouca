@@ -1,7 +1,5 @@
-import type { Town, TownExtended } from "@ou-ca/common/api/entities/town";
 import {
   getTownResponse,
-  getTownsExtendedResponse,
   getTownsQueryParamsSchema,
   getTownsResponse,
   townInfoSchema,
@@ -84,9 +82,7 @@ export const townsController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await townService.findPaginatedTowns(req.user, queryParams),
@@ -100,28 +96,9 @@ export const townsController: FastifyPluginCallback<{
       }
     }
 
-    const [townsData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Town[] | TownExtended[] = townsData;
-    if (extended) {
-      data = await Promise.all(
-        townsData.map(async (townData) => {
-          // TODO look to optimize this request
-          const department = (await departmentService.findDepartmentOfTownId(townData.id, req.user))._unsafeUnwrap();
-          const localitiesCount = (await townService.getLocalitiesCountByTown(townData.id, req.user))._unsafeUnwrap();
-          const entriesCount = (await townService.getEntriesCountByTown(townData.id, req.user))._unsafeUnwrap();
-          return {
-            ...townData,
-            departmentCode: department?.code,
-            localitiesCount,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getTownsExtendedResponse : getTownsResponse;
-    const response = responseParser.parse({
+    const response = getTownsResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

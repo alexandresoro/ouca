@@ -2,7 +2,7 @@ import { z } from "zod";
 import { entitiesCommonQueryParamsSchema } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { localityExtendedSchema, localitySchema } from "./entities/locality.js";
+import { localitySchema } from "./entities/locality.js";
 
 /**
  * `GET` `/locality/:id`
@@ -44,14 +44,9 @@ export const getLocalitiesQueryParamsSchema = entitiesCommonQueryParamsSchema.ex
   townId: z.string().optional(),
 });
 
-export type LocalitiesSearchParams = Omit<z.infer<typeof getLocalitiesQueryParamsSchema>, "extended">;
+export type LocalitiesSearchParams = z.infer<typeof getLocalitiesQueryParamsSchema>;
 
 export const getLocalitiesResponse = getPaginatedResponseSchema(localitySchema);
-
-/**
- * @deprecated use `getLocalitiesResponse` instead
- */
-export const getLocalitiesExtendedResponse = getPaginatedResponseSchema(localityExtendedSchema);
 
 /**
  * `PUT` `/locality/:id` Update of locality entity

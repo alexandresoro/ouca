@@ -1,5 +1,5 @@
 import type { Locality } from "@ou-ca/common/api/entities/locality";
-import { type LocalitiesOrderBy, getLocalitiesExtendedResponse } from "@ou-ca/common/api/locality";
+import { type LocalitiesOrderBy, getLocalitiesResponse } from "@ou-ca/common/api/locality";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -60,9 +60,8 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getLocalitiesExtendedResponse,
+    schema: getLocalitiesResponse,
   });
 
   const handleRequestSort = (sortingColumn: LocalitiesOrderBy) => {

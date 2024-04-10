@@ -1,13 +1,11 @@
 import {
   ageInfoSchema,
   getAgeResponse,
-  getAgesExtendedResponse,
   getAgesQueryParamsSchema,
   getAgesResponse,
   upsertAgeInput,
   upsertAgeResponse,
 } from "@ou-ca/common/api/age";
-import type { Age, AgeExtended } from "@ou-ca/common/api/entities/age";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
@@ -76,9 +74,7 @@ export const agesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await ageService.findPaginatedAges(req.user, queryParams),
@@ -92,23 +88,9 @@ export const agesController: FastifyPluginCallback<{
       }
     }
 
-    const [agesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Age[] | AgeExtended[] = agesData;
-    if (extended) {
-      data = await Promise.all(
-        agesData.map(async (ageData) => {
-          const entriesCount = (await ageService.getEntriesCountByAge(ageData.id, req.user))._unsafeUnwrap();
-          return {
-            ...ageData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getAgesExtendedResponse : getAgesResponse;
-    const response = responseParser.parse({
+    const response = getAgesResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

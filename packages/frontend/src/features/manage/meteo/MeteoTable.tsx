@@ -1,7 +1,6 @@
-import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
-import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
+import { getWeathersResponse } from "@ou-ca/common/api/weather";
 import { Cloud, Wind } from "@styled-icons/boxicons-regular";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,8 +26,6 @@ const COLUMNS = [
 const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, onClickDeleteWeather }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
 
@@ -40,9 +37,8 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getWeathersExtendedResponse,
+    schema: getWeathersResponse,
   });
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {

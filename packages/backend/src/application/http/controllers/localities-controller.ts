@@ -1,6 +1,4 @@
-import type { Locality, LocalityExtended } from "@ou-ca/common/api/entities/locality";
 import {
-  getLocalitiesExtendedResponse,
   getLocalitiesQueryParamsSchema,
   getLocalitiesResponse,
   getLocalityResponse,
@@ -97,9 +95,7 @@ export const localitiesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await localityService.findPaginatedLocalities(req.user, queryParams),
@@ -113,37 +109,9 @@ export const localitiesController: FastifyPluginCallback<{
       }
     }
 
-    const [localitiesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Locality[] | LocalityExtended[] = localitiesData;
-    if (extended) {
-      data = await Promise.all(
-        localitiesData.map(async (localityData) => {
-          // TODO look to optimize this request
-          const town = (await townService.findTownOfLocalityId(localityData.id, req.user))._unsafeUnwrap();
-          const department = town
-            ? (await departmentService.findDepartmentOfTownId(town.id, req.user))._unsafeUnwrap()
-            : null;
-          const inventoriesCount = (
-            await localityService.getInventoriesCountByLocality(localityData.id, req.user)
-          )._unsafeUnwrap();
-          const entriesCount = (
-            await localityService.getEntriesCountByLocality(localityData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...localityData,
-            townCode: town?.code,
-            townName: town?.nom,
-            departmentCode: department?.code,
-            inventoriesCount,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getLocalitiesExtendedResponse : getLocalitiesResponse;
-    const response = responseParser.parse({
+    const response = getLocalitiesResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

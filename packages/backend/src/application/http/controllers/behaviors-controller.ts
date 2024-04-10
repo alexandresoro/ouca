@@ -1,13 +1,11 @@
 import {
   behaviorInfoSchema,
   getBehaviorResponse,
-  getBehaviorsExtendedResponse,
   getBehaviorsQueryParamsSchema,
   getBehaviorsResponse,
   upsertBehaviorInput,
   upsertBehaviorResponse,
 } from "@ou-ca/common/api/behavior";
-import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
@@ -76,9 +74,7 @@ export const behaviorsController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await behaviorService.findPaginatedBehaviors(req.user, queryParams),
@@ -92,25 +88,9 @@ export const behaviorsController: FastifyPluginCallback<{
       }
     }
 
-    const [behaviorsData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Behavior[] | BehaviorExtended[] = behaviorsData;
-    if (extended) {
-      data = await Promise.all(
-        behaviorsData.map(async (behaviorData) => {
-          const entriesCount = (
-            await behaviorService.getEntriesCountByBehavior(behaviorData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...behaviorData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getBehaviorsExtendedResponse : getBehaviorsResponse;
-    const response = responseParser.parse({
+    const response = getBehaviorsResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

@@ -1,5 +1,5 @@
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
-import { type ClassesOrderBy, getClassesExtendedResponse } from "@ou-ca/common/api/species-class";
+import { type ClassesOrderBy, getClassesResponse } from "@ou-ca/common/api/species-class";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -36,9 +36,8 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getClassesExtendedResponse,
+    schema: getClassesResponse,
   });
 
   const handleRequestSort = (sortingColumn: ClassesOrderBy) => {

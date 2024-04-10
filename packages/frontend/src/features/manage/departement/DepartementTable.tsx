@@ -1,5 +1,4 @@
-import { useUser } from "@hooks/useUser";
-import { type DepartmentsOrderBy, getDepartmentsExtendedResponse } from "@ou-ca/common/api/department";
+import { type DepartmentsOrderBy, getDepartmentsResponse } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,8 +27,6 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>({
     orderBy: "code",
   });
@@ -42,9 +39,8 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getDepartmentsExtendedResponse,
+    schema: getDepartmentsResponse,
   });
 
   const handleRequestSort = (sortingColumn: DepartmentsOrderBy) => {

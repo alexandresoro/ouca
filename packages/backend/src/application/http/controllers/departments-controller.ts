@@ -1,13 +1,11 @@
 import {
   departmentInfoSchema,
   getDepartmentResponse,
-  getDepartmentsExtendedResponse,
   getDepartmentsQueryParamsSchema,
   getDepartmentsResponse,
   upsertDepartmentInput,
   upsertDepartmentResponse,
 } from "@ou-ca/common/api/department";
-import type { Department, DepartmentExtended } from "@ou-ca/common/api/entities/department";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
@@ -80,9 +78,7 @@ export const departmentsController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await departmentService.findPaginatedDepartments(req.user, queryParams),
@@ -96,33 +92,9 @@ export const departmentsController: FastifyPluginCallback<{
       }
     }
 
-    const [departmentsData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Department[] | DepartmentExtended[] = departmentsData;
-    if (extended) {
-      data = await Promise.all(
-        departmentsData.map(async (departmentData) => {
-          const localitiesCount = (
-            await departmentService.getLocalitiesCountByDepartment(departmentData.id, req.user)
-          )._unsafeUnwrap();
-          const townsCount = (
-            await departmentService.getTownsCountByDepartment(departmentData.id, req.user)
-          )._unsafeUnwrap();
-          const entriesCount = (
-            await departmentService.getEntriesCountByDepartment(departmentData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...departmentData,
-            localitiesCount,
-            townsCount,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getDepartmentsExtendedResponse : getDepartmentsResponse;
-    const response = responseParser.parse({
+    const response = getDepartmentsResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

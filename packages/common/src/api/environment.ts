@@ -5,7 +5,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { environmentExtendedSchema, environmentSchema } from "./entities/environment.js";
+import { environmentSchema } from "./entities/environment.js";
 
 /**
  * `GET` `/environment/:id`
@@ -32,14 +32,9 @@ export const getEnvironmentsQueryParamsSchema = entitiesCommonQueryParamsSchema.
   orderBy: z.enum(ENVIRONMENTS_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type EnvironmentsSearchParams = Omit<z.infer<typeof getEnvironmentsQueryParamsSchema>, "extended">;
+export type EnvironmentsSearchParams = z.infer<typeof getEnvironmentsQueryParamsSchema>;
 
 export const getEnvironmentsResponse = getPaginatedResponseSchema(environmentSchema);
-
-/**
- * @deprecated use `getEnvironmentsResponse` instead
- */
-export const getEnvironmentsExtendedResponse = getPaginatedResponseSchema(environmentExtendedSchema);
 
 /**
  * `PUT` `/environment/:id` Update of environment entity

@@ -1,7 +1,6 @@
-import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
-import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
+import { getSexesResponse } from "@ou-ca/common/api/sex";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -26,8 +25,6 @@ const COLUMNS = [
 const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClickDeleteSex }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
 
@@ -39,9 +36,8 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getSexesExtendedResponse,
+    schema: getSexesResponse,
   });
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {

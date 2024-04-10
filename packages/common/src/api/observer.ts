@@ -29,7 +29,7 @@ export const getObserversQueryParamsSchema = entitiesCommonQueryParamsSchema.ext
   orderBy: z.enum(ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type ObserversSearchParams = Omit<z.infer<typeof getObserversQueryParamsSchema>, "extended">;
+export type ObserversSearchParams = z.infer<typeof getObserversQueryParamsSchema>;
 
 export const getObserversResponse = getPaginatedResponseSchema(observerSchema);
 

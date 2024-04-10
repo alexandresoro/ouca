@@ -6,7 +6,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { behaviorExtendedSchema, behaviorSchema } from "./entities/behavior.js";
+import { behaviorSchema } from "./entities/behavior.js";
 
 /**
  * `GET` `/behavior/:id`
@@ -33,14 +33,9 @@ export const getBehaviorsQueryParamsSchema = entitiesCommonQueryParamsSchema.ext
   orderBy: z.enum(BEHAVIORS_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type BehaviorsSearchParams = Omit<z.infer<typeof getBehaviorsQueryParamsSchema>, "extended">;
+export type BehaviorsSearchParams = z.infer<typeof getBehaviorsQueryParamsSchema>;
 
 export const getBehaviorsResponse = getPaginatedResponseSchema(behaviorSchema);
-
-/**
- * @deprecated use `getBehaviorsResponse` instead
- */
-export const getBehaviorsExtendedResponse = getPaginatedResponseSchema(behaviorExtendedSchema);
 
 /**
  * `PUT` `/behavior/:id` Update of behavior entity

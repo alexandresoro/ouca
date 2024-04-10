@@ -1,13 +1,11 @@
 import {
   distanceEstimateInfoSchema,
   getDistanceEstimateResponse,
-  getDistanceEstimatesExtendedResponse,
   getDistanceEstimatesQueryParamsSchema,
   getDistanceEstimatesResponse,
   upsertDistanceEstimateInput,
   upsertDistanceEstimateResponse,
 } from "@ou-ca/common/api/distance-estimate";
-import type { DistanceEstimate, DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
@@ -76,9 +74,7 @@ export const distanceEstimatesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await distanceEstimateService.findPaginatedDistanceEstimates(req.user, queryParams),
@@ -92,25 +88,9 @@ export const distanceEstimatesController: FastifyPluginCallback<{
       }
     }
 
-    const [distanceEstimatesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: DistanceEstimate[] | DistanceEstimateExtended[] = distanceEstimatesData;
-    if (extended) {
-      data = await Promise.all(
-        distanceEstimatesData.map(async (distanceEstimateData) => {
-          const entriesCount = (
-            await distanceEstimateService.getEntriesCountByDistanceEstimate(distanceEstimateData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...distanceEstimateData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getDistanceEstimatesExtendedResponse : getDistanceEstimatesResponse;
-    const response = responseParser.parse({
+    const response = getDistanceEstimatesResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

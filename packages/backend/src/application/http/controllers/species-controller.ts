@@ -1,6 +1,4 @@
-import type { Species, SpeciesExtended } from "@ou-ca/common/api/entities/species";
 import {
-  getSpeciesExtendedResponse,
   getSpeciesPaginatedResponse,
   getSpeciesQueryParamsSchema,
   getSpeciesResponse,
@@ -97,9 +95,7 @@ export const speciesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await speciesService.findPaginatedSpecies(req.user, queryParams),
@@ -113,30 +109,9 @@ export const speciesController: FastifyPluginCallback<{
       }
     }
 
-    const [speciesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Species[] | SpeciesExtended[] = speciesData;
-    if (extended) {
-      data = await Promise.all(
-        speciesData.map(async (singleSpeciesData) => {
-          // TODO look to optimize this request
-          const speciesClass = (
-            await classService.findSpeciesClassOfSpecies(singleSpeciesData.id, req.user)
-          )._unsafeUnwrap();
-          const entriesCount = (
-            await speciesService.getEntriesCountBySpecies(singleSpeciesData.id, queryParams, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...singleSpeciesData,
-            speciesClassName: speciesClass?.libelle,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getSpeciesExtendedResponse : getSpeciesPaginatedResponse;
-    const response = responseParser.parse({
+    const response = getSpeciesPaginatedResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

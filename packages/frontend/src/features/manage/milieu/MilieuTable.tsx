@@ -1,6 +1,5 @@
-import { useUser } from "@hooks/useUser";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
-import { type EnvironmentsOrderBy, getEnvironmentsExtendedResponse } from "@ou-ca/common/api/environment";
+import { type EnvironmentsOrderBy, getEnvironmentsResponse } from "@ou-ca/common/api/environment";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -29,8 +28,6 @@ const COLUMNS = [
 const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment, onClickDeleteEnvironment }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>({
     orderBy: "code",
   });
@@ -43,9 +40,8 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getEnvironmentsExtendedResponse,
+    schema: getEnvironmentsResponse,
   });
 
   const handleRequestSort = (sortingColumn: EnvironmentsOrderBy) => {

@@ -1,5 +1,5 @@
 import type { Town } from "@ou-ca/common/api/entities/town";
-import { type TownsOrderBy, getTownsExtendedResponse } from "@ou-ca/common/api/town";
+import { type TownsOrderBy, getTownsResponse } from "@ou-ca/common/api/town";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -29,9 +29,8 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getTownsExtendedResponse,
+    schema: getTownsResponse,
   });
 
   const handleRequestSort = (sortingColumn: TownsOrderBy) => {

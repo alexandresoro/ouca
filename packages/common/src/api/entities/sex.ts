@@ -8,15 +8,3 @@ export const sexSchema = z.object({
 });
 
 export type Sex = z.infer<typeof sexSchema>;
-
-/**
- * @deprecated Use `sexSchema` instead.
- */
-export const sexExtendedSchema = sexSchema.extend({
-  entriesCount: z.number(),
-});
-
-/**
- * @deprecated Use `Sex` instead.
- */
-export type SexExtended = z.infer<typeof sexExtendedSchema>;

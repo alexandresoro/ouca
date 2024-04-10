@@ -1,7 +1,5 @@
-import type { SpeciesClass, SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
 import {
   getClassResponse,
-  getClassesExtendedResponse,
   getClassesQueryParamsSchema,
   getClassesResponse,
   speciesClassInfoSchema,
@@ -78,9 +76,7 @@ export const classesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await classService.findPaginatedSpeciesClasses(req.user, queryParams),
@@ -94,29 +90,9 @@ export const classesController: FastifyPluginCallback<{
       }
     }
 
-    const [classesData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: SpeciesClass[] | SpeciesClassExtended[] = classesData;
-    if (extended) {
-      data = await Promise.all(
-        classesData.map(async (classData) => {
-          const speciesCount = (
-            await classService.getSpeciesCountBySpeciesClass(classData.id, req.user)
-          )._unsafeUnwrap();
-          const entriesCount = (
-            await classService.getEntriesCountBySpeciesClass(classData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...classData,
-            speciesCount,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getClassesExtendedResponse : getClassesResponse;
-    const response = responseParser.parse({
+    const response = getClassesResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });

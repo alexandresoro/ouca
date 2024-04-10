@@ -1,5 +1,4 @@
-import { useUser } from "@hooks/useUser";
-import { type BehaviorsOrderBy, getBehaviorsExtendedResponse } from "@ou-ca/common/api/behavior";
+import { type BehaviorsOrderBy, getBehaviorsResponse } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,8 +35,6 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>({
     orderBy: "code",
   });
@@ -50,9 +47,8 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getBehaviorsExtendedResponse,
+    schema: getBehaviorsResponse,
   });
 
   const handleRequestSort = (sortingColumn: BehaviorsOrderBy) => {

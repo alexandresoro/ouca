@@ -5,7 +5,7 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { weatherExtendedSchema, weatherSchema } from "./entities/weather.js";
+import { weatherSchema } from "./entities/weather.js";
 
 /**
  * `GET` `/weather/:id`
@@ -29,14 +29,9 @@ export const getWeathersQueryParamsSchema = entitiesCommonQueryParamsSchema.exte
   orderBy: z.enum(ENTITIES_WITH_LABEL_ORDER_BY_ELEMENTS).optional(),
 });
 
-export type WeathersSearchParams = Omit<z.infer<typeof getWeathersQueryParamsSchema>, "extended">;
+export type WeathersSearchParams = z.infer<typeof getWeathersQueryParamsSchema>;
 
 export const getWeathersResponse = getPaginatedResponseSchema(weatherSchema);
-
-/**
- * @deprecated use `getWeathersResponse` instead
- */
-export const getWeathersExtendedResponse = getPaginatedResponseSchema(weatherExtendedSchema);
 
 /**
  * `PUT` `/weather/:id` Update of weather entity

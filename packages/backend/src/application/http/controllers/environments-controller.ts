@@ -1,8 +1,6 @@
-import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
 import {
   environmentInfoSchema,
   getEnvironmentResponse,
-  getEnvironmentsExtendedResponse,
   getEnvironmentsQueryParamsSchema,
   getEnvironmentsResponse,
   upsertEnvironmentInput,
@@ -76,9 +74,7 @@ export const environmentsController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     const paginatedResults = Result.combine([
       await environmentService.findPaginatedEnvironments(req.user, queryParams),
@@ -92,25 +88,9 @@ export const environmentsController: FastifyPluginCallback<{
       }
     }
 
-    const [environmentsData, count] = paginatedResults.value;
+    const [data, count] = paginatedResults.value;
 
-    let data: Environment[] | EnvironmentExtended[] = environmentsData;
-    if (extended) {
-      data = await Promise.all(
-        environmentsData.map(async (environmentData) => {
-          const entriesCount = (
-            await environmentService.getEntriesCountByEnvironment(environmentData.id, req.user)
-          )._unsafeUnwrap();
-          return {
-            ...environmentData,
-            entriesCount,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getEnvironmentsExtendedResponse : getEnvironmentsResponse;
-    const response = responseParser.parse({
+    const response = getEnvironmentsResponse.parse({
       data,
       meta: getPaginationMetadata(count, queryParams),
     });
