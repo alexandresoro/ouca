@@ -20,7 +20,7 @@ const findSexById = async (id: number): Promise<Sex | null> => {
 const findSexes = async (
   { orderBy, sortOrder, q, offset, limit }: SexFindManyInput = {},
   ownerId?: string,
-): Promise<readonly Sex[]> => {
+): Promise<Sex[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>

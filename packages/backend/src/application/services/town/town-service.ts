@@ -6,7 +6,7 @@ import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import type { TownsSearchParams, UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type TownServiceDependencies = {
   townRepository: TownRepository;
@@ -22,7 +22,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
       return err("notAllowed");
     }
     const town = await townRepository.findTownById(id);
-    return ok(enrichEntityWithEditableStatus(town, loggedUser));
+    return ok(town);
   };
 
   const getEntriesCountByTown = async (
@@ -56,7 +56,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     }
 
     const town = await townRepository.findTownByLocalityId(localityId);
-    return ok(enrichEntityWithEditableStatus(town, loggedUser));
+    return ok(town);
   };
 
   const isTownUsed = async (
@@ -77,11 +77,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
       orderBy: "nom",
     });
 
-    const enrichedTowns = towns.map((town) => {
-      return enrichEntityWithEditableStatus(town, null);
-    });
-
-    return [...enrichedTowns];
+    return towns;
   };
 
   const findPaginatedTowns = async (
@@ -105,11 +101,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
       loggedUser.id,
     );
 
-    const enrichedTowns = towns.map((town) => {
-      return enrichEntityWithEditableStatus(town, loggedUser);
-    });
-
-    return ok([...enrichedTowns]);
+    return ok(towns);
   };
 
   const findAllTownsWithDepartments = async (): Promise<(Omit<Town, "editable"> & { departmentCode: string })[]> => {
@@ -141,9 +133,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
       ownerId: loggedUser.id,
     });
 
-    return createdTownResult.map((createdTown) => {
-      return enrichEntityWithEditableStatus(createdTown, loggedUser);
-    });
+    return createdTownResult;
   };
 
   const updateTown = async (
@@ -166,9 +156,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
 
     const updatedTownResult = await townRepository.updateTown(id, input);
 
-    return updatedTownResult.map((updatedTown) => {
-      return enrichEntityWithEditableStatus(updatedTown, loggedUser);
-    });
+    return updatedTownResult;
   };
 
   const deleteTown = async (
@@ -200,7 +188,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
     }
 
     const deletedTown = await townRepository.deleteTownById(id);
-    return ok(enrichEntityWithEditableStatus(deletedTown, loggedUser));
+    return ok(deletedTown);
   };
 
   const createTowns = async (towns: Omit<TownCreateInput, "ownerId">[], loggedUser: LoggedUser): Promise<Town[]> => {
@@ -210,11 +198,7 @@ export const buildTownService = ({ townRepository, localityRepository }: TownSer
       }),
     );
 
-    const enrichedCreatedTowns = createdTowns.map((town) => {
-      return enrichEntityWithEditableStatus(town, loggedUser);
-    });
-
-    return enrichedCreatedTowns;
+    return createdTowns;
   };
 
   return {

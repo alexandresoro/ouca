@@ -5,7 +5,7 @@ import type { SexRepository } from "@interfaces/sex-repository-interface.js";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import type { SexesSearchParams, UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type SexServiceDependencies = {
   sexRepository: SexRepository;
@@ -21,7 +21,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
     }
 
     const sex = await sexRepository.findSexById(id);
-    return ok(enrichEntityWithEditableStatus(sex, loggedUser));
+    return ok(sex);
   };
 
   const getEntriesCountBySex = async (
@@ -53,11 +53,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
       orderBy: "libelle",
     });
 
-    const enrichedSexes = sexes.map((sex) => {
-      return enrichEntityWithEditableStatus(sex, null);
-    });
-
-    return [...enrichedSexes];
+    return sexes;
   };
 
   const findPaginatedSexes = async (
@@ -80,11 +76,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
       loggedUser.id,
     );
 
-    const enrichedSexes = sexes.map((sex) => {
-      return enrichEntityWithEditableStatus(sex, loggedUser);
-    });
-
-    return ok([...enrichedSexes]);
+    return ok(sexes);
   };
 
   const getSexesCount = async (
@@ -111,9 +103,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
       ownerId: loggedUser.id,
     });
 
-    return createdSexResult.map((createdSex) => {
-      return enrichEntityWithEditableStatus(createdSex, loggedUser);
-    });
+    return createdSexResult;
   };
 
   const updateSex = async (
@@ -136,9 +126,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
 
     const updatedSexResult = await sexRepository.updateSex(id, input);
 
-    return updatedSexResult.map((updatedSex) => {
-      return enrichEntityWithEditableStatus(updatedSex, loggedUser);
-    });
+    return updatedSexResult;
   };
 
   const deleteSex = async (
@@ -170,7 +158,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
     }
 
     const deletedSex = await sexRepository.deleteSexById(id);
-    return ok(deletedSex ? enrichEntityWithEditableStatus(deletedSex, loggedUser) : null);
+    return ok(deletedSex);
   };
 
   const createSexes = async (
@@ -183,11 +171,7 @@ export const buildSexService = ({ sexRepository }: SexServiceDependencies) => {
       }),
     );
 
-    const enrichedCreatedSexes = createdSexes.map((sex) => {
-      return enrichEntityWithEditableStatus(sex, loggedUser);
-    });
-
-    return enrichedCreatedSexes;
+    return createdSexes;
   };
 
   return {

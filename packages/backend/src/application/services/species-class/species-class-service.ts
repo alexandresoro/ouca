@@ -6,7 +6,7 @@ import type { SpeciesRepository } from "@interfaces/species-repository-interface
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import type { ClassesSearchParams, UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type SpeciesClassServiceDependencies = {
   classRepository: SpeciesClassRepository;
@@ -23,7 +23,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
     }
 
     const speciesClass = await classRepository.findSpeciesClassById(id);
-    return ok(enrichEntityWithEditableStatus(speciesClass, loggedUser));
+    return ok(speciesClass);
   };
 
   const getSpeciesCountBySpeciesClass = async (
@@ -82,7 +82,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
     const speciesClass = await classRepository.findSpeciesClassBySpeciesId(
       especeId ? Number.parseInt(especeId) : undefined,
     );
-    return ok(enrichEntityWithEditableStatus(speciesClass, loggedUser));
+    return ok(speciesClass);
   };
 
   const findAllSpeciesClasses = async (): Promise<SpeciesClass[]> => {
@@ -90,11 +90,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
       orderBy: "libelle",
     });
 
-    const enrichedClasses = classes.map((speciesClass) => {
-      return enrichEntityWithEditableStatus(speciesClass, null);
-    });
-
-    return [...enrichedClasses];
+    return classes;
   };
 
   const findPaginatedSpeciesClasses = async (
@@ -117,11 +113,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
       loggedUser.id,
     );
 
-    const enrichedClasses = classes.map((speciesClass) => {
-      return enrichEntityWithEditableStatus(speciesClass, loggedUser);
-    });
-
-    return ok([...enrichedClasses]);
+    return ok(classes);
   };
 
   const getSpeciesClassesCount = async (
@@ -148,9 +140,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
       ownerId: loggedUser?.id,
     });
 
-    return createdClassResult.map((createdClass) => {
-      return enrichEntityWithEditableStatus(createdClass, loggedUser);
-    });
+    return createdClassResult;
   };
 
   const updateSpeciesClass = async (
@@ -173,9 +163,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
 
     const updatedClassResult = await classRepository.updateSpeciesClass(id, input);
 
-    return updatedClassResult.map((updatedClass) => {
-      return enrichEntityWithEditableStatus(updatedClass, loggedUser);
-    });
+    return updatedClassResult;
   };
 
   const deleteSpeciesClass = async (
@@ -207,7 +195,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
     }
 
     const deletedClass = await classRepository.deleteSpeciesClassById(id);
-    return ok(enrichEntityWithEditableStatus(deletedClass, loggedUser));
+    return ok(deletedClass);
   };
 
   const createMultipleSpeciesClasses = async (
@@ -220,11 +208,7 @@ export const buildSpeciesClassService = ({ classRepository, speciesRepository }:
       }),
     );
 
-    const enrichedCreatedClasses = createdClasses.map((speciesClass) => {
-      return enrichEntityWithEditableStatus(speciesClass, loggedUser);
-    });
-
-    return enrichedCreatedClasses;
+    return createdClasses;
   };
 
   return {

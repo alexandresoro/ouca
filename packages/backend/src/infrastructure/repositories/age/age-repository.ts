@@ -20,7 +20,7 @@ const findAgeById = async (id: number): Promise<Age | null> => {
 const findAges = async (
   { orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {},
   ownerId?: string,
-): Promise<readonly Age[]> => {
+): Promise<Age[]> => {
   const isSortByNbDonnees = orderBy === "nbDonnees";
 
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>

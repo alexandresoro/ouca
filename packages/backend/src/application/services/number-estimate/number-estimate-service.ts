@@ -5,7 +5,7 @@ import type { NumberEstimateRepository } from "@interfaces/number-estimate-repos
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { NumberEstimatesSearchParams, UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type NumberEstimateServiceDependencies = {
   numberEstimateRepository: NumberEstimateRepository;
@@ -21,7 +21,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     }
 
     const numberEstimate = await numberEstimateRepository.findNumberEstimateById(id);
-    return ok(enrichEntityWithEditableStatus(numberEstimate, loggedUser));
+    return ok(numberEstimate);
   };
 
   const getEntriesCountByNumberEstimate = async (
@@ -53,11 +53,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
       orderBy: "libelle",
     });
 
-    const enrichedNumberEstimates = numberEstimates.map((numberEstimate) => {
-      return enrichEntityWithEditableStatus(numberEstimate, null);
-    });
-
-    return [...enrichedNumberEstimates];
+    return numberEstimates;
   };
 
   const findPaginatesNumberEstimates = async (
@@ -80,11 +76,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
       loggedUser.id,
     );
 
-    const enrichedNumberEstimates = numberEstimates.map((numberEstimate) => {
-      return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
-    });
-
-    return ok([...enrichedNumberEstimates]);
+    return ok(numberEstimates);
   };
 
   const getNumberEstimatesCount = async (
@@ -111,9 +103,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
       ownerId: loggedUser.id,
     });
 
-    return createdNumberEstimateResult.map((createdNumberEstimate) => {
-      return enrichEntityWithEditableStatus(createdNumberEstimate, loggedUser);
-    });
+    return createdNumberEstimateResult;
   };
 
   const updateNumberEstimate = async (
@@ -135,9 +125,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     }
     const updatedNumberEstimateResult = await numberEstimateRepository.updateNumberEstimate(id, input);
 
-    return updatedNumberEstimateResult.map((updatedNumberEstimate) => {
-      return enrichEntityWithEditableStatus(updatedNumberEstimate, loggedUser);
-    });
+    return updatedNumberEstimateResult;
   };
 
   const deleteNumberEstimate = async (
@@ -169,7 +157,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
     }
 
     const deletedNumberEstimate = await numberEstimateRepository.deleteNumberEstimateById(id);
-    return ok(enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser));
+    return ok(deletedNumberEstimate);
   };
 
   const createNumberEstimates = async (
@@ -182,11 +170,7 @@ export const buildNumberEstimateService = ({ numberEstimateRepository }: NumberE
       }),
     );
 
-    const enrichedCreatedNumberEstimates = createdNumberEstimates.map((numberEstimate) => {
-      return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
-    });
-
-    return enrichedCreatedNumberEstimates;
+    return createdNumberEstimates;
   };
 
   return {

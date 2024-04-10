@@ -6,7 +6,7 @@ import type { ObserverRepository } from "@interfaces/observer-repository-interfa
 import type { Observer } from "@ou-ca/common/api/entities/observer";
 import type { ObserversSearchParams, UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type ObserverServiceDependencies = {
   observerRepository: ObserverRepository;
@@ -22,7 +22,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     }
 
     const observer = await observerRepository.findObserverById(id);
-    return ok(enrichEntityWithEditableStatus(observer, loggedUser));
+    return ok(observer);
   };
 
   const getEntriesCountByObserver = async (
@@ -62,7 +62,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     }
 
     const observers = await observerRepository.findObserversById(ids);
-    return ok(observers.map((observer) => enrichEntityWithEditableStatus(observer, loggedUser)));
+    return ok(observers);
   };
 
   const findAllObservers = async (): Promise<Observer[]> => {
@@ -70,11 +70,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
       orderBy: "libelle",
     });
 
-    const enrichedObservers = observers.map((observer) => {
-      return enrichEntityWithEditableStatus(observer, null);
-    });
-
-    return [...enrichedObservers];
+    return observers;
   };
 
   const findPaginatedObservers = async (
@@ -97,11 +93,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
       loggedUser.id,
     );
 
-    const enrichedObservers = observers.map((observer) => {
-      return enrichEntityWithEditableStatus(observer, loggedUser);
-    });
-
-    return ok([...enrichedObservers]);
+    return ok(observers);
   };
 
   const getObserversCount = async (
@@ -129,9 +121,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
       ownerId: loggedUser.id,
     });
 
-    return createdObservateurResult.map((createdObservateur) => {
-      return enrichEntityWithEditableStatus(createdObservateur, loggedUser);
-    });
+    return createdObservateurResult;
   };
 
   const updateObserver = async (
@@ -155,9 +145,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     // Update an existing observer
     const updatedObservateurResult = await observerRepository.updateObserver(id, input);
 
-    return updatedObservateurResult.map((updatedObservateur) => {
-      return enrichEntityWithEditableStatus(updatedObservateur, loggedUser);
-    });
+    return updatedObservateurResult;
   };
 
   const deleteObserver = async (
@@ -189,7 +177,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
     }
 
     const deletedObserver = await observerRepository.deleteObserverById(id);
-    return ok(deletedObserver ? enrichEntityWithEditableStatus(deletedObserver, loggedUser) : null);
+    return ok(deletedObserver);
   };
 
   const createObservers = async (
@@ -202,11 +190,7 @@ export const buildObserverService = ({ observerRepository }: ObserverServiceDepe
       }),
     );
 
-    const enrichedCreatedObservers = createdObservers.map((observer) => {
-      return enrichEntityWithEditableStatus(observer, loggedUser);
-    });
-
-    return enrichedCreatedObservers;
+    return createdObservers;
   };
 
   return {

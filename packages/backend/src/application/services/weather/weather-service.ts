@@ -5,7 +5,7 @@ import type { WeatherRepository } from "@interfaces/weather-repository-interface
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import type { UpsertWeatherInput, WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type WeatherServiceDependencies = {
   weatherRepository: WeatherRepository;
@@ -21,7 +21,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     }
 
     const weather = await weatherRepository.findWeatherById(id);
-    return ok(enrichEntityWithEditableStatus(weather, loggedUser));
+    return ok(weather);
   };
 
   const findWeathers = async (
@@ -37,7 +37,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     }
 
     const weathers = await weatherRepository.findWeathersById(ids);
-    return ok(weathers.map((weather) => enrichEntityWithEditableStatus(weather, loggedUser)));
+    return ok(weathers);
   };
 
   const getEntriesCountByWeather = async (
@@ -69,11 +69,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
       orderBy: "libelle",
     });
 
-    const enrichedWeathers = weathers.map((weather) => {
-      return enrichEntityWithEditableStatus(weather, null);
-    });
-
-    return [...enrichedWeathers];
+    return weathers;
   };
 
   const findPaginatedWeathers = async (
@@ -96,11 +92,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
       loggedUser.id,
     );
 
-    const enrichedWeathers = weathers.map((weather) => {
-      return enrichEntityWithEditableStatus(weather, loggedUser);
-    });
-
-    return ok([...enrichedWeathers]);
+    return ok(weathers);
   };
 
   const getWeathersCount = async (
@@ -128,9 +120,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
       ownerId: loggedUser?.id,
     });
 
-    return createdWeatherResult.map((createdWeather) => {
-      return enrichEntityWithEditableStatus(createdWeather, loggedUser);
-    });
+    return createdWeatherResult;
   };
 
   const updateWeather = async (
@@ -154,9 +144,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     // Update an existing weather
     const updatedWeatherResult = await weatherRepository.updateWeather(id, input);
 
-    return updatedWeatherResult.map((updatedWeather) => {
-      return enrichEntityWithEditableStatus(updatedWeather, loggedUser);
-    });
+    return updatedWeatherResult;
   };
 
   const deleteWeather = async (
@@ -188,7 +176,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
     }
 
     const deletedWeather = await weatherRepository.deleteWeatherById(id);
-    return ok(deletedWeather ? enrichEntityWithEditableStatus(deletedWeather, loggedUser) : null);
+    return ok(deletedWeather);
   };
 
   const createWeathers = async (
@@ -201,11 +189,7 @@ export const buildWeatherService = ({ weatherRepository }: WeatherServiceDepende
       }),
     );
 
-    const enrichedCreatedWeathers = createdWeathers.map((weather) => {
-      return enrichEntityWithEditableStatus(weather, loggedUser);
-    });
-
-    return enrichedCreatedWeathers;
+    return createdWeathers;
   };
 
   return {

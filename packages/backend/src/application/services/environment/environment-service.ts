@@ -5,7 +5,7 @@ import type { EnvironmentRepository } from "@interfaces/environment-repository-i
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import type { EnvironmentsSearchParams, UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type EnvironmentServiceDependencies = {
   environmentRepository: EnvironmentRepository;
@@ -21,7 +21,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     }
 
     const environment = await environmentRepository.findEnvironmentById(id);
-    return ok(enrichEntityWithEditableStatus(environment, loggedUser));
+    return ok(environment);
   };
 
   const findEnvironments = async (
@@ -37,7 +37,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     }
 
     const environments = await environmentRepository.findEnvironmentsById(ids);
-    return ok(environments.map((environment) => enrichEntityWithEditableStatus(environment, loggedUser)));
+    return ok(environments);
   };
 
   const getEntriesCountByEnvironment = async (
@@ -69,11 +69,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
       orderBy: "libelle",
     });
 
-    const enrichedEnvironments = environments.map((environment) => {
-      return enrichEntityWithEditableStatus(environment, null);
-    });
-
-    return [...enrichedEnvironments];
+    return environments;
   };
 
   const findPaginatedEnvironments = async (
@@ -96,11 +92,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
       loggedUser.id,
     );
 
-    const enrichedEnvironments = environments.map((environment) => {
-      return enrichEntityWithEditableStatus(environment, loggedUser);
-    });
-
-    return ok([...enrichedEnvironments]);
+    return ok(environments);
   };
 
   const getEnvironmentsCount = async (
@@ -127,9 +119,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
       ownerId: loggedUser.id,
     });
 
-    return createdEnvironmentResult.map((createdEnvironment) => {
-      return enrichEntityWithEditableStatus(createdEnvironment, loggedUser);
-    });
+    return createdEnvironmentResult;
   };
 
   const updateEnvironment = async (
@@ -152,9 +142,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
 
     const updatedEnvironmentResult = await environmentRepository.updateEnvironment(id, input);
 
-    return updatedEnvironmentResult.map((updatedEnvironment) => {
-      return enrichEntityWithEditableStatus(updatedEnvironment, loggedUser);
-    });
+    return updatedEnvironmentResult;
   };
 
   const deleteEnvironment = async (
@@ -186,7 +174,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
     }
 
     const deletedEnvironment = await environmentRepository.deleteEnvironmentById(id);
-    return ok(enrichEntityWithEditableStatus(deletedEnvironment, loggedUser));
+    return ok(deletedEnvironment);
   };
 
   const createEnvironments = async (
@@ -199,11 +187,7 @@ export const buildEnvironmentService = ({ environmentRepository }: EnvironmentSe
       }),
     );
 
-    const enrichedCreatedEnvironments = createdEnvironments.map((environment) => {
-      return enrichEntityWithEditableStatus(environment, loggedUser);
-    });
-
-    return enrichedCreatedEnvironments;
+    return createdEnvironments;
   };
 
   return {

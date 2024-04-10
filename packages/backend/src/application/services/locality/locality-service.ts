@@ -24,7 +24,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     }
 
     const locality = await localityRepository.findLocalityById(id);
-    return ok(reshapeLocalityRepositoryToApi(locality, loggedUser));
+    return ok(reshapeLocalityRepositoryToApi(locality));
   };
 
   const getInventoriesCountByLocality = async (
@@ -71,7 +71,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     }
 
     const locality = await localityRepository.findLocalityByInventoryId(inventoryId);
-    return ok(reshapeLocalityRepositoryToApi(locality, loggedUser));
+    return ok(reshapeLocalityRepositoryToApi(locality));
   };
 
   const findAllLocalities = async (): Promise<Locality[]> => {
@@ -80,7 +80,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     });
 
     const enrichedLocalities = localities.map((locality) => {
-      return reshapeLocalityRepositoryToApi(locality, null);
+      return reshapeLocalityRepositoryToApi(locality);
     });
 
     return [...enrichedLocalities];
@@ -108,7 +108,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     );
 
     const enrichedLocalities = localities.map((locality) => {
-      return reshapeLocalityRepositoryToApi(locality, loggedUser);
+      return reshapeLocalityRepositoryToApi(locality);
     });
 
     return ok([...enrichedLocalities]);
@@ -149,7 +149,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     });
 
     return createdLocalityResult.map((createdLocality) => {
-      return reshapeLocalityRepositoryToApi(createdLocality, loggedUser);
+      return reshapeLocalityRepositoryToApi(createdLocality);
     });
   };
 
@@ -174,7 +174,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     const updatedLocalityResult = await localityRepository.updateLocality(id, input);
 
     return updatedLocalityResult.map((updatedLocality) => {
-      return reshapeLocalityRepositoryToApi(updatedLocality, loggedUser);
+      return reshapeLocalityRepositoryToApi(updatedLocality);
     });
   };
 
@@ -207,7 +207,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     }
 
     const deletedLocality = await localityRepository.deleteLocalityById(id);
-    return ok(reshapeLocalityRepositoryToApi(deletedLocality, loggedUser));
+    return ok(reshapeLocalityRepositoryToApi(deletedLocality));
   };
 
   const createLocalities = async (localities: UpsertLocalityInput[], loggedUser: LoggedUser): Promise<Locality[]> => {
@@ -221,7 +221,7 @@ export const buildLocalityService = ({ localityRepository, inventoryRepository }
     );
 
     const enrichedCreatedLocalities = createdLocalities.map((locality) => {
-      return reshapeLocalityRepositoryToApi(locality, loggedUser);
+      return reshapeLocalityRepositoryToApi(locality);
     });
 
     return enrichedCreatedLocalities;

@@ -5,7 +5,7 @@ import type { AgeRepository } from "@interfaces/age-repository-interface.js";
 import type { AgesSearchParams, UpsertAgeInput } from "@ou-ca/common/api/age";
 import type { Age } from "@ou-ca/common/api/entities/age";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type AgeServiceDependencies = {
   ageRepository: AgeRepository;
@@ -21,7 +21,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     }
 
     const age = await ageRepository.findAgeById(id);
-    return ok(enrichEntityWithEditableStatus(age, loggedUser));
+    return ok(age);
   };
 
   const getEntriesCountByAge = async (
@@ -53,11 +53,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
       orderBy: "libelle",
     });
 
-    const enrichedAges = ages.map((age) => {
-      return enrichEntityWithEditableStatus(age, null);
-    });
-
-    return [...enrichedAges];
+    return ages;
   };
 
   const findPaginatedAges = async (
@@ -80,11 +76,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
       loggedUser.id,
     );
 
-    const enrichedAges = ages.map((age) => {
-      return enrichEntityWithEditableStatus(age, loggedUser);
-    });
-
-    return ok([...enrichedAges]);
+    return ok(ages);
   };
 
   const getAgesCount = async (
@@ -111,9 +103,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
       ownerId: loggedUser.id,
     });
 
-    return createdAgeResult.map((createdAge) => {
-      return enrichEntityWithEditableStatus(createdAge, loggedUser);
-    });
+    return createdAgeResult;
   };
 
   const updateAge = async (
@@ -136,9 +126,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
 
     const upsertedAgeResult = await ageRepository.updateAge(id, input);
 
-    return upsertedAgeResult.map((upsertedAge) => {
-      return enrichEntityWithEditableStatus(upsertedAge, loggedUser);
-    });
+    return upsertedAgeResult;
   };
 
   const deleteAge = async (
@@ -170,7 +158,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     }
 
     const deletedAge = await ageRepository.deleteAgeById(id);
-    return ok(deletedAge ? enrichEntityWithEditableStatus(deletedAge, loggedUser) : null);
+    return ok(deletedAge);
   };
 
   const createAges = async (
@@ -183,11 +171,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
       }),
     );
 
-    const enrichedCreatedAges = createdAges.map((age) => {
-      return enrichEntityWithEditableStatus(age, loggedUser);
-    });
-
-    return enrichedCreatedAges;
+    return createdAges;
   };
 
   return {

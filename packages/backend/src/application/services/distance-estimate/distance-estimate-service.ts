@@ -5,7 +5,7 @@ import type { DistanceEstimateRepository } from "@interfaces/distance-estimate-r
 import type { DistanceEstimatesSearchParams, UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type DistanceEstimateServiceDependencies = {
   distanceEstimateRepository: DistanceEstimateRepository;
@@ -21,7 +21,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
     }
 
     const distanceEstimate = await distanceEstimateRepository.findDistanceEstimateById(id);
-    return ok(enrichEntityWithEditableStatus(distanceEstimate, loggedUser));
+    return ok(distanceEstimate);
   };
 
   const getEntriesCountByDistanceEstimate = async (
@@ -53,11 +53,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
       orderBy: "libelle",
     });
 
-    const enrichedDistanceEstimates = distanceEstimates.map((age) => {
-      return enrichEntityWithEditableStatus(age, null);
-    });
-
-    return [...enrichedDistanceEstimates];
+    return distanceEstimates;
   };
 
   const findPaginatedDistanceEstimates = async (
@@ -80,11 +76,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
       loggedUser.id,
     );
 
-    const enrichedDistanceEstimates = distanceEstimates.map((age) => {
-      return enrichEntityWithEditableStatus(age, loggedUser);
-    });
-
-    return ok([...enrichedDistanceEstimates]);
+    return ok(distanceEstimates);
   };
 
   const getDistanceEstimatesCount = async (
@@ -111,9 +103,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
       ownerId: loggedUser.id,
     });
 
-    return createdDistanceEstimateResult.map((createdDistanceEstimate) => {
-      return enrichEntityWithEditableStatus(createdDistanceEstimate, loggedUser);
-    });
+    return createdDistanceEstimateResult;
   };
 
   const updateDistanceEstimate = async (
@@ -136,9 +126,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
 
     const updateDistanceEstimateResult = await distanceEstimateRepository.updateDistanceEstimate(id, input);
 
-    return updateDistanceEstimateResult.map((updateDistanceEstimate) => {
-      return enrichEntityWithEditableStatus(updateDistanceEstimate, loggedUser);
-    });
+    return updateDistanceEstimateResult;
   };
 
   const deleteDistanceEstimate = async (
@@ -170,7 +158,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
     }
 
     const deletedDistanceEstimate = await distanceEstimateRepository.deleteDistanceEstimateById(id);
-    return ok(enrichEntityWithEditableStatus(deletedDistanceEstimate, loggedUser));
+    return ok(deletedDistanceEstimate);
   };
 
   const createDistanceEstimates = async (
@@ -183,11 +171,7 @@ export const buildDistanceEstimateService = ({ distanceEstimateRepository }: Dis
       }),
     );
 
-    const enrichedCreatedDistanceEstimates = createdDistanceEstimates.map((distanceEstimate) => {
-      return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
-    });
-
-    return enrichedCreatedDistanceEstimates;
+    return createdDistanceEstimates;
   };
 
   return {

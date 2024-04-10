@@ -8,7 +8,7 @@ export type WeatherRepository = {
   findWeathers: (
     { orderBy, sortOrder, q, offset, limit }: WeatherFindManyInput,
     ownerId?: string,
-  ) => Promise<readonly Weather[]>;
+  ) => Promise<Weather[]>;
   getCount: (q?: string | null) => Promise<number>;
   getEntriesCountById: (id: string, ownerId?: string) => Promise<number>;
   createWeather: (weatherInput: WeatherCreateInput) => Promise<Result<Weather, EntityFailureReason>>;

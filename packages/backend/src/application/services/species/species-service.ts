@@ -5,7 +5,7 @@ import type { SpeciesRepository } from "@interfaces/species-repository-interface
 import type { Species as SpeciesCommon } from "@ou-ca/common/api/entities/species";
 import type { SpeciesSearchParams, UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 import type { SpeciesClassService } from "../species-class/species-class-service.js";
 
 type SpeciesServiceDependencies = {
@@ -18,12 +18,10 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
     species: Species,
     loggedUser: LoggedUser | null,
   ): Promise<Result<SpeciesCommon, AccessFailureReason>> => {
-    // TODO this can be called from import with loggedUser = null and will fail validation
-    // Ideally, even import should have a user
     const speciesClassResult = await classService.findSpeciesClassOfSpecies(species.id, loggedUser);
 
     return speciesClassResult.map((speciesClass) => {
-      return enrichEntityWithEditableStatus({ ...species, speciesClass }, loggedUser);
+      return { ...species, speciesClass };
     });
   };
 
@@ -237,7 +235,7 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
       return ok(null);
     }
 
-    return ok(enrichEntityWithEditableStatus({ ...deletedSpecies, speciesClass }, loggedUser));
+    return ok({ ...deletedSpecies, speciesClass });
   };
 
   const createMultipleSpecies = async (

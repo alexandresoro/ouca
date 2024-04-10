@@ -5,7 +5,7 @@ import type { BehaviorRepository } from "@interfaces/behavior-repository-interfa
 import type { BehaviorsSearchParams, UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type BehaviorServiceDependencies = {
   behaviorRepository: BehaviorRepository;
@@ -21,7 +21,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     }
 
     const behavior = await behaviorRepository.findBehaviorById(id);
-    return ok(enrichEntityWithEditableStatus(behavior, loggedUser));
+    return ok(behavior);
   };
 
   const findBehaviors = async (
@@ -37,7 +37,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     }
 
     const behaviors = await behaviorRepository.findBehaviorsById(ids);
-    return ok(behaviors.map((behavior) => enrichEntityWithEditableStatus(behavior, loggedUser)));
+    return ok(behaviors);
   };
 
   const getEntriesCountByBehavior = async (
@@ -69,11 +69,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
       orderBy: "code",
     });
 
-    const enrichedBehaviors = behaviors.map((behavior) => {
-      return enrichEntityWithEditableStatus(behavior, null);
-    });
-
-    return [...enrichedBehaviors];
+    return behaviors;
   };
 
   const findPaginatedBehaviors = async (
@@ -96,11 +92,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
       loggedUser.id,
     );
 
-    const enrichedBehaviors = behaviors.map((behavior) => {
-      return enrichEntityWithEditableStatus(behavior, loggedUser);
-    });
-
-    return ok([...enrichedBehaviors]);
+    return ok(behaviors);
   };
 
   const getBehaviorsCount = async (
@@ -127,9 +119,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
       ownerId: loggedUser.id,
     });
 
-    return createdBehaviorResult.map((createdBehavior) => {
-      return enrichEntityWithEditableStatus(createdBehavior, loggedUser);
-    });
+    return createdBehaviorResult;
   };
 
   const updateBehavior = async (
@@ -152,9 +142,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
 
     const updatedBehaviorResult = await behaviorRepository.updateBehavior(id, input);
 
-    return updatedBehaviorResult.map((updatedBehavior) => {
-      return enrichEntityWithEditableStatus(updatedBehavior, loggedUser);
-    });
+    return updatedBehaviorResult;
   };
 
   const deleteBehavior = async (
@@ -186,7 +174,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
     }
 
     const deletedBehavior = await behaviorRepository.deleteBehaviorById(id);
-    return ok(enrichEntityWithEditableStatus(deletedBehavior, loggedUser));
+    return ok(deletedBehavior);
   };
 
   const createBehaviors = async (
@@ -199,11 +187,7 @@ export const buildBehaviorService = ({ behaviorRepository }: BehaviorServiceDepe
       }),
     );
 
-    const enrichedCreatedBehaviors = createdBehaviors.map((behavior) => {
-      return enrichEntityWithEditableStatus(behavior, loggedUser);
-    });
-
-    return enrichedCreatedBehaviors;
+    return createdBehaviors;
   };
 
   return {

@@ -7,7 +7,7 @@ import type { TownRepository } from "@interfaces/town-repository-interface.js";
 import type { DepartmentsSearchParams, UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { type Result, err, ok } from "neverthrow";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
+import { getSqlPagination } from "../entities-utils.js";
 
 type DepartmentServiceDependencies = {
   departmentRepository: DepartmentRepository;
@@ -29,7 +29,7 @@ export const buildDepartmentService = ({
     }
 
     const department = await departmentRepository.findDepartmentById(id);
-    return ok(enrichEntityWithEditableStatus(department, loggedUser));
+    return ok(department);
   };
 
   const getEntriesCountByDepartment = async (
@@ -89,7 +89,7 @@ export const buildDepartmentService = ({
     const department = await departmentRepository.findDepartmentByTownId(
       communeId ? Number.parseInt(communeId) : undefined,
     );
-    return ok(enrichEntityWithEditableStatus(department, loggedUser));
+    return ok(department);
   };
 
   const findAllDepartments = async (): Promise<Department[]> => {
@@ -97,11 +97,7 @@ export const buildDepartmentService = ({
       orderBy: "code",
     });
 
-    const enrichedDepartments = departments.map((department) => {
-      return enrichEntityWithEditableStatus(department, null);
-    });
-
-    return [...enrichedDepartments];
+    return departments;
   };
 
   const findPaginatedDepartments = async (
@@ -124,11 +120,7 @@ export const buildDepartmentService = ({
       loggedUser.id,
     );
 
-    const enrichedDepartments = departments.map((department) => {
-      return enrichEntityWithEditableStatus(department, loggedUser);
-    });
-
-    return ok([...enrichedDepartments]);
+    return ok(departments);
   };
 
   const getDepartmentsCount = async (
@@ -155,9 +147,7 @@ export const buildDepartmentService = ({
       ownerId: loggedUser.id,
     });
 
-    return createdDepartmentResult.map((createdDepartment) => {
-      return enrichEntityWithEditableStatus(createdDepartment, loggedUser);
-    });
+    return createdDepartmentResult;
   };
 
   const updateDepartment = async (
@@ -180,9 +170,7 @@ export const buildDepartmentService = ({
 
     const updatedDepartmentResult = await departmentRepository.updateDepartment(id, input);
 
-    return updatedDepartmentResult.map((updatedDepartment) => {
-      return enrichEntityWithEditableStatus(updatedDepartment, loggedUser);
-    });
+    return updatedDepartmentResult;
   };
 
   const deleteDepartment = async (
@@ -214,7 +202,7 @@ export const buildDepartmentService = ({
     }
 
     const deletedDepartment = await departmentRepository.deleteDepartmentById(id);
-    return ok(deletedDepartment ? enrichEntityWithEditableStatus(deletedDepartment, loggedUser) : null);
+    return ok(deletedDepartment);
   };
 
   const createDepartments = async (
@@ -227,11 +215,7 @@ export const buildDepartmentService = ({
       }),
     );
 
-    const enrichedCreatedDepartments = createdDepartments.map((department) => {
-      return enrichEntityWithEditableStatus(department, loggedUser);
-    });
-
-    return enrichedCreatedDepartments;
+    return createdDepartments;
   };
 
   return {
