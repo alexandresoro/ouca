@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { Weather, WeatherExtended } from "@ou-ca/common/api/entities/weather";
+import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const MeteoPage: FunctionComponent = () => {
   const [upsertWeatherDialog, setUpsertWeatherDialog] = useState<
     null | { mode: "create" } | { mode: "update"; weather: Weather }
   >(null);
-  const [weatherToDelete, setWeatherToDelete] = useState<WeatherExtended | null>(null);
+  const [weatherToDelete, setWeatherToDelete] = useState<Weather | null>(null);
 
   const { mutate: createWeather } = useApiMutation(
     {

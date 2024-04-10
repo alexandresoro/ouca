@@ -1,7 +1,6 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import type { WeatherExtended } from "@ou-ca/common/api/entities/weather";
+import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
 import { Cloud, Wind } from "@styled-icons/boxicons-regular";
 import { Fragment, type FunctionComponent } from "react";
@@ -11,11 +10,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import WeatherTableRow from "./WeatherTableRow";
 
 type MeteoTableProps = {
-  onClickUpdateWeather: (weather: WeatherExtended) => void;
-  onClickDeleteWeather: (weather: WeatherExtended) => void;
+  onClickUpdateWeather: (weather: Weather) => void;
+  onClickDeleteWeather: (weather: Weather) => void;
 };
 
 const COLUMNS = [
@@ -105,26 +104,14 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((weather) => {
-                const isOwner = user != null && weather?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={weather?.id}>
-                    <td>{weather.libelle}</td>
-                    <td>{weather.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={weather.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.weather.canEdit}
-                        disabledDelete={!weather.editable}
-                        onEditClicked={() => onClickUpdateWeather(weather)}
-                        onDeleteClicked={() => onClickDeleteWeather(weather)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((weather) => (
+                <WeatherTableRow
+                  key={weather.id}
+                  weather={weather}
+                  onEditClicked={onClickUpdateWeather}
+                  onDeleteClicked={onClickDeleteWeather}
+                />
+              ))}
             </Fragment>
           );
         })}
