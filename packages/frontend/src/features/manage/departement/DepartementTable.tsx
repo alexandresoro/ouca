@@ -1,7 +1,6 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { useUser } from "@hooks/useUser";
 import { type DepartmentsOrderBy, getDepartmentsExtendedResponse } from "@ou-ca/common/api/department";
-import type { DepartmentExtended } from "@ou-ca/common/api/entities/department";
+import type { Department } from "@ou-ca/common/api/entities/department";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -9,11 +8,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import DepartmentTableRow from "./DepartmentTableRow";
 
 type DepartementTableProps = {
-  onClickUpdateDepartment: (department: DepartmentExtended) => void;
-  onClickDeleteDepartment: (department: DepartmentExtended) => void;
+  onClickUpdateDepartment: (department: Department) => void;
+  onClickDeleteDepartment: (department: Department) => void;
 };
 
 const COLUMNS = [
@@ -115,28 +114,14 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((department) => {
-                const isOwner = user != null && department?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={department?.id}>
-                    <td>{department.code}</td>
-                    <td>{department.townsCount}</td>
-                    <td>{department.localitiesCount}</td>
-                    <td>{department.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={department.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.department.canEdit}
-                        disabledDelete={!department.editable || department.townsCount > 0}
-                        onEditClicked={() => onClickUpdateDepartment(department)}
-                        onDeleteClicked={() => onClickDeleteDepartment(department)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((department) => (
+                <DepartmentTableRow
+                  key={department.id}
+                  department={department}
+                  onEditClicked={onClickUpdateDepartment}
+                  onDeleteClicked={onClickDeleteDepartment}
+                />
+              ))}
             </Fragment>
           );
         })}

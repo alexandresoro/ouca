@@ -1,6 +1,6 @@
 import { useUser } from "@hooks/useUser";
 import { type UpsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
-import type { Department, DepartmentExtended } from "@ou-ca/common/api/entities/department";
+import type { Department } from "@ou-ca/common/api/entities/department";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ const DepartementPage: FunctionComponent = () => {
   const [upsertDepartmentDialog, setUpsertDepartmentDialog] = useState<
     null | { mode: "create" } | { mode: "update"; department: Department }
   >(null);
-  const [departmentToDelete, setDepartmentToDelete] = useState<DepartmentExtended | null>(null);
+  const [departmentToDelete, setDepartmentToDelete] = useState<Department | null>(null);
 
   const { mutate: createDepartment } = useApiMutation(
     {
