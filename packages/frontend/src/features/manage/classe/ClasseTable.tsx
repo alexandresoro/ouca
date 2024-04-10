@@ -1,6 +1,4 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
-import { useUser } from "@hooks/useUser";
-import type { SpeciesClassExtended } from "@ou-ca/common/api/entities/species-class";
+import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type ClassesOrderBy, getClassesExtendedResponse } from "@ou-ca/common/api/species-class";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,11 +7,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import SpeciesClassTableRow from "./SpeciesClassTableRow";
 
 type ClasseTableProps = {
-  onClickUpdateSpeciesClass: (speciesClass: SpeciesClassExtended) => void;
-  onClickDeleteSpeciesClass: (speciesClass: SpeciesClassExtended) => void;
+  onClickUpdateSpeciesClass: (speciesClass: SpeciesClass) => void;
+  onClickDeleteSpeciesClass: (speciesClass: SpeciesClass) => void;
 };
 
 const COLUMNS = [
@@ -25,8 +23,6 @@ const COLUMNS = [
 
 const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass, onClickDeleteSpeciesClass }) => {
   const { t } = useTranslation();
-
-  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>({
     orderBy: "libelle",
@@ -103,27 +99,14 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((speciesClass) => {
-                const isOwner = user != null && speciesClass?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={speciesClass?.id}>
-                    <td>{speciesClass.libelle}</td>
-                    <td>{speciesClass.speciesCount}</td>
-                    <td>{speciesClass.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={speciesClass.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.speciesClass.canEdit}
-                        disabledDelete={!speciesClass.editable || speciesClass.speciesCount > 0}
-                        onEditClicked={() => onClickUpdateSpeciesClass(speciesClass)}
-                        onDeleteClicked={() => onClickDeleteSpeciesClass(speciesClass)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((speciesClass) => (
+                <SpeciesClassTableRow
+                  speciesClass={speciesClass}
+                  key={speciesClass.id}
+                  onEditClicked={onClickUpdateSpeciesClass}
+                  onDeleteClicked={onClickDeleteSpeciesClass}
+                />
+              ))}
             </Fragment>
           );
         })}

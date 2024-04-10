@@ -20,20 +20,18 @@ const AgeTableRow: FunctionComponent<AgeTableRowProps> = ({ age, onEditClicked, 
 
   return (
     <tr className="hover:bg-base-200">
-      <td>{age?.libelle}</td>
+      <td>{age.libelle}</td>
       <td>{ageInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
         <AvatarWithUniqueNameAvatar input={age?.ownerId ?? null} />
       </td>
       <td align="center" className="w-32">
-        {age != null && (
-          <TableCellActionButtons
-            canEdit={isOwner || user?.permissions.age.canEdit}
-            canDelete={ageInfo?.canBeDeleted && user?.permissions.age.canDelete}
-            onEditClicked={() => onEditClicked?.(age)}
-            onDeleteClicked={() => onDeleteClicked?.(age)}
-          />
-        )}
+        <TableCellActionButtons
+          canEdit={isOwner || user?.permissions.age.canEdit}
+          canDelete={ageInfo?.canBeDeleted && user?.permissions.age.canDelete}
+          onEditClicked={() => onEditClicked?.(age)}
+          onDeleteClicked={() => onDeleteClicked?.(age)}
+        />
       </td>
     </tr>
   );

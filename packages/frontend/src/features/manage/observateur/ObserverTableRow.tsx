@@ -20,20 +20,18 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ observer, 
 
   return (
     <tr className="hover:bg-base-200">
-      <td>{observer?.libelle}</td>
+      <td>{observer.libelle}</td>
       <td>{observerInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
         <AvatarWithUniqueNameAvatar input={observer?.ownerId ?? null} />
       </td>
       <td align="center" className="w-32">
-        {observer != null && (
-          <TableCellActionButtons
-            canEdit={isOwner || user?.permissions.observer.canEdit}
-            canDelete={observerInfo?.canBeDeleted && user?.permissions.observer.canDelete}
-            onEditClicked={() => onEditClicked?.(observer)}
-            onDeleteClicked={() => onDeleteClicked?.(observer)}
-          />
-        )}
+        <TableCellActionButtons
+          canEdit={isOwner || user?.permissions.observer.canEdit}
+          canDelete={observerInfo?.canBeDeleted && user?.permissions.observer.canDelete}
+          onEditClicked={() => onEditClicked?.(observer)}
+          onDeleteClicked={() => onDeleteClicked?.(observer)}
+        />
       </td>
     </tr>
   );
