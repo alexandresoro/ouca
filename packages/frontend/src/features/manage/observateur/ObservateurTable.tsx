@@ -94,7 +94,7 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
             <Fragment key={page.meta.pageNumber}>
               {page.data.map((observateur) => (
                 <ObserverTableRow
-                  id={observateur.id}
+                  observer={observateur}
                   key={observateur.id}
                   onEditClicked={onClickUpdateObserver}
                   onDeleteClicked={onClickDeleteObserver}

@@ -1,19 +1,18 @@
 import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { useUser } from "@hooks/useUser";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
-import { useApiObserverInfoQuery, useApiObserverQuery } from "@services/api/observer/api-observer-queries";
+import { useApiObserverInfoQuery } from "@services/api/observer/api-observer-queries";
 import type { FunctionComponent } from "react";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ObserverTableRowProps = {
-  id: string;
+  observer: Observer;
   onEditClicked?: (observer: Observer) => void;
   onDeleteClicked?: (observer: Observer) => void;
 };
 
-const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ id, onEditClicked, onDeleteClicked }) => {
-  const { data: observer } = useApiObserverQuery(id);
-  const { data: observerInfo } = useApiObserverInfoQuery(id);
+const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ observer, onEditClicked, onDeleteClicked }) => {
+  const { data: observerInfo } = useApiObserverInfoQuery(observer.id);
 
   const user = useUser();
 
