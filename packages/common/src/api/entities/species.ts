@@ -9,7 +9,6 @@ export const speciesSchema = z.object({
   classId: z.string().nullable(), // FIXME: field is nullable in DB
   speciesClass: speciesClassSchema.nullable(),
   ownerId: z.string().uuid().nullable(),
-  editable: z.boolean(),
 });
 
 export type Species = z.infer<typeof speciesSchema>;

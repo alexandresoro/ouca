@@ -11,9 +11,8 @@ export const speciesServiceFactory = Factory.define<Species>(() => {
     nomFrancais: faker.string.alpha(),
     nomLatin: faker.string.alpha(),
     classId: faker.string.sample(),
-    editable: faker.datatype.boolean(),
     speciesClass: speciesClassServiceFactory.build(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

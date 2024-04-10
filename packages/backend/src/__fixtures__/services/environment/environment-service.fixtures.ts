@@ -8,8 +8,7 @@ export const environmentServiceFactory = Factory.define<Environment>(() => {
     id: faker.string.sample(),
     code: faker.string.alphanumeric(),
     libelle: faker.string.alpha(),
-    editable: faker.datatype.boolean(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

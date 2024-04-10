@@ -10,8 +10,7 @@ export const behaviorServiceFactory = Factory.define<Behavior>(() => {
     code: faker.string.alphanumeric(),
     libelle: faker.string.alpha(),
     nicheur: faker.helpers.arrayElement(NICHEUR_CODES),
-    editable: faker.datatype.boolean(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

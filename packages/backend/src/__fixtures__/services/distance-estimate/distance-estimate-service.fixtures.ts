@@ -7,8 +7,7 @@ export const distanceEstimateServiceFactory = Factory.define<DistanceEstimate>((
   return {
     id: faker.string.sample(),
     libelle: faker.string.alpha(),
-    editable: faker.datatype.boolean(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

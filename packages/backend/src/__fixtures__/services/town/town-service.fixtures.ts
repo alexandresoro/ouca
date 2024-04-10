@@ -9,10 +9,7 @@ export const townServiceFactory = Factory.define<Town>(() => {
     code: faker.number.int(),
     nom: faker.string.alpha(),
     departmentId: faker.string.alpha(),
-    editable: faker.datatype.boolean(),
-    departmentCode: faker.string.alphanumeric(),
-    localitiesCount: faker.number.int(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

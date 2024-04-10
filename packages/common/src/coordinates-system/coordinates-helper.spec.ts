@@ -14,7 +14,6 @@ test("should correctly validate non-customized coordinated", () => {
     nom: "test",
     ownerId: "1",
     townId: "1",
-    editable: true,
   };
 
   assert.strictEqual(areCoordinatesCustom(locality, 45, 10, -4), false);
@@ -31,7 +30,6 @@ test("should correctly validate customized coordinated", () => {
     nom: "test",
     ownerId: "1",
     townId: "1",
-    editable: true,
   };
 
   assert.strictEqual(areCoordinatesCustom(locality, 33, 22, 11), true);

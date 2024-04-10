@@ -7,9 +7,7 @@ export const observerServiceFactory = Factory.define<Observer>(() => {
   return {
     id: faker.string.sample(),
     libelle: faker.string.alpha(),
-    editable: faker.datatype.boolean(),
-    inventoriesCount: faker.number.int(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

@@ -7,9 +7,7 @@ export const speciesClassServiceFactory = Factory.define<SpeciesClass>(() => {
   return {
     id: faker.string.sample(),
     libelle: faker.string.alpha(),
-    editable: faker.datatype.boolean(),
-    speciesCount: faker.number.int(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

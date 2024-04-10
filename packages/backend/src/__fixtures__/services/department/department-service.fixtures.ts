@@ -7,10 +7,7 @@ export const departmentServiceFactory = Factory.define<Department>(() => {
   return {
     id: faker.string.sample(),
     code: faker.string.alpha(),
-    editable: faker.datatype.boolean(),
-    localitiesCount: faker.number.int(),
-    townsCount: faker.number.int(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

@@ -6,7 +6,6 @@ export const townSchema = z.object({
   nom: z.string(),
   departmentId: z.string(),
   ownerId: z.string().uuid().nullable(),
-  editable: z.boolean(),
 });
 
 export type Town = z.infer<typeof townSchema>;

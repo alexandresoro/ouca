@@ -5,7 +5,6 @@ export const numberEstimateSchema = z.object({
   libelle: z.string(),
   nonCompte: z.boolean(),
   ownerId: z.string().uuid().nullable(),
-  editable: z.boolean(),
 });
 
 export type NumberEstimate = z.infer<typeof numberEstimateSchema>;

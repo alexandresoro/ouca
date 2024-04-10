@@ -8,8 +8,7 @@ export const numberEstimateServiceFactory = Factory.define<NumberEstimate>(() =>
     id: faker.string.sample(),
     libelle: faker.string.alpha(),
     nonCompte: faker.datatype.boolean(),
-    editable: faker.datatype.boolean(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 

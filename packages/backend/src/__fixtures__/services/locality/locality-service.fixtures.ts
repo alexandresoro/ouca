@@ -13,12 +13,7 @@ export const localityServiceFactory = Factory.define<Locality>(() => {
       latitude: faker.number.int({ max: 90, min: -90 }),
     },
     townId: faker.string.sample(),
-    townCode: faker.number.int(),
-    townName: faker.string.alpha(),
-    departmentCode: faker.string.alphanumeric(),
-    editable: faker.datatype.boolean(),
-    inventoriesCount: faker.number.int(),
-    entriesCount: faker.number.int(),
+    ownerId: faker.string.uuid(),
   };
 });
 
