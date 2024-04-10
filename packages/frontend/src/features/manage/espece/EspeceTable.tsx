@@ -1,6 +1,5 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { useUser } from "@hooks/useUser";
-import type { SpeciesExtended } from "@ou-ca/common/api/entities/species";
+import type { Species } from "@ou-ca/common/api/entities/species";
 import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,11 +8,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import SpeciesTableRow from "./SpeciesTableRow";
 
 type EspeceTableProps = {
-  onClickUpdateSpecies: (species: SpeciesExtended) => void;
-  onClickDeleteSpecies: (species: SpeciesExtended) => void;
+  onClickUpdateSpecies: (species: Species) => void;
+  onClickDeleteSpecies: (species: Species) => void;
 };
 
 const COLUMNS = [
@@ -107,29 +106,14 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((species) => {
-                const isOwner = user != null && species?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={species?.id}>
-                    <td>{species.speciesClass?.libelle}</td>
-                    <td>{species.code}</td>
-                    <td>{species.nomFrancais}</td>
-                    <td>{species.nomLatin}</td>
-                    <td>{species.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={species.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.species.canEdit}
-                        disabledDelete={!species.editable || species.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateSpecies(species)}
-                        onDeleteClicked={() => onClickDeleteSpecies(species)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((species) => (
+                <SpeciesTableRow
+                  key={species.id}
+                  species={species}
+                  onEditClicked={onClickUpdateSpecies}
+                  onDeleteClicked={onClickDeleteSpecies}
+                />
+              ))}
             </Fragment>
           );
         })}
