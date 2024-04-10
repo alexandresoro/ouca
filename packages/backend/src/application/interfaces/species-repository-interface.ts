@@ -8,7 +8,7 @@ export type SpeciesRepository = {
   findAllSpeciesWithClassLabel(): Promise<(Species & { classLabel: string })[]>;
   findSpecies(options?: SpeciesFindManyInput, ownerId?: string): Promise<Species[]>;
   getCount(options?: Pick<SpeciesFindManyInput, "q" | "searchCriteria">): Promise<number>;
-  getEntriesCountById: (id: string, searchCriteria?: SearchCriteria | null) => Promise<number>;
+  getEntriesCountById: (id: string, searchCriteria?: SearchCriteria | null, ownerId?: string) => Promise<number>;
   createSpecies(speciesInput: SpeciesCreateInput): Promise<Result<Species, EntityFailureReason>>;
   createSpeciesMultiple(speciesInputs: SpeciesCreateInput[]): Promise<Species[]>;
   updateSpecies(speciesId: number, speciesInput: SpeciesCreateInput): Promise<Result<Species, EntityFailureReason>>;

@@ -74,7 +74,7 @@ describe("Data count per entity", () => {
     await speciesService.getEntriesCountBySpecies("12", {}, loggedUser);
 
     assert.strictEqual(speciesRepository.getEntriesCountById.mock.callCount(), 1);
-    assert.deepStrictEqual(speciesRepository.getEntriesCountById.mock.calls[0].arguments, ["12", {}]);
+    assert.deepStrictEqual(speciesRepository.getEntriesCountById.mock.calls[0].arguments, ["12", {}, undefined]);
   });
 
   test("should not be allowed when the requester is not logged", async () => {

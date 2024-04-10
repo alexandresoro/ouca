@@ -96,7 +96,7 @@ const findSpecies = async (
           .groupBy("espece.id")
           .orderBy(
             (eb) =>
-              ownerId && searchCriteria?.ownerId
+              ownerId
                 ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
                 : eb.fn.count("donnee.id"),
             sortOrder ?? undefined,
@@ -394,7 +394,11 @@ const getCount = async ({ q, searchCriteria }: Pick<SpeciesFindManyInput, "q" | 
   return countSchema.parse(countResult).count;
 };
 
-const getEntriesCountById = async (id: string, searchCriteria?: SearchCriteria | null): Promise<number> => {
+const getEntriesCountById = async (
+  id: string,
+  searchCriteria?: SearchCriteria | null,
+  ownerId?: string,
+): Promise<number> => {
   let query = kysely
     .selectFrom("donnee")
     .leftJoin("espece", "espece.id", "donnee.especeId")
@@ -411,6 +415,10 @@ const getEntriesCountById = async (id: string, searchCriteria?: SearchCriteria |
 
   if (searchCriteria != null) {
     query = query.where(withSearchCriteria(searchCriteria));
+  }
+
+  if (ownerId) {
+    query = query.where("inventaire.ownerId", "=", ownerId);
   }
 
   const countResult = await query.executeTakeFirstOrThrow();

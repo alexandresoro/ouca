@@ -66,14 +66,7 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
 
     const { q, orderBy, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
 
-    const reshapedSearchCriteria = onlyOwnData
-      ? {
-          ...searchCriteria,
-          ownerId: loggedUser.id,
-        }
-      : searchCriteria;
-
-    return ok(await speciesRepository.getEntriesCountById(id, reshapedSearchCriteria));
+    return ok(await speciesRepository.getEntriesCountById(id, searchCriteria, onlyOwnData ? loggedUser.id : undefined));
   };
 
   const isSpeciesUsed = async (
