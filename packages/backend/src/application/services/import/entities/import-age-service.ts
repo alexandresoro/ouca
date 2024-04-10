@@ -1,9 +1,9 @@
 import type { AgeCreateInput } from "@domain/age/age.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age } from "@ou-ca/common/api/entities/age";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
-export class ImportAgeService extends ImportEntiteAvecLibelleService<AgeSimple> {
+export class ImportAgeService extends ImportEntiteAvecLibelleService<Age> {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
     this.entities = await this.services.ageService.findAllAges();
@@ -16,7 +16,7 @@ export class ImportAgeService extends ImportEntiteAvecLibelleService<AgeSimple> 
   protected saveEntities = (
     ages: Omit<AgeCreateInput, "ownerId">[],
     loggedUser: LoggedUser,
-  ): Promise<readonly AgeSimple[]> => {
+  ): Promise<readonly Age[]> => {
     return this.services.ageService.createAges(ages, loggedUser);
   };
 }
