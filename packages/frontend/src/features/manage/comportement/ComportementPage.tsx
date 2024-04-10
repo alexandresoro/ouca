@@ -1,6 +1,6 @@
 import { useUser } from "@hooks/useUser";
 import { type UpsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
-import type { Behavior, BehaviorExtended } from "@ou-ca/common/api/entities/behavior";
+import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ const ComportementPage: FunctionComponent = () => {
   const [upsertBehaviorDialog, setUpsertBehaviorDialog] = useState<
     null | { mode: "create" } | { mode: "update"; behavior: Behavior }
   >(null);
-  const [behaviorToDelete, setBehaviorToDelete] = useState<BehaviorExtended | null>(null);
+  const [behaviorToDelete, setBehaviorToDelete] = useState<Behavior | null>(null);
 
   const { mutate: createBehavior } = useApiMutation(
     {
