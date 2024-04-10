@@ -1,5 +1,5 @@
 import { getAgesResponse } from "@ou-ca/common/api/age";
-import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age } from "@ou-ca/common/api/entities/age";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
@@ -16,7 +16,7 @@ type EntryFormCharacteristicsProps = Pick<UseFormReturn<EntryFormState>, "contro
   defaultNumber?: number;
   defaultNumberEstimate?: NumberEstimate;
   defaultSex?: Sex;
-  defaultAge?: AgeSimple;
+  defaultAge?: Age;
 };
 
 const renderNumberEstimate = (numberEstimate: NumberEstimate | null): string => {
@@ -27,7 +27,7 @@ const renderSex = (sex: Sex | null): string => {
   return sex?.libelle ?? "";
 };
 
-const renderAge = (age: AgeSimple | null): string => {
+const renderAge = (age: Age | null): string => {
   return age?.libelle ?? "";
 };
 
@@ -55,7 +55,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
   }, [defaultSex]);
 
   const [ageInput, setAgeInput] = useState("");
-  const [selectedAge, setSelectedAge] = useState<AgeSimple | null>(null);
+  const [selectedAge, setSelectedAge] = useState<Age | null>(null);
   useEffect(() => {
     setSelectedAge(defaultAge ?? null);
   }, [defaultAge]);

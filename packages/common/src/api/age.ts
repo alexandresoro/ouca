@@ -5,13 +5,13 @@ import {
 } from "./common/entitiesSearchParams.js";
 import { entityInfoSchema } from "./common/entity-info.js";
 import { getPaginatedResponseSchema } from "./common/pagination.js";
-import { ageSchema, ageSimpleSchema } from "./entities/age.js";
+import { ageExtendedSchema, ageSchema } from "./entities/age.js";
 
 /**
  * `GET` `/age/:id`
  *  Retrieve age entity
  */
-export const getAgeResponse = ageSimpleSchema;
+export const getAgeResponse = ageSchema;
 
 export type GetAgeResponse = z.infer<typeof getAgeResponse>;
 
@@ -31,12 +31,12 @@ export const getAgesQueryParamsSchema = entitiesCommonQueryParamsSchema.extend({
 
 export type AgesSearchParams = Omit<z.infer<typeof getAgesQueryParamsSchema>, "extended">;
 
-export const getAgesResponse = getPaginatedResponseSchema(ageSimpleSchema);
+export const getAgesResponse = getPaginatedResponseSchema(ageSchema);
 
 /**
  * @deprecated use `getAgesResponse` instead
  */
-export const getAgesExtendedResponse = getPaginatedResponseSchema(ageSchema);
+export const getAgesExtendedResponse = getPaginatedResponseSchema(ageExtendedSchema);
 
 /**
  * `PUT` `/age/:id` Update of age entity
@@ -48,6 +48,6 @@ export const upsertAgeInput = z.object({
 
 export type UpsertAgeInput = z.infer<typeof upsertAgeInput>;
 
-export const upsertAgeResponse = ageSimpleSchema;
+export const upsertAgeResponse = ageSchema;
 
 export type UpsertAgeResponse = z.infer<typeof upsertAgeResponse>;

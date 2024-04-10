@@ -1,8 +1,6 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
-import { useUser } from "@hooks/useUser";
-import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
+import { getAgesResponse } from "@ou-ca/common/api/age";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age } from "@ou-ca/common/api/entities/age";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -10,10 +8,10 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import AgeTableRow from "./AgeTableRow";
 
 type AgeTableProps = {
-  onClickUpdateAge: (age: AgeSimple) => void;
+  onClickUpdateAge: (age: Age) => void;
   onClickDeleteAge: (age: Age) => void;
 };
 
@@ -27,8 +25,6 @@ const COLUMNS = [
 const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickDeleteAge }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
 
@@ -40,9 +36,8 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
       pageSize: 10,
       orderBy,
       sortOrder,
-      extended: true,
     },
-    schema: getAgesExtendedResponse,
+    schema: getAgesResponse,
   });
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
@@ -94,26 +89,14 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((age) => {
-                const isOwner = user != null && age?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={age.id}>
-                    <td>{age.libelle}</td>
-                    <td>{age.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={age.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.age.canEdit}
-                        disabledDelete={!age.editable || age.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateAge(age)}
-                        onDeleteClicked={() => onClickDeleteAge(age)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((age) => (
+                <AgeTableRow
+                  age={age}
+                  key={age.id}
+                  onEditClicked={onClickUpdateAge}
+                  onDeleteClicked={onClickDeleteAge}
+                />
+              ))}
             </Fragment>
           );
         })}

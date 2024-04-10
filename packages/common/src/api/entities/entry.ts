@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ageSimpleSchema } from "./age.js";
+import { ageSchema } from "./age.js";
 import { behaviorSchema } from "./behavior.js";
 import { distanceEstimateSchema } from "./distance-estimate.js";
 import { environmentSchema } from "./environment.js";
@@ -13,7 +13,7 @@ export const entrySchema = z.object({
   inventoryId: z.string(),
   species: speciesSchema,
   sex: sexSchema,
-  age: ageSimpleSchema,
+  age: ageSchema,
   numberEstimate: numberEstimateSchema,
   number: z.number().nullable(),
   distanceEstimate: distanceEstimateSchema.nullable(),
