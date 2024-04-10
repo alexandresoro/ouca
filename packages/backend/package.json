@@ -63,7 +63,7 @@
     "@faker-js/faker": "8.4.1",
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.8",
-    "@types/node": "20.12.6",
+    "@types/node": "20.12.7",
     "@types/pg": "8.11.5",
     "dotenv": "16.4.5",
     "fishery": "2.2.2",
