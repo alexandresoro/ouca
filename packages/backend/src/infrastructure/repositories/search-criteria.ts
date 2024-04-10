@@ -169,10 +169,6 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
       );
     }
 
-    if (searchCriteria.regroupment != null) {
-      expressions.push(eb("donnee.regroupement", "=", searchCriteria.regroupment));
-    }
-
     if (searchCriteria.fromDate != null) {
       expressions.push(eb("inventaire.date", ">=", new Date(searchCriteria.fromDate)));
     }

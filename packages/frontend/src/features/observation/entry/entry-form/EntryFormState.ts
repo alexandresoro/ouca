@@ -7,7 +7,6 @@ export type EntryFormState = {
   number: number | null;
   distanceEstimateId: string | null;
   distance: number | null;
-  regroupment: number | null;
   behaviorIds: string[];
   environmentIds: string[];
   comment: string | null;

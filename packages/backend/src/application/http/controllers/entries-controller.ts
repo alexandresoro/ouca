@@ -227,18 +227,5 @@ export const entriesController: FastifyPluginCallback<{
     return await reply.send({ id: deletedEntry.id });
   });
 
-  fastify.get("/next-regroupment", async (req, reply) => {
-    const idResult = await entryService.findNextGrouping(req.user);
-
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-      }
-    }
-
-    await reply.send({ id: idResult.value });
-  });
-
   done();
 };

@@ -1,34 +1,27 @@
 import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
-import { MagicWand } from "@styled-icons/boxicons-solid";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
 import TextInput from "../../../../components/base/TextInput";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
-import useApiFetch from "../../../../services/api/useApiFetch";
-import { capitalizeFirstLetter } from "../../../../utils/capitalize-first-letter";
 import type { EntryFormState } from "./EntryFormState";
 
-type EntryFormDistanceRegroupmentProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {
+type EntryFormDistanceProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {
   defaultDistanceEstimate?: DistanceEstimate;
   isDistanceDisplayed?: boolean;
-  isRegroupmentDisplayed?: boolean;
 };
 
 const renderDistanceEstimate = (distanceEstimate: DistanceEstimate | null): string => {
   return distanceEstimate?.libelle ?? "";
 };
 
-const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupmentProps> = ({
+const EntryFormDistance: FunctionComponent<EntryFormDistanceProps> = ({
   register,
   control,
-  setValue,
   defaultDistanceEstimate,
   isDistanceDisplayed,
-  isRegroupmentDisplayed,
 }) => {
   const { t } = useTranslation();
 
@@ -37,10 +30,6 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
   useEffect(() => {
     setSelectedDistanceEstimate(defaultDistanceEstimate ?? null);
   }, [defaultDistanceEstimate]);
-
-  const fetchNextRegroupment = useApiFetch({
-    schema: z.object({ id: z.number() }),
-  });
 
   const {
     field: { ref: refDistanceEstimate, onChange: onChangeDistanceEstimateForm, onBlur: onBlurDistanceEstimate },
@@ -74,17 +63,6 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
     },
   );
 
-  const generateRegroupment = () => {
-    void fetchNextRegroupment({
-      path: "/entries/next-regroupment",
-    }).then(({ id: nextRegroupment }) => {
-      setValue("regroupment", nextRegroupment, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-    });
-  };
-
   return (
     <div className="flex gap-16 justify-between">
       {isDistanceDisplayed && (
@@ -115,29 +93,8 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
           />
         </div>
       )}
-      {isRegroupmentDisplayed && (
-        <div className="flex gap-4 items-center">
-          <TextInput
-            {...register("regroupment", {
-              setValueAs: (v: string) => (v?.length ? Number.parseInt(v) : typeof v === "number" ? v : null),
-            })}
-            textInputClassName="w-36 py-1"
-            label={t("entryForm.regroupment")}
-            type="number"
-            hasError={!!errors.regroupment}
-          />
-          <div
-            className="tooltip tooltip-bottom absolute right-5 bottom-[30px]"
-            data-tip={capitalizeFirstLetter(t("entryForm.regroupmentGenerate"))}
-          >
-            <button type="button" className="btn btn-secondary btn-circle btn-xs" onClick={generateRegroupment}>
-              <MagicWand className="h-4" />
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default EntryFormDistanceRegroupment;
+export default EntryFormDistance;

@@ -27,7 +27,6 @@ beforeEach(() => {
   entryRepository.createEntry.mock.resetCalls();
   entryRepository.updateEntry.mock.resetCalls();
   entryRepository.deleteEntryById.mock.resetCalls();
-  entryRepository.findLatestGrouping.mock.resetCalls();
   inventoryRepository.findInventoryByEntryId.mock.resetCalls();
 });
 
@@ -183,37 +182,6 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-describe("Get next group", () => {
-  test("should handle existing groups", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    entryRepository.findLatestGrouping.mock.mockImplementationOnce(() => Promise.resolve(18));
-
-    const nextRegroupement = await entryService.findNextGrouping(loggedUser);
-
-    assert.strictEqual(entryRepository.findLatestGrouping.mock.callCount(), 1);
-    assert.deepStrictEqual(nextRegroupement, ok(19));
-  });
-
-  test("should handle no existing group", async () => {
-    const loggedUser = loggedUserFactory.build();
-
-    entryRepository.findLatestGrouping.mock.mockImplementationOnce(() => Promise.resolve(null));
-
-    const nextRegroupement = await entryService.findNextGrouping(loggedUser);
-
-    assert.strictEqual(entryRepository.findLatestGrouping.mock.callCount(), 1);
-    assert.deepStrictEqual(nextRegroupement, ok(1));
-  });
-
-  test("should not be allowed when the no login details are provided", async () => {
-    const result = await entryService.findNextGrouping(null);
-
-    assert.deepStrictEqual(result, err("notAllowed"));
-    assert.strictEqual(entryRepository.findLatestGrouping.mock.callCount(), 0);
-  });
-});
-
 describe("Deletion of a data", () => {
   test("should handle the deletion of any data if has permission", async () => {
     const loggedUser = loggedUserFactory.build({
@@ -293,7 +261,6 @@ describe("Deletion of a data", () => {
 describe("Update of a data", () => {
   test("should update existing data", async () => {
     const dataData = upsertEntryInputFactory.build();
-    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
@@ -309,10 +276,7 @@ describe("Update of a data", () => {
     await entryService.updateEntry("12", dataData, loggedUser);
 
     assert.strictEqual(entryRepository.updateEntry.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.updateEntry.mock.calls[0].arguments, [
-      "12",
-      { ...restEntry, grouping: regroupment },
-    ]);
+    assert.deepStrictEqual(entryRepository.updateEntry.mock.calls[0].arguments, ["12", dataData]);
   });
 
   test("should not be allowed when trying to update to a different data that already exists", async () => {
@@ -359,16 +323,13 @@ describe("Creation of a data", () => {
       behaviorIds: [],
       environmentIds: [],
     });
-    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
     await entryService.createEntry(dataData, loggedUser);
 
     assert.strictEqual(entryRepository.createEntry.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [
-      { ...restEntry, grouping: regroupment },
-    ]);
+    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [dataData]);
   });
 
   test("should create new data with behaviors only", async () => {
@@ -376,7 +337,6 @@ describe("Creation of a data", () => {
       behaviorIds: ["2", "3"],
       environmentIds: [],
     });
-    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
@@ -385,9 +345,7 @@ describe("Creation of a data", () => {
     await entryService.createEntry(dataData, loggedUser);
 
     assert.strictEqual(entryRepository.createEntry.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [
-      { ...restEntry, grouping: regroupment },
-    ]);
+    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [dataData]);
   });
 
   test("should create new data with environments only", async () => {
@@ -395,7 +353,6 @@ describe("Creation of a data", () => {
       behaviorIds: [],
       environmentIds: ["2", "3"],
     });
-    const { regroupment, ...restEntry } = dataData;
 
     const loggedUser = loggedUserFactory.build();
 
@@ -404,8 +361,6 @@ describe("Creation of a data", () => {
     await entryService.createEntry(dataData, loggedUser);
 
     assert.strictEqual(entryRepository.createEntry.mock.callCount(), 1);
-    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [
-      { ...restEntry, grouping: regroupment },
-    ]);
+    assert.deepStrictEqual(entryRepository.createEntry.mock.calls[0].arguments, [dataData]);
   });
 });

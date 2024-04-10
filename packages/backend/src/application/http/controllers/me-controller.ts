@@ -57,7 +57,6 @@ export const meController: FastifyPluginCallback<{
       displayAssociates: input.areAssociesDisplayed ?? undefined,
       displayWeather: input.isMeteoDisplayed ?? undefined,
       displayDistance: input.isDistanceDisplayed ?? undefined,
-      displayGrouping: input.isRegroupementDisplayed ?? undefined,
     } satisfies User["settings"];
 
     const updatedUser = await userService.updateSettings(req.user.id, reshapedInput);

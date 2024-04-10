@@ -6,7 +6,6 @@ import type { InventoryRepository } from "@interfaces/inventory-repository-inter
 import type { EntriesSearchParams, UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Result, err, ok } from "neverthrow";
 import { getSqlPagination } from "../entities-utils.js";
-import { reshapeInputEntryUpsertData } from "./entry-service-reshape.js";
 
 type EntryServiceDependencies = {
   inventoryRepository: InventoryRepository;
@@ -118,15 +117,6 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
     return ok(await entryRepository.getCount(reshapedSearchCriteria));
   };
 
-  const findNextGrouping = async (loggedUser: LoggedUser | null): Promise<Result<number, AccessFailureReason>> => {
-    if (!loggedUser) {
-      return err("notAllowed");
-    }
-
-    const latestRegroupement = await entryRepository.findLatestGrouping();
-    return ok((latestRegroupement ?? 0) + 1);
-  };
-
   const createEntry = async (
     input: UpsertEntryInput,
     loggedUser: LoggedUser | null,
@@ -136,7 +126,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
     }
 
     // Check if an exact same entry already exists or not
-    const existingEntry = await entryRepository.findExistingEntry(reshapeInputEntryUpsertData(input));
+    const existingEntry = await entryRepository.findExistingEntry(input);
 
     if (existingEntry) {
       // The entry already exists so we return an error
@@ -146,7 +136,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       });
     }
 
-    const createdEntry = await entryRepository.createEntry(reshapeInputEntryUpsertData(input));
+    const createdEntry = await entryRepository.createEntry(input);
 
     return ok(createdEntry);
   };
@@ -168,7 +158,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
     }
 
     // Check if an exact same entry already exists or not
-    const existingEntry = await entryRepository.findExistingEntry(reshapeInputEntryUpsertData(input));
+    const existingEntry = await entryRepository.findExistingEntry(input);
 
     if (existingEntry && existingEntry.id !== id) {
       return err({
@@ -177,7 +167,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       });
     }
 
-    const updatedEntry = await entryRepository.updateEntry(id, reshapeInputEntryUpsertData(input));
+    const updatedEntry = await entryRepository.updateEntry(id, input);
 
     return ok(updatedEntry);
   };
@@ -207,7 +197,6 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
     findAllEntries,
     findPaginatedEntries,
     getEntriesCount,
-    findNextGrouping,
     createEntry,
     updateEntry,
     deleteEntry,

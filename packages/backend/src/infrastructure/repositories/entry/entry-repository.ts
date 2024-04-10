@@ -26,7 +26,6 @@ const findEntryById = async (id: string): Promise<Entry | null> => {
       sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
       "distance",
       "commentaire",
-      "regroupement",
       "dateCreation",
       sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
       sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
@@ -54,7 +53,6 @@ const findExistingEntry = async (criteria: EntryCreateInput): Promise<Entry | nu
       sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
       "distance",
       "commentaire",
-      "regroupement",
       "dateCreation",
       sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
       sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
@@ -90,12 +88,6 @@ const findExistingEntry = async (criteria: EntryCreateInput): Promise<Entry | nu
         clause.push(eb("donnee.commentaire", "=", criteria.comment));
       } else {
         clause.push(eb("donnee.commentaire", "is", null));
-      }
-
-      if (criteria.grouping != null) {
-        clause.push(eb("donnee.regroupement", "=", criteria.grouping));
-      } else {
-        clause.push(eb("donnee.regroupement", "is", null));
       }
 
       return eb.and(clause);
@@ -153,7 +145,6 @@ const findEntries = async ({
       sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
       "donnee.distance",
       "donnee.commentaire",
-      "donnee.regroupement",
       "donnee.dateCreation",
       sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
       sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
@@ -227,7 +218,6 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
           entryInput.distanceEstimateId != null ? Number.parseInt(entryInput.distanceEstimateId) : null,
         distance: entryInput.distance,
         commentaire: entryInput.comment,
-        regroupement: entryInput.grouping,
         dateCreation: new Date(),
       })
       .returning([
@@ -241,7 +231,6 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
         sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
         "distance",
         "commentaire",
-        "regroupement",
         "dateCreation",
       ])
       .executeTakeFirstOrThrow();
@@ -297,7 +286,6 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
           entryInput.distanceEstimateId != null ? Number.parseInt(entryInput.distanceEstimateId) : null,
         distance: entryInput.distance,
         commentaire: entryInput.comment,
-        regroupement: entryInput.grouping,
       })
       .where("id", "=", entryId)
       .returning([
@@ -311,7 +299,6 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
         sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
         "distance",
         "commentaire",
-        "regroupement",
         "dateCreation",
       ])
       .executeTakeFirstOrThrow();
@@ -383,7 +370,6 @@ const deleteEntryById = async (entryId: string): Promise<Entry | null> => {
       sql<string>`donnee.estimation_distance_id::text`.as("estimationDistanceId"),
       "distance",
       "commentaire",
-      "regroupement",
       "dateCreation",
     ])
     .executeTakeFirst();
@@ -397,15 +383,6 @@ const deleteEntryById = async (entryId: string): Promise<Entry | null> => {
         }),
       )
     : null;
-};
-
-const findLatestGrouping = async (): Promise<number | null> => {
-  const result = await kysely
-    .selectFrom("donnee")
-    .select((eb) => eb.fn.max("regroupement").as("grouping"))
-    .executeTakeFirstOrThrow();
-
-  return result.grouping;
 };
 
 const updateAssociatedInventory = async (currentInventoryId: string, newInventoryId: string): Promise<void> => {
@@ -426,6 +403,5 @@ export const entryRepository = {
   createEntry,
   updateEntry,
   deleteEntryById,
-  findLatestGrouping,
   updateAssociatedInventory,
 };

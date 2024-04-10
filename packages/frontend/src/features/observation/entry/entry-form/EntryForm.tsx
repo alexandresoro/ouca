@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import EntryFormBehaviors from "./EntryFormBehaviors";
 import EntryFormCharacteristics from "./EntryFormCharacteristics";
 import EntryFormComment from "./EntryFormComment";
-import EntryFormDistanceRegroupment from "./EntryFormDistanceRegroupment";
+import EntryFormDistance from "./EntryFormDistance";
 import EntryFormEnvironments from "./EntryFormEnvironments";
 import EntryFormSpecies from "./EntryFormSpecies";
 import type { EntryFormState } from "./EntryFormState";
@@ -78,7 +78,6 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
           number: settings?.defaultNumber ?? null,
           distanceEstimateId: null,
           distance: null,
-          regroupment: null,
           behaviorIds: [],
           environmentIds: [],
           comment: null,
@@ -93,7 +92,6 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
           number: props.initialData.number,
           distanceEstimateId: props.initialData.distanceEstimate?.id ?? null,
           distance: props.initialData.distance,
-          regroupment: props.initialData.regroupment,
           behaviorIds: props.initialData.behaviors.map((behavior) => behavior.id),
           environmentIds: props.initialData.environments.map((environment) => environment.id),
           comment: props.initialData.comment,
@@ -158,13 +156,12 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
                   defaultSex={(props.mode === "update" ? props.initialData.sex : undefined) ?? defaultSex}
                   defaultAge={(props.mode === "update" ? props.initialData.age : undefined) ?? defaultAge}
                 />
-                {(settings?.displayDistance || settings?.displayGrouping) && (
-                  <EntryFormDistanceRegroupment
+                {settings?.displayDistance && (
+                  <EntryFormDistance
                     control={control}
                     register={register}
                     setValue={setValue}
                     isDistanceDisplayed={settings.displayDistance}
-                    isRegroupmentDisplayed={settings.displayGrouping}
                     defaultDistanceEstimate={
                       (props.mode === "update" ? props.initialData.distanceEstimate : undefined) ?? undefined
                     }

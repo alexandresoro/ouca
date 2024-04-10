@@ -62,7 +62,6 @@ export const upsertEntryInput = z
     number: z.number().int().positive().nullable(),
     distanceEstimateId: z.string().trim().min(1).nullable(),
     distance: z.number().int().nonnegative().nullable(),
-    regroupment: z.number().int().positive().nullable(),
     comment: z.string().trim().min(1).nullable(),
     behaviorIds: z.array(z.string().trim().min(1)),
     environmentIds: z.array(z.string().trim().min(1)),

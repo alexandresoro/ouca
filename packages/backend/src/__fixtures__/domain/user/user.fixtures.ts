@@ -13,7 +13,6 @@ export const userSettingsFactory = Factory.define<NonNullable<User["settings"]>>
     displayAssociates: faker.datatype.boolean(),
     displayWeather: faker.datatype.boolean(),
     displayDistance: faker.datatype.boolean(),
-    displayGrouping: faker.datatype.boolean(),
   };
 });
 

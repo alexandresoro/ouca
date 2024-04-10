@@ -21,7 +21,6 @@ export const getSearchCriteriaParamsSchema = z.object({
   ageIds: z.union([z.array(z.string()), z.string().transform((value) => [value])]).optional(),
   distance: z.number().optional(),
   distanceEstimateIds: z.union([z.array(z.string()), z.string().transform((value) => [value])]).optional(),
-  regroupment: z.number().optional(),
   fromDate: z.string().optional(),
   toDate: z.string().optional(),
   comment: z.string().optional(),

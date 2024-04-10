@@ -13,7 +13,6 @@ export const upsertEntryInputFactory = Factory.define<UpsertEntryInput>(() => {
     distanceEstimateId: faker.string.alphanumeric(),
     distance: faker.number.int(),
     comment: faker.lorem.sentence(),
-    regroupment: faker.number.int(),
     behaviorIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     environmentIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
   };

@@ -11,7 +11,6 @@ const userSettingsSchema = z
     displayAssociates: z.boolean().optional(),
     displayWeather: z.boolean().optional(),
     displayDistance: z.boolean().optional(),
-    displayGrouping: z.boolean().optional(),
   })
   .nullable();
 

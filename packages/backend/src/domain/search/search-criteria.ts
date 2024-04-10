@@ -20,7 +20,6 @@ export type SearchCriteria = {
   ageIds?: string[];
   distance?: number | null;
   distanceEstimateIds?: string[];
-  regroupment?: number;
   fromDate?: string | null;
   toDate?: string | null;
   comment?: string;

@@ -24,7 +24,6 @@ export const reshapeRawEntry = (rawEntry: RawEntry): Entry => {
     estimationNombreId,
     estimationDistanceId,
     nombre,
-    regroupement,
     commentaire,
     dateCreation,
     ...restRawEntry
@@ -38,7 +37,6 @@ export const reshapeRawEntry = (rawEntry: RawEntry): Entry => {
     numberEstimateId: estimationNombreId,
     distanceEstimateId: estimationDistanceId,
     number: nombre,
-    grouping: regroupement,
     comment: commentaire,
     creationDate: dateCreation,
   };

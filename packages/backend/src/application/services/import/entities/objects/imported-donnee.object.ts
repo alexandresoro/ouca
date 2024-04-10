@@ -26,12 +26,11 @@ const SEXE_INDEX = 16;
 const AGE_INDEX = 17;
 const ESTIMATION_DISTANCE_INDEX = 18;
 const DISTANCE_INDEX = 19;
-const REGROUPEMENT_INDEX = 20;
-const COMP_1_INDEX = 21;
-const COMP_6_INDEX = 26;
-const MILIEU_1_INDEX = 27;
-const MILIEU_4_INDEX = 30;
-const COMMENTAIRE_INDEX = 31;
+const COMP_1_INDEX = 20;
+const COMP_6_INDEX = 25;
+const MILIEU_1_INDEX = 26;
+const MILIEU_4_INDEX = 29;
+const COMMENTAIRE_INDEX = 30;
 
 const LIST_SEPARATOR = ",";
 
@@ -41,8 +40,6 @@ const NOMBRE_MIN_VALUE = 1;
 const NOMBRE_MAX_VALUE = 65535;
 const DISTANCE_MIN_VALUE = 0;
 const DISTANCE_MAX_VALUE = 65535;
-const REGROUPEMENT_MIN_VALUE = 1;
-const REGROUPEMENT_MAX_VALUE = 65535;
 
 export class ImportedDonnee {
   observateur: string;
@@ -65,7 +62,6 @@ export class ImportedDonnee {
   estimationNombre: string;
   distance: string;
   estimationDistance: string;
-  regroupement: string;
   commentaire: string;
   milieux: string[];
   comportements: string[];
@@ -91,7 +87,6 @@ export class ImportedDonnee {
     this.estimationNombre = donneeTab[ESTIMATION_NOMBRE_INDEX].trim();
     this.distance = donneeTab[DISTANCE_INDEX].trim().replace(",", ".");
     this.estimationDistance = donneeTab[ESTIMATION_DISTANCE_INDEX].trim();
-    this.regroupement = donneeTab[REGROUPEMENT_INDEX].trim();
     this.commentaire = donneeTab[COMMENTAIRE_INDEX].trim().replace(";", ",");
 
     this.comportements = [];
@@ -131,7 +126,6 @@ export class ImportedDonnee {
       distanceEstimateId: estimationDistanceId ?? null,
       distance: this.distance ? +this.distance : null,
       comment: this.commentaire ? this.commentaire : null,
-      regroupment: this.regroupement ? +this.regroupement : null,
       behaviorIds: [...comportementsIds],
       environmentIds: [...milieuxIds],
     };
@@ -256,11 +250,6 @@ export class ImportedDonnee {
       return distanceError;
     }
 
-    const regroupementError = this.checkRegroupementValidity();
-    if (regroupementError) {
-      return regroupementError;
-    }
-
     return null;
   };
 
@@ -364,22 +353,6 @@ export class ImportedDonnee {
 
       if (distance < DISTANCE_MIN_VALUE || distance > DISTANCE_MAX_VALUE) {
         return `La distance de contact doit être un entier compris entre ${DISTANCE_MIN_VALUE} et ${DISTANCE_MAX_VALUE}`;
-      }
-    }
-
-    return null;
-  };
-
-  private checkRegroupementValidity = (): string | null => {
-    if (this.regroupement) {
-      const regroupement = Number(this.regroupement);
-
-      if (!Number.isInteger(regroupement)) {
-        return "La numéro de regroupement doit être un entier";
-      }
-
-      if (regroupement < REGROUPEMENT_MIN_VALUE || regroupement > REGROUPEMENT_MAX_VALUE) {
-        return `Le numéro de regroupement doit être un entier compris entre ${REGROUPEMENT_MIN_VALUE} et ${REGROUPEMENT_MAX_VALUE}`;
       }
     }
 

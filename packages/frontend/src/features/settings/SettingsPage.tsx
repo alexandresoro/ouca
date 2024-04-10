@@ -28,7 +28,6 @@ type SettingsInputs = {
   areAssociesDisplayed: boolean;
   isMeteoDisplayed: boolean;
   isDistanceDisplayed: boolean;
-  isRegroupementDisplayed: boolean;
 };
 
 const SettingsPage: FunctionComponent = () => {
@@ -120,7 +119,6 @@ const SettingsPage: FunctionComponent = () => {
       areAssociesDisplayed: false,
       isMeteoDisplayed: false,
       isDistanceDisplayed: false,
-      isRegroupementDisplayed: false,
     },
     resolver: zodResolver(putMeInput),
   });
@@ -136,7 +134,6 @@ const SettingsPage: FunctionComponent = () => {
       areAssociesDisplayed: !!settings?.displayAssociates,
       isMeteoDisplayed: !!settings?.displayWeather,
       isDistanceDisplayed: !!settings?.displayDistance,
-      isRegroupementDisplayed: !!settings?.displayGrouping,
     });
   }, [settings, reset]);
 
@@ -248,8 +245,6 @@ const SettingsPage: FunctionComponent = () => {
                 <FormSwitch name="isMeteoDisplayed" label={t("displayWeather")} control={control} />
 
                 <FormSwitch name="isDistanceDisplayed" label={t("displayDistance")} control={control} />
-
-                <FormSwitch name="isRegroupementDisplayed" label={t("displayRegroupmentNumber")} control={control} />
               </div>
             </form>
           </div>

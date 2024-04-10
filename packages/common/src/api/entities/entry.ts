@@ -18,7 +18,6 @@ export const entrySchema = z.object({
   number: z.number().nullable(),
   distanceEstimate: distanceEstimateSchema.nullable(),
   distance: z.number().nullable(),
-  regroupment: z.number().nullable(),
   behaviors: z.array(behaviorSchema),
   environments: z.array(environmentSchema),
   comment: z.string().nullable(),

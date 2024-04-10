@@ -45,6 +45,5 @@ export const enrichedEntry = async (
     sex,
     comment: entry.comment,
     number: entry.number,
-    regroupment: entry.grouping,
   });
 };

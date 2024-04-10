@@ -15,7 +15,6 @@ const userSettingsSchema = z
     displayAssociates: z.boolean().optional(),
     displayWeather: z.boolean().optional(),
     displayDistance: z.boolean().optional(),
-    displayGrouping: z.boolean().optional(),
   })
   .nullable();
 
@@ -77,7 +76,6 @@ export const putMeInput = z.object({
   areAssociesDisplayed: z.boolean(),
   isMeteoDisplayed: z.boolean(),
   isDistanceDisplayed: z.boolean(),
-  isRegroupementDisplayed: z.boolean(),
 });
 
 export type PutMeInput = z.infer<typeof putMeInput>;

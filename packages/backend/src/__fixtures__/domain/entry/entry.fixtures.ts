@@ -16,7 +16,6 @@ export const entryFactory = Factory.define<Entry>(() => {
     behaviorIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     environmentIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     comment: faker.lorem.sentence(),
-    grouping: faker.number.int(),
     creationDate: faker.date.recent(),
   };
 });
@@ -34,6 +33,5 @@ export const entryCreateInputFactory = Factory.define<EntryCreateInput>(() => {
     behaviorIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     environmentIds: faker.helpers.multiple(() => faker.string.alphanumeric()),
     comment: faker.lorem.sentence(),
-    grouping: faker.number.int(),
   };
 });

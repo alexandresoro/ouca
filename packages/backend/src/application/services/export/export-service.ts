@@ -237,7 +237,6 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
           "Estimation du nombre": estimationNombre?.libelle,
           "Estimation de la distance": estimationDistance?.libelle,
           "Distance en mètres": donnee.distance,
-          "Numéro de regroupement": donnee.grouping,
           Nicheur: nicheurStatus,
           "Comportement 1": getComportement(comportements, 1),
           "Comportement 2": getComportement(comportements, 2),

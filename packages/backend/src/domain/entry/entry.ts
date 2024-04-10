@@ -27,7 +27,6 @@ export const entrySchema = z.object({
   behaviorIds: z.array(z.string()),
   environmentIds: z.array(z.string()),
   comment: z.string().nullable(),
-  grouping: z.number().nullable(),
   creationDate: z.date(),
 });
 
@@ -69,5 +68,4 @@ export type EntryCreateInput = {
   behaviorIds: string[];
   environmentIds: string[];
   comment?: string | null;
-  grouping?: number | null;
 };

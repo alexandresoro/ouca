@@ -9,6 +9,5 @@ export type Entry = {
   estimationDistanceId: number | null;
   distance: number | null;
   commentaire: string | null;
-  regroupement: number | null;
   dateCreation: Date;
 };

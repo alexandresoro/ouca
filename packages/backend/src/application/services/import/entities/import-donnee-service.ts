@@ -252,7 +252,6 @@ export class ImportDonneeService extends ImportService {
         donnee.numberEstimateId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
         donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
-        donnee.grouping === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
         areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
         areSetsContainingSameValues(new Set(donnee.environmentIds), milieuxIds)
@@ -274,7 +273,6 @@ export class ImportDonneeService extends ImportService {
         `${donnee.numberEstimateId}` === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
         donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
-        donnee.regroupment === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
         areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
         areSetsContainingSameValues(new Set(donnee.environmentIds), milieuxIds)
