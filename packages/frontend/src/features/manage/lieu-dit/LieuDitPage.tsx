@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { Locality, LocalityExtended } from "@ou-ca/common/api/entities/locality";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const LieuDitPage: FunctionComponent = () => {
   const [upsertLocalityDialog, setUpsertLocalityDialog] = useState<
     null | { mode: "create" } | { mode: "update"; locality: Locality }
   >(null);
-  const [localityToDelete, setLocalityToDelete] = useState<LocalityExtended | null>(null);
+  const [localityToDelete, setLocalityToDelete] = useState<Locality | null>(null);
 
   const { mutate: createLocality } = useApiMutation(
     {

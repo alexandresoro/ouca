@@ -1,6 +1,4 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
-import { useUser } from "@hooks/useUser";
-import type { LocalityExtended } from "@ou-ca/common/api/entities/locality";
+import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesOrderBy, getLocalitiesExtendedResponse } from "@ou-ca/common/api/locality";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,11 +7,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import LocalityTableRow from "./LocalityTableRow";
 
 type LieuDitTableProps = {
-  onClickUpdateLocality: (locality: LocalityExtended) => void;
-  onClickDeleteLocality: (locality: LocalityExtended) => void;
+  onClickUpdateLocality: (locality: Locality) => void;
+  onClickDeleteLocality: (locality: Locality) => void;
 };
 
 const COLUMNS = [
@@ -49,8 +47,6 @@ const COLUMNS = [
 
 const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality, onClickDeleteLocality }) => {
   const { t } = useTranslation();
-
-  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>({
     orderBy: "nom",
@@ -118,32 +114,14 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((locality) => {
-                const isOwner = user != null && locality?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={locality?.id}>
-                    <td>{locality.departmentCode}</td>
-                    <td>{locality.townCode}</td>
-                    <td>{locality.townName}</td>
-                    <td>{locality.nom}</td>
-                    <td>{locality.coordinates.latitude}</td>
-                    <td>{locality.coordinates.longitude}</td>
-                    <td>{locality.coordinates.altitude}</td>
-                    <td>{locality.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={locality.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.locality.canEdit}
-                        disabledDelete={!locality.editable || locality.inventoriesCount > 0}
-                        onEditClicked={() => onClickUpdateLocality(locality)}
-                        onDeleteClicked={() => onClickDeleteLocality(locality)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((locality) => (
+                <LocalityTableRow
+                  key={locality.id}
+                  locality={locality}
+                  onEditClicked={onClickUpdateLocality}
+                  onDeleteClicked={onClickDeleteLocality}
+                />
+              ))}
             </Fragment>
           );
         })}
