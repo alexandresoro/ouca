@@ -23,7 +23,7 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ observer, 
       <td>{observer.libelle}</td>
       <td>{observerInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
-        <AvatarWithUniqueNameAvatar input={observer?.ownerId ?? null} />
+        <AvatarWithUniqueNameAvatar input={observer.ownerId} />
       </td>
       <td align="center" className="w-32">
         <TableCellActionButtons

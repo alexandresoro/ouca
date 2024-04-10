@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { Town, TownExtended } from "@ou-ca/common/api/entities/town";
+import type { Town } from "@ou-ca/common/api/entities/town";
 import { type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const CommunePage: FunctionComponent = () => {
   const [upsertTownDialog, setUpsertTownDialog] = useState<null | { mode: "create" } | { mode: "update"; town: Town }>(
     null,
   );
-  const [townToDelete, setTownToDelete] = useState<TownExtended | null>(null);
+  const [townToDelete, setTownToDelete] = useState<Town | null>(null);
 
   const { mutate: createTown } = useApiMutation(
     {

@@ -1,6 +1,4 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
-import { useUser } from "@hooks/useUser";
-import type { TownExtended } from "@ou-ca/common/api/entities/town";
+import type { Town } from "@ou-ca/common/api/entities/town";
 import { type TownsOrderBy, getTownsExtendedResponse } from "@ou-ca/common/api/town";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,17 +7,15 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import TownTableRow from "./TownTableRow";
 
 type CommuneTableProps = {
-  onClickUpdateTown: (town: TownExtended) => void;
-  onClickDeleteTown: (town: TownExtended) => void;
+  onClickUpdateTown: (town: Town) => void;
+  onClickDeleteTown: (town: Town) => void;
 };
 
 const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown, onClickDeleteTown }) => {
   const { t } = useTranslation();
-
-  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>({
     orderBy: "nom",
@@ -110,29 +106,14 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((town) => {
-                const isOwner = user != null && town?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={town?.id}>
-                    <td>{town.departmentCode}</td>
-                    <td>{town.code}</td>
-                    <td>{town.nom}</td>
-                    <td>{town.localitiesCount}</td>
-                    <td>{town.entriesCount}</td>
-                    <td align="center">
-                      <AvatarWithUniqueNameAvatar input={town.ownerId} />
-                    </td>
-                    <td align="center">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.town.canEdit}
-                        disabledDelete={!town.editable || town.localitiesCount > 0}
-                        onEditClicked={() => onClickUpdateTown(town)}
-                        onDeleteClicked={() => onClickDeleteTown(town)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((town) => (
+                <TownTableRow
+                  key={town.id}
+                  town={town}
+                  onEditClicked={onClickUpdateTown}
+                  onDeleteClicked={onClickDeleteTown}
+                />
+              ))}
             </Fragment>
           );
         })}

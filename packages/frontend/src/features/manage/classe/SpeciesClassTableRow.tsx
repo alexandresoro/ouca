@@ -28,7 +28,7 @@ const SpeciesClassTableRow: FunctionComponent<SpeciesClassTableRowProps> = ({
       <td>{speciesClassInfo?.speciesCount}</td>
       <td>{speciesClassInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
-        <AvatarWithUniqueNameAvatar input={speciesClass?.ownerId ?? null} />
+        <AvatarWithUniqueNameAvatar input={speciesClass.ownerId} />
       </td>
       <td align="center" className="w-32">
         {speciesClass != null && (

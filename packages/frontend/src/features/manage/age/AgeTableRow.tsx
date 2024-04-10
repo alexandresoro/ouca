@@ -23,7 +23,7 @@ const AgeTableRow: FunctionComponent<AgeTableRowProps> = ({ age, onEditClicked, 
       <td>{age.libelle}</td>
       <td>{ageInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
-        <AvatarWithUniqueNameAvatar input={age?.ownerId ?? null} />
+        <AvatarWithUniqueNameAvatar input={age.ownerId} />
       </td>
       <td align="center" className="w-32">
         <TableCellActionButtons
