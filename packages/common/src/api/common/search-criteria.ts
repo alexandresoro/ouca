@@ -27,7 +27,7 @@ export const getSearchCriteriaParamsSchema = z.object({
   breeders: z.union([z.array(z.enum(NICHEUR_CODES)), z.enum(NICHEUR_CODES).transform((value) => [value])]).optional(),
   behaviorIds: z.union([z.array(z.string()), z.string().transform((value) => [value])]).optional(),
   environmentIds: z.union([z.array(z.string()), z.string().transform((value) => [value])]).optional(),
-  onlyOwnData: z
+  fromAllUsers: z
     .preprocess((val) => {
       return typeof val === "string" ? val === "true" : val;
     }, z.coerce.boolean())

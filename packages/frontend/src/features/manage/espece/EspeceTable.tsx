@@ -1,4 +1,3 @@
-import { useUser } from "@hooks/useUser";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import { type SpeciesOrderBy, getSpeciesExtendedResponse } from "@ou-ca/common/api/species";
 import { Fragment, type FunctionComponent } from "react";
@@ -37,8 +36,6 @@ const COLUMNS = [
 const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies, onClickDeleteSpecies }) => {
   const { t } = useTranslation();
 
-  const user = useUser();
-
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({
     orderBy: "nomFrancais",
   });
@@ -52,7 +49,6 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
       orderBy,
       sortOrder,
       extended: true,
-      onlyOwnData: false,
     },
     schema: getSpeciesExtendedResponse,
   });

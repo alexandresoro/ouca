@@ -15,7 +15,6 @@ const SearchFilterSpecies: FunctionComponent = () => {
     queryParams: {
       q: speciesInput,
       pageSize: 5,
-      onlyOwnData: false,
     },
     schema: getSpeciesPaginatedResponse,
   });

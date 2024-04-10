@@ -87,6 +87,30 @@ describe("Data paginated find by search criteria", () => {
       {
         orderBy: undefined,
         sortOrder: undefined,
+        searchCriteria: { ownerId: loggedUser.id },
+        offset: 0,
+        limit: 10,
+      },
+    ]);
+  });
+
+  test("should handle being called without all data requested", async () => {
+    const dataData = entryFactory.buildList(3);
+    const loggedUser = loggedUserFactory.build();
+
+    entryRepository.findEntries.mock.mockImplementationOnce(() => Promise.resolve(dataData));
+
+    await entryService.findPaginatedEntries(loggedUser, {
+      pageNumber: 1,
+      pageSize: 10,
+      fromAllUsers: true,
+    });
+
+    assert.strictEqual(entryRepository.findEntries.mock.callCount(), 1);
+    assert.deepStrictEqual(entryRepository.findEntries.mock.calls[0].arguments, [
+      {
+        orderBy: undefined,
+        sortOrder: undefined,
         searchCriteria: { ownerId: undefined },
         offset: 0,
         limit: 10,
@@ -117,7 +141,7 @@ describe("Data paginated find by search criteria", () => {
         searchCriteria: {
           number: 12,
           breeders: ["certain", "probable"],
-          ownerId: undefined,
+          ownerId: loggedUser.id,
         },
         orderBy: "department",
         sortOrder: "desc",
@@ -147,7 +171,7 @@ describe("Entities count by search criteria", () => {
     assert.strictEqual(entryRepository.getCount.mock.callCount(), 1);
     assert.deepStrictEqual(entryRepository.getCount.mock.calls[0].arguments, [
       {
-        ownerId: undefined,
+        ownerId: loggedUser.id,
       },
     ]);
   });
@@ -169,7 +193,7 @@ describe("Entities count by search criteria", () => {
       {
         number: 12,
         breeders: ["certain", "probable"],
-        ownerId: undefined,
+        ownerId: loggedUser.id,
       },
     ]);
   });

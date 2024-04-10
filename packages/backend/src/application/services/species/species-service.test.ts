@@ -74,6 +74,15 @@ describe("Data count per entity", () => {
     await speciesService.getEntriesCountBySpecies("12", {}, loggedUser);
 
     assert.strictEqual(speciesRepository.getEntriesCountById.mock.callCount(), 1);
+    assert.deepStrictEqual(speciesRepository.getEntriesCountById.mock.calls[0].arguments, ["12", {}, loggedUser.id]);
+  });
+
+  test("should request the correct parameters if all users requested", async () => {
+    const loggedUser = loggedUserFactory.build();
+
+    await speciesService.getEntriesCountBySpecies("12", {}, loggedUser, true);
+
+    assert.strictEqual(speciesRepository.getEntriesCountById.mock.callCount(), 1);
     assert.deepStrictEqual(speciesRepository.getEntriesCountById.mock.calls[0].arguments, ["12", {}, undefined]);
   });
 
@@ -87,6 +96,7 @@ describe("Data count per entity", () => {
 
 test("Find all species", async () => {
   const speciesData = speciesFactory.buildList(3);
+  const loggedUser = loggedUserFactory.build();
 
   const speciesClass = speciesClassFactory.build();
   classService.findSpeciesClassOfSpecies.mock.mockImplementation(() =>
@@ -95,7 +105,7 @@ test("Find all species", async () => {
 
   speciesRepository.findSpecies.mock.mockImplementationOnce(() => Promise.resolve(speciesData));
 
-  await speciesService.findAllSpecies();
+  await speciesService.findAllSpecies(loggedUser);
 
   assert.strictEqual(speciesRepository.findSpecies.mock.callCount(), 1);
   assert.deepStrictEqual(speciesRepository.findSpecies.mock.calls[0].arguments, [

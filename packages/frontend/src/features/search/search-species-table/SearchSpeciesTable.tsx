@@ -46,7 +46,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
     {
-      path: "/species",
+      path: "/search/species",
       queryParams: {
         pageSize: 10,
         orderBy,

@@ -59,14 +59,17 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
     id: string,
     options: SpeciesSearchParams,
     loggedUser: LoggedUser | null,
+    acrossAllUsers?: boolean,
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const { q, orderBy, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
+    const { q, orderBy, sortOrder, pageSize, pageNumber, fromAllUsers, ...searchCriteria } = options;
 
-    return ok(await speciesRepository.getEntriesCountById(id, searchCriteria, onlyOwnData ? loggedUser.id : undefined));
+    return ok(
+      await speciesRepository.getEntriesCountById(id, searchCriteria, acrossAllUsers ? undefined : loggedUser.id),
+    );
   };
 
   const isSpeciesUsed = async (
@@ -97,25 +100,18 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
 
   const findPaginatedSpecies = async (
     loggedUser: LoggedUser | null,
-    options: SpeciesSearchParams,
+    options: SpeciesSearchParams & { ownerId?: string },
   ): Promise<Result<SpeciesCommon[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
-
-    const reshapedSearchCriteria = onlyOwnData
-      ? {
-          ...searchCriteria,
-          ownerId: loggedUser.id,
-        }
-      : searchCriteria;
+    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, fromAllUsers, ...searchCriteria } = options;
 
     const species = await speciesRepository.findSpecies(
       {
         q,
-        searchCriteria: reshapedSearchCriteria,
+        searchCriteria,
         ...getSqlPagination({
           pageSize,
           pageNumber,
@@ -123,7 +119,8 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
         orderBy: orderByField,
         sortOrder,
       },
-      loggedUser.id,
+      // If we request entries from all users, don't request to sort by ownerId entries
+      fromAllUsers ? undefined : loggedUser.id,
     );
 
     return enrichSpeciesMultiple([...species], loggedUser);
@@ -131,25 +128,18 @@ export const buildSpeciesService = ({ speciesRepository, classService }: Species
 
   const getSpeciesCount = async (
     loggedUser: LoggedUser | null,
-    options: SpeciesSearchParams,
+    options: Omit<SpeciesSearchParams, "fromAllUsers"> & { ownerId?: string },
   ): Promise<Result<number, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
 
-    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
-
-    const reshapedSearchCriteria = onlyOwnData
-      ? {
-          ...searchCriteria,
-          ownerId: loggedUser.id,
-        }
-      : searchCriteria;
+    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
 
     return ok(
       await speciesRepository.getCount({
         q: options.q,
-        searchCriteria: reshapedSearchCriteria,
+        searchCriteria,
       }),
     );
   };

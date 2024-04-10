@@ -65,6 +65,10 @@ export const entriesController: FastifyPluginCallback<{
       data: { extended, ...queryParams },
     } = parsedQueryParamsResult;
 
+    if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+      return await reply.status(403).send();
+    }
+
     const paginatedResults = Result.combine([
       await entryService.findPaginatedEntries(req.user, queryParams),
       await entryService.getEntriesCount(req.user, queryParams),

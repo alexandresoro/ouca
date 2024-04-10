@@ -1,6 +1,6 @@
 import { Tab } from "@headlessui/react";
 import { useApiEntryQueryAll } from "@services/api/entry/api-entry-queries";
-import { useApiSpeciesQueryAll } from "@services/api/species/api-species-queries";
+import { useApiSearchSpecies } from "@services/api/search/api-search-queries";
 import { useFeatures } from "@services/app-features/features";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useState } from "react";
@@ -30,7 +30,7 @@ const SearchPage: FunctionComponent = () => {
     paused: selectedTab !== 0,
   });
 
-  const { data: dataSpecies } = useApiSpeciesQueryAll({
+  const { data: dataSpecies } = useApiSearchSpecies({
     queryParams: {
       pageNumber: 1,
       pageSize: 1,

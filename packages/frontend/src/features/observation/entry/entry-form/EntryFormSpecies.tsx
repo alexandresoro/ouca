@@ -75,7 +75,6 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
         q: speciesInput,
         pageSize: 5,
         classIds: selectedClass?.id,
-        onlyOwnData: false,
       },
       schema: getSpeciesPaginatedResponse,
     },

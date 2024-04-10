@@ -39,7 +39,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       return err("notAllowed");
     }
 
-    const { orderBy: orderByField, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
+    const { orderBy: orderByField, sortOrder, pageSize, pageNumber, fromAllUsers, ...searchCriteria } = options;
 
     let orderBy: EntryFindManyInput["orderBy"] | undefined;
     switch (orderByField) {
@@ -83,7 +83,7 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
 
     const reshapedSearchCriteria = {
       ...searchCriteria,
-      ownerId: onlyOwnData ? loggedUser.id : undefined,
+      ownerId: fromAllUsers ? undefined : loggedUser.id,
     };
 
     const entries = await entryRepository.findEntries({
@@ -107,11 +107,11 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       return err("notAllowed");
     }
 
-    const { orderBy, sortOrder, pageSize, pageNumber, onlyOwnData, ...searchCriteria } = options;
+    const { orderBy, sortOrder, pageSize, pageNumber, fromAllUsers, ...searchCriteria } = options;
 
     const reshapedSearchCriteria = {
       ...searchCriteria,
-      ownerId: onlyOwnData ? loggedUser.id : undefined,
+      ownerId: fromAllUsers ? undefined : loggedUser.id,
     };
 
     return ok(await entryRepository.getCount(reshapedSearchCriteria));

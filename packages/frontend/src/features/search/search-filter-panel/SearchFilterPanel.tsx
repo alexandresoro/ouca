@@ -3,7 +3,7 @@ import { useUser } from "@hooks/useUser";
 import { useAtom } from "jotai";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { searchEntriesOnlyOwnDataAtom } from "../searchEntriesCriteriaAtom";
+import { searchEntriesFromAllUsersAtom } from "../searchEntriesCriteriaAtom";
 import SearchFilterAges from "./SearchFilterAges";
 import SearchFilterBehaviors from "./SearchFilterBehaviors";
 import SearchFilterBreeders from "./SearchFilterBreeders";
@@ -24,7 +24,7 @@ const SearchFilterPanel: FunctionComponent = () => {
   const user = useUser();
   const canViewAllEntries = user?.permissions.canViewAllEntries;
 
-  const [onlyOwnData, setOnlyOwnData] = useAtom(searchEntriesOnlyOwnDataAtom);
+  const [fromAllUsers, setFromAllUsers] = useAtom(searchEntriesFromAllUsersAtom);
 
   return (
     <div>
@@ -32,8 +32,8 @@ const SearchFilterPanel: FunctionComponent = () => {
       {canViewAllEntries && (
         <Switch
           label={t("observationFilter.displayOnlyMyObservations")}
-          checked={onlyOwnData}
-          onChange={setOnlyOwnData}
+          checked={!fromAllUsers}
+          onChange={(val) => setFromAllUsers(!val)}
         />
       )}
       <div className="flex flex-col gap-2.5">

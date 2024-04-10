@@ -19,7 +19,7 @@ const SearchSpeciesTableRow: FunctionComponent<SearchSpeciesTableRowProps> = ({ 
       <td>{species.code}</td>
       <td>{species.nomFrancais}</td>
       <td>{species.nomLatin}</td>
-      <td>{searchCriteria.onlyOwnData ? speciesInfo?.ownEntriesCount : speciesInfo?.totalEntriesCount}</td>
+      <td>{searchCriteria.fromAllUsers ? speciesInfo?.totalEntriesCount : speciesInfo?.ownEntriesCount}</td>
     </tr>
   );
 };
