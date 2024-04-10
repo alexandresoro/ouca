@@ -7,7 +7,7 @@ import {
   upsertAgeInput,
   upsertAgeResponse,
 } from "@ou-ca/common/api/age";
-import type { Age, AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age, AgeExtended } from "@ou-ca/common/api/entities/age";
 import type { FastifyPluginCallback } from "fastify";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
@@ -94,7 +94,7 @@ export const agesController: FastifyPluginCallback<{
 
     const [agesData, count] = paginatedResults.value;
 
-    let data: AgeSimple[] | Age[] = agesData;
+    let data: Age[] | AgeExtended[] = agesData;
     if (extended) {
       data = await Promise.all(
         agesData.map(async (ageData) => {

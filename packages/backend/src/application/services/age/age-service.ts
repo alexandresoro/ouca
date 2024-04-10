@@ -3,7 +3,7 @@ import type { AccessFailureReason, DeletionFailureReason } from "@domain/shared/
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { AgeRepository } from "@interfaces/age-repository-interface.js";
 import type { AgesSearchParams, UpsertAgeInput } from "@ou-ca/common/api/age";
-import type { AgeSimple } from "@ou-ca/common/api/entities/age";
+import type { Age } from "@ou-ca/common/api/entities/age";
 import { type Result, err, ok } from "neverthrow";
 import { enrichEntityWithEditableStatus, getSqlPagination } from "../entities-utils.js";
 
@@ -15,7 +15,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const findAge = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<AgeSimple | null, AccessFailureReason>> => {
+  ): Promise<Result<Age | null, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -48,7 +48,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     return ok(totalEntriesWithAge > 0);
   };
 
-  const findAllAges = async (): Promise<AgeSimple[]> => {
+  const findAllAges = async (): Promise<Age[]> => {
     const ages = await ageRepository.findAges({
       orderBy: "libelle",
     });
@@ -63,7 +63,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const findPaginatedAges = async (
     loggedUser: LoggedUser | null,
     options: AgesSearchParams,
-  ): Promise<Result<AgeSimple[], AccessFailureReason>> => {
+  ): Promise<Result<Age[], AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -101,7 +101,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const createAge = async (
     input: UpsertAgeInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<AgeSimple, AgeFailureReason>> => {
+  ): Promise<Result<Age, AgeFailureReason>> => {
     if (!loggedUser?.permissions.age.canCreate) {
       return err("notAllowed");
     }
@@ -120,7 +120,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
     id: number,
     input: UpsertAgeInput,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<AgeSimple, AgeFailureReason>> => {
+  ): Promise<Result<Age, AgeFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -144,7 +144,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const deleteAge = async (
     id: number,
     loggedUser: LoggedUser | null,
-  ): Promise<Result<AgeSimple | null, DeletionFailureReason>> => {
+  ): Promise<Result<Age | null, DeletionFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -176,7 +176,7 @@ export const buildAgeService = ({ ageRepository }: AgeServiceDependencies) => {
   const createAges = async (
     ages: Omit<AgeCreateInput, "ownerId">[],
     loggedUser: LoggedUser,
-  ): Promise<readonly AgeSimple[]> => {
+  ): Promise<readonly Age[]> => {
     const createdAges = await ageRepository.createAges(
       ages.map((age) => {
         return { ...age, ownerId: loggedUser.id };

@@ -11,6 +11,8 @@ export const ageExtendedSchema = z.object({
   entriesCount: z.number(),
 });
 
+export type AgeExtended = z.infer<typeof ageExtendedSchema>;
+
 export const ageSchema = z.object({
   id: z.coerce.string(),
   libelle: z.string(),
