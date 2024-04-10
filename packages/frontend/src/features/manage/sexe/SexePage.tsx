@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { Sex, SexExtended } from "@ou-ca/common/api/entities/sex";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { type UpsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const SexePage: FunctionComponent = () => {
   const [upsertSexDialog, setUpsertSexDialog] = useState<null | { mode: "create" } | { mode: "update"; sex: Sex }>(
     null,
   );
-  const [sexToDelete, setSexToDelete] = useState<SexExtended | null>(null);
+  const [sexToDelete, setSexToDelete] = useState<Sex | null>(null);
 
   const { mutate: createSex } = useApiMutation(
     {

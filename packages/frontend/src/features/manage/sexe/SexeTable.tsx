@@ -1,7 +1,6 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
 import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import type { SexExtended } from "@ou-ca/common/api/entities/sex";
+import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,11 +9,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import SexTableRow from "./SexTableRow";
 
 type SexeTableProps = {
-  onClickUpdateSex: (sex: SexExtended) => void;
-  onClickDeleteSex: (sex: SexExtended) => void;
+  onClickUpdateSex: (sex: Sex) => void;
+  onClickDeleteSex: (sex: Sex) => void;
 };
 
 const COLUMNS = [
@@ -94,26 +93,14 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((sex) => {
-                const isOwner = user != null && sex?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={sex?.id}>
-                    <td>{sex?.libelle}</td>
-                    <td>{sex?.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={sex.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.sex.canEdit}
-                        disabledDelete={!sex.editable || sex.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateSex(sex)}
-                        onDeleteClicked={() => onClickDeleteSex(sex)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((sex) => (
+                <SexTableRow
+                  sex={sex}
+                  key={sex.id}
+                  onEditClicked={onClickUpdateSex}
+                  onDeleteClicked={onClickDeleteSex}
+                />
+              ))}
             </Fragment>
           );
         })}
