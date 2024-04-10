@@ -1,6 +1,6 @@
 import { useUser } from "@hooks/useUser";
 import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
-import type { DistanceEstimate, DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
+import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ const EstimationDistancePage: FunctionComponent = () => {
   const [upsertDistanceEstimateDialog, setUpsertDistanceEstimateDialog] = useState<
     null | { mode: "create" } | { mode: "update"; distanceEstimate: DistanceEstimate }
   >(null);
-  const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimateExtended | null>(null);
+  const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimate | null>(null);
 
   const { mutate: createDistanceEstimate } = useApiMutation(
     {

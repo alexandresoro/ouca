@@ -1,8 +1,6 @@
-import AvatarWithUniqueNameAvatar from "@components/common/AvatarWithUniqueName";
-import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
-import type { DistanceEstimateExtended } from "@ou-ca/common/api/entities/distance-estimate";
+import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
@@ -10,11 +8,11 @@ import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
-import TableCellActionButtons from "../common/TableCellActionButtons";
+import DistanceEstimateTableRow from "./DistanceEstimateTableRow";
 
 type EstimationDistanceTableProps = {
-  onClickUpdateDistanceEstimate: (distanceEstimate: DistanceEstimateExtended) => void;
-  onClickDeleteDistanceEstimate: (distanceEstimate: DistanceEstimateExtended) => void;
+  onClickUpdateDistanceEstimate: (distanceEstimate: DistanceEstimate) => void;
+  onClickDeleteDistanceEstimate: (distanceEstimate: DistanceEstimate) => void;
 };
 
 const COLUMNS = [
@@ -29,8 +27,6 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
   onClickDeleteDistanceEstimate,
 }) => {
   const { t } = useTranslation();
-
-  const user = useUser();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
@@ -97,26 +93,14 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
         tableRows={data?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
-              {page.data.map((distanceEstimate) => {
-                const isOwner = user != null && distanceEstimate?.ownerId === user.id;
-                return (
-                  <tr className="hover:bg-base-200" key={distanceEstimate?.id}>
-                    <td>{distanceEstimate.libelle}</td>
-                    <td>{distanceEstimate.entriesCount}</td>
-                    <td align="center" className="w-32">
-                      <AvatarWithUniqueNameAvatar input={distanceEstimate.ownerId} />
-                    </td>
-                    <td align="center" className="w-32">
-                      <TableCellActionButtons
-                        canEdit={isOwner || user?.permissions.distanceEstimate.canEdit}
-                        disabledDelete={!distanceEstimate.editable || distanceEstimate.entriesCount > 0}
-                        onEditClicked={() => onClickUpdateDistanceEstimate(distanceEstimate)}
-                        onDeleteClicked={() => onClickDeleteDistanceEstimate(distanceEstimate)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {page.data.map((distanceEstimate) => (
+                <DistanceEstimateTableRow
+                  key={distanceEstimate.id}
+                  distanceEstimate={distanceEstimate}
+                  onEditClicked={onClickUpdateDistanceEstimate}
+                  onDeleteClicked={onClickDeleteDistanceEstimate}
+                />
+              ))}
             </Fragment>
           );
         })}
