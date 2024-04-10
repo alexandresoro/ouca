@@ -1,5 +1,5 @@
 import { useUser } from "@hooks/useUser";
-import type { Environment, EnvironmentExtended } from "@ou-ca/common/api/entities/environment";
+import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { type UpsertEnvironmentInput, upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -27,7 +27,7 @@ const MilieuPage: FunctionComponent = () => {
   const [upsertEnvironmentDialog, setUpsertEnvironmentDialog] = useState<
     null | { mode: "create" } | { mode: "update"; environment: Environment }
   >(null);
-  const [environmentToDelete, setEnvironmentToDelete] = useState<EnvironmentExtended | null>(null);
+  const [environmentToDelete, setEnvironmentToDelete] = useState<Environment | null>(null);
 
   const { mutate: createEnvironment } = useApiMutation(
     {
