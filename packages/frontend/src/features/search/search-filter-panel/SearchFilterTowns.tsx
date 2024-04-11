@@ -1,6 +1,6 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
 import { getTownsResponse } from "@ou-ca/common/api/town";
-import useApiQuery from "@services/api/useApiQuery";
+import { useApiQuery } from "@services/api/useApiQuery";
 import { useAtom, useAtomValue } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";

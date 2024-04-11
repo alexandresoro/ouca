@@ -44,7 +44,7 @@ export const fetchApiResponse = async ({
   return response;
 };
 
-const fetchApi = async <T = unknown>({
+export const fetchApi = async <T = unknown>({
   url,
   method,
   body,
@@ -75,5 +75,3 @@ export type FetchErrorType = {
   status: number;
   statusText?: string;
 };
-
-export default fetchApi;

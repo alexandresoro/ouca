@@ -7,7 +7,7 @@ export const apiUrlAtom = atom((get) => {
   return get(configAtom).apiUrl ?? "";
 });
 
-const useApiUrl = (includeApiPath = true) => {
+export const useApiUrl = (includeApiPath = true) => {
   const apiUrl = useAtomValue(apiUrlAtom);
 
   if (!includeApiPath) {
@@ -16,5 +16,3 @@ const useApiUrl = (includeApiPath = true) => {
 
   return `${apiUrl}${API_PATH}`;
 };
-
-export default useApiUrl;

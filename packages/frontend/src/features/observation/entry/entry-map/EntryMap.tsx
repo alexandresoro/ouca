@@ -1,5 +1,6 @@
 import { getLocalityResponse } from "@ou-ca/common/api/locality";
 import type { GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+import { useApiFetch } from "@services/api/useApiFetch";
 import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
@@ -24,7 +25,6 @@ import {
   type ViewState,
 } from "react-map-gl/maplibre";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
-import useApiFetch from "../../../../services/api/useApiFetch";
 import { boundingPolygon } from "../../../../utils/map/bounding-polygon";
 import MapInstance from "../../../maps/MapInstance";
 import { clusterCountLayer, clusterLayer, selectionLayer, singleLocalityLayer } from "../../../maps/localities-layers";

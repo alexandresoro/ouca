@@ -1,4 +1,4 @@
-import fetchApi from "@utils/fetch-api";
+import { fetchApi } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAuth } from "react-oidc-context";
 import useSWR, { type SWRConfiguration } from "swr";

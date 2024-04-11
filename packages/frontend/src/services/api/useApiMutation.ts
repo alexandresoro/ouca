@@ -1,9 +1,9 @@
-import fetchApi from "@utils/fetch-api";
+import { fetchApi } from "@utils/fetch-api";
 import { useAuth } from "react-oidc-context";
 import useSWRMutation, { type SWRMutationConfiguration } from "swr/mutation";
 import type { z } from "zod";
 import type { ApiQueryKey } from "./useApiQuery";
-import useApiUrl from "./useApiUrl";
+import { useApiUrl } from "./useApiUrl";
 
 type MutationVariables = { body?: Record<string, unknown> } | undefined;
 

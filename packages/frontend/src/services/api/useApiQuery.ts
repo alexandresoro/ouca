@@ -1,9 +1,9 @@
-import fetchApi from "@utils/fetch-api";
+import { fetchApi } from "@utils/fetch-api";
 import { toUrlSearchParams } from "@utils/url/url-search-params";
 import { useAuth } from "react-oidc-context";
 import useSWR, { type SWRConfiguration } from "swr";
 import type { z } from "zod";
-import useApiUrl from "./useApiUrl";
+import { useApiUrl } from "./useApiUrl";
 
 export type ApiQueryKey = {
   url: string;
@@ -42,5 +42,3 @@ export const useApiQuery = <T = unknown, E = unknown>(
     swrOptions,
   );
 };
-
-export default useApiQuery;

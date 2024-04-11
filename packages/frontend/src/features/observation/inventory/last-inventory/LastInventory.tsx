@@ -1,8 +1,8 @@
 import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
+import { useApiFetch } from "@services/api/useApiFetch";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
-import useApiFetch from "../../../../services/api/useApiFetch";
 
 const LastInventory: FunctionComponent = () => {
   const { t } = useTranslation();

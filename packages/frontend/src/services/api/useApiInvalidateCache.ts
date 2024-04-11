@@ -1,5 +1,5 @@
 import { type Arguments, type MutatorOptions, useSWRConfig } from "swr";
-import useApiUrl from "./useApiUrl";
+import { useApiUrl } from "./useApiUrl";
 
 const isApiCacheKey = (key: Arguments): key is { url: string } => {
   return (
@@ -15,7 +15,7 @@ const isMatchingCacheKey = (key: Arguments, queryUrlPath: string): boolean => {
   return false;
 };
 
-const useApiInvalidateCache = (path: string, mutatorOptions?: MutatorOptions) => {
+export const useApiInvalidateCache = (path: string, mutatorOptions?: MutatorOptions) => {
   const { mutate } = useSWRConfig();
   const apiUrl = useApiUrl();
 
@@ -30,5 +30,3 @@ const useApiInvalidateCache = (path: string, mutatorOptions?: MutatorOptions) =>
       mutatorOptions,
     );
 };
-
-export default useApiInvalidateCache;
