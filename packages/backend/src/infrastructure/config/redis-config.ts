@@ -2,6 +2,7 @@ import { z } from "zod";
 import { logger } from "../../utils/logger.js";
 
 const envRedisSchema = z.object({
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   REDIS_URL: z.string().default("redis://localhost:6379/0"),
 });
 

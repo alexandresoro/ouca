@@ -8,7 +8,9 @@ const initLogger = pino({
 });
 
 const envLogSchema = z.object({
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("warn"),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_LOG_PRETTY: z.coerce.boolean().default(false),
 });
 

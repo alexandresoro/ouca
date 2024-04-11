@@ -9,7 +9,9 @@ export const oidcUser = z.object({
   username: z.string().optional(),
   exp: z.number(), // Expiration date as unix time
   email: z.string().optional(),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   given_name: z.string().optional(),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   family_name: z.string().optional(),
   name: z.string().optional(),
   // The following lines are non-standard claims

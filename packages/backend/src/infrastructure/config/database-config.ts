@@ -6,10 +6,15 @@ const zodStringToBoolean = (input: string | undefined): boolean => {
 };
 
 const envDbSchema = z.object({
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   DATABASE_URL: z.string().default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste"),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_DATABASE_RUN_MIGRATIONS: z.string().default("false").transform(zodStringToBoolean),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_DATABASE_MIGRATION_SCHEMA: z.string().default("public"),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_DATABASE_MIGRATION_TABLE: z.string().default("base_naturaliste_umzug_migrations"),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_DATABASE_MIGRATIONS_PATH: z.string().default(new URL("../../../migrations/", import.meta.url).pathname),
 });
 

@@ -2,6 +2,7 @@ type AppConfig = {
   apiUrl: string;
 };
 
+// biome-ignore lint/style/useNamingConvention: <explanation>
 export const onRequestGet: PagesFunction<{ API_URLS?: KVNamespace }> = async ({ request, env }) => {
   const url = new URL(request.url);
 

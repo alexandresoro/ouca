@@ -23,6 +23,12 @@
         "useForOf": "warn",
         "useFragmentSyntax": "warn",
         "useImportType": "warn",
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false
+          }
+        },
         "useSelfClosingElements": "warn",
         "useShorthandArrayType": "error"
       },

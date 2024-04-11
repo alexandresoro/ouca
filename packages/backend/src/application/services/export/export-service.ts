@@ -73,6 +73,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const agesToExport = agesDb.map((ageDb) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Âge: ageDb.libelle,
       };
     });
@@ -89,6 +90,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     const classes = await classService.findAllSpeciesClasses();
 
     const objectsToExport = classes.map((object) => {
+      // biome-ignore lint/style/useNamingConvention: <explanation>
       return { Classe: object.libelle };
     });
 
@@ -105,8 +107,11 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = communesDb.map((communeDb) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Département: communeDb.departmentCode,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Code: communeDb.code,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Nom: communeDb.nom,
       };
     });
@@ -126,7 +131,9 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const comportementsToExport = comportementsDb.map((object) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Code: object.code,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Libellé: object.libelle,
       };
     });
@@ -146,6 +153,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = departementsDb.map((object) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Département: object.code,
       };
     });
@@ -208,14 +216,20 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
         const nicheurStatus = getNicheurStatusToDisplay(comportements, "");
 
         return {
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           ID: donnee.id,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Observateur: observateur?.libelle,
           "Observateurs associés": associes.length
             ? associes.map((associe) => associe.libelle).join(SEPARATOR_COMMA)
             : "",
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Date: inventaire?.date ? new Date(inventaire.date) : "", // TODO test this
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Heure: inventaire?.time,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Durée: inventaire?.duration,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Département: departement?.code,
           "Code commune": commune?.code,
           "Nom commune": commune?.nom,
@@ -226,17 +240,22 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
             inventaire?.customizedCoordinates?.longitude ?? lieudit?.coordinates.longitude,
           "Altitude en mètres": inventaire?.customizedCoordinates?.altitude ?? lieudit?.coordinates.altitude,
           "Température en °C": inventaire?.temperature,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Météo: meteos.length ? meteos.map((meteo) => meteo.libelle).join(SEPARATOR_COMMA) : "",
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Classe: classe?.libelle,
           "Code espèce": espece?.code,
           "Nom francais": espece?.nomFrancais,
           "Nom scientifique": espece?.nomLatin,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Sexe: sexe?.libelle,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Âge: age?.libelle,
           "Nombre d'individus": donnee.number,
           "Estimation du nombre": estimationNombre?.libelle,
           "Estimation de la distance": estimationDistance?.libelle,
           "Distance en mètres": donnee.distance,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Nicheur: nicheurStatus,
           "Comportement 1": getComportement(comportements, 1),
           "Comportement 2": getComportement(comportements, 2),
@@ -248,6 +267,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
           "Milieu 2": getMilieu(milieux, 2),
           "Milieu 3": getMilieu(milieux, 3),
           "Milieu 4": getMilieu(milieux, 4),
+          // biome-ignore lint/style/useNamingConvention: <explanation>
           Commentaires: donnee.comment,
         };
       }),
@@ -266,7 +286,9 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = especes.map((espece) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Classe: espece.classLabel,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Code: espece.code,
         "Nom français": espece.nomFrancais,
         "Nom scientifique": espece.nomLatin,
@@ -326,12 +348,16 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = lieuxDits.map((lieudit) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Département: lieudit.departmentCode,
         "Code commune": lieudit.townCode,
         "Nom commune": lieudit.townName,
         "Lieu-dit": lieudit.nom,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Latitude: lieudit.latitude,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Longitude: lieudit.longitude,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Altitude: lieudit.altitude,
       };
     });
@@ -351,6 +377,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = meteos.map((object) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Météo: object.libelle,
       };
     });
@@ -370,7 +397,9 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const milieuxToExport = milieuxDb.map((object) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Code: object.code,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Libellé: object.libelle,
       };
     });
@@ -390,6 +419,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = observateurs.map((object) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Observateur: object.libelle,
       };
     });
@@ -407,6 +437,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
 
     const objectsToExport = sexes.map((object) => {
       return {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Sexe: object.libelle,
       };
     });

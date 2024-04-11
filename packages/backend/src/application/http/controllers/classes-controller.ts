@@ -17,6 +17,7 @@ export const classesController: FastifyPluginCallback<{
   const { classService } = services;
 
   fastify.get<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -41,6 +42,7 @@ export const classesController: FastifyPluginCallback<{
   });
 
   fastify.get<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -125,6 +127,7 @@ export const classesController: FastifyPluginCallback<{
   });
 
   fastify.put<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -153,6 +156,7 @@ export const classesController: FastifyPluginCallback<{
   });
 
   fastify.delete<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };

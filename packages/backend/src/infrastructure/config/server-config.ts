@@ -2,7 +2,9 @@ import { z } from "zod";
 import { logger } from "../../utils/logger.js";
 
 const envServerSchema = z.object({
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_SERVER_HOST: z.string().default("localhost"),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   OUCA_SERVER_PORT: z.coerce.number().min(1).max(65535).multipleOf(1).default(4000),
 });
 

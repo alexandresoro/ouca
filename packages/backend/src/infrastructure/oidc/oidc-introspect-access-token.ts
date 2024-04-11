@@ -18,6 +18,7 @@ const fetchIntrospectAccessToken = async (
     fetch(`${oidcConfig.issuer}${oidcConfig.introspectionPath}`, {
       method: "POST",
       headers: {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
         Authorization: `Basic ${basicAuthHeader}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },

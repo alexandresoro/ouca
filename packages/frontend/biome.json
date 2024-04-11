@@ -4,7 +4,8 @@
   "linter": {
     "rules": {
       "style": {
-        "noDefaultExport": "off"
+        "noDefaultExport": "off",
+        "useNamingConvention": "off"
       }
     }
   }

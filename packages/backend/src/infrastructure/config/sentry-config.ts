@@ -2,8 +2,11 @@ import { z } from "zod";
 import { logger } from "../../utils/logger.js";
 
 const envSentrySchema = z.object({
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   SENTRY_DSN: z.string().optional(),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   SENTRY_ENV: z.string().optional(),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   SENTRY_RELEASE: z.string().trim().min(1).optional(),
 });
 

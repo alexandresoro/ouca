@@ -17,6 +17,7 @@ export const environmentsController: FastifyPluginCallback<{
   const { environmentService } = services;
 
   fastify.get<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -41,6 +42,7 @@ export const environmentsController: FastifyPluginCallback<{
   });
 
   fastify.get<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -123,6 +125,7 @@ export const environmentsController: FastifyPluginCallback<{
   });
 
   fastify.put<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -151,6 +154,7 @@ export const environmentsController: FastifyPluginCallback<{
   });
 
   fastify.delete<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };

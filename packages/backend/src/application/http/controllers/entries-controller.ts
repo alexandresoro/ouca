@@ -20,6 +20,7 @@ export const entriesController: FastifyPluginCallback<{
   const { entryService, inventoryService } = services;
 
   fastify.get<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
@@ -164,6 +165,7 @@ export const entriesController: FastifyPluginCallback<{
   });
 
   fastify.put<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: string;
     };
@@ -209,6 +211,7 @@ export const entriesController: FastifyPluginCallback<{
   });
 
   fastify.delete<{
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: string | number;
     };

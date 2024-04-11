@@ -31,13 +31,19 @@ export type Database = {
   comportement: Behavior;
   departement: Department;
   donnee: Entry;
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   donnee_comportement: EntryBehavior;
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   donnee_milieu: EntryEnvironment;
   espece: Species;
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   estimation_distance: DistanceEstimate;
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   estimation_nombre: NumberEstimate;
   inventaire: Inventory;
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   inventaire_associe: InventoryAssociate;
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   inventaire_meteo: InventoryWeather;
   lieudit: Locality;
   meteo: Weather;
