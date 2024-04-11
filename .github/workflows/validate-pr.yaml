@@ -8,6 +8,11 @@ jobs:
     uses: ./.github/workflows/_validate.yml
     secrets: inherit
 
+  # We had cases where the PR typecheck was fine, but the build failed
+  # Let's make sure we don't deploy something that doesn't build
+  build-frontend:
+    uses: ./.github/workflows/_build-frontend.yml
+
   build-deploy-frontend:
     needs: validate-pr
     concurrency:
