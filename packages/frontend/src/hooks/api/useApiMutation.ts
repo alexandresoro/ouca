@@ -33,7 +33,6 @@ const useApiMutation = <TData, TVariables extends MutationVariables, TError exte
   const accessToken = user?.access_token;
 
   const mutationFn: MutationFunction<TData, TVariables> = async (variables) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { path: pathFromMutate, body, ...restVariables } = variables;
 
     const path = pathFromMutate ?? pathFromOptions;

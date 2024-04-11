@@ -35,8 +35,7 @@ export const getAltitudeForCoordinates = async ({
 
   try {
     const response = await fetch(`${ALTICODAGE_URL}?${searchParams.toString()}`);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const responseParsed = await response.json();
+    const responseParsed = (await response.json()) as unknown;
 
     const responseValidated = alticodageResponseSchema.parse(responseParsed);
 

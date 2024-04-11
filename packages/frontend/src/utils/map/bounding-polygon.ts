@@ -1,7 +1,6 @@
 import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import convex from "@turf/convex";
-// eslint-disable-next-line import/no-unresolved
 import type { Feature, FeatureCollection, Point, Polygon } from "geojson";
 
 export const boundingPolygon = (

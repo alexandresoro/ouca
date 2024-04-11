@@ -7,7 +7,6 @@ import booleanDisjoint from "@turf/boolean-disjoint";
 import booleanWithin from "@turf/boolean-within";
 import { featureCollection, point } from "@turf/helpers";
 import type { BBox2d } from "@turf/helpers/dist/js/lib/geojson";
-// eslint-disable-next-line import/no-unresolved
 import type { FeatureCollection, Point, Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";

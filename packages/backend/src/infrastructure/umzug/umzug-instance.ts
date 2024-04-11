@@ -20,7 +20,6 @@ export const getUmzugInstance = (kyselyCustomInstance?: Kysely<Database>) => {
     migrations: {
       glob: `${dbConfig.migrator.migrationsPath}/*.sql`,
       resolve: ({ name, path: pathFile }) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return {
           name,
           up: async () => {

@@ -1,5 +1,5 @@
-import { redis } from "@infrastructure/ioredis/redis.js";
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { redis } from "@infrastructure/ioredis/redis.js";
 import { Queue } from "bullmq";
 import { logger as mainLogger } from "../../utils/logger.js";
 
