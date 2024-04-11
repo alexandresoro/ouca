@@ -6,6 +6,9 @@ import { useAtomValue } from "jotai";
 import { useAuth } from "react-oidc-context";
 import type { z } from "zod";
 
+/**
+ * @deprecated Use `useApiQuery` from `@services` instead
+ */
 const useApiQuery = <
   TQueryFnData = unknown,
   TError extends FetchErrorType = FetchErrorType,
@@ -72,4 +75,7 @@ const useApiQuery = <
   });
 };
 
+/**
+ * @deprecated Use `useApiQuery` from `@services` instead
+ */
 export default useApiQuery;
