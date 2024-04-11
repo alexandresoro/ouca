@@ -7,7 +7,7 @@ import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
+import { useApiDownloadExport } from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import AgeCreate from "./AgeCreate";
@@ -116,7 +116,7 @@ const AgePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("ages") });
+  const downloadExport = useApiDownloadExport({ filename: t("ages"), path: "/generate-export/ages" });
 
   const handleCreateClick = () => {
     setUpsertAgeDialog({ mode: "create" });
@@ -127,7 +127,7 @@ const AgePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/ages" });
+    void downloadExport();
   };
 
   const handleCreateAge = (input: UpsertAgeInput) => {
