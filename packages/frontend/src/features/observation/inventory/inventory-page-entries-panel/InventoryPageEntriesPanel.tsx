@@ -17,11 +17,8 @@ import InventoryPageEntryElement from "../inventory-page-entry-element/Inventory
 type InventoryPageEntriesPanelProps = {
   inventoryId: string;
   entries: InfiniteData<z.infer<typeof getEntriesExtendedResponse>> | undefined;
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   onCreateEntrySettled?: () => void | Promise<void>;
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   onUpdateEntrySettled?: () => void | Promise<void>;
-  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   onDeleteEntrySettled?: () => void | Promise<void>;
 };
 
