@@ -1,3 +1,4 @@
+import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import { type UpsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
 import type { Age } from "@ou-ca/common/api/entities/age";
@@ -5,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -22,7 +22,7 @@ const AgePage: FunctionComponent = () => {
 
   const queryClient = useQueryClient();
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const [upsertAgeDialog, setUpsertAgeDialog] = useState<null | { mode: "create" } | { mode: "update"; age: Age }>(
     null,

@@ -1,3 +1,4 @@
+import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
@@ -5,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -22,7 +22,7 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   const queryClient = useQueryClient();
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const [upsertDistanceEstimateDialog, setUpsertDistanceEstimateDialog] = useState<
     null | { mode: "create" } | { mode: "update"; distanceEstimate: DistanceEstimate }

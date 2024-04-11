@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNotifications } from "@hooks/useNotifications";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { type UpsertLocalityInput, upsertLocalityInput } from "@ou-ca/common/api/locality";
@@ -10,7 +11,6 @@ import TextInput from "../../../components/base/TextInput";
 import Select from "../../../components/base/select/Select";
 import FormSelect from "../../../components/form/FormSelect";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type LieuDitEditProps = {
@@ -95,7 +95,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     }
   }, [dataTowns, fetchingTowns, getValues, setValue]);
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   useEffect(() => {
     if (errorTowns || errorDepartements) {

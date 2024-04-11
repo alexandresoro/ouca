@@ -1,10 +1,10 @@
+import { useNotifications } from "@hooks/useNotifications";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import useSnackbar from "../../../../hooks/useSnackbar";
 import { useApiEntryCreate } from "../../../../services/api/entry/api-entry-queries";
 import { useApiInventoryCreate } from "../../../../services/api/inventory/api-inventory-queries";
 import { ENTRY_STEP, INVENTORY_STEP, type NewEntryStep } from "../new-entry-page/new-entry-hash-step-mapper";
@@ -23,7 +23,7 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   const [searchParams] = useSearchParams();
   const inventoryIdParam = searchParams.get("inventoryId") ?? undefined;
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const [entryFormKey, setEntryFormKey] = useState(0);
 

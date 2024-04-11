@@ -1,5 +1,6 @@
 import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
+import { useNotifications } from "@hooks/useNotifications";
 import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import {
@@ -17,7 +18,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../../hooks/useSnackbar";
 import { useApiInventoryDelete, useApiInventoryUpdate } from "../../../../services/api/inventory/api-inventory-queries";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
 import InventoryMap from "../inventory-map/InventoryMap";
@@ -33,7 +33,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
 
   const navigate = useNavigate();
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const queryClient = useQueryClient();
 

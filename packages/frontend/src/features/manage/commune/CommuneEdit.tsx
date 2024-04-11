@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNotifications } from "@hooks/useNotifications";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { type UpsertTownInput, upsertTownInput } from "@ou-ca/common/api/town";
 import { type FunctionComponent, useEffect } from "react";
@@ -7,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import FormSelect from "../../../components/form/FormSelect";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type CommuneEditProps = {
@@ -55,7 +55,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
     },
   );
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   useEffect(() => {
     if (errorDepartements) {

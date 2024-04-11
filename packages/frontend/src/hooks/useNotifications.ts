@@ -1,11 +1,15 @@
-import type { Notification } from "@typings/Notification";
 import { useSetAtom } from "jotai";
 import { useCallback } from "react";
+import type { Notification } from "../features/notifications/Notification";
 import { notificationsAtom } from "../features/notifications/notificationAtoms";
 
 const NOTIFICATION_TIMEOUT_MS = 2500;
 
-export const useDisplayNotification = (): ((notification: Omit<Notification, "id">) => number) => {
+type UseNotifications = {
+  displayNotification: (notification: Omit<Notification, "id">) => number;
+};
+
+export const useNotifications = (): UseNotifications => {
   const setNotifications = useSetAtom(notificationsAtom);
 
   const addNotification = useCallback(
@@ -44,5 +48,5 @@ export const useDisplayNotification = (): ((notification: Omit<Notification, "id
     [addNotification],
   );
 
-  return displayNotification;
+  return { displayNotification };
 };

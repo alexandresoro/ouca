@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNotifications } from "@hooks/useNotifications";
 import { type UpsertSpeciesInput, upsertSpeciesInput } from "@ou-ca/common/api/species";
 import { getClassesResponse } from "@ou-ca/common/api/species-class";
 import { type FunctionComponent, useEffect } from "react";
@@ -7,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import FormSelect from "../../../components/form/FormSelect";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type EspeceEditProps = {
@@ -56,7 +56,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
     },
   );
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   useEffect(() => {
     if (errorClasses) {

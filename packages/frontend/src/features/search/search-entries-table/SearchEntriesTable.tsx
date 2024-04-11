@@ -2,8 +2,8 @@ import InfiniteTable from "@components/base/table/InfiniteTable";
 import TableSortLabel from "@components/base/table/TableSortLabel";
 import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
 import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
+import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
-import useSnackbar from "@hooks/useSnackbar";
 import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { type EntriesOrderBy, type UpsertEntryInput, getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-entry-queries";
@@ -53,7 +53,7 @@ const SearchEntriesTable: FunctionComponent = () => {
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
 

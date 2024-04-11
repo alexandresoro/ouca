@@ -3,7 +3,7 @@ import FormSelect from "@components/form/FormSelect";
 import FormSwitch from "@components/form/FormSwitch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useApiQuery from "@hooks/api/useApiQuery";
-import useSnackbar from "@hooks/useSnackbar";
+import { useNotifications } from "@hooks/useNotifications";
 import { useUserSettings } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
@@ -33,7 +33,7 @@ type SettingsInputs = {
 const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const settings = useUserSettings();
 

@@ -1,3 +1,4 @@
+import { useNotifications } from "@hooks/useNotifications";
 import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
 import type { UpsertEntryInput, getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
@@ -7,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import type { z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
-import useSnackbar from "../../../../hooks/useSnackbar";
 import { useApiEntryDelete, useApiEntryUpdate } from "../../../../services/api/entry/api-entry-queries";
 import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import { ENTRY_STEP } from "../../entry/new-entry-page/new-entry-hash-step-mapper";
@@ -31,7 +31,7 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
 }) => {
   const { t } = useTranslation();
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const queryClient = useQueryClient();
 

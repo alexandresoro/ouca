@@ -1,3 +1,4 @@
+import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
 import type { UpsertObserverInput } from "@ou-ca/common/api/observer";
@@ -10,7 +11,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
-import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -27,7 +27,7 @@ const ObservateurPage: FunctionComponent = () => {
 
   const queryClient = useQueryClient();
 
-  const { displayNotification } = useSnackbar();
+  const { displayNotification } = useNotifications();
 
   const [upsertObserverDialog, setUpsertObserverDialog] = useState<
     null | { mode: "create" } | { mode: "update"; observer: Observer }
