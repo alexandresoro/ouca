@@ -1,4 +1,3 @@
-/* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";

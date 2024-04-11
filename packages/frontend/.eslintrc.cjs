@@ -13,11 +13,6 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  settings: {
-    "import/resolver": {
-      typescript: {},
-    },
-  },
   ignorePatterns: ["tailwind.config.*"],
   rules: {
     "@typescript-eslint/no-misused-promises": [

@@ -4,7 +4,6 @@ export const writeExcelToBuffer = async (
   objects: Record<string, unknown>[],
   worksheetName: string,
 ): Promise<exceljs.Buffer> => {
-  // eslint-disable-next-line import/no-named-as-default-member
   const workbook = new exceljs.Workbook();
   const sheet = workbook.addWorksheet(worksheetName);
   if (objects?.length) {

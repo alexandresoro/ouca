@@ -6,12 +6,6 @@ module.exports = {
     EXPERIMENTAL_useSourceOfProjectReferenceRedirect: true,
     tsconfigRootDir: __dirname,
   },
-  settings: {
-    "import/resolver": {
-      typescript: {},
-      node: true,
-    },
-  },
   ignorePatterns: ["src/application/jobs/**/*-sandboxed.js"],
   overrides: [
     {
