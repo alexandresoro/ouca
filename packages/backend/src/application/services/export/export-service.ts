@@ -7,6 +7,7 @@ import type { EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
 import { type Result, err, ok } from "neverthrow";
+import { getDateOnlyAsUTCDate } from "../../../utils/time-utils.js";
 import type { AgeService } from "../age/age-service.js";
 import type { BehaviorService } from "../behavior/behavior-service.js";
 import type { DepartmentService } from "../department/department-service.js";
@@ -224,7 +225,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
             ? associes.map((associe) => associe.libelle).join(SEPARATOR_COMMA)
             : "",
           // biome-ignore lint/style/useNamingConvention: <explanation>
-          Date: inventaire?.date ? new Date(inventaire.date) : "", // TODO test this
+          Date: inventaire?.date ? getDateOnlyAsUTCDate(new Date(inventaire.date)) : "",
           // biome-ignore lint/style/useNamingConvention: <explanation>
           Heure: inventaire?.time,
           // biome-ignore lint/style/useNamingConvention: <explanation>

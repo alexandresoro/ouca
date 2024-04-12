@@ -1,3 +1,4 @@
+import { getSearchCriteriaParamsSchema } from "@ou-ca/common/api/common/search-criteria";
 import type { FastifyPluginCallback, FastifyRequest } from "fastify";
 import type { Services } from "../../services/services.js";
 
@@ -180,8 +181,26 @@ export const generateExportController: FastifyPluginCallback<{
   });
 
   fastify.post("/entries", async (req, reply) => {
+    const parsedQueryParamsResult = getSearchCriteriaParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const { data: queryParams } = parsedQueryParamsResult;
+
+    if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+      return await reply.status(403).send();
+    }
+
+    // If we don't want to see all users' entries, we need to filter by ownerId
+    const reshapedQueryParams = {
+      ...queryParams,
+      ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
+    };
+
     // TODO add search criteria
-    const idResult = await exportService.generateEntriesExport(req.user, {});
+    const idResult = await exportService.generateEntriesExport(req.user, reshapedQueryParams);
 
     if (idResult.isErr()) {
       switch (idResult.error) {

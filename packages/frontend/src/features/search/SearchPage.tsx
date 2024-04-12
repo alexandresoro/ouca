@@ -1,7 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { useApiEntryQueryAll } from "@services/api/entry/api-entry-queries";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiSearchSpecies } from "@services/api/search/api-search-queries";
-import { useFeatures } from "@services/app-features/features";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,8 +14,6 @@ const SELECTED_TAB_MAPPING = ["entries", "species"] as const;
 
 const SearchPage: FunctionComponent = () => {
   const { t } = useTranslation();
-
-  const features = useFeatures();
 
   const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
 
@@ -39,6 +37,12 @@ const SearchPage: FunctionComponent = () => {
     paused: selectedTab !== 1,
   });
 
+  const downloadExport = useApiDownloadExport({
+    filename: t("exportFilename.entries"),
+    path: "/generate-export/entries",
+    queryParams: searchCriteria,
+  });
+
   return (
     <div className="container mx-auto flex gap-16 mt-6">
       <div className="flex-shrink-0 w-80">
@@ -47,7 +51,7 @@ const SearchPage: FunctionComponent = () => {
 
       <div className="flex-grow">
         <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
-          <div className="flex justify-between mb-12">
+          <div className="flex justify-between items-center mb-12 mr-12">
             <Tab.List className="join">
               <Tab as={Fragment}>
                 {({ selected }) => (
@@ -74,23 +78,24 @@ const SearchPage: FunctionComponent = () => {
                 )}
               </Tab>
             </Tab.List>
-            <div className="flex gap-4">
-              <div
-                className={`flex items-center text-sm font-bold uppercase text-base-content ${
-                  features.tmp_export_search_results ? "" : "mr-12"
-                }`}
-              >
-                {SELECTED_TAB_MAPPING[selectedTab] === "entries" &&
-                  dataEntries?.meta != null &&
-                  t("search.entriesCount", { count: dataEntries.meta.count })}
-                {SELECTED_TAB_MAPPING[selectedTab] === "species" &&
-                  dataSpecies?.meta != null &&
-                  t("search.speciesCount", { count: dataSpecies.meta.count })}
-              </div>
-              {features.tmp_export_search_results && (
-                <button type="button" className="btn btn-sm btn-outline btn-secondary uppercase mt-2">
-                  {t("observationFilter.exportToExcel")}
-                </button>
+            <div className="grow justify-end items-center ml-12 text-sm font-bold uppercase text-base-content">
+              {SELECTED_TAB_MAPPING[selectedTab] === "entries" && dataEntries?.meta != null && (
+                <div className="flex justify-between items-center">
+                  <button
+                    type="button"
+                    // TODO: Test what happens w/ big data sets before enabling this
+                    disabled={dataEntries.meta.count === 0 || dataEntries.meta.count > 10000}
+                    className="btn btn-sm btn-outline btn-secondary uppercase"
+                    onClick={() => downloadExport()}
+                  >
+                    {t("observationFilter.exportToExcel")}
+                    <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>
+                  </button>
+                  <span>{t("search.entriesCount", { count: dataEntries.meta.count })}</span>
+                </div>
+              )}
+              {SELECTED_TAB_MAPPING[selectedTab] === "species" && dataSpecies?.meta != null && (
+                <span className="flex justify-end">{t("search.speciesCount", { count: dataSpecies.meta.count })}</span>
               )}
             </div>
           </div>

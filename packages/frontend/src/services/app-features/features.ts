@@ -1,12 +1,9 @@
 import { atom, useAtomValue } from "jotai";
 
-export type Features = {
-  tmp_export_search_results: boolean;
-};
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+export type Features = {};
 
-const DEFAULT_FEATURES = {
-  tmp_export_search_results: false,
-} satisfies Features;
+const DEFAULT_FEATURES = {} satisfies Features;
 
 export const appFeaturesAtom = atom<Features>(DEFAULT_FEATURES);
 

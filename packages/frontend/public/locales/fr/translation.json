@@ -113,6 +113,9 @@
   "environmentCreationTitle": "Création d'un milieu naturel",
   "environmentEditionTitle": "Modification d'un milieu naturel",
   "environments": "Milieux naturels",
+  "exportFilename": {
+    "entries": "observations"
+  },
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
   "genericError": "Une erreur est survenue. Veuillez réessayer.",
