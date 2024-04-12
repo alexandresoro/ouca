@@ -2,6 +2,7 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
 import type { UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import {
   useApiObserverCreate,
   useApiObserverDelete,
@@ -12,7 +13,6 @@ import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import ObservateurCreate from "./ObservateurCreate";
@@ -88,7 +88,10 @@ const ObservateurPage: FunctionComponent = () => {
     },
   });
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("observer") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("observer"),
+    path: "/generate-export/observers",
+  });
 
   const handleCreateClick = () => {
     setUpsertObserverDialog({ mode: "create" });
@@ -99,7 +102,7 @@ const ObservateurPage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/observers" });
+    void downloadExport();
   };
 
   const handleCreateObserver = (input: UpsertObserverInput) => {

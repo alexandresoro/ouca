@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import { type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import CommuneCreate from "./CommuneCreate";
@@ -116,7 +116,7 @@ const CommunePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("towns") });
+  const downloadExport = useApiDownloadExport({ filename: t("towns"), path: "/generate-export/towns" });
 
   const handleCreateClick = () => {
     setUpsertTownDialog({ mode: "create" });
@@ -127,7 +127,7 @@ const CommunePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/towns" });
+    void downloadExport();
   };
 
   const handleCreateTown = (input: UpsertTownInput) => {

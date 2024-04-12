@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import MeteoCreate from "./MeteoCreate";
@@ -116,7 +116,10 @@ const MeteoPage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("weathers") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("weathers"),
+    path: "/generate-export/weathers",
+  });
 
   const handleCreateClick = () => {
     setUpsertWeatherDialog({ mode: "create" });
@@ -127,7 +130,7 @@ const MeteoPage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/weathers" });
+    void downloadExport();
   };
 
   const handleCreateWeather = (input: UpsertWeatherInput) => {

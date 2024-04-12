@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { type UpsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import SexeCreate from "./SexeCreate";
@@ -116,7 +116,10 @@ const SexePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("genders") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("genders"),
+    path: "/generate-export/sexes",
+  });
 
   const handleCreateClick = () => {
     setUpsertSexDialog({ mode: "create" });
@@ -127,7 +130,7 @@ const SexePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/sexes" });
+    void downloadExport();
   };
 
   const handleCreateSex = (input: UpsertSexInput) => {

@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import { type UpsertSpeciesInput, upsertSpeciesResponse } from "@ou-ca/common/api/species";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import EspeceCreate from "./EspeceCreate";
@@ -116,7 +116,7 @@ const EspecePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("species") });
+  const downloadExport = useApiDownloadExport({ filename: t("species"), path: "/generate-export/species" });
 
   const handleCreateClick = () => {
     setUpsertSpeciesDialog({ mode: "create" });
@@ -127,7 +127,7 @@ const EspecePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/species" });
+    void downloadExport();
   };
 
   const handleCreateSpecies = (input: UpsertSpeciesInput) => {

@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { type UpsertEnvironmentInput, upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import MilieuCreate from "./MilieuCreate";
@@ -116,7 +116,10 @@ const MilieuPage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("environments") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("environments"),
+    path: "/generate-export/environments",
+  });
 
   const handleCreateClick = () => {
     setUpsertEnvironmentDialog({ mode: "create" });
@@ -127,7 +130,7 @@ const MilieuPage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/environments" });
+    void downloadExport();
   };
 
   const handleCreateEnvironment = (input: UpsertEnvironmentInput) => {

@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type UpsertNumberEstimateInput, upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import EstimationNombreCreate from "./EstimationNombreCreate";
@@ -116,7 +116,10 @@ const EstimationNombrePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("numberPrecisions") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("numberPrecisions"),
+    path: "/generate-export/number-estimates",
+  });
 
   const handleCreateClick = () => {
     setUpsertNumberEstimateDialog({ mode: "create" });
@@ -127,7 +130,7 @@ const EstimationNombrePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/number-estimates" });
+    void downloadExport();
   };
 
   const handleCreateNumberEstimate = (input: UpsertNumberEstimateInput) => {

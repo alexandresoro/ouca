@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import { type UpsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import ComportementCreate from "./ComportementCreate";
@@ -116,7 +116,7 @@ const ComportementPage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("behaviors") });
+  const downloadExport = useApiDownloadExport({ filename: t("behaviors"), path: "/generate-export/behaviors" });
 
   const handleCreateClick = () => {
     setUpsertBehaviorDialog({ mode: "create" });
@@ -127,7 +127,7 @@ const ComportementPage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/behaviors" });
+    void downloadExport();
   };
 
   const handleCreateBehavior = (input: UpsertBehaviorInput) => {

@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import EstimationDistanceCreate from "./EstimationDistanceCreate";
@@ -116,7 +116,10 @@ const EstimationDistancePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("distancePrecisions") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("distancePrecisions"),
+    path: "/generate-export/distance-estimates",
+  });
 
   const handleCreateClick = () => {
     setUpsertDistanceEstimateDialog({ mode: "create" });
@@ -127,7 +130,7 @@ const EstimationDistancePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/distance-estimates" });
+    void downloadExport();
   };
 
   const handleCreateDistanceEstimate = (input: UpsertDistanceEstimateInput) => {

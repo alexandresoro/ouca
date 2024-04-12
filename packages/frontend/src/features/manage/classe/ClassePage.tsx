@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import ClasseCreate from "./ClasseCreate";
@@ -116,7 +116,7 @@ const ClassePage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("speciesClasses") });
+  const downloadExport = useApiDownloadExport({ filename: t("speciesClasses"), path: "/generate-export/classes" });
 
   const handleCreateClick = () => {
     setUpsertSpeciesClassDialog({ mode: "create" });
@@ -127,7 +127,7 @@ const ClassePage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/classes" });
+    void downloadExport();
   };
 
   const handleCreateSpeciesClass = (input: UpsertClassInput) => {

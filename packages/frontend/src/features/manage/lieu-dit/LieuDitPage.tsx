@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import LieuDitCreate from "./LieuDitCreate";
@@ -116,7 +116,10 @@ const LieuDitPage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("localities") });
+  const downloadExport = useApiDownloadExport({
+    filename: t("localities"),
+    path: "/generate-export/localities",
+  });
 
   const handleCreateClick = () => {
     setUpsertLocalityDialog({ mode: "create" });
@@ -127,7 +130,7 @@ const LieuDitPage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/localities" });
+    void downloadExport();
   };
 
   const handleCreateLocality = (input: UpsertLocalityInput) => {

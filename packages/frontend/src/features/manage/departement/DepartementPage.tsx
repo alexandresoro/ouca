@@ -2,12 +2,12 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import { type UpsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
+import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
-import useApiExportEntities from "../../../services/api/export/useApiExportEntities";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import DepartementCreate from "./DepartementCreate";
@@ -116,7 +116,7 @@ const DepartementPage: FunctionComponent = () => {
     },
   );
 
-  const { mutate: generateExport } = useApiExportEntities({ filename: t("departments") });
+  const downloadExport = useApiDownloadExport({ filename: t("departments"), path: "/generate-export/departments" });
 
   const handleCreateClick = () => {
     setUpsertDepartmentDialog({ mode: "create" });
@@ -127,7 +127,7 @@ const DepartementPage: FunctionComponent = () => {
   };
 
   const handleExportClick = () => {
-    generateExport({ path: "/generate-export/departments" });
+    void downloadExport();
   };
 
   const handleCreateDepartment = (input: UpsertDepartmentInput) => {
