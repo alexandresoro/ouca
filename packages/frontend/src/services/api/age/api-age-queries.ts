@@ -1,4 +1,9 @@
-import { ageInfoSchema, getAgeResponse } from "@ou-ca/common/api/age";
+import { ageInfoSchema, getAgeResponse, getAgesResponse } from "@ou-ca/common/api/age";
+import {
+  type UseApiInfiniteQueryCommonParams,
+  type UseApiQuerySWRInfiniteOptions,
+  useApiInfiniteQuery,
+} from "@services/api/useApiInfiniteQuery";
 import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { z } from "zod";
 
@@ -25,6 +30,22 @@ export const useApiAgeInfoQuery = (
     id != null ? `/ages/${id}/info` : null,
     {
       schema: ageInfoSchema,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiAgesInfiniteQuery = (
+  queryParams: UseApiInfiniteQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWRInfiniteOptions<typeof getAgeResponse>,
+) => {
+  return useApiInfiniteQuery(
+    "/ages",
+    {
+      queryParams,
+      schema: getAgesResponse,
     },
     {
       ...swrOptions,

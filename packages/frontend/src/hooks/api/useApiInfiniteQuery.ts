@@ -19,6 +19,9 @@ const getNextPage = (page: z.infer<PaginatedResponseSchemaType<z.ZodAny>>): numb
   return page.meta.pageNumber + 1;
 };
 
+/**
+ * @deprecated Use `useApiInfiniteQuery` from `@services` instead
+ */
 const useApiInfiniteQuery = <
   S extends z.ZodAny,
   TQueryFnData extends z.infer<PaginatedResponseSchemaType<S>>,
@@ -84,4 +87,7 @@ const useApiInfiniteQuery = <
   });
 };
 
+/**
+ * @deprecated Use `useApiInfiniteQuery` from `@services` instead
+ */
 export default useApiInfiniteQuery;
