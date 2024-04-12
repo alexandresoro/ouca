@@ -2,6 +2,7 @@ import {
   getSpeciesPaginatedResponse,
   getSpeciesQueryParamsSchema,
   getSpeciesResponse,
+  speciesInfoQueryParamsSchema,
   speciesInfoSchema,
   upsertSpeciesInput,
   upsertSpeciesResponse,
@@ -47,8 +48,16 @@ export const speciesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/info", async (req, reply) => {
+    const parsedQueryParamsResult = speciesInfoQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const { data: queryParams } = parsedQueryParamsResult;
+
     const speciesInfoResult = Result.combine([
-      await speciesService.getEntriesCountBySpecies(`${req.params.id}`, {}, req.user),
+      await speciesService.getEntriesCountBySpecies(`${req.params.id}`, queryParams, req.user),
       await speciesService.isSpeciesUsed(`${req.params.id}`, req.user),
     ]);
 
@@ -64,7 +73,7 @@ export const speciesController: FastifyPluginCallback<{
       // TODO: this should be better handled in the service
       const totalEntriesCountResult = await speciesService.getEntriesCountBySpecies(
         `${req.params.id}`,
-        {},
+        queryParams,
         req.user,
         true,
       );

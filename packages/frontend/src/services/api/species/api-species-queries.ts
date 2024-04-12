@@ -17,12 +17,14 @@ export const useApiSpeciesQueryAll = (
 
 export const useApiSpeciesInfoQuery = (
   id: string | null,
+  queryParams?: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof speciesInfoSchema>>,
 ) => {
   return useApiQuery(
     id != null ? `/species/${id}/info` : null,
     {
       schema: speciesInfoSchema,
+      queryParams,
     },
     {
       ...swrOptions,

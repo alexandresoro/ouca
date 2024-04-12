@@ -220,8 +220,8 @@ const findSpecies = async (
           .orderBy(
             (eb) =>
               ownerId
-                ? eb.fn.count("donnee.id").filterWhere("inventaire.ownerId", "=", ownerId)
-                : eb.fn.count("donnee.id"),
+                ? eb.fn.count("donnee.id").distinct().filterWhere("inventaire.ownerId", "=", ownerId)
+                : eb.fn.count("donnee.id").distinct(),
             sortOrder ?? undefined,
           )
           .orderBy("espece.code asc");

@@ -9,9 +9,9 @@ type SearchSpeciesTableRowProps = {
 };
 
 const SearchSpeciesTableRow: FunctionComponent<SearchSpeciesTableRowProps> = ({ species }) => {
-  const { data: speciesInfo } = useApiSpeciesInfoQuery(species.id);
-
   const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
+
+  const { data: speciesInfo } = useApiSpeciesInfoQuery(species.id, { ...searchCriteria });
 
   return (
     <tr className="hover:bg-base-200" key={species.id}>
