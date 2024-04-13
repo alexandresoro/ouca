@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getClassesResponse } from "@ou-ca/common/api/species-class";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiSpeciesClassesQuery } from "@services/api/species-class/api-species-class-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterClasses: FunctionComponent = () => {
 
   const [classInput, setClassInput] = useState("");
   const [selectedClasses, setSelectedClasses] = useAtom(searchEntriesFilterClassesAtom);
-  const { data: dataClasses } = useApiQuery("/classes", {
-    queryParams: {
-      q: classInput,
-      pageSize: 5,
-    },
-    schema: getClassesResponse,
+  const { data: dataClasses } = useApiSpeciesClassesQuery({
+    q: classInput,
+    pageSize: 5,
   });
 
   return (

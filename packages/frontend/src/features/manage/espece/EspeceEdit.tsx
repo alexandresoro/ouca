@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@hooks/useNotifications";
 import { type UpsertSpeciesInput, upsertSpeciesInput } from "@ou-ca/common/api/species";
-import { getClassesResponse } from "@ou-ca/common/api/species-class";
-import { type FunctionComponent, useEffect } from "react";
+import { useApiSpeciesClassesQuery } from "@services/api/species-class/api-species-class-queries";
+import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import FormSelect from "../../../components/form/FormSelect";
-import useApiQuery from "../../../hooks/api/useApiQuery";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type EspeceEditProps = {
@@ -20,6 +19,8 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
   const { defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
+
+  const { displayNotification } = useNotifications();
 
   const {
     register,
@@ -37,35 +38,20 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
     mode: "onTouched",
   });
 
-  const {
-    data: classes,
-    isError: errorClasses,
-    isFetching: fetchingClasses,
-  } = useApiQuery(
+  const { data: classes, isLoading: loadingClasses } = useApiSpeciesClassesQuery(
     {
-      path: "/classes",
-      queryParams: {
-        orderBy: "libelle",
-        sortOrder: "asc",
-      },
-      schema: getClassesResponse,
+      orderBy: "libelle",
+      sortOrder: "asc",
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("retrieveGenericError"),
+        });
+      },
     },
   );
-
-  const { displayNotification } = useNotifications();
-
-  useEffect(() => {
-    if (errorClasses) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [errorClasses, displayNotification, t]);
 
   return (
     <>
@@ -98,7 +84,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
         <EntityUpsertFormActionButtons
           className="mt-6"
           onCancelClick={onCancel}
-          disabled={fetchingClasses || !isValid || !isDirty}
+          disabled={loadingClasses || !isValid || !isDirty}
         />
       </form>
     </>
