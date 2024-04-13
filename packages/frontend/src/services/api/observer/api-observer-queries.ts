@@ -1,12 +1,13 @@
 import {
   deleteObserverResponse,
   getObserverResponse,
+  getObserversResponse,
   observerInfoSchema,
   upsertObserverResponse,
 } from "@ou-ca/common/api/observer";
 import { useApiFetch } from "@services/api/useApiFetch";
 import { useApiMutation } from "@services/api/useApiMutation";
-import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { SWRMutationConfiguration } from "swr/mutation";
 import type { z } from "zod";
 
@@ -33,6 +34,22 @@ export const useApiObserverInfoQuery = (
     id != null ? `/observers/${id}/info` : null,
     {
       schema: observerInfoSchema,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiObserversQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getObserversResponse>>,
+) => {
+  return useApiQuery(
+    "/observers",
+    {
+      queryParams,
+      schema: getObserversResponse,
     },
     {
       ...swrOptions,

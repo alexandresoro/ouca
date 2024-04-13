@@ -1,5 +1,9 @@
-import { getNumberEstimateResponse, numberEstimateInfoSchema } from "@ou-ca/common/api/number-estimate";
-import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
+import {
+  getNumberEstimateResponse,
+  getNumberEstimatesResponse,
+  numberEstimateInfoSchema,
+} from "@ou-ca/common/api/number-estimate";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { z } from "zod";
 
 export const useApiNumberEstimateQuery = (
@@ -25,6 +29,22 @@ export const useApiNumberEstimateInfoQuery = (
     id != null ? `/number-estimates/${id}/info` : null,
     {
       schema: numberEstimateInfoSchema,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiNumberEstimatesQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getNumberEstimatesResponse>>,
+) => {
+  return useApiQuery(
+    "/number-estimates",
+    {
+      queryParams,
+      schema: getNumberEstimatesResponse,
     },
     {
       ...swrOptions,

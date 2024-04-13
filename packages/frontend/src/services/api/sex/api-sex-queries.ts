@@ -1,5 +1,5 @@
-import { getSexResponse, sexInfoSchema } from "@ou-ca/common/api/sex";
-import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
+import { getSexResponse, getSexesResponse, sexInfoSchema } from "@ou-ca/common/api/sex";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { z } from "zod";
 
 export const useApiSexQuery = (
@@ -25,6 +25,22 @@ export const useApiSexInfoQuery = (
     id != null ? `/sexes/${id}/info` : null,
     {
       schema: sexInfoSchema,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiSexesQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getSexesResponse>>,
+) => {
+  return useApiQuery(
+    "/observers",
+    {
+      queryParams,
+      schema: getSexesResponse,
     },
     {
       ...swrOptions,

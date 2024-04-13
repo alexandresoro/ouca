@@ -4,7 +4,7 @@ import {
   type UseApiQuerySWRInfiniteOptions,
   useApiInfiniteQuery,
 } from "@services/api/useApiInfiniteQuery";
-import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { z } from "zod";
 
 export const useApiAgeQuery = (
@@ -30,6 +30,22 @@ export const useApiAgeInfoQuery = (
     id != null ? `/ages/${id}/info` : null,
     {
       schema: ageInfoSchema,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiAgesQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getAgesResponse>>,
+) => {
+  return useApiQuery(
+    "/ages",
+    {
+      queryParams,
+      schema: getAgesResponse,
     },
     {
       ...swrOptions,

@@ -1,5 +1,5 @@
-import { departmentInfoSchema, getDepartmentResponse } from "@ou-ca/common/api/department";
-import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
+import { departmentInfoSchema, getDepartmentResponse, getDepartmentsResponse } from "@ou-ca/common/api/department";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { z } from "zod";
 
 export const useApiDepartmentQuery = (
@@ -25,6 +25,22 @@ export const useApiDepartmentInfoQuery = (
     id != null ? `/departments/${id}/info` : null,
     {
       schema: departmentInfoSchema,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiDepartmentsQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getDepartmentsResponse>>,
+) => {
+  return useApiQuery(
+    "/departments",
+    {
+      queryParams,
+      schema: getDepartmentsResponse,
     },
     {
       ...swrOptions,
