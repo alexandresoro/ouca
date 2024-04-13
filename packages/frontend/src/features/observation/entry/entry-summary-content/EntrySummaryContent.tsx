@@ -23,8 +23,7 @@ const EntrySummaryContent: FunctionComponent<EntrySummaryContentProps> = ({ entr
         <div className="flex flex-col gap-2">
           <div className="first-letter:capitalize">
             {t("observationDetails.species")} : {entry.species.nomFrancais} –
-            <span className="font-style: italic"> {entry.species.nomLatin}</span> –
-            <span className="font-light"> {entry.species.code}</span>
+            <span className="font-style: italic"> {entry.species.nomLatin}</span>
           </div>
 
           <div className="flex gap-20">
