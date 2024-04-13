@@ -1,6 +1,7 @@
 import { Disclosure } from "@headlessui/react";
 import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
 import { CalendarPlus, ChevronDown, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
+import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import IconButton from "../../../../components/base/IconButton";
@@ -41,13 +42,13 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
                   <h4 className="text-lg">{entry.species.nomFrancais}</h4>
                 </div>
                 <div className="flex gap-5">
-                  <div className="tooltip tooltip-bottom" data-tip={t("gender")}>
+                  <div className="tooltip tooltip-bottom" data-tip={capitalizeFirstLetter(t("gender"))}>
                     <div className="flex items-center text-base gap-1">
                       <MaleSign className="h-5 w-5" />
                       {entry.sex.libelle}
                     </div>
                   </div>
-                  <div className="tooltip tooltip-bottom" data-tip={t("age")}>
+                  <div className="tooltip tooltip-bottom" data-tip={capitalizeFirstLetter(t("age"))}>
                     <div className="flex items-center text-base gap-1">
                       <CalendarPlus className="h-5 w-5" />
                       {entry.age.libelle}
