@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getTownsResponse } from "@ou-ca/common/api/town";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiTownsQuery } from "@services/api/town/api-town-queries";
 import { useAtom, useAtomValue } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,14 +12,10 @@ const SearchFilterTowns: FunctionComponent = () => {
 
   const [townInput, setTownInput] = useState("");
   const [selectedTowns, setSelectedTowns] = useAtom(searchEntriesFilterTownsAtom);
-  const { data: dataTowns } = useApiQuery("/towns", {
-    queryParams: {
-      q: townInput,
-      pageSize: 5,
-      departmentId: selectedDepartments[0]?.id,
-    },
-    schema: getTownsResponse,
-    paused: selectedTowns.length > 1,
+  const { data: dataTowns } = useApiTownsQuery({
+    q: townInput,
+    pageSize: 5,
+    departmentId: selectedDepartments[0]?.id,
   });
 
   return (
