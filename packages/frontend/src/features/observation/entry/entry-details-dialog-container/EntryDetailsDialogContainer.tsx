@@ -22,7 +22,9 @@ const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainer
     <Dialog className={`modal ${open ? "modal-open" : ""}`} open={open} onClose={onClose}>
       <Dialog.Panel className="modal-box max-w-7xl">
         <Dialog.Title className="text-2xl font-semibold py-4 first-letter:uppercase flex justify-between">
-          <span>{entry.species.nomFrancais}</span>
+          <span>
+            {entry.species.nomFrancais} – <span className="font-style: italic">{entry.species.nomLatin}</span>
+          </span>
           <span className="badge badge-outline text-secondary font-normal">ID {entry.id}</span>
         </Dialog.Title>
         <div className="flex gap-8">
