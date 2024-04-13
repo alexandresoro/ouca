@@ -37,7 +37,7 @@ export const useApiSexesQuery = (
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getSexesResponse>>,
 ) => {
   return useApiQuery(
-    "/observers",
+    "/sexes",
     {
       queryParams,
       schema: getSexesResponse,

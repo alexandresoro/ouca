@@ -2,18 +2,17 @@ import TextInput from "@components/base/TextInput";
 import FormSelect from "@components/form/FormSelect";
 import FormSwitch from "@components/form/FormSwitch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useApiQuery from "@hooks/api/useApiQuery";
 import { useNotifications } from "@hooks/useNotifications";
 import { useUserSettings } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
-import { getAgesResponse } from "@ou-ca/common/api/age";
-import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { type PutMeInput, putMeInput } from "@ou-ca/common/api/me";
-import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
-import { getObserversResponse } from "@ou-ca/common/api/observer";
-import { getSexesResponse } from "@ou-ca/common/api/sex";
+import { useApiAgesQuery } from "@services/api/age/api-age-queries";
+import { useApiDepartmentsQuery } from "@services/api/department/api-department-queries";
 import { useApiSettingsUpdate } from "@services/api/me/api-me-queries";
+import { useApiNumberEstimatesQuery } from "@services/api/number-estimate/api-number-estimate-queries";
+import { useApiObserversQuery } from "@services/api/observer/api-observer-queries";
+import { useApiSexesQuery } from "@services/api/sex/api-sex-queries";
 import { type FunctionComponent, useCallback, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -37,53 +36,22 @@ const SettingsPage: FunctionComponent = () => {
 
   const settings = useUserSettings();
 
-  const {
-    data: ages,
-    isError: isErrorAges,
-    isFetching: isFetchingAges,
-  } = useApiQuery({
-    path: "/ages",
-    schema: getAgesResponse,
-  });
+  const { data: ages, error: isErrorAges, isLoading: isLoadingAges } = useApiAgesQuery({});
 
-  const {
-    data: departments,
-    isError: isErrorDepartments,
-    isFetching: isFetchingDepartments,
-  } = useApiQuery({
-    path: "/departments",
-    schema: getDepartmentsResponse,
-  });
+  const { data: departments, error: isErrorDepartments, isLoading: isLoadingDepartments } = useApiDepartmentsQuery({});
 
   const {
     data: numberEstimates,
-    isError: isErrorNumberEstimates,
-    isFetching: isFetchingNumberEstimates,
-  } = useApiQuery({
-    path: "/number-estimates",
-    schema: getNumberEstimatesResponse,
-  });
+    error: isErrorNumberEstimates,
+    isLoading: isLoadingNumberEstimates,
+  } = useApiNumberEstimatesQuery({});
 
-  const {
-    data: observers,
-    isError: isErrorObservers,
-    isFetching: isFetchingObservers,
-  } = useApiQuery({
-    path: "/observers",
-    schema: getObserversResponse,
-  });
+  const { data: observers, error: isErrorObservers, isLoading: isLoadingObservers } = useApiObserversQuery({});
 
-  const {
-    data: sexes,
-    isError: isErrorSexes,
-    isFetching: isFetchingSexes,
-  } = useApiQuery({
-    path: "/sexes",
-    schema: getSexesResponse,
-  });
+  const { data: sexes, error: isErrorSexes, isLoading: isLoadingSexes } = useApiSexesQuery({});
 
-  const fetching =
-    isFetchingAges || isFetchingDepartments || isFetchingNumberEstimates || isFetchingObservers || isFetchingSexes;
+  const loading =
+    isLoadingAges || isLoadingDepartments || isLoadingNumberEstimates || isLoadingObservers || isLoadingSexes;
   const error = isErrorAges || isErrorDepartments || isErrorNumberEstimates || isErrorObservers || isErrorSexes;
 
   const { trigger } = useApiSettingsUpdate({
@@ -178,12 +146,12 @@ const SettingsPage: FunctionComponent = () => {
         <h1 className="text-2xl font-normal">{t("settings")}</h1>
       </StyledPanelHeader>
       <ContentContainerLayout>
-        {fetching && (
+        {loading && (
           <div className="flex justify-center items-center">
             <progress className="progress progress-primary w-56" />
           </div>
         )}
-        {!(fetching || error) && (
+        {!(loading || error) && (
           <div className="card border-2 border-primary p-6 shadow-xl">
             <form className="flex justify-center items-center flex-col sm:flex-row gap-0 sm:gap-10 md:gap-16">
               <div className="flex flex-col w-full">
