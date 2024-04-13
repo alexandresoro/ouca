@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getAgesResponse } from "@ou-ca/common/api/age";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiAgesQuery } from "@services/api/age/api-age-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterAges: FunctionComponent = () => {
 
   const [ageInput, setAgeInput] = useState("");
   const [selectedAges, setSelectedAges] = useAtom(searchEntriesFilterAgesAtom);
-  const { data: dataAges } = useApiQuery("/ages", {
-    queryParams: {
-      q: ageInput,
-      pageSize: 5,
-    },
-    schema: getAgesResponse,
+  const { data: dataAges } = useApiAgesQuery({
+    q: ageInput,
+    pageSize: 5,
   });
 
   return (

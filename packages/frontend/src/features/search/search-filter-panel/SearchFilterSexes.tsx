@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getSexesResponse } from "@ou-ca/common/api/sex";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiSexesQuery } from "@services/api/sex/api-sex-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterSexes: FunctionComponent = () => {
 
   const [sexInput, setSexInput] = useState("");
   const [selectedSexes, setSelectedSexes] = useAtom(searchEntriesFilterSexesAtom);
-  const { data: dataSexes } = useApiQuery("/sexes", {
-    queryParams: {
-      q: sexInput,
-      pageSize: 5,
-    },
-    schema: getSexesResponse,
+  const { data: dataSexes } = useApiSexesQuery({
+    q: sexInput,
+    pageSize: 5,
   });
 
   return (
