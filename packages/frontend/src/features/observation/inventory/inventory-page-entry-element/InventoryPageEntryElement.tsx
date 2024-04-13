@@ -84,7 +84,7 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
               className={`${open ? "rotate-180 transform" : ""} btn btn-ghost btn-circle btn-sm text-primary`}
             />
           </Disclosure.Button>
-          <Disclosure.Panel className="text-md pb-4 pt-0">
+          <Disclosure.Panel className="text-md pb-4 pt-2">
             <EntrySummaryContent entry={entry} />
           </Disclosure.Panel>
         </>
