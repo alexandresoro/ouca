@@ -102,7 +102,7 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
           {t("inventoryPage.entriesPanel.addNewEntry")}
         </Link>
       </div>
-      <ul className="flex flex-col justify-evenly gap-x-4 gap-y-2">
+      <ul className="flex flex-col justify-evenly gap-x-4 gap-y-2 mb-4">
         {entries?.pages.map((page) => {
           return (
             <Fragment key={page.meta.pageNumber}>
