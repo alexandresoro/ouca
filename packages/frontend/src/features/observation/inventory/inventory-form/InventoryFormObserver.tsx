@@ -29,10 +29,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   const { t } = useTranslation();
 
   const [observateurInput, setObservateurInput] = useState("");
-  const [selectedObserver, setSelectedObserver] = useState<Observer | null>(null);
-  useEffect(() => {
-    setSelectedObserver(defaultObserver ?? null);
-  }, [defaultObserver]);
+  const [selectedObserver, setSelectedObserver] = useState<Observer | null>(defaultObserver ?? null);
 
   const [associatesInput, setAssociatesInput] = useState("");
   const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>(defaultAssociates ?? []);
