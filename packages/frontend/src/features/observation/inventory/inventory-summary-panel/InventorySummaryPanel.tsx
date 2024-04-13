@@ -1,8 +1,6 @@
 import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
-import { Calendar, Map as MapIcon, Sun, User } from "@styled-icons/boxicons-regular";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import ItemWithAvatar from "../../../../components/base/ItemWithAvatar";
 import { getInventaireCoordinates } from "../../../../utils/coordinates-helper";
 
 type InventorySummaryPanelProps = {
@@ -13,66 +11,60 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
   const { t } = useTranslation();
 
   return (
-    <div className="card border-2 border-primary shadow-xl py-4">
-      <ItemWithAvatar
-        icon={<User className="h-6" />}
-        primary={inventory.observer.libelle}
-        secondary={
-          inventory.associates.length ? (
-            <div className="first-letter:uppercase">
-              {`${inventory.associates.map(({ libelle }) => libelle).join(", ")}`}
-            </div>
-          ) : undefined
-        }
-      />
+    <div className="card gap-5 border-2 border-primary shadow-xl py-6">
+      <div className="px-4">
+        <div className="title-with-divider">{t("observationDetails.observers")}</div>
+        <div>{inventory.observer.libelle}</div>
+        <div className="opacity-70">{`${inventory.associates.map(({ libelle }) => libelle).join(", ")}`}</div>
+      </div>
 
-      <ItemWithAvatar
-        icon={<Calendar className="h-6" />}
-        primary={`${new Intl.DateTimeFormat().format(new Date(inventory.date))} ${inventory.heure ?? ""}`}
-        secondary={inventory.duree ? `${t("duration")}: ${inventory.duree}` : undefined}
-      />
-
-      <ItemWithAvatar
-        icon={<MapIcon className="h-6" />}
-        primary={
-          <>
-            <div>{inventory.locality.nom}</div>
-            <div>{`${inventory.locality.townName} (${inventory.locality.departmentCode})`}</div>
-          </>
-        }
-        secondary={
-          <>
-            <div>
-              {t("observationDetails.coordinates", {
-                coordinates: {
-                  latitude: getInventaireCoordinates(inventory).latitude,
-                  longitude: getInventaireCoordinates(inventory).longitude,
-                },
-              })}
-            </div>
-            <div>
-              {t("observationDetails.altitude", {
-                altitude: getInventaireCoordinates(inventory).altitude,
-              })}
-            </div>
-          </>
-        }
-      />
+      <div className="px-4">
+        <div className="title-with-divider">{t("observationDetails.date")}</div>
+        <div>{`${new Intl.DateTimeFormat().format(new Date(inventory.date))} ${inventory.heure ?? ""}`} </div>
+        {inventory.duree && (
+          <div className="opacity-70 first-letter:capitalize">
+            {t("observationDetails.duration")} : {inventory.duree}
+          </div>
+        )}
+      </div>
 
       {(inventory.weathers.length > 0 || inventory.temperature !== null) && (
-        <ItemWithAvatar
-          icon={<Sun className="h-6" />}
-          primary={
-            <div className="first-letter:uppercase">
-              {inventory.weathers.length > 0 ? `${inventory.weathers.map(({ libelle }) => libelle).join(", ")}` : ""}
+        <div className="px-4">
+          <div className="title-with-divider">{t("observationDetails.weather")}</div>
+          {inventory.weathers.length > 0 && (
+            <div className="first-letter:capitalize">{inventory.weathers.map(({ libelle }) => libelle).join(", ")}</div>
+          )}
+          {inventory.temperature !== null && (
+            <div className="first-letter:capitalize">
+              {t("observationDetails.temperature", {
+                temperature: inventory.temperature,
+              })}
             </div>
-          }
-          secondary={t("observationDetails.temperature", {
-            context: inventory.temperature !== null ? "" : "undefined",
-            temperature: inventory.temperature,
-          })}
-        />
+          )}
+        </div>
       )}
+
+      <div className="px-4">
+        <div className="title-with-divider">{t("observationDetails.locality")}</div>
+        <div>
+          {inventory.locality.nom} – {`${inventory.locality.townName} (${inventory.locality.departmentCode})`}
+        </div>
+        <div className="opacity-70">
+          <div className="first-letter:capitalize">
+            {t("observationDetails.coordinates", {
+              coordinates: {
+                latitude: getInventaireCoordinates(inventory).latitude,
+                longitude: getInventaireCoordinates(inventory).longitude,
+              },
+            })}
+          </div>
+          <div className="first-letter:capitalize">
+            {t("observationDetails.altitude", {
+              altitude: getInventaireCoordinates(inventory).altitude,
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

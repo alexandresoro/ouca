@@ -40,3 +40,10 @@
 .modal-open {
   @apply backdrop-blur-sm;
 }
+
+@layer components {
+  .title-with-divider {
+    @apply divider mt-0 mb-3 divider-start divider-primary text-primary font-bold uppercase;
+  }
+}
+  
