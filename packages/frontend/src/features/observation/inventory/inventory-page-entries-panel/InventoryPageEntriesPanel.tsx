@@ -111,7 +111,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
                   <li key={entry.id}>
                     <InventoryPageEntryElement
                       entry={entry}
-                      onViewDetailsAction={(entry) => setViewEntryDialogEntry(entry)}
                       onEditAction={(entry) => setUpdateEntryDialogEntry(entry)}
                       onDeleteAction={(entry) => setDeleteEntryDialogEntry(entry)}
                     />

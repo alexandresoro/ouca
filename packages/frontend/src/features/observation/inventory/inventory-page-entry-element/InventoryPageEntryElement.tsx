@@ -8,14 +8,12 @@ import EntrySummaryContent from "../../entry/entry-summary-content/EntrySummaryC
 
 type InventoryPageEntryElementProps = {
   entry: EntryExtended;
-  onViewDetailsAction?: (entry: EntryExtended) => void;
   onEditAction?: (entry: Entry) => void;
   onDeleteAction?: (entry: EntryExtended) => void;
 };
 
 const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProps> = ({
   entry,
-  onViewDetailsAction,
   onEditAction,
   onDeleteAction,
 }) => {
