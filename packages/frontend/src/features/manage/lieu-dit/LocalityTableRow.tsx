@@ -34,7 +34,7 @@ const LocalityTableRow: FunctionComponent<LocalityTableRowProps> = ({ locality, 
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.locality.canEdit}
-          canDelete={localityInfo?.canBeDeleted && user?.permissions.locality.canDelete}
+          canDelete={localityInfo?.canBeDeleted && (isOwner || user?.permissions.locality.canDelete)}
           onEditClicked={() => onEditClicked?.(locality)}
           onDeleteClicked={() => onDeleteClicked?.(locality)}
         />

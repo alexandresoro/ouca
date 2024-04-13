@@ -28,7 +28,7 @@ const AgeTableRow: FunctionComponent<AgeTableRowProps> = ({ age, onEditClicked, 
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.age.canEdit}
-          canDelete={ageInfo?.canBeDeleted && user?.permissions.age.canDelete}
+          canDelete={ageInfo?.canBeDeleted && (isOwner || user?.permissions.age.canDelete)}
           onEditClicked={() => onEditClicked?.(age)}
           onDeleteClicked={() => onDeleteClicked?.(age)}
         />

@@ -33,7 +33,7 @@ const EnvironmentTableRow: FunctionComponent<EnvironmentTableRowProps> = ({
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.environment.canEdit}
-          canDelete={environmentInfo?.canBeDeleted && user?.permissions.environment.canDelete}
+          canDelete={environmentInfo?.canBeDeleted && (isOwner || user?.permissions.environment.canDelete)}
           onEditClicked={() => onEditClicked?.(environment)}
           onDeleteClicked={() => onDeleteClicked?.(environment)}
         />

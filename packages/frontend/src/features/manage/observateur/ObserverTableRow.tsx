@@ -28,7 +28,7 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ observer, 
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.observer.canEdit}
-          canDelete={observerInfo?.canBeDeleted && user?.permissions.observer.canDelete}
+          canDelete={observerInfo?.canBeDeleted && (isOwner || user?.permissions.observer.canDelete)}
           onEditClicked={() => onEditClicked?.(observer)}
           onDeleteClicked={() => onDeleteClicked?.(observer)}
         />

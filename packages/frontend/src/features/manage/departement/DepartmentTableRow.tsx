@@ -34,7 +34,7 @@ const DepartmentTableRow: FunctionComponent<DepartmentTableRowProps> = ({
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.department.canEdit}
-          canDelete={departmentInfo?.canBeDeleted && user?.permissions.department.canDelete}
+          canDelete={departmentInfo?.canBeDeleted && (isOwner || user?.permissions.department.canDelete)}
           onEditClicked={() => onEditClicked?.(department)}
           onDeleteClicked={() => onDeleteClicked?.(department)}
         />

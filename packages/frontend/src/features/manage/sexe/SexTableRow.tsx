@@ -28,7 +28,7 @@ const SexTableRow: FunctionComponent<SexTableRowProps> = ({ sex, onEditClicked, 
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.sex.canEdit}
-          canDelete={sexInfo?.canBeDeleted && user?.permissions.sex.canDelete}
+          canDelete={sexInfo?.canBeDeleted && (isOwner || user?.permissions.sex.canDelete)}
           onEditClicked={() => onEditClicked?.(sex)}
           onDeleteClicked={() => onDeleteClicked?.(sex)}
         />

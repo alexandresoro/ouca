@@ -33,7 +33,7 @@ const BehaviorTableRow: FunctionComponent<BehaviorTableRowProps> = ({ behavior, 
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.behavior.canEdit}
-          canDelete={behaviorInfo?.canBeDeleted && user?.permissions.behavior.canDelete}
+          canDelete={behaviorInfo?.canBeDeleted && (isOwner || user?.permissions.behavior.canDelete)}
           onEditClicked={() => onEditClicked?.(behavior)}
           onDeleteClicked={() => onDeleteClicked?.(behavior)}
         />

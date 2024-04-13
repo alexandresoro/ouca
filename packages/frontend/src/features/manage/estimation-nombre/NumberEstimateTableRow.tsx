@@ -36,7 +36,7 @@ const NumberEstimateTableRow: FunctionComponent<NumberEstimateTableRowProps> = (
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.numberEstimate.canEdit}
-          canDelete={numberEstimateInfo?.canBeDeleted && user?.permissions.numberEstimate.canDelete}
+          canDelete={numberEstimateInfo?.canBeDeleted && (isOwner || user?.permissions.numberEstimate.canDelete)}
           onEditClicked={() => onEditClicked?.(numberEstimate)}
           onDeleteClicked={() => onDeleteClicked?.(numberEstimate)}
         />

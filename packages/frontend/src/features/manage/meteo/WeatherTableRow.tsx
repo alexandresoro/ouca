@@ -28,7 +28,7 @@ const WeatherTableRow: FunctionComponent<WeatherTableRowProps> = ({ weather, onE
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.weather.canEdit}
-          canDelete={weatherInfo?.canBeDeleted && user?.permissions.weather.canDelete}
+          canDelete={weatherInfo?.canBeDeleted && (isOwner || user?.permissions.weather.canDelete)}
           onEditClicked={() => onEditClicked?.(weather)}
           onDeleteClicked={() => onDeleteClicked?.(weather)}
         />

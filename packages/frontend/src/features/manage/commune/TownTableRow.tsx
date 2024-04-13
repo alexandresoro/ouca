@@ -31,7 +31,7 @@ const TownTableRow: FunctionComponent<TownTableRowProps> = ({ town, onEditClicke
       <td align="center">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.town.canEdit}
-          canDelete={townInfo?.canBeDeleted && user?.permissions.town.canDelete}
+          canDelete={townInfo?.canBeDeleted && (isOwner || user?.permissions.town.canDelete)}
           onEditClicked={() => onEditClicked?.(town)}
           onDeleteClicked={() => onDeleteClicked?.(town)}
         />

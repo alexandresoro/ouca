@@ -32,7 +32,7 @@ const DistanceEstimateTableRow: FunctionComponent<DistanceEstimateTableRowProps>
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.distanceEstimate.canEdit}
-          canDelete={distanceEstimateInfo?.canBeDeleted && user?.permissions.distanceEstimate.canDelete}
+          canDelete={distanceEstimateInfo?.canBeDeleted && (isOwner || user?.permissions.distanceEstimate.canDelete)}
           onEditClicked={() => onEditClicked?.(distanceEstimate)}
           onDeleteClicked={() => onDeleteClicked?.(distanceEstimate)}
         />

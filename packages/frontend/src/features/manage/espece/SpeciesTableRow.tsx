@@ -31,7 +31,7 @@ const SpeciesTableRow: FunctionComponent<SpeciesTableRowProps> = ({ species, onE
       <td align="center" className="w-32">
         <TableCellActionButtons
           canEdit={isOwner || user?.permissions.species.canEdit}
-          canDelete={speciesInfo?.canBeDeleted && user?.permissions.species.canDelete}
+          canDelete={speciesInfo?.canBeDeleted && (isOwner || user?.permissions.species.canDelete)}
           onEditClicked={() => onEditClicked?.(species)}
           onDeleteClicked={() => onDeleteClicked?.(species)}
         />
