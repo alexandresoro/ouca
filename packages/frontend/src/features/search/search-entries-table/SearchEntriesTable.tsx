@@ -33,10 +33,6 @@ const COLUMNS = [
     key: "date",
     locKey: "observationsTable.header.date",
   },
-  {
-    key: "observateur",
-    locKey: "observationsTable.header.observer",
-  },
 ] as const;
 
 const SearchEntriesTable: FunctionComponent = () => {

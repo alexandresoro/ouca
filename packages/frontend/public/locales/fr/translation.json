@@ -66,7 +66,7 @@
   "deleteInventoryDialogMsg": "Êtes-vous certain de vouloir supprimer cet inventaire ?",
   "deleteLieuDitDialogMsg": "Êtes-vous certain de vouloir supprimer le lieu-dit {{name}} à {{city}} ({{department}}) ?",
   "deleteNumberPrecisionDialogMsg": "Êtes-vous certain de vouloir supprimer l'estimation du nombre {{name}} ?",
-  "deleteObservationDialogMsg": "Êtes-vous certain de vouloir supprimer l'observation [Espèce: {{species}}, Lieu: {{city}} ({{department}}), {{locality}}, Date: {{date}}] ?",
+  "deleteObservationDialogMsg": "Êtes-vous certain de vouloir supprimer l'observation [Espèce: {{species}}, Localisation: {{city}} ({{department}}), {{locality}}, Date: {{date}}] ?",
   "deleteObserverDialogMsg": "Êtes-vous certain de vouloir supprimer l'observateur {{name}} ?",
   "deleteRequiredDialogMsgImpactedObservations_zero": "Aucune donnée associée n'existe.",
   "deleteRequiredDialogMsgImpactedObservations_one": "L'unique donnée associée sera supprimée.",
@@ -282,7 +282,7 @@
       },
       "species": "Espèce",
       "number": "Nombre",
-      "locality": "Lieu",
+      "locality": "Localisation",
       "date": "Date",
       "observer": "Observateur"
     }

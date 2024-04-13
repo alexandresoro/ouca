@@ -26,10 +26,6 @@ const COLUMNS = [
     key: "nomLatin",
     locKey: "scientificName",
   },
-  {
-    key: "nbDonnees",
-    locKey: "numberOfObservations",
-  },
 ] as const;
 
 const SearchSpeciesTable: FunctionComponent = () => {
@@ -82,6 +78,15 @@ const SearchSpeciesTable: FunctionComponent = () => {
               </TableSortLabel>
             </th>
           ))}
+          <th className="w-32">
+            <TableSortLabel
+              active={orderBy === "nbDonnees"}
+              direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+              onClick={() => handleRequestSort("nbDonnees")}
+            >
+              <span className="first-letter: capitalize">{t("numberOfObservations")}</span>
+            </TableSortLabel>
+          </th>
         </>
       }
       tableRows={data?.pages.map((page) => {

@@ -28,7 +28,6 @@ const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (pr
           {donnee.inventory.locality.nom}
         </td>
         <td>{new Intl.DateTimeFormat().format(new Date(donnee?.inventory.date))}</td>
-        <td>{donnee.inventory.observer.libelle}</td>
         <td align="right" className="flex gap-1 pr-6">
           <div className="tooltip tooltip-bottom" data-tip={t("goToInventory")}>
             <Link
