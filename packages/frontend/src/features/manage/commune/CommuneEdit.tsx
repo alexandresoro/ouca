@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@hooks/useNotifications";
-import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { type UpsertTownInput, upsertTownInput } from "@ou-ca/common/api/town";
-import { type FunctionComponent, useEffect } from "react";
+import { useApiDepartmentsQuery } from "@services/api/department/api-department-queries";
+import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../components/base/TextInput";
 import FormSelect from "../../../components/form/FormSelect";
-import useApiQuery from "../../../hooks/api/useApiQuery";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type CommuneEditProps = {
@@ -20,6 +19,8 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   const { defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
+
+  const { displayNotification } = useNotifications();
 
   const {
     register,
@@ -36,35 +37,20 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
     mode: "onTouched",
   });
 
-  const {
-    data: departments,
-    isError: errorDepartements,
-    isFetching: fetchingDepartements,
-  } = useApiQuery(
+  const { data: departments, isLoading: loadingDepartments } = useApiDepartmentsQuery(
     {
-      path: "/departments",
-      queryParams: {
-        orderBy: "code",
-        sortOrder: "asc",
-      },
-      schema: getDepartmentsResponse,
+      orderBy: "code",
+      sortOrder: "asc",
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("retrieveGenericError"),
+        });
+      },
     },
   );
-
-  const { displayNotification } = useNotifications();
-
-  useEffect(() => {
-    if (errorDepartements) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [errorDepartements, displayNotification, t]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -83,7 +69,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
       <EntityUpsertFormActionButtons
         className="mt-6"
         onCancelClick={onCancel}
-        disabled={fetchingDepartements || !isValid || !isDirty}
+        disabled={loadingDepartments || !isValid || !isDirty}
       />
     </form>
   );
