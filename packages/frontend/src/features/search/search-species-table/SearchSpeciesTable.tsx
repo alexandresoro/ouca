@@ -83,7 +83,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
         return (
           <Fragment key={page.meta.pageNumber}>
             {page.data.map((espece) => {
-              return <SearchSpeciesTableRow species={espece} />;
+              return <SearchSpeciesTableRow key={espece.id} species={espece} />;
             })}
           </Fragment>
         );
