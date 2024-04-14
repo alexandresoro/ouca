@@ -2,7 +2,9 @@ import { useNotifications } from "@hooks/useNotifications";
 import { useUser } from "@hooks/useUser";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
+import { getTownResponse } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiFetch } from "@services/api/useApiFetch";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,9 +27,13 @@ const LieuDitPage: FunctionComponent = () => {
   const { displayNotification } = useNotifications();
 
   const [upsertLocalityDialog, setUpsertLocalityDialog] = useState<
-    null | { mode: "create" } | { mode: "update"; locality: Locality }
+    null | { mode: "create" } | { mode: "update"; locality: Locality; departmentId: string }
   >(null);
   const [localityToDelete, setLocalityToDelete] = useState<Locality | null>(null);
+
+  const fetchTown = useApiFetch({
+    schema: getTownResponse,
+  });
 
   const { mutate: createLocality } = useApiMutation(
     {
@@ -125,8 +131,18 @@ const LieuDitPage: FunctionComponent = () => {
     setUpsertLocalityDialog({ mode: "create" });
   };
 
-  const handleUpdateClick = (locality: Locality) => {
-    setUpsertLocalityDialog({ mode: "update", locality });
+  const handleUpdateClick = async (locality: Locality) => {
+    const townOfLocality = await fetchTown({
+      path: `/towns/${locality.townId}`,
+    }).catch(() => {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericError"),
+      });
+      throw new Error("Error while fetching town of locality.");
+    });
+
+    setUpsertLocalityDialog({ mode: "update", locality, departmentId: townOfLocality.departmentId });
   };
 
   const handleExportClick = () => {
@@ -173,6 +189,7 @@ const LieuDitPage: FunctionComponent = () => {
         {upsertLocalityDialog?.mode === "update" && (
           <LieuDitUpdate
             locality={upsertLocalityDialog.locality}
+            selectedDepartmentId={upsertLocalityDialog.departmentId}
             onCancel={() => setUpsertLocalityDialog(null)}
             onSubmit={handleUpdateLocality}
           />
