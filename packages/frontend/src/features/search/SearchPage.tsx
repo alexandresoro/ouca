@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import { useApiEntryQueryAll } from "@services/api/entry/api-entry-queries";
+import { useApiEntriesQuery } from "@services/api/entry/api-entry-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiSearchSpecies } from "@services/api/search/api-search-queries";
 import { useAtomValue } from "jotai";
@@ -19,23 +19,29 @@ const SearchPage: FunctionComponent = () => {
 
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const { data: dataEntries, mutate: mutateEntriesCount } = useApiEntryQueryAll({
-    queryParams: {
+  const { data: dataEntries, mutate: mutateEntriesCount } = useApiEntriesQuery(
+    {
       pageNumber: 1,
       pageSize: 1,
       ...searchCriteria,
     },
-    paused: selectedTab !== 0,
-  });
+    {},
+    {
+      paused: selectedTab !== 0,
+    },
+  );
 
-  const { data: dataSpecies, mutate: mutateSpeciesCount } = useApiSearchSpecies({
-    queryParams: {
+  const { data: dataSpecies, mutate: mutateSpeciesCount } = useApiSearchSpecies(
+    {
       pageNumber: 1,
       pageSize: 1,
       ...searchCriteria,
     },
-    paused: selectedTab !== 1,
-  });
+    {},
+    {
+      paused: selectedTab !== 1,
+    },
+  );
 
   const downloadExport = useApiDownloadExport({
     filename: t("exportFilename.entries"),

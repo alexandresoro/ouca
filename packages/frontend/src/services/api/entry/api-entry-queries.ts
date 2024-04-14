@@ -10,15 +10,17 @@ import type { UseMutationOptions } from "@tanstack/react-query";
 import type { FetchErrorType } from "@utils/fetch-api";
 import type { z } from "zod";
 
-export const useApiEntryQueryAll = (
-  params: UseApiQueryCommonParams,
+export const useApiEntriesQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getEntriesResponse>>,
+  { paused = false } = {},
 ) =>
   useApiQuery(
     "/entries",
     {
+      queryParams,
       schema: getEntriesResponse,
-      ...params,
+      paused,
     },
     swrOptions,
   );

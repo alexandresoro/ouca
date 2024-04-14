@@ -3,14 +3,16 @@ import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery }
 import type { z } from "zod";
 
 export const useApiSearchSpecies = (
-  params: UseApiQueryCommonParams,
+  queryParams: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getSpeciesPaginatedResponse>>,
+  { paused = false } = {},
 ) =>
   useApiQuery(
     "/search/species",
     {
+      queryParams,
       schema: getSpeciesPaginatedResponse,
-      ...params,
+      paused,
     },
     swrOptions,
   );
