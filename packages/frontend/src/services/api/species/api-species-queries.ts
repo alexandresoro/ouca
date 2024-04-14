@@ -48,14 +48,14 @@ export const useApiSpeciesInfoQuery = (
 };
 
 export const useApiSpeciesQueryAll = (
-  params: UseApiQueryCommonParams["queryParams"],
+  queryParams: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getSpeciesPaginatedResponse>>,
 ) =>
   useApiQuery(
     "/species",
     {
+      queryParams,
       schema: getSpeciesPaginatedResponse,
-      ...params,
     },
     swrOptions,
   );
