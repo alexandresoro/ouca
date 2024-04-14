@@ -37,7 +37,7 @@ const COLUMNS = [
 
 type SearchEntriesTableProps = {
   onEntryUpdated?: (entryId: string) => void;
-  onEntryDeleted?: (entryId: string) => void;
+  onEntryDeleted?: () => void;
 };
 
 const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntryUpdated, onEntryDeleted }) => {
@@ -89,6 +89,7 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
         type: "success",
         message: t("inventoryForm.entries.updateSuccess"),
       });
+      onEntryUpdated?.(updatedEntry.id);
     },
     onError: () => {
       displayNotification({
@@ -107,6 +108,7 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
         type: "success",
         message: t("deleteConfirmationMessage"),
       });
+      onEntryDeleted?.();
     },
     onError: () => {
       displayNotification({
@@ -121,7 +123,6 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
       entryId,
       body: entryFormData,
     });
-    onEntryUpdated?.(entryId);
   };
 
   const handleDeleteDonnee = (donnee: EntryExtended | null) => {
@@ -134,7 +135,6 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     if (donnee) {
       setDeleteDialog(null);
       mutate({ entryId: donnee.id });
-      onEntryDeleted?.(donnee.id);
     }
   };
 
