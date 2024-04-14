@@ -1,10 +1,9 @@
 import Select from "@components/base/select/Select";
 import { useUser } from "@hooks/useUser";
 import ContentContainerLayout from "@layouts/ContentContainerLayout";
-import { importStatusSchema } from "@ou-ca/common/import/import-status";
 import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import/import-types";
+import { useApiImportStatusQuery } from "@services/api/import/api-import-queries";
 import { useApiFetch } from "@services/api/useApiFetch";
-import { useApiQuery } from "@services/api/useApiQuery";
 import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
 import { type ChangeEvent, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,13 +35,8 @@ const ImportPage: FunctionComponent = () => {
 
   const [isImportOngoing, setIsImportOngoing] = useState(false);
 
-  const { data: importStatus } = useApiQuery(
-    `/import-status/${importId}`,
-    {
-      schema: importStatusSchema,
-      paused: !importId,
-      useApiPath: false,
-    },
+  const { data: importStatus } = useApiImportStatusQuery(
+    importId,
     {
       refreshInterval: (data) => {
         if (data?.status === "completed" || data?.status === "failed") {
@@ -59,6 +53,9 @@ const ImportPage: FunctionComponent = () => {
           setIsImportOngoing(false);
         }
       },
+    },
+    {
+      paused: !importId,
     },
   );
 
