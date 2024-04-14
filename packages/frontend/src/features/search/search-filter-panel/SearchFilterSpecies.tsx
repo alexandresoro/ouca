@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiSpeciesQueryAll } from "@services/api/species/api-species-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterSpecies: FunctionComponent = () => {
 
   const [speciesInput, setSpeciesInput] = useState("");
   const [selectedSpecies, setSelectedSpecies] = useAtom(searchEntriesFilterSpeciesAtom);
-  const { data: dataSpecies } = useApiQuery("/species", {
-    queryParams: {
-      q: speciesInput,
-      pageSize: 5,
-    },
-    schema: getSpeciesPaginatedResponse,
+  const { data: dataSpecies } = useApiSpeciesQueryAll({
+    q: speciesInput,
+    pageSize: 5,
   });
 
   return (

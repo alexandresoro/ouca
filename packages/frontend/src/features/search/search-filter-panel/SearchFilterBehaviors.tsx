@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiBehaviorsQuery } from "@services/api/behavior/api-behavior-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterBehaviors: FunctionComponent = () => {
 
   const [behaviorInput, setBehaviorInput] = useState("");
   const [selectedBehaviors, setSelectedBehaviors] = useAtom(searchEntriesFilterBehaviorsAtom);
-  const { data: dataBehaviors } = useApiQuery("/behaviors", {
-    queryParams: {
-      q: behaviorInput,
-      pageSize: 5,
-    },
-    schema: getBehaviorsResponse,
+  const { data: dataBehaviors } = useApiBehaviorsQuery({
+    q: behaviorInput,
+    pageSize: 5,
   });
 
   return (

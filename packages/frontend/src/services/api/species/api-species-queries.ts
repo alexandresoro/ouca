@@ -2,19 +2,6 @@ import { getSpeciesPaginatedResponse, speciesInfoSchema } from "@ou-ca/common/ap
 import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { z } from "zod";
 
-export const useApiSpeciesQueryAll = (
-  params: UseApiQueryCommonParams,
-  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getSpeciesPaginatedResponse>>,
-) =>
-  useApiQuery(
-    "/species",
-    {
-      schema: getSpeciesPaginatedResponse,
-      ...params,
-    },
-    swrOptions,
-  );
-
 export const useApiSpeciesInfoQuery = (
   id: string | null,
   queryParams?: UseApiQueryCommonParams["queryParams"],
@@ -31,3 +18,16 @@ export const useApiSpeciesInfoQuery = (
     },
   );
 };
+
+export const useApiSpeciesQueryAll = (
+  params: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getSpeciesPaginatedResponse>>,
+) =>
+  useApiQuery(
+    "/species",
+    {
+      schema: getSpeciesPaginatedResponse,
+      ...params,
+    },
+    swrOptions,
+  );

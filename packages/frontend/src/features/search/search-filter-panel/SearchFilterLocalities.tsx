@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getLocalitiesResponse } from "@ou-ca/common/api/locality";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiLocalitiesQuery } from "@services/api/locality/api-locality-queries";
 import { useAtom, useAtomValue } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,15 +12,17 @@ const SearchFilterLocalities: FunctionComponent = () => {
 
   const [localityInput, setLocalityInput] = useState("");
   const [selectedLocalities, setSelectedLocalities] = useAtom(searchEntriesFilterLocalitiesAtom);
-  const { data: dataLocalities } = useApiQuery("/localities", {
-    queryParams: {
+  const { data: dataLocalities } = useApiLocalitiesQuery(
+    {
       q: localityInput,
       pageSize: 5,
       townId: selectedTowns[0]?.id,
     },
-    schema: getLocalitiesResponse,
-    paused: selectedTowns.length !== 1,
-  });
+    {},
+    {
+      paused: selectedTowns.length !== 1,
+    },
+  );
 
   return (
     <AutocompleteMultiple

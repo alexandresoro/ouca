@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getObserversResponse } from "@ou-ca/common/api/observer";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiObserversQuery } from "@services/api/observer/api-observer-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterObservers: FunctionComponent = () => {
 
   const [observerInput, setObserverInput] = useState("");
   const [selectedObservers, setSelectedObservers] = useAtom(searchEntriesFilterObserversAtom);
-  const { data: dataObservers } = useApiQuery("/observers", {
-    queryParams: {
-      q: observerInput,
-      pageSize: 5,
-    },
-    schema: getObserversResponse,
+  const { data: dataObservers } = useApiObserversQuery({
+    q: observerInput,
+    pageSize: 5,
   });
 
   return (

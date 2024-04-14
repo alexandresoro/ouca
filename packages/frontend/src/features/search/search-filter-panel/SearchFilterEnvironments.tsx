@@ -1,6 +1,5 @@
 import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
-import { getEnvironmentsResponse } from "@ou-ca/common/api/environment";
-import { useApiQuery } from "@services/api/useApiQuery";
+import { useApiEnvironmentsQuery } from "@services/api/environment/api-environment-queries";
 import { useAtom } from "jotai";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,9 @@ const SearchFilterEnvironments: FunctionComponent = () => {
 
   const [environmentInput, setEnvironmentInput] = useState("");
   const [selectedEnvironments, setSelectedEnvironments] = useAtom(searchEntriesFilterEnvironmentsAtom);
-  const { data: dataEnvironments } = useApiQuery("/environments", {
-    queryParams: {
-      q: environmentInput,
-      pageSize: 5,
-    },
-    schema: getEnvironmentsResponse,
+  const { data: dataEnvironments } = useApiEnvironmentsQuery({
+    q: environmentInput,
+    pageSize: 5,
   });
 
   return (
