@@ -1,6 +1,6 @@
-import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import usePaginationParams from "@hooks/usePaginationParams";
-import { type SpeciesOrderBy, getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
+import type { SpeciesOrderBy } from "@ou-ca/common/api/species";
+import { useApiSearchInfiniteSpecies } from "@services/api/search/api-search-queries";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -40,22 +40,12 @@ const SearchSpeciesTable: FunctionComponent = () => {
 
   const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
 
-  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
-    {
-      path: "/search/species",
-      queryParams: {
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        ...searchCriteria,
-      },
-      schema: getSpeciesPaginatedResponse,
-    },
-    {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-    },
-  );
+  const { data, fetchNextPage, hasNextPage } = useApiSearchInfiniteSpecies({
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+    ...searchCriteria,
+  });
 
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -89,7 +79,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
           </th>
         </>
       }
-      tableRows={data?.pages.map((page) => {
+      tableRows={data?.map((page) => {
         return (
           <Fragment key={page.meta.pageNumber}>
             {page.data.map((espece) => {
