@@ -12,7 +12,7 @@ import { Navigate } from "react-router-dom";
 import { z } from "zod";
 import ImportStatusPanel from "./ImportStatusPanel";
 
-const Test: FunctionComponent = () => {
+const ImportPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
@@ -130,4 +130,4 @@ const Test: FunctionComponent = () => {
   );
 };
 
-export default Test;
+export default ImportPage;
