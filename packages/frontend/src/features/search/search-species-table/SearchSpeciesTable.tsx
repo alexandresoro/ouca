@@ -40,6 +40,9 @@ const SearchSpeciesTable: FunctionComponent = () => {
 
   const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
 
+  // TODO: this is not updated properly when modifying an entry
+  // it reuses the cache, so the order by entries count is not updated
+  // (count is OK though)
   const { data, fetchNextPage, hasNextPage } = useApiSearchInfiniteSpecies({
     pageSize: 10,
     orderBy,
