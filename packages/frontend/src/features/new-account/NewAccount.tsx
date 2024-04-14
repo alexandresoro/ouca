@@ -1,6 +1,5 @@
-import useApiMutation from "@hooks/api/useApiMutation";
 import { useApiMe } from "@services/api/me/api-me-queries";
-import { useQueryClient } from "@tanstack/react-query";
+import { useApiCreateAccount } from "@services/api/user/api-user-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,11 +10,9 @@ const NewAccount: FunctionComponent = () => {
 
   const navigate = useNavigate();
 
-  const queryClient = useQueryClient();
-
   const [isNewAccountRequested, setIsNewAccountRequested] = useState(false);
 
-  const { isLoading, mutate: mutateUser } = useApiMe({
+  const { isLoading } = useApiMe({
     revalidateIfStale: true,
     shouldRetryOnError: (err) => {
       // If we receive a 404, we don't want to retry as we assume the user doesn't exist
@@ -29,23 +26,11 @@ const NewAccount: FunctionComponent = () => {
     },
   });
 
-  const { mutate } = useApiMutation(
-    {
-      method: "POST",
-      path: "/user/create",
-    },
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries(["API", "/settings"]);
+  const { trigger } = useApiCreateAccount();
 
-        await mutateUser();
-      },
-    },
-  );
-
-  const onCreateAccountRequested = () => {
+  const onCreateAccountRequested = async () => {
     setIsNewAccountRequested(true);
-    mutate({});
+    await trigger();
   };
 
   if (isLoading) {
