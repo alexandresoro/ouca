@@ -19,7 +19,7 @@ const SearchPage: FunctionComponent = () => {
 
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const { data: dataEntries } = useApiEntryQueryAll({
+  const { data: dataEntries, mutate: mutateEntriesCount } = useApiEntryQueryAll({
     queryParams: {
       pageNumber: 1,
       pageSize: 1,
@@ -28,7 +28,7 @@ const SearchPage: FunctionComponent = () => {
     paused: selectedTab !== 0,
   });
 
-  const { data: dataSpecies } = useApiSearchSpecies({
+  const { data: dataSpecies, mutate: mutateSpeciesCount } = useApiSearchSpecies({
     queryParams: {
       pageNumber: 1,
       pageSize: 1,
@@ -42,6 +42,11 @@ const SearchPage: FunctionComponent = () => {
     path: "/generate-export/entries",
     queryParams: searchCriteria,
   });
+
+  const handleEntryDeleted = async () => {
+    await mutateEntriesCount();
+    await mutateSpeciesCount();
+  };
 
   return (
     <div className="container mx-auto flex gap-16 mt-6">
@@ -101,7 +106,7 @@ const SearchPage: FunctionComponent = () => {
           </div>
           <Tab.Panels>
             <Tab.Panel>
-              <SearchEntriesTable />
+              <SearchEntriesTable onEntryDeleted={() => handleEntryDeleted()} />
             </Tab.Panel>
             <Tab.Panel>
               <SearchSpeciesTable />

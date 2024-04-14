@@ -35,7 +35,12 @@ const COLUMNS = [
   },
 ] as const;
 
-const SearchEntriesTable: FunctionComponent = () => {
+type SearchEntriesTableProps = {
+  onEntryUpdated?: (entryId: string) => void;
+  onEntryDeleted?: (entryId: string) => void;
+};
+
+const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntryUpdated, onEntryDeleted }) => {
   const { t } = useTranslation();
 
   const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EntriesOrderBy>({
@@ -116,6 +121,7 @@ const SearchEntriesTable: FunctionComponent = () => {
       entryId,
       body: entryFormData,
     });
+    onEntryUpdated?.(entryId);
   };
 
   const handleDeleteDonnee = (donnee: EntryExtended | null) => {
@@ -128,6 +134,7 @@ const SearchEntriesTable: FunctionComponent = () => {
     if (donnee) {
       setDeleteDialog(null);
       mutate({ entryId: donnee.id });
+      onEntryDeleted?.(donnee.id);
     }
   };
 
