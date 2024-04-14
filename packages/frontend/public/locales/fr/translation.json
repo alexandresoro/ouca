@@ -418,7 +418,7 @@
       "distance-estimate": "estimations de la distance",
       "behavior": "comportements",
       "environment": "milieux",
-      "entry": "données"
+      "entry": "observations"
     },
     "noOngoingImportStatus": "Aucun import en cours",
     "importOngoingNoStatus": "Import soumis. Aucun statut disponible pour le moment.",
@@ -448,6 +448,127 @@
     },
     "exportImportErrorsLabel": "Exporter les erreurs d'import au format CSV",
     "exportFileName": "erreurs_import_{{suffix}}.csv"
+  },
+  "importInstructions": {
+    "column": {
+      "index": "Colonne",
+      "name": "Nom",
+      "description": "Description"
+    },
+    "shared": {
+      "prerequisites": {
+        "title": "Préparation du fichier à importer",
+        "writeData": "Renseignez les données à importer dans un tableur Excel en respectant la liste et l'ordre des colonnes indiqués plus bas.",
+        "saveFile": "Cliquez sur \"Enregistrez-sous\", choisir le type de fichier \"CSV (séparateur point-virgule)\". Enregistrez.",
+        "checkList": "Ouvrez le fichier avec un éditeur de texte, tel que Notepad, et vérifiez les points suivants :",
+        "checkHeaders": "Le fichier ne doit pas contenir d'en-tête.",
+        "checkSeparators": "Les colonnes sont séparées par des points-virgule (;).",
+        "checkOrder": "L'ordre des colonnes est respecté.",
+        "checkRequiredColumns": "Les colonnes indiquées avec un astérisque (*) sont renseignées, c'est-à-dire non vides.",
+        "checkEndOfFile": "Il n'y a pas de ligne vide à la fin du fichier."
+      },
+      "results": {
+        "title": "Résultats de l'import",
+        "process": "L'application va essayer d'importer chaque ligne du fichier fourni dans la base de données.",
+        "output": "Toutes les lignes qui n'ont pas pu être importées seront enregistrées dans un fichier de sortie que vous pourrez télécharger à la fin du traitement."
+      },
+      "columnsList": "Liste des colonnes"
+    },
+    "entries": {
+      "title": "Instructions pour importer des observations",
+      "observer": {
+        "name": "Observateur",
+        "description": ""
+      },
+      "associates": {
+        "name": "Observateurs associés",
+        "description": "Liste séparée par des virgules"
+      },
+      "date": {
+        "name": "Date",
+        "description": "JJ/MM/AAAA"
+      },
+      "time": {
+        "name": "Heure",
+        "description": "HH:MM ou HHhMM or HHHMM"
+      },
+      "duration": {
+        "name": "Durée",
+        "description": "HH:MM ou HHhMM or HHHMM"
+      },
+      "department": {
+        "name": "Département",
+        "description": ""
+      },
+      "town": {
+        "name": "Commune",
+        "description": "Code ou nom de la commune"
+      },
+      "locality": {
+        "name": "Lieu-dit",
+        "description": ""
+      },
+      "latitude": {
+        "name": "Latitude",
+        "description": "En degrés décimaux"
+      },
+      "longitude": {
+        "name": "Longitude",
+        "description": "En degrés décimaux"
+      },
+      "altitude": {
+        "name": "Altitude",
+        "description": "Nombre entier en mètres"
+      },
+      "weather": {
+        "name": "Météos",
+        "description": "Liste séparée par des virgules"
+      },
+      "temperature": {
+        "name": "Température",
+        "description": "Nombre entier en degrés Celsius"
+      },
+      "species": {
+        "name": "Espèce",
+        "description": "Code ou nom français ou nom scientifique"
+      },
+      "count": {
+        "name": "Nombre",
+        "description": "Nombre entier ou vide"
+      },
+      "countEstimate": {
+        "name": "Estimation du nombre",
+        "description": ""
+      },
+      "sex": {
+        "name": "Sexe",
+        "description": ""
+      },
+      "age": {
+        "name": "Âge",
+        "description": ""
+      },
+      "distanceEstimate": {
+        "name": "Estimation de la distance",
+        "description": ""
+      },
+      "distance": {
+        "name": "Distance",
+        "description": "Nombre entier en mètres"
+      },
+      "behavior": {
+        "name": "Comportement",
+        "description": "Code ou libellé"
+      },
+      "environment": {
+        "name": "Milieu",
+        "description": "Code ou libellé"
+      },
+      "comments": {
+        "name": "Commentaires",
+        "description": ""
+      }
+    }
   },
   "logout": "Déconnexion",
   "sessionExpired": {
