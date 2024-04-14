@@ -64,6 +64,8 @@ export const useApiAgesInfiniteQuery = (
       schema: getAgesResponse,
     },
     {
+      revalidateFirstPage: false,
+      revalidateAll: true,
       ...swrOptions,
     },
   );

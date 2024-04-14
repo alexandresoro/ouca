@@ -6,6 +6,11 @@ import {
   upsertObserverResponse,
 } from "@ou-ca/common/api/observer";
 import { useApiFetch } from "@services/api/useApiFetch";
+import {
+  type UseApiInfiniteQueryCommonParams,
+  type UseApiQuerySWRInfiniteOptions,
+  useApiInfiniteQuery,
+} from "@services/api/useApiInfiniteQuery";
 import { useApiMutation } from "@services/api/useApiMutation";
 import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { SWRMutationConfiguration } from "swr/mutation";
@@ -52,6 +57,24 @@ export const useApiObserversQuery = (
       schema: getObserversResponse,
     },
     {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiObserversInfiniteQuery = (
+  queryParams: UseApiInfiniteQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWRInfiniteOptions<typeof getObserverResponse>,
+) => {
+  return useApiInfiniteQuery(
+    "/observers",
+    {
+      queryParams,
+      schema: getObserversResponse,
+    },
+    {
+      revalidateFirstPage: false,
+      revalidateAll: true,
       ...swrOptions,
     },
   );

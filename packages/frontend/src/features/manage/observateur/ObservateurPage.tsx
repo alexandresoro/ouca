@@ -1,5 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Observer } from "@ou-ca/common/api/entities/observer";
 import type { UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
@@ -7,13 +9,14 @@ import {
   useApiObserverCreate,
   useApiObserverDelete,
   useApiObserverUpdate,
+  useApiObserversInfiniteQuery,
 } from "@services/api/observer/api-observer-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import ObservateurCreate from "./ObservateurCreate";
 import ObservateurDeleteDialog from "./ObservateurDeleteDialog";
@@ -25,8 +28,6 @@ const ObservateurPage: FunctionComponent = () => {
 
   const user = useUser();
 
-  const queryClient = useQueryClient();
-
   const { displayNotification } = useNotifications();
 
   const [upsertObserverDialog, setUpsertObserverDialog] = useState<
@@ -34,14 +35,43 @@ const ObservateurPage: FunctionComponent = () => {
   >(null);
   const [observerToDelete, setObserverToDelete] = useState<Observer | null>(null);
 
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiObserversInfiniteQuery({
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  });
+
+  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const createObserver = useApiObserverCreate();
 
-  const { trigger: updateObserver2 } = useApiObserverUpdate(
+  const handleUpsertObserverError = (e: unknown) => {
+    if (e instanceof FetchError && e.status === 409) {
+      displayNotification({
+        type: "error",
+        message: t("observerAlreadyExistingError"),
+      });
+    } else {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericSaveError"),
+      });
+    }
+  };
+
+  const { trigger: updateObserver } = useApiObserverUpdate(
     upsertObserverDialog?.mode === "update" ? upsertObserverDialog.observer?.id : null,
     {
       onSuccess: () => {
-        // Since an update can change the sort order, we need to invalidate the table
-        void queryClient.invalidateQueries(["API", "observerTable"]);
+        void mutate();
 
         displayNotification({
           type: "success",
@@ -50,27 +80,16 @@ const ObservateurPage: FunctionComponent = () => {
         setUpsertObserverDialog(null);
       },
       onError: (e) => {
-        // Since an update can change the sort order, we need to invalidate the table
-        void queryClient.invalidateQueries(["API", "observerTable"]);
+        void mutate();
 
-        if (e instanceof FetchError && e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("observerAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        handleUpsertObserverError(e);
       },
     },
   );
 
   const { trigger: deleteObserver } = useApiObserverDelete(observerToDelete?.id ?? null, {
     onSuccess: () => {
-      void queryClient.invalidateQueries(["API", "observerTable"]);
+      void mutate();
 
       displayNotification({
         type: "success",
@@ -79,7 +98,7 @@ const ObservateurPage: FunctionComponent = () => {
       setObserverToDelete(null);
     },
     onError: () => {
-      void queryClient.invalidateQueries(["API", "observerTable"]);
+      void mutate();
 
       displayNotification({
         type: "error",
@@ -115,25 +134,15 @@ const ObservateurPage: FunctionComponent = () => {
         setUpsertObserverDialog(null);
       })
       .catch((e) => {
-        if (e instanceof FetchError && e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("observerAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        handleUpsertObserverError(e);
       })
       .finally(() => {
-        void queryClient.invalidateQueries(["API", "observerTable"]);
+        void mutate();
       });
   };
 
-  const handleUpdateObserver = (id: string, input: UpsertObserverInput) => {
-    void updateObserver2({ body: input });
+  const handleUpdateObserver = (_id: string, input: UpsertObserverInput) => {
+    void updateObserver({ body: input });
   };
 
   const handleDeleteObserver = () => {
@@ -149,7 +158,23 @@ const ObservateurPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <ObservateurTable onClickUpdateObserver={handleUpdateClick} onClickDeleteObserver={setObserverToDelete} />
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
+        <ObservateurTable
+          observers={data?.flatMap((page) => page.data)}
+          handleRequestSort={handleRequestSort}
+          onClickUpdateObserver={handleUpdateClick}
+          onClickDeleteObserver={setObserverToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertObserverDialog != null}
