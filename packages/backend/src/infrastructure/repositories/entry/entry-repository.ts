@@ -181,11 +181,9 @@ const getCount = async (criteria?: SearchCriteria | null): Promise<number> => {
   let query = kysely
     .selectFrom("donnee")
     .leftJoin("espece", "donnee.especeId", "espece.id")
-    .leftJoin("classe", "espece.classeId", "classe.id")
     .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
     .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
     .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
-    .leftJoin("milieu", "donnee_milieu.milieuId", "milieu.id")
     .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
     .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
     .leftJoin("commune", "lieudit.communeId", "commune.id")
