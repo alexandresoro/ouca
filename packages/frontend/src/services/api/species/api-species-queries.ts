@@ -72,7 +72,6 @@ export const useApiSpeciesInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

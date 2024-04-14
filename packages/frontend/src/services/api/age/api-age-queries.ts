@@ -68,7 +68,6 @@ export const useApiAgesInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

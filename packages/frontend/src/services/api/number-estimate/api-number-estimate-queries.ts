@@ -73,7 +73,6 @@ export const useApiNumberEstimatesInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

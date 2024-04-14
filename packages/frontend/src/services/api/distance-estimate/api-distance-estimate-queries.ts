@@ -73,7 +73,6 @@ export const useApiDistanceEstimatesInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

@@ -49,10 +49,10 @@ export const useApiInfiniteQuery = <T extends z.ZodTypeAny, E = unknown>(
   };
 
   const infiniteResponse = useSWRInfinite(getKey, ({ url, token }) => fetchApi({ url, token, schema }), swrOptions);
-  const { size, setSize, data } = infiniteResponse;
+  const { setSize, data } = infiniteResponse;
 
   const fetchNextPage = async () => {
-    await setSize(size + 1);
+    await setSize((size) => size + 1);
   };
 
   const hasNextPage =

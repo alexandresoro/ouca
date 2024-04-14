@@ -34,7 +34,6 @@ export const useApiSearchInfiniteSpecies = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

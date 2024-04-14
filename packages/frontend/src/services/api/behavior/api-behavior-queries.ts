@@ -73,7 +73,6 @@ export const useApiBehaviorsInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

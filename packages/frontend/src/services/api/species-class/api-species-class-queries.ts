@@ -73,7 +73,6 @@ export const useApiSpeciesClassesInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

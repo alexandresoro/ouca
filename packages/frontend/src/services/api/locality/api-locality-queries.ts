@@ -75,7 +75,6 @@ export const useApiLocalitiesInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );

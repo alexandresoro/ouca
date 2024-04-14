@@ -73,7 +73,6 @@ export const useApiWeathersInfiniteQuery = (
     },
     {
       revalidateFirstPage: false,
-      revalidateAll: true,
       ...swrOptions,
     },
   );
