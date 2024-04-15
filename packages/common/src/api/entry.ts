@@ -16,12 +16,9 @@ export type GetEntryResponse = z.infer<typeof getEntryResponse>;
  *  Retrieve paginated entries results
  */
 export const ENTRIES_ORDER_BY_ELEMENTS = [
-  "id",
   "codeEspece",
   "nomFrancais",
   "nombre",
-  "sexe",
-  "age",
   "departement",
   "codeCommune",
   "nomCommune",

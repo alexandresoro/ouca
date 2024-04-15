@@ -4,7 +4,7 @@ import { kysely } from "@infrastructure/kysely/kysely.js";
 import { countSchema } from "@infrastructure/repositories/common.js";
 import { getOrderByIdentifier } from "@infrastructure/repositories/entry/entry-repository-helper.js";
 import { reshapeRawEntry } from "@infrastructure/repositories/entry/entry-repository-reshape.js";
-import { withSearchCriteria } from "@infrastructure/repositories/search-criteria.js";
+import { withSearchCriteria, withSearchCriteriaMinimal } from "@infrastructure/repositories/search-criteria.js";
 import { type OperandExpression, type SqlBool, sql } from "kysely";
 import { nanoid } from "nanoid";
 import { z } from "zod";
@@ -120,20 +120,63 @@ const findEntries = async ({
   offset,
   limit,
 }: EntryFindManyInput = {}): Promise<Entry[]> => {
+  const {
+    behaviorIds = [],
+    environmentIds = [],
+    breeders = [],
+    associateIds = [],
+    weatherIds = [],
+  } = searchCriteria ?? {};
+  const associatesNeeded = !!associateIds.length;
+  const weathersNeeded = !!weatherIds.length;
+  const behaviorTableNeeded = !!breeders.length;
+  const behaviorsNeeded = behaviorTableNeeded || !!behaviorIds.length;
+  const environmentsNeeded = !!environmentIds.length;
+
   let queryEntry = kysely
     .selectFrom("donnee")
-    .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
-    .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
-    .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
+    .$if(behaviorsNeeded, (qb) =>
+      qb
+        .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+        .$if(behaviorIds.length > 0, (qb) =>
+          qb.where(
+            "donnee_comportement.comportementId",
+            "in",
+            behaviorIds.map((elt) => Number.parseInt(elt)),
+          ),
+        )
+        .$if(behaviorTableNeeded, (qb) =>
+          qb
+            .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
+            .where("comportement.nicheur", "in", breeders),
+        ),
+    )
+    .$if(environmentsNeeded, (qb) =>
+      qb.leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId").where(
+        "donnee_milieu.milieuId",
+        "in",
+        environmentIds.map((elt) => Number.parseInt(elt)),
+      ),
+    )
     .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-    .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
-    .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+    .$if(weathersNeeded, (qb) =>
+      qb.leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId").where(
+        "inventaire_meteo.meteoId",
+        "in",
+        weatherIds.map((elt) => Number.parseInt(elt)),
+      ),
+    )
+    .$if(associatesNeeded, (qb) =>
+      qb.leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId").where(
+        "inventaire_associe.observateurId",
+        "in",
+        associateIds.map((elt) => Number.parseInt(elt)),
+      ),
+    )
     .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
     .leftJoin("commune", "lieudit.communeId", "commune.id")
     .leftJoin("departement", "commune.departementId", "departement.id")
     .leftJoin("espece", "donnee.especeId", "espece.id")
-    .leftJoin("age", "donnee.ageId", "age.id")
-    .leftJoin("sexe", "donnee.sexeId", "sexe.id")
     .select([
       "donnee.id",
       sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
@@ -146,12 +189,10 @@ const findEntries = async ({
       "donnee.distance",
       "donnee.commentaire",
       "donnee.dateCreation",
-      sql<string[]>`array_remove(array_agg(donnee_comportement.comportement_id::text), NULL)`.as("behaviorIds"),
-      sql<string[]>`array_remove(array_agg(donnee_milieu.milieu_id::text), NULL)`.as("environmentIds"),
     ]);
 
   if (searchCriteria != null) {
-    queryEntry = queryEntry.where(withSearchCriteria(searchCriteria));
+    queryEntry = queryEntry.where(withSearchCriteriaMinimal(searchCriteria));
   }
 
   queryEntry = queryEntry.groupBy("donnee.id");
@@ -174,21 +215,76 @@ const findEntries = async ({
 
   const entriesResult = await queryEntry.execute();
 
-  return z.array(entrySchema).parse(entriesResult.map((entry) => reshapeRawEntry(entry)));
+  // Lookup for behaviorIds and environmentIds separately to improve performance
+  const behaviorIdsResult = await kysely
+    .selectFrom("donnee_comportement")
+    .select([
+      "donnee_comportement.donneeId",
+      sql<string>`donnee_comportement.comportement_id::text`.as("comportementId"),
+    ])
+    .where(
+      "donneeId",
+      "in",
+      entriesResult.map((entry) => entry.id),
+    )
+    .execute();
+
+  const environmentIdsResult = await kysely
+    .selectFrom("donnee_milieu")
+    .select(["donnee_milieu.donneeId", sql<string>`donnee_milieu.milieu_id::text`.as("milieuId")])
+    .where(
+      "donneeId",
+      "in",
+      entriesResult.map((entry) => entry.id),
+    )
+    .execute();
+
+  return z.array(entrySchema).parse(
+    entriesResult.map((entry) =>
+      reshapeRawEntry({
+        ...entry,
+        behaviorIds: behaviorIdsResult
+          .filter((result) => result.donneeId === entry.id)
+          .map((result) => result.comportementId),
+        environmentIds: environmentIdsResult
+          .filter((result) => result.donneeId === entry.id)
+          .map((result) => result.milieuId),
+      }),
+    ),
+  );
 };
 
 const getCount = async (criteria?: SearchCriteria | null): Promise<number> => {
+  const townTableNeeded = !!criteria?.departmentIds?.length;
+  const localityTableNeeded = townTableNeeded || !!criteria?.townIds?.length;
+  const associatesNeeded = !!criteria?.associateIds?.length;
+  const weathersNeeded = !!criteria?.weatherIds?.length;
+  const behaviorTableNeeded = !!criteria?.breeders?.length;
+  const behaviorsNeeded = behaviorTableNeeded || !!criteria?.behaviorIds?.length;
+  const environmentsNeeded = !!criteria?.environmentIds?.length;
+  const speciesTableNeeded = !!criteria?.classIds?.length;
+
   let query = kysely
     .selectFrom("donnee")
-    .leftJoin("espece", "donnee.especeId", "espece.id")
-    .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
-    .leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id")
-    .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
     .leftJoin("inventaire", "donnee.inventaireId", "inventaire.id")
-    .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
-    .leftJoin("commune", "lieudit.communeId", "commune.id")
-    .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
-    .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
+    .$if(speciesTableNeeded, (qb) => qb.leftJoin("espece", "donnee.especeId", "espece.id"))
+    .$if(behaviorsNeeded, (qb) =>
+      qb
+        .leftJoin("donnee_comportement", "donnee.id", "donnee_comportement.donneeId")
+        .$if(behaviorTableNeeded, (qb) =>
+          qb.leftJoin("comportement", "donnee_comportement.comportementId", "comportement.id"),
+        ),
+    )
+    .$if(environmentsNeeded, (qb) => qb.leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId"))
+    .$if(localityTableNeeded, (qb) =>
+      qb
+        .leftJoin("lieudit", "inventaire.lieuditId", "lieudit.id")
+        .$if(townTableNeeded, (qb) => qb.leftJoin("commune", "lieudit.communeId", "commune.id")),
+    )
+    .$if(weathersNeeded, (qb) => qb.leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId"))
+    .$if(associatesNeeded, (qb) =>
+      qb.leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId"),
+    )
     .select((eb) => eb.fn.count("donnee.id").distinct().as("count"));
 
   if (criteria != null) {

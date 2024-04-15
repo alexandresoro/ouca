@@ -2,16 +2,10 @@ import type { EntryFindManyInput } from "@domain/entry/entry.js";
 
 export const getOrderByIdentifier = (orderBy: EntryFindManyInput["orderBy"]) => {
   switch (orderBy) {
-    case "id":
-      return "donnee.id";
     case "speciesCode":
       return "espece.code";
     case "speciesName":
       return "espece.nomFrancais";
-    case "age":
-      return "age.libelle";
-    case "sex":
-      return "sexe.libelle";
     case "number":
       return "donnee.nombre";
     case "observerName":
