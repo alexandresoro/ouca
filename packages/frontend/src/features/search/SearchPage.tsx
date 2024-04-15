@@ -2,6 +2,7 @@ import { Tab } from "@headlessui/react";
 import { useApiEntriesQuery } from "@services/api/entry/api-entry-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiSearchSpecies } from "@services/api/search/api-search-queries";
+import { Export } from "@styled-icons/boxicons-regular";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -107,7 +108,7 @@ const SearchPage: FunctionComponent = () => {
                     className="btn btn-sm btn-outline btn-secondary uppercase"
                     onClick={() => handleExportRequested()}
                   >
-                    {isExporting && <span className="loading loading-spinner loading-xs" />}
+                    {isExporting ? <span className="loading loading-spinner loading-xs" /> : <Export className="h-5" />}
                     {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
                     <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>
                   </button>
