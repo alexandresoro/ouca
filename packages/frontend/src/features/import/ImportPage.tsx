@@ -9,17 +9,8 @@ import { type ChangeEvent, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { z } from "zod";
+import ImportInstructionsPanel from "./ImportInstructionsPanel";
 import ImportStatusPanel from "./ImportStatusPanel";
-import ImportEntriesPanel from "./entities/ImportEntriesPanel";
-
-const getImportComponent = (importType: ImportType) => () => {
-  switch (importType) {
-    case "entry":
-      return <ImportEntriesPanel />;
-    default:
-      return <></>;
-  }
-};
 
 const ImportPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -95,9 +86,6 @@ const ImportPage: FunctionComponent = () => {
     return <Navigate to="/" replace={true} />;
   }
 
-  // biome-ignore lint/style/useNamingConvention: <explanation>
-  const ImportComponent = getImportComponent(importType);
-
   return (
     <ContentContainerLayout>
       <div className="card border-2 border-primary p-6 shadow-xl">
@@ -138,7 +126,9 @@ const ImportPage: FunctionComponent = () => {
         <ImportStatusPanel importType={importType} status={importStatus} isImportOngoing={isImportOngoing} />
       </div>
 
-      <ImportComponent />
+      <div className="card border-2 border-primary p-6 shadow-xl my-6">
+        <ImportInstructionsPanel importType={importType} />
+      </div>
     </ContentContainerLayout>
   );
 };

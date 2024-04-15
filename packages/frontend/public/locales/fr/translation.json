@@ -475,7 +475,7 @@
       "columnsList": "Liste des colonnes"
     },
     "entries": {
-      "title": "Instructions pour importer des observations",
+      "title": "Instructions pour importer des {{ importType }}",
       "observer": {
         "name": "Observateur",
         "description": ""
