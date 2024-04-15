@@ -55,9 +55,6 @@ export const buildEntryService = ({ inventoryRepository, entryRepository }: Entr
       case "nombre":
         orderBy = "number";
         break;
-      case "sexe":
-        orderBy = "sex";
-        break;
       case "departement":
         orderBy = "department";
         break;
