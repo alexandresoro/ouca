@@ -19,7 +19,7 @@ const SpeciesTableRow: FunctionComponent<SpeciesTableRowProps> = ({ species, onE
   const isOwner = user != null && species?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{species.speciesClass?.libelle}</td>
       <td>{species.code}</td>
       <td>{species.nomFrancais}</td>

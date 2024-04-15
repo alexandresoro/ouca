@@ -19,7 +19,7 @@ const ObserverTableRow: FunctionComponent<ObserverTableRowProps> = ({ observer, 
   const isOwner = user != null && observer?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{observer.libelle}</td>
       <td>{observerInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">

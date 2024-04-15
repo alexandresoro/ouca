@@ -14,7 +14,7 @@ const SearchSpeciesTableRow: FunctionComponent<SearchSpeciesTableRowProps> = ({ 
   const { data: speciesInfo } = useApiSpeciesInfoQuery(species.id, { ...searchCriteria });
 
   return (
-    <tr className="hover:bg-base-200" key={species.id}>
+    <tr className="table-hover" key={species.id}>
       <td>{species.speciesClass?.libelle}</td>
       <td>{species.code}</td>
       <td>{species.nomFrancais}</td>

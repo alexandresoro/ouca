@@ -45,6 +45,10 @@
   .title-with-divider {
     @apply divider mt-0 mb-3 divider-start divider-primary text-primary font-bold uppercase;
   }
+
+  .table-hover {
+    @apply odd:hover:bg-primary-content even:hover:bg-primary-content;
+  }
 }
   
 .display-linebreak {

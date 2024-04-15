@@ -22,7 +22,7 @@ const BehaviorTableRow: FunctionComponent<BehaviorTableRowProps> = ({ behavior, 
   const isOwner = user != null && behavior?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{behavior.code}</td>
       <td>{behavior.libelle}</td>
       <td>{behavior.nicheur ? t(`breedingStatus.${behavior.nicheur}`) : ""}</td>

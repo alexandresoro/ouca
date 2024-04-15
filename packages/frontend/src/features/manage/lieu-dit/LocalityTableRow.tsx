@@ -19,7 +19,7 @@ const LocalityTableRow: FunctionComponent<LocalityTableRowProps> = ({ locality, 
   const isOwner = user != null && locality?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{localityInfo?.departmentCode}</td>
       <td>{localityInfo?.townCode}</td>
       <td>{localityInfo?.townName}</td>

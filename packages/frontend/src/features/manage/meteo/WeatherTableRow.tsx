@@ -19,7 +19,7 @@ const WeatherTableRow: FunctionComponent<WeatherTableRowProps> = ({ weather, onE
   const isOwner = user != null && weather?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{weather.libelle}</td>
       <td>{weatherInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">

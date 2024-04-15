@@ -19,7 +19,7 @@ const AgeTableRow: FunctionComponent<AgeTableRowProps> = ({ age, onEditClicked, 
   const isOwner = user != null && age?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{age.libelle}</td>
       <td>{ageInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">

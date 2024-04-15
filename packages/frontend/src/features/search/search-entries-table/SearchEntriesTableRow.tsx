@@ -20,7 +20,7 @@ const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (pr
 
   return (
     <>
-      <tr className="hover:bg-base-200">
+      <tr className="table-hover">
         <td>{donnee.species.nomFrancais}</td>
         <td>{donnee.number}</td>
         <td>

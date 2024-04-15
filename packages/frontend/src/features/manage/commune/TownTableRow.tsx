@@ -19,7 +19,7 @@ const TownTableRow: FunctionComponent<TownTableRowProps> = ({ town, onEditClicke
   const isOwner = user != null && town?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{townInfo?.departmentCode}</td>
       <td>{town.code}</td>
       <td>{town.nom}</td>

@@ -26,7 +26,7 @@ const NumberEstimateTableRow: FunctionComponent<NumberEstimateTableRowProps> = (
   const isOwner = user != null && numberEstimate?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{numberEstimate.libelle}</td>
       <td>{numberEstimate.nonCompte ? t("yes") : ""}</td>
       <td>{numberEstimateInfo?.ownEntriesCount}</td>

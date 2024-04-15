@@ -23,7 +23,7 @@ const DepartmentTableRow: FunctionComponent<DepartmentTableRowProps> = ({
   const isOwner = user != null && department?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{department.code}</td>
       <td>{departmentInfo?.townsCount}</td>
       <td>{departmentInfo?.localitiesCount}</td>

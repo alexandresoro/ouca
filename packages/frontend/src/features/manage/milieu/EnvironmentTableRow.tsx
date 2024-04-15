@@ -23,7 +23,7 @@ const EnvironmentTableRow: FunctionComponent<EnvironmentTableRowProps> = ({
   const isOwner = user != null && environment?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{environment.code}</td>
       <td>{environment.libelle}</td>
       <td>{environmentInfo?.ownEntriesCount}</td>

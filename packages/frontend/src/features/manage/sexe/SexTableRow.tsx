@@ -19,7 +19,7 @@ const SexTableRow: FunctionComponent<SexTableRowProps> = ({ sex, onEditClicked, 
   const isOwner = user != null && sex?.ownerId === user.id;
 
   return (
-    <tr className="hover:bg-base-200">
+    <tr className="table-hover">
       <td>{sex.libelle}</td>
       <td>{sexInfo?.ownEntriesCount}</td>
       <td align="center" className="w-32">
