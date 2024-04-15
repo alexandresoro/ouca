@@ -18,11 +18,11 @@ importers:
   packages/backend:
     dependencies:
       '@bull-board/api':
-        specifier: 5.15.3
-        version: 5.15.3(@bull-board/ui@5.15.3)
+        specifier: 5.15.5
+        version: 5.15.5(@bull-board/ui@5.15.5)
       '@bull-board/fastify':
-        specifier: 5.15.3
-        version: 5.15.3
+        specifier: 5.15.5
+        version: 5.15.5
       '@fastify/caching':
         specifier: 8.3.0
         version: 8.3.0
@@ -701,29 +701,29 @@ packages:
     dev: true
     optional: true
 
-  /@bull-board/api@5.15.3(@bull-board/ui@5.15.3):
-    resolution: {integrity: sha512-tlEYOI6Hp0ZGozDCtKQEFgvzTKXj+drKStHJm86s1TcUZlsnMjzR0BUxu5CW6EB3tS3MtPLJH5RQCmUq0UEiiQ==}
+  /@bull-board/api@5.15.5(@bull-board/ui@5.15.5):
+    resolution: {integrity: sha512-s3x0f+0s4nwndBM+QSROMVKiDyE/vaaouQCsxRWOFqneLCkM+Ro2wF6fkhmFkZMjouoBbS8rCFGaIZ+8uttYtg==}
     peerDependencies:
-      '@bull-board/ui': 5.15.3
+      '@bull-board/ui': 5.15.5
     dependencies:
-      '@bull-board/ui': 5.15.3
+      '@bull-board/ui': 5.15.5
       redis-info: 3.1.0
     dev: false
 
-  /@bull-board/fastify@5.15.3:
-    resolution: {integrity: sha512-PXl243r4YmNZ3NrpwONBwCHCiN0Nlm1t4jTJ802nM3xMgajAXDMDINvM8MRGhZnrkpOEQOGNH1P3635cqiRvXA==}
+  /@bull-board/fastify@5.15.5:
+    resolution: {integrity: sha512-gPpZqm4wizCSvPKgaOXyl4Y1wAFTzH6qk6TWPBLv+7OjMqoVVlF0h+O/n/1Pv0485mBJgtoyaxWvmwdiOxRMMg==}
     dependencies:
-      '@bull-board/api': 5.15.3(@bull-board/ui@5.15.3)
-      '@bull-board/ui': 5.15.3
+      '@bull-board/api': 5.15.5(@bull-board/ui@5.15.5)
+      '@bull-board/ui': 5.15.5
       '@fastify/static': 6.12.0
       '@fastify/view': 8.2.0
       ejs: 3.1.10
     dev: false
 
-  /@bull-board/ui@5.15.3:
-    resolution: {integrity: sha512-wCXk+s4cSszZe0p0sYYxZPLSKafFQNPsUypTvpAh3IC2p4fr6F/wUBGb1kBMspRkFC19l5yFCD5qPHVlAR0QKw==}
+  /@bull-board/ui@5.15.5:
+    resolution: {integrity: sha512-TSXgqBDI3ig6ez6yHArGzpwCuA/rhQewv0KOUAvPzssgX4HqfkatrV7gTuTM+XJe7/sLiXnBiryV7SRV0hgRMg==}
     dependencies:
-      '@bull-board/api': 5.15.3(@bull-board/ui@5.15.3)
+      '@bull-board/api': 5.15.5(@bull-board/ui@5.15.5)
     dev: false
 
   /@cloudflare/workers-types@4.20240405.0:
