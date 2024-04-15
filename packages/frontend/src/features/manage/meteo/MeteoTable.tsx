@@ -57,13 +57,15 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
         count={data?.pages?.[0].meta.count}
       />
 
-      <div role="alert" className="alert bg-secondary-content border-secondary-content mb-2">
-        <Cloud className="h-6 w-6" />
-        {t("weather.cloudCoverLegend")}
-      </div>
-      <div role="alert" className="alert bg-secondary-content border-secondary-content">
-        <Wind className="h-6 w-6" />
-        {t("weather.windLegend")}
+      <div className="flex flex-col gap-2">
+        <div role="alert" className="alert bg-info-content border-none">
+          <Cloud className="h-6 w-6" />
+          {t("weather.cloudCoverLegend")}
+        </div>
+        <div role="alert" className="alert bg-info-content border-none">
+          <Wind className="h-6 w-6" />
+          {t("weather.windLegend")}
+        </div>
       </div>
 
       <InfiniteTable
