@@ -475,6 +475,132 @@
       },
       "columnsList": "Liste des colonnes"
     },
+    "observers": {
+      "label": {
+        "name": "Observateur",
+        "description": "NOM Prénom"
+      }
+    },
+    "departments": {
+      "code": {
+        "name": "Département",
+        "description": "Code du département"
+      }
+    },
+    "towns": {
+      "department": {
+        "name": "Département",
+        "description": ""
+      },
+      "code": {
+        "name": "Code de la commune",
+        "description": "Nombre entier"
+      },
+      "name": {
+        "name": "Nom de la commune",
+        "description": ""
+      }
+    },
+    "localities": {
+      "department": {
+        "name": "Département",
+        "description": ""
+      },
+      "town": {
+        "name": "Commune",
+        "description": "Code ou nom de la commune"
+      },
+      "name": {
+        "name": "Lieu-dit",
+        "description": ""
+      },
+      "latitude": {
+        "name": "Latitude",
+        "description": "En degrés décimaux"
+      },
+      "longitude": {
+        "name": "Longitude",
+        "description": "En degrés décimaux"
+      },
+      "altitude": {
+        "name": "Altitude",
+        "description": "Nombre entier en mètres"
+      }
+    },
+    "weathers": {
+      "label": {
+        "name": "Météo",
+        "description": ""
+      }
+    },
+    "speciesClasses": {
+      "label": {
+        "name": "Classe espèce",
+        "description": ""
+      }
+    },
+    "species": {
+      "class": {
+        "name": "Classe espèce",
+        "description": ""
+      },
+      "code": {
+        "name": "Code",
+        "description": ""
+      },
+      "name": {
+        "name": "Nom français",
+        "description": ""
+      },
+      "scientificName": {
+        "name": "Nom scientifique",
+        "description": ""
+      }
+    },
+    "sexes": {
+      "label": {
+        "name": "Sexe",
+        "description": ""
+      }
+    },
+    "ages": {
+      "label": {
+        "name": "Âge",
+        "description": ""
+      }
+    },
+    "numberEstimates": {
+      "label": {
+        "name": "Estimation du nombre",
+        "description": ""
+      }
+    },
+    "distanceEstimates": {
+      "label": {
+        "name": "Estimation de la distance",
+        "description": ""
+      }
+    },
+    "behaviors": {
+      "code": {
+        "name": "Code",
+        "description": ""
+      },
+      "label": {
+        "name": "Nom",
+        "description": ""
+      }
+    },
+    "environments": {
+      "code": {
+        "name": "Code",
+        "description": ""
+      },
+      "label": {
+        "name": "Nom",
+        "description": ""
+      }
+    },
     "entries": {
       "title": "Instructions pour importer des {{ importType }}",
       "observer": {

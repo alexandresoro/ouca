@@ -1,10 +1,49 @@
 import type { ImportType } from "@ou-ca/common/import/import-types";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import ImportAgesPanel from "./entities/ImportAgesPanel";
+import ImportBehaviorsPanel from "./entities/ImportBehaviorsPanel";
+import ImportDepartmentsPanel from "./entities/ImportDepartmentsPanel";
+import ImportDistanceEstimatesPanel from "./entities/ImportDistanceEstimatesPanel";
 import ImportEntriesPanel from "./entities/ImportEntriesPanel";
+import ImportEnvironmentsPanel from "./entities/ImportEnvironmentsPanel";
+import ImportLocalitiesPanel from "./entities/ImportLocalitiesPanel";
+import ImportNumberEstimatesPanel from "./entities/ImportNumberEstimatesPanel";
+import ImportObserversPanel from "./entities/ImportObserversPanel";
+import ImportSexesPanel from "./entities/ImportSexesPanel";
+import ImportSpeciesClassesPanel from "./entities/ImportSpeciesClassesPanel";
+import ImportSpeciesEstimatesPanel from "./entities/ImportSpeciesPanel";
+import ImportTownsPanel from "./entities/ImportTownsPanel";
+import ImportWeathersPanel from "./entities/ImportWeathersPanel";
 
 const getImportComponent = (importType: ImportType) => () => {
   switch (importType) {
+    case "observer":
+      return <ImportObserversPanel />;
+    case "department":
+      return <ImportDepartmentsPanel />;
+    case "town":
+      return <ImportTownsPanel />;
+    case "locality":
+      return <ImportLocalitiesPanel />;
+    case "weather":
+      return <ImportWeathersPanel />;
+    case "species-class":
+      return <ImportSpeciesClassesPanel />;
+    case "species":
+      return <ImportSpeciesEstimatesPanel />;
+    case "sex":
+      return <ImportSexesPanel />;
+    case "age":
+      return <ImportAgesPanel />;
+    case "number-estimate":
+      return <ImportNumberEstimatesPanel />;
+    case "distance-estimate":
+      return <ImportDistanceEstimatesPanel />;
+    case "behavior":
+      return <ImportBehaviorsPanel />;
+    case "environment":
+      return <ImportEnvironmentsPanel />;
     case "entry":
       return <ImportEntriesPanel />;
     default:
