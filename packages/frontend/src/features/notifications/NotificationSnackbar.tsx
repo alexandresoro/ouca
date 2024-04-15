@@ -25,7 +25,7 @@ const NotificationSnackbar: FunctionComponent = () => {
       {notifications.map(({ id, message, type }) => (
         <div
           key={`notification-${id}`}
-          className={`alert shadow-lg ${type === "info" ? "alert-info" : ""} ${
+          className={`alert shadow-lg text-neutral ${type === "info" ? "alert-info" : ""} ${
             type === "success" ? "alert-success" : ""
           } ${type === "error" ? "alert-error" : ""} ${type === "warning" ? "alert-warning" : ""}`}
         >

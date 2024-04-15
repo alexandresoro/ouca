@@ -19,6 +19,8 @@ const SearchPage: FunctionComponent = () => {
 
   const [selectedTab, setSelectedTab] = useState(0);
 
+  const [isExporting, setIsExporting] = useState(false);
+
   const { data: dataEntries, mutate: mutateEntriesCount } = useApiEntriesQuery(
     {
       pageNumber: 1,
@@ -52,6 +54,12 @@ const SearchPage: FunctionComponent = () => {
   const handleEntryDeleted = async () => {
     await mutateEntriesCount();
     await mutateSpeciesCount();
+  };
+
+  const handleExportRequested = async () => {
+    setIsExporting(true);
+    await downloadExport();
+    setIsExporting(false);
   };
 
   return (
@@ -95,11 +103,12 @@ const SearchPage: FunctionComponent = () => {
                   <button
                     type="button"
                     // TODO: Test what happens w/ big data sets before enabling this
-                    disabled={dataEntries.meta.count === 0 || dataEntries.meta.count > 10000}
+                    disabled={dataEntries.meta.count === 0 || dataEntries.meta.count > 10000 || isExporting}
                     className="btn btn-sm btn-outline btn-secondary uppercase"
-                    onClick={() => downloadExport()}
+                    onClick={() => handleExportRequested()}
                   >
-                    {t("observationFilter.exportToExcel")}
+                    {isExporting && <span className="loading loading-spinner loading-xs" />}
+                    {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
                     <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>
                   </button>
                   <span>{t("search.entriesCount", { count: dataEntries.meta.count })}</span>

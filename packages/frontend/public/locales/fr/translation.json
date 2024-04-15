@@ -82,7 +82,8 @@
   "observationFilter": {
     "search": "Recherche d'observations",
     "displayOnlyMyObservations": "Uniquement mes observations",
-    "exportToExcel": "Exporter au format Excel"
+    "exportToExcel": "Exporter au format Excel",
+    "exportOnGoing": "Export en cours"
   },
   "department": "Département",
   "departmentAlreadyExistingError": "Il existe déjà un département identique.",
