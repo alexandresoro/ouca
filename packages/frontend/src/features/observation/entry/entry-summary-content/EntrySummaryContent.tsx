@@ -69,7 +69,9 @@ const EntrySummaryContent: FunctionComponent<EntrySummaryContentProps> = ({ entr
             <span>{t("behaviors")}</span>
           </div>
           {entry.behaviors.map(({ libelle }) => (
-            <span className="badge badge-outline m-1 p-3 text-base">{libelle}</span>
+            <span key={libelle} className="badge badge-outline m-1 p-3 text-base">
+              {libelle}
+            </span>
           ))}
           {nicheurStatus && (
             <span className="badge badge-outline badge-accent m-1 p-3 text-base">
@@ -83,7 +85,9 @@ const EntrySummaryContent: FunctionComponent<EntrySummaryContentProps> = ({ entr
         <div>
           <div className="title-with-divider">{t("observationDetails.environments")}</div>
           {entry.environments.map(({ libelle }) => (
-            <span className="badge badge-outline m-1 p-3 text-base">{libelle}</span>
+            <span key={libelle} className="badge badge-outline m-1 p-3 text-base">
+              {libelle}
+            </span>
           ))}
         </div>
       )}

@@ -115,6 +115,7 @@ const HeaderSettings: FunctionComponent = () => {
           if (localizationKey === "settings") {
             Dividers.push(<hr key={`divider-${to}`} />);
           }
+          // biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
           return [CurrentMenuItem, ...Dividers];
         })}
         <hr className="w-full border-t-[1px] my-1" />
