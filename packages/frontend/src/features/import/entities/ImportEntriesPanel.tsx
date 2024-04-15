@@ -1,4 +1,4 @@
-import type { FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 const ImportEntriesPanel: FunctionComponent = () => {
@@ -122,24 +122,28 @@ const ImportEntriesPanel: FunctionComponent = () => {
             </tr>
             {["U", "V", "W", "X", "Y", "Z"].map((column, index) => {
               return (
-                <tr>
-                  <th>{column}</th>
-                  <td>
-                    {t("importInstructions.entries.behavior.name")} {index + 1}
-                  </td>
-                  <td>{t("importInstructions.entries.behavior.description")}</td>
-                </tr>
+                <Fragment key={column}>
+                  <tr>
+                    <th>{column}</th>
+                    <td>
+                      {t("importInstructions.entries.behavior.name")} {index + 1}
+                    </td>
+                    <td>{t("importInstructions.entries.behavior.description")}</td>
+                  </tr>
+                </Fragment>
               );
             })}
             {["AA", "AB", "AC", "AD"].map((column, index) => {
               return (
-                <tr>
-                  <th>{column}</th>
-                  <td>
-                    {t("importInstructions.entries.environment.name")} {index + 1}
-                  </td>
-                  <td>{t("importInstructions.entries.environment.description")}</td>
-                </tr>
+                <Fragment key={column}>
+                  <tr>
+                    <th>{column}</th>
+                    <td>
+                      {t("importInstructions.entries.environment.name")} {index + 1}
+                    </td>
+                    <td>{t("importInstructions.entries.environment.description")}</td>
+                  </tr>
+                </Fragment>
               );
             })}
             <tr>
