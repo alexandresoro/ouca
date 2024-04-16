@@ -26,7 +26,6 @@ const getMenuOptions = (enableImport: boolean) => [
           localizationKey: "importFromFile" as ParseKeys,
           Icon: Import,
           to: "/import",
-          beta: true,
         },
       ]
     : []),
@@ -91,7 +90,7 @@ const HeaderSettings: FunctionComponent = () => {
         }}
         className="flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
       >
-        {getMenuOptions(enableImport).map(({ Icon, localizationKey, to, beta }) => {
+        {getMenuOptions(enableImport).map(({ Icon, localizationKey, to }) => {
           const CurrentMenuItem = (
             <Menu.Item key={to}>
               {({ active }) => (
@@ -104,7 +103,6 @@ const HeaderSettings: FunctionComponent = () => {
                   <>
                     <Icon className="h-5" />
                     {t(localizationKey)}
-                    {beta && <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>}
                   </>
                 </Link>
               )}
