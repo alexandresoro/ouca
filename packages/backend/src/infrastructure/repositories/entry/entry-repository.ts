@@ -216,28 +216,32 @@ const findEntries = async ({
   const entriesResult = await queryEntry.execute();
 
   // Lookup for behaviorIds and environmentIds separately to improve performance
-  const behaviorIdsResult = await kysely
-    .selectFrom("donnee_comportement")
-    .select([
-      "donnee_comportement.donneeId",
-      sql<string>`donnee_comportement.comportement_id::text`.as("comportementId"),
-    ])
-    .where(
-      "donneeId",
-      "in",
-      entriesResult.map((entry) => entry.id),
-    )
-    .execute();
+  const behaviorIdsResult = entriesResult.length
+    ? await kysely
+        .selectFrom("donnee_comportement")
+        .select([
+          "donnee_comportement.donneeId",
+          sql<string>`donnee_comportement.comportement_id::text`.as("comportementId"),
+        ])
+        .where(
+          "donneeId",
+          "in",
+          entriesResult.map((entry) => entry.id),
+        )
+        .execute()
+    : [];
 
-  const environmentIdsResult = await kysely
-    .selectFrom("donnee_milieu")
-    .select(["donnee_milieu.donneeId", sql<string>`donnee_milieu.milieu_id::text`.as("milieuId")])
-    .where(
-      "donneeId",
-      "in",
-      entriesResult.map((entry) => entry.id),
-    )
-    .execute();
+  const environmentIdsResult = entriesResult.length
+    ? await kysely
+        .selectFrom("donnee_milieu")
+        .select(["donnee_milieu.donneeId", sql<string>`donnee_milieu.milieu_id::text`.as("milieuId")])
+        .where(
+          "donneeId",
+          "in",
+          entriesResult.map((entry) => entry.id),
+        )
+        .execute()
+    : [];
 
   return z.array(entrySchema).parse(
     entriesResult.map((entry) =>
