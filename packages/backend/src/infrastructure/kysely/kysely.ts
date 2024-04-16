@@ -84,6 +84,7 @@ export const getKyselyInstance = () => {
           kyselyLogger.warn(
             {
               error: serializeError(event.error),
+              query: event.query.sql,
             },
             "query execution produced an error",
           );
