@@ -200,8 +200,8 @@ importers:
         specifier: 5.0.8
         version: 5.0.8
       '@headlessui/react':
-        specifier: 1.7.18
-        version: 1.7.18(react-dom@18.2.0)(react@18.2.0)
+        specifier: 1.7.19
+        version: 1.7.19(react-dom@18.2.0)(react@18.2.0)
       '@hookform/resolvers':
         specifier: 3.3.4
         version: 3.3.4(react-hook-form@7.51.3)
@@ -1384,8 +1384,8 @@ packages:
     resolution: {integrity: sha512-K8wUqcKmm7XWSvixfxgxp1kt+eHjNqgu0stzGmYjYqCqOpgkvGRfemLWXaBLHf/Jv4sTsxmbdbjV1cB0a7CdrA==}
     dev: false
 
-  /@headlessui/react@1.7.18(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-4i5DOrzwN4qSgNsL4Si61VMkUcWbcSKueUV7sFhpHzQcSShdlHENE5+QBntMSRvHt8NyoFO2AGG8si9lq+w4zQ==}
+  /@headlessui/react@1.7.19(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Ll+8q3OlMJfJbAKM/+/Y2q6PPYbryqNTXDbryx7SXLIDamkF6iQFbriYHga0dY44PvDhvvBWCx1Xj4U5+G4hOw==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16 || ^17 || ^18
