@@ -104,7 +104,7 @@ const SearchPage: FunctionComponent = () => {
                   <button
                     type="button"
                     // TODO: Test what happens w/ big data sets before enabling this
-                    disabled={dataEntries.meta.count === 0 || dataEntries.meta.count > 10000 || isExporting}
+                    disabled={dataEntries.meta.count === 0 || isExporting}
                     className="btn btn-sm btn-outline btn-secondary uppercase"
                     onClick={() => handleExportRequested()}
                   >
