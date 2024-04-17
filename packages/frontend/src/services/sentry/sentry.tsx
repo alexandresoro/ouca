@@ -1,4 +1,4 @@
-import { extraErrorDataIntegration, httpClientIntegration } from "@sentry/integrations";
+import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
 import type { AppConfig } from "@services/config/config";
 import type { User } from "oidc-client-ts";
@@ -24,17 +24,19 @@ export const initializeSentry = (config: AppConfig) => {
         }
       : {}),
     integrations: [
-      Sentry.reactRouterV6BrowserTracingIntegration({
-        useEffect,
-        useLocation,
-        useNavigationType,
-        createRoutesFromChildren,
-        matchRoutes,
+      new Sentry.BrowserTracing({
+        routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+          useEffect,
+          useLocation,
+          useNavigationType,
+          createRoutesFromChildren,
+          matchRoutes,
+        ),
       }),
-      Sentry.browserTracingIntegration(),
-      // Sentry.replayIntegration(),
-      extraErrorDataIntegration(),
-      httpClientIntegration(),
+      // Disable replay as not supported by GlitchTip
+      // new Sentry.Replay({}),
+      new ExtraErrorData(),
+      new HttpClient(),
     ],
     beforeSend(event) {
       // Check if it is an exception, and if so, show the report dialog
