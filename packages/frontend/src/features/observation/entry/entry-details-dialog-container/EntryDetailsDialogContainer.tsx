@@ -1,18 +1,21 @@
 import { Dialog } from "@headlessui/react";
-import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
+import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventorySummaryPanel from "../../inventory/inventory-summary-panel/InventorySummaryPanel";
 import EntrySummaryPanel from "../entry-summary-panel/EntrySummaryPanel";
 
 type EntryDetailsDialogContainerProps = {
-  entry?: EntryExtended;
+  entry?: Entry;
   open: boolean;
   onClose: (value: boolean) => void;
 };
 
 const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainerProps> = ({ entry, open, onClose }) => {
   const { t } = useTranslation();
+
+  const { data: inventory } = useApiInventoryQuery(entry?.inventoryId ?? null);
 
   if (!entry) {
     return null;
@@ -32,7 +35,7 @@ const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainer
             <h3 className="text-xl font-normal py-4 first-letter:uppercase">
               {t("observationDetails.inventoryTitle")}
             </h3>
-            <InventorySummaryPanel inventory={entry.inventory} />
+            {inventory && <InventorySummaryPanel inventory={inventory} />}
           </div>
           <div className="basis-3/5">
             <h3 className="py-4 text-xl font-normal first-letter:uppercase">{t("observation")}</h3>

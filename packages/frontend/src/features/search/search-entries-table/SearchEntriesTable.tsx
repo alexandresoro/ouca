@@ -51,7 +51,7 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
   const queryClient = useQueryClient();
 
   const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
-  const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
+  const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<Entry | undefined>();
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
 
   const { displayNotification } = useNotifications();

@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import type { z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import { useApiEntryDelete, useApiEntryUpdate } from "../../../../services/api/entry/api-entry-queries";
-import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import { ENTRY_STEP } from "../../entry/new-entry-page/new-entry-hash-step-mapper";
 import UpdateEntryDialogContainer from "../../entry/update-entry-dialog-container/UpdateEntryDialogContainer";
 import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
@@ -35,7 +34,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
 
   const queryClient = useQueryClient();
 
-  const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
   const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<EntryExtended | null>(null);
 
@@ -121,11 +119,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
           );
         })}
       </ul>
-      <EntryDetailsDialogContainer
-        entry={viewEntryDialogEntry}
-        open={viewEntryDialogEntry != null}
-        onClose={() => setViewEntryDialogEntry(undefined)}
-      />
       <UpdateEntryDialogContainer
         entry={updateEntryDialogEntry}
         open={updateEntryDialogEntry != null}
