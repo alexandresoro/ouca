@@ -1,14 +1,16 @@
-import useApiMutation from "@hooks/api/useApiMutation";
+import useApiMutationTQ from "@hooks/api/useApiMutation";
 import {
   type UpsertInventoryInput,
   type UpsertInventoryResponse,
   getInventoryResponse,
   upsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
+import { useApiMutation } from "@services/api/useApiMutation";
 import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { UseMutationOptions } from "@tanstack/react-query";
 import type { FetchErrorType } from "@utils/fetch-api";
-import { z } from "zod";
+import type { SWRMutationConfiguration } from "swr/dist/mutation";
+import type { z } from "zod";
 
 export const useApiInventoryQuery = (
   id: string | null,
@@ -31,7 +33,7 @@ export const useApiInventoryCreate = (
     "mutationFn"
   >,
 ) =>
-  useApiMutation(
+  useApiMutationTQ(
     {
       path: "/inventories",
       method: "POST",
@@ -41,43 +43,32 @@ export const useApiInventoryCreate = (
   );
 
 export const useApiInventoryUpdate = (
-  mutationOptions?: Omit<
-    UseMutationOptions<UpsertInventoryResponse, FetchErrorType, { path?: string; body: UpsertInventoryInput }>,
-    "mutationFn"
-  >,
+  id: string | null,
+  swrOptions?: SWRMutationConfiguration<z.infer<typeof upsertInventoryResponse>, unknown>,
 ) => {
-  const { mutate, ...restUseMutation } = useApiMutation(
+  return useApiMutation(
+    id ? `/inventories/${id}` : null,
     {
       method: "PUT",
       schema: upsertInventoryResponse,
     },
-    { ...mutationOptions },
+    {
+      revalidate: false,
+      populateCache: true,
+      ...swrOptions,
+    },
   );
-
-  const mutateApi = ({ inventoryId, body }: { inventoryId: string; body: UpsertInventoryInput }) =>
-    mutate({
-      path: `/inventories/${inventoryId}`,
-      body,
-    });
-
-  return { ...restUseMutation, mutate: mutateApi };
 };
 
-export const useApiInventoryDelete = (
-  mutationOptions?: Omit<UseMutationOptions<{ id: string }, FetchErrorType, { path?: string }>, "mutationFn">,
-) => {
-  const { mutate, ...restUseMutation } = useApiMutation(
+export const useApiInventoryDelete = (id: string | null, swrOptions?: SWRMutationConfiguration<unknown, unknown>) => {
+  return useApiMutation(
+    id ? `/inventories/${id}` : null,
     {
       method: "DELETE",
-      schema: z.object({ id: z.string() }),
     },
-    { ...mutationOptions },
+    {
+      revalidate: false,
+      ...swrOptions,
+    },
   );
-
-  const mutateApi = ({ inventoryId }: { inventoryId: string }) =>
-    mutate({
-      path: `/inventories/${inventoryId}`,
-    });
-
-  return { ...restUseMutation, mutate: mutateApi };
 };

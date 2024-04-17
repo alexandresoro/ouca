@@ -106,9 +106,8 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     },
   );
 
-  const { mutate: updateInventory } = useApiInventoryUpdate({
-    onSuccess: (updatedInventory) => {
-      queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
+  const { trigger: triggerUpdateInventory } = useApiInventoryUpdate(inventory.id, {
+    onSuccess: () => {
       displayNotification({
         type: "success",
         message: t("inventoryForm.updateSuccess"),
@@ -123,21 +122,22 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     },
   });
 
-  const { mutate: deleteInventory } = useApiInventoryDelete({
-    onSuccess: async () => {
+  const { trigger: triggerDeleteInventory } = useApiInventoryDelete(inventory.id, {
+    onSuccess: () => {
       displayNotification({
         type: "success",
         message: t("inventoryForm.deleteSuccess"),
       });
       setDeleteDialog(null);
-      await queryClient.invalidateQueries(["API", "indexInventory"]);
-      if (previousInventoryId != null) {
-        navigate(`../${previousInventoryId}`, { replace: true, relative: "path" });
-      } else if (nextInventoryId != null) {
-        navigate(`../${nextInventoryId}`, { replace: true, relative: "path" });
-      } else {
-        navigate("/", { replace: true });
-      }
+      void queryClient.invalidateQueries(["API", "indexInventory"]).then(() => {
+        if (previousInventoryId != null) {
+          navigate(`../${previousInventoryId}`, { replace: true, relative: "path" });
+        } else if (nextInventoryId != null) {
+          navigate(`../${nextInventoryId}`, { replace: true, relative: "path" });
+        } else {
+          navigate("/", { replace: true });
+        }
+      });
     },
     onError: () => {
       displayNotification({
@@ -163,9 +163,8 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
 
   const [inventoryEditDialogOpen, setInventoryEditDialogOpen] = useState<boolean>(false);
 
-  const handleInventoryUpdate = (inventoryFormData: UpsertInventoryInput, inventoryId: string) => {
-    updateInventory({
-      inventoryId,
+  const handleInventoryUpdate = async (inventoryFormData: UpsertInventoryInput) => {
+    await triggerUpdateInventory({
       body: inventoryFormData,
     });
   };
@@ -301,7 +300,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
         open={!!deleteDialog}
         messageContent={t("deleteInventoryDialogMsg")}
         onCancelAction={() => setDeleteDialog(null)}
-        onConfirmAction={() => deleteInventory({ inventoryId: inventory.id })}
+        onConfirmAction={() => triggerDeleteInventory()}
       />
     </>
   );
