@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
 import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
-import { entryExtendedSchema, entrySchema } from "./entities/entry.js";
+import { entrySchema } from "./entities/entry.js";
 
 /**
  * `GET` `/entry/:id`
@@ -35,15 +35,12 @@ export const getEntriesQueryParamsSchema = paginationQueryParamsSchema
   .extend({
     orderBy: z.enum(ENTRIES_ORDER_BY_ELEMENTS).optional(),
     sortOrder: z.enum(["asc", "desc"]).optional(),
-    extended: z.coerce.boolean().default(false),
   })
   .merge(getSearchCriteriaParamsSchema);
 
 export type EntriesSearchParams = Omit<z.infer<typeof getEntriesQueryParamsSchema>, "extended">;
 
 export const getEntriesResponse = getPaginatedResponseSchema(entrySchema);
-
-export const getEntriesExtendedResponse = getPaginatedResponseSchema(entryExtendedSchema);
 
 /**
  * `PUT` `/entry/:id` Update of entry

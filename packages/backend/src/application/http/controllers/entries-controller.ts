@@ -1,6 +1,4 @@
-import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
 import {
-  getEntriesExtendedResponse,
   getEntriesQueryParamsSchema,
   getEntriesResponse,
   getEntryResponse,
@@ -12,12 +10,11 @@ import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedEntry } from "./entries-enricher.js";
-import { enrichedInventory } from "./inventories-enricher.js";
 
 export const entriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { entryService, inventoryService } = services;
+  const { entryService } = services;
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
@@ -62,9 +59,7 @@ export const entriesController: FastifyPluginCallback<{
       return await reply.status(422).send(parsedQueryParamsResult.error.issues);
     }
 
-    const {
-      data: { extended, ...queryParams },
-    } = parsedQueryParamsResult;
+    const { data: queryParams } = parsedQueryParamsResult;
 
     if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
       return await reply.status(403).send();
@@ -93,30 +88,8 @@ export const entriesController: FastifyPluginCallback<{
 
     const enrichedEntries = enrichedEntriesResults.map((enrichedEntryResult) => enrichedEntryResult._unsafeUnwrap());
 
-    let data: Entry[] | EntryExtended[] = enrichedEntries;
-    if (extended) {
-      data = await Promise.all(
-        enrichedEntries.map(async (enrichedEntryData) => {
-          // TODO look to optimize this request
-          const inventory = (
-            await inventoryService.findInventoryOfEntryId(enrichedEntryData.id, req.user)
-          )._unsafeUnwrap();
-          if (!inventory) {
-            return Promise.reject("No matching inventory found");
-          }
-
-          const inventoryEnriched = (await enrichedInventory(services, inventory, req.user))._unsafeUnwrap();
-          return {
-            ...enrichedEntryData,
-            inventory: inventoryEnriched,
-          };
-        }),
-      );
-    }
-
-    const responseParser = extended ? getEntriesExtendedResponse : getEntriesResponse;
-    const response = responseParser.parse({
-      data,
+    const response = getEntriesResponse.parse({
+      data: enrichedEntries,
       meta: getPaginationMetadata(count, queryParams),
     });
 
