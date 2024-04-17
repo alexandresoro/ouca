@@ -1,12 +1,12 @@
 import Avatar from "@components/common/Avatar";
 import { useUser } from "@hooks/useUser";
-import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 type EntrySummaryContentProps = {
-  entry: EntryExtended;
+  entry: Entry;
 };
 
 const EntrySummaryContent: FunctionComponent<EntrySummaryContentProps> = ({ entry }) => {

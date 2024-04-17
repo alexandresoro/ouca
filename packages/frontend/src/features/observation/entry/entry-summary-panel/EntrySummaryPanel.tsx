@@ -1,9 +1,9 @@
-import type { EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
 import type { FunctionComponent } from "react";
 import EntrySummaryContent from "../entry-summary-content/EntrySummaryContent";
 
 type EntrySummaryPanelProps = {
-  entry: EntryExtended;
+  entry: Entry;
 };
 
 const EntrySummaryPanel: FunctionComponent<EntrySummaryPanelProps> = ({ entry }) => {
