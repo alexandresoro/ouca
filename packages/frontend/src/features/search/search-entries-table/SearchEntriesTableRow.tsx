@@ -1,7 +1,6 @@
 import IconButton from "@components/base/IconButton";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
-import { useApiSpeciesQuery } from "@services/api/species/api-species-queries";
 import { Detail, EditAlt, Trash } from "@styled-icons/boxicons-regular";
 import { Binoculars } from "@styled-icons/boxicons-solid";
 import type { FunctionComponent } from "react";
@@ -20,13 +19,12 @@ const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (pr
 
   const { t } = useTranslation();
 
-  const { data: species } = useApiSpeciesQuery(donnee.species.id);
   const { data: inventory } = useApiInventoryQuery(donnee.inventoryId);
 
   return (
     <>
       <tr className="table-hover">
-        <td>{species?.nomFrancais}</td>
+        <td>{donnee.species?.nomFrancais}</td>
         <td>{donnee.number}</td>
         <td>
           {inventory?.locality.townName} ({inventory?.locality.departmentCode}), {inventory?.locality.nom}
