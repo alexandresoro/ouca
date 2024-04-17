@@ -1,4 +1,4 @@
-import { getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
+import { getEntriesResponse } from "@ou-ca/common/api/entry";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import { FetchError } from "@utils/fetch-api";
 import type { FunctionComponent } from "react";
@@ -26,9 +26,8 @@ const InventoryPage: FunctionComponent = () => {
       queryParams: {
         pageSize: 10,
         inventoryId: inventory?.id,
-        extended: true,
       },
-      schema: getEntriesExtendedResponse,
+      schema: getEntriesResponse,
     },
     {
       enabled: inventory != null,

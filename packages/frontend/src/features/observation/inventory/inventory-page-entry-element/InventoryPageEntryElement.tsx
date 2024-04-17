@@ -1,5 +1,5 @@
 import { Disclosure } from "@headlessui/react";
-import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { CalendarPlus, ChevronDown, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
 import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
 import type { FunctionComponent } from "react";
@@ -8,9 +8,9 @@ import IconButton from "../../../../components/base/IconButton";
 import EntrySummaryContent from "../../entry/entry-summary-content/EntrySummaryContent";
 
 type InventoryPageEntryElementProps = {
-  entry: EntryExtended;
+  entry: Entry;
   onEditAction?: (entry: Entry) => void;
-  onDeleteAction?: (entry: EntryExtended) => void;
+  onDeleteAction?: (entry: Entry) => void;
 };
 
 const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProps> = ({

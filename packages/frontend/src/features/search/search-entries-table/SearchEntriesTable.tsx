@@ -1,16 +1,16 @@
 import InfiniteTable from "@components/base/table/InfiniteTable";
 import TableSortLabel from "@components/base/table/TableSortLabel";
-import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
 import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
-import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
-import { type EntriesOrderBy, type UpsertEntryInput, getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
+import { type EntriesOrderBy, type UpsertEntryInput, getEntriesResponse } from "@ou-ca/common/api/entry";
 import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-entry-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import DeleteEntryConfirmationDialog from "../../observation/entry/delete-entry-confirmation-dialog/DeleteEntryConfirmationDialog";
 import EntryDetailsDialogContainer from "../../observation/entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import UpdateEntryDialogContainer from "../../observation/entry/update-entry-dialog-container/UpdateEntryDialogContainer";
 import { searchEntriesCriteriaAtom } from "../searchEntriesCriteriaAtom";
@@ -50,7 +50,7 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
 
   const queryClient = useQueryClient();
 
-  const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<Entry | null>(null);
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<Entry | undefined>();
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
 
@@ -65,10 +65,9 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
         pageSize: 10,
         orderBy,
         sortOrder,
-        extended: true,
         ...searchCriteria,
       },
-      schema: getEntriesExtendedResponse,
+      schema: getEntriesResponse,
     },
     {
       staleTime: Number.POSITIVE_INFINITY,
@@ -125,13 +124,13 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     });
   };
 
-  const handleDeleteDonnee = (donnee: EntryExtended | null) => {
+  const handleDeleteDonnee = (donnee: Entry | null) => {
     if (donnee) {
       setDeleteDialog(donnee);
     }
   };
 
-  const handleDeleteDonneeConfirmation = (donnee: EntryExtended | null) => {
+  const handleDeleteDonneeConfirmation = (donnee: Entry | null) => {
     if (donnee) {
       setDeleteDialog(null);
       mutate({ entryId: donnee.id });
@@ -186,15 +185,9 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
         onMoreRequested={fetchNextPage}
       />
 
-      <DeletionConfirmationDialog
+      <DeleteEntryConfirmationDialog
         open={!!deleteDialog}
-        messageContent={t("deleteObservationDialogMsg", {
-          species: deleteDialog?.species.nomFrancais,
-          locality: deleteDialog?.inventory.locality.nom,
-          city: deleteDialog?.inventory.locality.townName,
-          department: deleteDialog?.inventory.locality.departmentCode,
-          date: deleteDialog?.inventory.date,
-        })}
+        entry={deleteDialog}
         onCancelAction={() => setDeleteDialog(null)}
         onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}
       />

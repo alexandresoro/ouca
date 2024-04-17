@@ -1,21 +1,21 @@
 import { useNotifications } from "@hooks/useNotifications";
-import type { Entry, EntryExtended } from "@ou-ca/common/api/entities/entry";
-import type { UpsertEntryInput, getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
+import type { Entry } from "@ou-ca/common/api/entities/entry";
+import type { UpsertEntryInput, getEntriesResponse } from "@ou-ca/common/api/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import type { z } from "zod";
-import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import { useApiEntryDelete, useApiEntryUpdate } from "../../../../services/api/entry/api-entry-queries";
+import DeleteEntryConfirmationDialog from "../../entry/delete-entry-confirmation-dialog/DeleteEntryConfirmationDialog";
 import { ENTRY_STEP } from "../../entry/new-entry-page/new-entry-hash-step-mapper";
 import UpdateEntryDialogContainer from "../../entry/update-entry-dialog-container/UpdateEntryDialogContainer";
 import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
 
 type InventoryPageEntriesPanelProps = {
   inventoryId: string;
-  entries: InfiniteData<z.infer<typeof getEntriesExtendedResponse>> | undefined;
+  entries: InfiniteData<z.infer<typeof getEntriesResponse>> | undefined;
   onCreateEntrySettled?: () => void | Promise<void>;
   onUpdateEntrySettled?: () => void | Promise<void>;
   onDeleteEntrySettled?: () => void | Promise<void>;
@@ -35,7 +35,7 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
   const queryClient = useQueryClient();
 
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
-  const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<EntryExtended | null>(null);
+  const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<Entry | null>(null);
 
   const { mutate: updateEntry } = useApiEntryUpdate({
     onSettled: onUpdateEntrySettled,
@@ -125,15 +125,9 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
         onClose={() => setUpdateEntryDialogEntry(null)}
         onSubmitUpdateEntryForm={handleSubmitUpdateExistingEntryForm}
       />
-      <DeletionConfirmationDialog
+      <DeleteEntryConfirmationDialog
         open={deleteEntryDialogEntry != null}
-        messageContent={t("deleteObservationDialogMsg", {
-          species: deleteEntryDialogEntry?.species.nomFrancais,
-          locality: deleteEntryDialogEntry?.inventory.locality.nom,
-          city: deleteEntryDialogEntry?.inventory.locality.townName,
-          department: deleteEntryDialogEntry?.inventory.locality.departmentCode,
-          date: deleteEntryDialogEntry?.inventory.date,
-        })}
+        entry={deleteEntryDialogEntry}
         onCancelAction={() => setDeleteEntryDialogEntry(null)}
         onConfirmAction={() => deleteEntryDialogEntry && handleDeleteExistingEntry(deleteEntryDialogEntry.id)}
       />
