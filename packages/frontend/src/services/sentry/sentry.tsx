@@ -24,14 +24,13 @@ export const initializeSentry = (config: AppConfig) => {
         }
       : {}),
     integrations: [
-      new Sentry.BrowserTracing({
-        routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-          useEffect,
-          useLocation,
-          useNavigationType,
-          createRoutesFromChildren,
-          matchRoutes,
-        ),
+      new Sentry.BrowserTracing(),
+      Sentry.reactRouterV6BrowserTracingIntegration({
+        useEffect,
+        useLocation,
+        useNavigationType,
+        createRoutesFromChildren,
+        matchRoutes,
       }),
       Sentry.replayIntegration(),
       extraErrorDataIntegration(),

@@ -20,6 +20,7 @@ initApp()
       </StrictMode>,
     );
   })
-  .catch(() => {
-    throw new Error("Unable to load application");
+  .catch((e) => {
+    console.error("Unable to load application");
+    throw e;
   });
