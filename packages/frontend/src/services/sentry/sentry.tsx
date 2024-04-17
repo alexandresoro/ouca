@@ -32,7 +32,7 @@ export const initializeSentry = (config: AppConfig) => {
         matchRoutes,
       }),
       Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
+      // Sentry.replayIntegration(),
       extraErrorDataIntegration(),
       httpClientIntegration(),
     ],
