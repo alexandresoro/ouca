@@ -1,4 +1,4 @@
-import { ExtraErrorData, HttpClient } from "@sentry/integrations";
+import { extraErrorDataIntegration, httpClientIntegration } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
 import type { AppConfig } from "@services/config/config";
 import type { User } from "oidc-client-ts";
@@ -33,10 +33,9 @@ export const initializeSentry = (config: AppConfig) => {
           matchRoutes,
         ),
       }),
-      // Disable replay as not supported by GlitchTip
-      // new Sentry.Replay({}),
-      new ExtraErrorData(),
-      new HttpClient(),
+      Sentry.replayIntegration(),
+      extraErrorDataIntegration(),
+      httpClientIntegration(),
     ],
     beforeSend(event) {
       // Check if it is an exception, and if so, show the report dialog
