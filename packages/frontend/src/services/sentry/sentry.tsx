@@ -24,7 +24,6 @@ export const initializeSentry = (config: AppConfig) => {
         }
       : {}),
     integrations: [
-      new Sentry.BrowserTracing(),
       Sentry.reactRouterV6BrowserTracingIntegration({
         useEffect,
         useLocation,
