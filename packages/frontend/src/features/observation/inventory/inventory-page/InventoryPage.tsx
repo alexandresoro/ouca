@@ -1,11 +1,11 @@
 import { getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
-import { getInventoryResponse } from "@ou-ca/common/api/inventory";
+import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
+import { FetchError } from "@utils/fetch-api";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "react-router-dom";
 import useApiInfiniteQuery from "../../../../hooks/api/useApiInfiniteQuery";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import InventoryPageEntriesPanel from "../inventory-page-entries-panel/InventoryPageEntriesPanel";
 import InventoryPagePanel from "../inventory-page-panel/InventoryPagePanel";
 
@@ -13,19 +13,7 @@ const InventoryPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { id } = useParams();
 
-  const {
-    data: inventory,
-    error,
-    isFetching,
-  } = useApiQuery(
-    {
-      path: `/inventories/${id!}`,
-      schema: getInventoryResponse,
-    },
-    {
-      enabled: id != null,
-    },
-  );
+  const { data: inventory, error, isLoading } = useApiInventoryQuery(id ?? null);
 
   const {
     data: entries,
@@ -57,7 +45,7 @@ const InventoryPage: FunctionComponent = () => {
     },
   });
 
-  if (isFetching && !inventory) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-56">
         <progress className="progress progress-primary w-56" />
@@ -66,7 +54,7 @@ const InventoryPage: FunctionComponent = () => {
   }
 
   if (error) {
-    if (error.status === 404) {
+    if (error instanceof FetchError && error.status === 404) {
       return <>{t("inventoryPage.inventoryNotFound")}</>;
     }
     return <>{t("inventoryPage.genericError")}</>;

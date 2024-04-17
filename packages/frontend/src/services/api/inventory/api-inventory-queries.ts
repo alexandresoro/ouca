@@ -2,11 +2,28 @@ import useApiMutation from "@hooks/api/useApiMutation";
 import {
   type UpsertInventoryInput,
   type UpsertInventoryResponse,
+  getInventoryResponse,
   upsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
+import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { UseMutationOptions } from "@tanstack/react-query";
 import type { FetchErrorType } from "@utils/fetch-api";
 import { z } from "zod";
+
+export const useApiInventoryQuery = (
+  id: string | null,
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getInventoryResponse>>,
+) => {
+  return useApiQuery(
+    id != null ? `/inventories/${id}` : null,
+    {
+      schema: getInventoryResponse,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
 
 export const useApiInventoryCreate = (
   mutationOptions?: Omit<
