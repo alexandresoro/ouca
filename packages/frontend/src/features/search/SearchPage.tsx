@@ -50,36 +50,24 @@ const SearchPage: FunctionComponent = () => {
     fetchNextPage: fetchNextPageEntries,
     hasNextPage: hasNextPageEntries,
     mutate: mutateEntries,
-  } = useApiEntriesInfiniteQuery(
-    {
-      pageSize: 10,
-      orderBy: orderByEntries,
-      sortOrder: sortOrderEntries,
-      ...searchCriteria,
-    },
-    {
-      revalidateIfStale: false,
-      revalidateAll: true,
-    },
-  );
+  } = useApiEntriesInfiniteQuery({
+    pageSize: 10,
+    orderBy: orderByEntries,
+    sortOrder: sortOrderEntries,
+    ...searchCriteria,
+  });
 
   const {
     data: speciesInfinite,
     fetchNextPage: fetchNextPageSpecies,
     hasNextPage: hasNextPageSpecies,
     mutate: mutateSpecies,
-  } = useApiSearchInfiniteSpecies(
-    {
-      pageSize: 10,
-      orderBy: orderBySpecies,
-      sortOrder: sortOrderSpecies,
-      ...searchCriteria,
-    },
-    {
-      revalidateIfStale: false,
-      revalidateAll: true,
-    },
-  );
+  } = useApiSearchInfiniteSpecies({
+    pageSize: 10,
+    orderBy: orderBySpecies,
+    sortOrder: sortOrderSpecies,
+    ...searchCriteria,
+  });
 
   const handleRequestSortEntries = (sortingColumn: EntriesOrderBy) => {
     const isAsc = orderByEntries === sortingColumn && sortOrderEntries === "asc";
