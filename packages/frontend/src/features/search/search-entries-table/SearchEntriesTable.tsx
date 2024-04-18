@@ -5,7 +5,7 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { type EntriesOrderBy, type UpsertEntryInput, getEntriesResponse } from "@ou-ca/common/api/entry";
-import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-entry-queries";
+import { useApiEntryDeleteLegacy, useApiEntryUpdateLegacy } from "@services/api/entry/api-entry-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useState } from "react";
@@ -75,7 +75,7 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     },
   );
 
-  const { mutate: updateEntry } = useApiEntryUpdate({
+  const { mutate: updateEntry } = useApiEntryUpdateLegacy({
     onSettled: async () => {
       // FIXME: this will only refetch the current filter,
       // but possibly not ones that are cached and not refetched
@@ -98,7 +98,7 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     },
   });
 
-  const { mutate } = useApiEntryDelete({
+  const { mutate } = useApiEntryDeleteLegacy({
     onSettled: async () => {
       await refetch();
     },

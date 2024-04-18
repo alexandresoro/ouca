@@ -1,11 +1,10 @@
-import { getEntriesResponse } from "@ou-ca/common/api/entry";
+import { useApiEntriesInfiniteQuery } from "@services/api/entry/api-entry-queries";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import { FetchError } from "@utils/fetch-api";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "react-router-dom";
-import useApiInfiniteQuery from "../../../../hooks/api/useApiInfiniteQuery";
 import InventoryPageEntriesPanel from "../inventory-page-entries-panel/InventoryPageEntriesPanel";
 import InventoryPagePanel from "../inventory-page-panel/InventoryPagePanel";
 
@@ -19,18 +18,15 @@ const InventoryPage: FunctionComponent = () => {
     data: entries,
     fetchNextPage,
     hasNextPage,
-    refetch,
-  } = useApiInfiniteQuery(
+    mutate,
+  } = useApiEntriesInfiniteQuery(
     {
-      path: "/entries",
-      queryParams: {
-        pageSize: 10,
-        inventoryId: inventory?.id,
-      },
-      schema: getEntriesResponse,
+      pageSize: 10,
+      inventoryId: inventory?.id,
     },
+    {},
     {
-      enabled: inventory != null,
+      paused: inventory == null,
     },
   );
 
@@ -65,7 +61,7 @@ const InventoryPage: FunctionComponent = () => {
         {inventory && (
           <InventoryPagePanel
             inventory={inventory}
-            isInventoryDeletionAllowed={entries?.pages?.[0] != null && entries.pages[0].meta.count === 0}
+            isInventoryDeletionAllowed={entries?.[0] != null && entries[0].meta.count === 0}
           />
         )}
       </div>
@@ -74,15 +70,12 @@ const InventoryPage: FunctionComponent = () => {
           <>
             <InventoryPageEntriesPanel
               inventoryId={inventory.id}
-              entries={entries}
-              onCreateEntrySettled={async () => {
-                await refetch();
-              }}
+              entries={entries ?? []}
               onUpdateEntrySettled={async () => {
-                await refetch();
+                await mutate();
               }}
               onDeleteEntrySettled={async () => {
-                await refetch();
+                await mutate();
               }}
             />
             {hasNextPage && (

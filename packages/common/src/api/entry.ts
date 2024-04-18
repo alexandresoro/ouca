@@ -42,6 +42,8 @@ export type EntriesSearchParams = Omit<z.infer<typeof getEntriesQueryParamsSchem
 
 export const getEntriesResponse = getPaginatedResponseSchema(entrySchema);
 
+export type GetEntriesResponse = z.infer<typeof getEntriesResponse>;
+
 /**
  * `PUT` `/entry/:id` Update of entry
  * `POST` `/entry` Create new entry
