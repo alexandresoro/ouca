@@ -1,7 +1,10 @@
 import { Tab } from "@headlessui/react";
-import { useApiEntriesQuery } from "@services/api/entry/api-entry-queries";
+import usePaginationParams from "@hooks/usePaginationParams";
+import type { EntriesOrderBy } from "@ou-ca/common/api/entry";
+import type { SpeciesOrderBy } from "@ou-ca/common/api/species";
+import { useApiEntriesInfiniteQuery } from "@services/api/entry/api-entry-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiSearchSpecies } from "@services/api/search/api-search-queries";
+import { useApiSearchInfiniteSpecies } from "@services/api/search/api-search-queries";
 import { Export } from "@styled-icons/boxicons-regular";
 import { useAtomValue } from "jotai";
 import { Fragment, type FunctionComponent, useState } from "react";
@@ -22,29 +25,73 @@ const SearchPage: FunctionComponent = () => {
 
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data: dataEntries, mutate: mutateEntriesCount } = useApiEntriesQuery(
+  const {
+    orderBy: orderByEntries,
+    setOrderBy: setOrderByEntries,
+    sortOrder: sortOrderEntries,
+    setSortOrder: setSortOrderEntries,
+  } = usePaginationParams<EntriesOrderBy>({
+    orderBy: "date",
+    sortOrder: "desc",
+  });
+
+  const {
+    orderBy: orderBySpecies,
+    setOrderBy: setOrderBySpecies,
+    sortOrder: sortOrderSpecies,
+    setSortOrder: setSortOrderSpecies,
+  } = usePaginationParams<SpeciesOrderBy>({
+    orderBy: "nbDonnees",
+    sortOrder: "desc",
+  });
+
+  const {
+    data: entriesInfinite,
+    fetchNextPage: fetchNextPageEntries,
+    hasNextPage: hasNextPageEntries,
+    mutate: mutateEntries,
+  } = useApiEntriesInfiniteQuery(
     {
-      pageNumber: 1,
-      pageSize: 1,
+      pageSize: 10,
+      orderBy: orderByEntries,
+      sortOrder: sortOrderEntries,
       ...searchCriteria,
     },
-    {},
     {
-      paused: selectedTab !== 0,
+      revalidateIfStale: false,
+      revalidateAll: true,
     },
   );
 
-  const { data: dataSpecies, mutate: mutateSpeciesCount } = useApiSearchSpecies(
+  const {
+    data: speciesInfinite,
+    fetchNextPage: fetchNextPageSpecies,
+    hasNextPage: hasNextPageSpecies,
+    mutate: mutateSpecies,
+  } = useApiSearchInfiniteSpecies(
     {
-      pageNumber: 1,
-      pageSize: 1,
+      pageSize: 10,
+      orderBy: orderBySpecies,
+      sortOrder: sortOrderSpecies,
       ...searchCriteria,
     },
-    {},
     {
-      paused: selectedTab !== 1,
+      revalidateIfStale: false,
+      revalidateAll: true,
     },
   );
+
+  const handleRequestSortEntries = (sortingColumn: EntriesOrderBy) => {
+    const isAsc = orderByEntries === sortingColumn && sortOrderEntries === "asc";
+    setSortOrderEntries(isAsc ? "desc" : "asc");
+    setOrderByEntries(sortingColumn);
+  };
+
+  const handleRequestSortSpecies = (sortingColumn: SpeciesOrderBy) => {
+    const isAsc = orderBySpecies === sortingColumn && sortOrderSpecies === "asc";
+    setSortOrderSpecies(isAsc ? "desc" : "asc");
+    setOrderBySpecies(sortingColumn);
+  };
 
   const downloadExport = useApiDownloadExport({
     filename: t("exportFilename.entries"),
@@ -52,9 +99,8 @@ const SearchPage: FunctionComponent = () => {
     queryParams: searchCriteria,
   });
 
-  const handleEntryDeleted = async () => {
-    await mutateEntriesCount();
-    await mutateSpeciesCount();
+  const handleEntryChange = async () => {
+    await Promise.all([mutateEntries(), mutateSpecies()]);
   };
 
   const handleExportRequested = async () => {
@@ -99,12 +145,14 @@ const SearchPage: FunctionComponent = () => {
               </Tab>
             </Tab.List>
             <div className="grow justify-end items-center ml-12 text-sm font-bold uppercase text-base-content">
-              {SELECTED_TAB_MAPPING[selectedTab] === "entries" && dataEntries?.meta != null && (
+              {SELECTED_TAB_MAPPING[selectedTab] === "entries" && entriesInfinite?.[0]?.meta != null && (
                 <div className="flex justify-between items-center">
                   <button
                     type="button"
                     // TODO: Test what happens w/ big data sets before enabling this
-                    disabled={dataEntries.meta.count === 0 || dataEntries.meta.count > 10000 || isExporting}
+                    disabled={
+                      entriesInfinite[0].meta.count === 0 || entriesInfinite[0].meta.count > 10000 || isExporting
+                    }
                     className="btn btn-sm btn-outline btn-secondary uppercase"
                     onClick={() => handleExportRequested()}
                   >
@@ -112,20 +160,38 @@ const SearchPage: FunctionComponent = () => {
                     {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
                     <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>
                   </button>
-                  <span>{t("search.entriesCount", { count: dataEntries.meta.count })}</span>
+                  <span>{t("search.entriesCount", { count: entriesInfinite[0].meta.count })}</span>
                 </div>
               )}
-              {SELECTED_TAB_MAPPING[selectedTab] === "species" && dataSpecies?.meta != null && (
-                <span className="flex justify-end">{t("search.speciesCount", { count: dataSpecies.meta.count })}</span>
+              {SELECTED_TAB_MAPPING[selectedTab] === "species" && speciesInfinite?.[0]?.meta != null && (
+                <span className="flex justify-end">
+                  {t("search.speciesCount", { count: speciesInfinite[0].meta.count })}
+                </span>
               )}
             </div>
           </div>
           <Tab.Panels>
             <Tab.Panel>
-              <SearchEntriesTable onEntryDeleted={() => handleEntryDeleted()} />
+              <SearchEntriesTable
+                entries={entriesInfinite?.flatMap((page) => page.data) ?? []}
+                handleRequestSort={handleRequestSortEntries}
+                orderBy={orderByEntries}
+                sortOrder={sortOrderEntries}
+                onEntryUpdated={() => handleEntryChange()}
+                onEntryDeleted={() => handleEntryChange()}
+                hasNextPage={hasNextPageEntries}
+                onMoreRequested={fetchNextPageEntries}
+              />
             </Tab.Panel>
             <Tab.Panel>
-              <SearchSpeciesTable />
+              <SearchSpeciesTable
+                species={speciesInfinite?.flatMap((page) => page.data) ?? []}
+                handleRequestSort={handleRequestSortSpecies}
+                orderBy={orderBySpecies}
+                sortOrder={sortOrderSpecies}
+                hasNextPage={hasNextPageSpecies}
+                onMoreRequested={fetchNextPageSpecies}
+              />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

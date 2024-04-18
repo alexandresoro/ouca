@@ -1,19 +1,15 @@
 import InfiniteTable from "@components/base/table/InfiniteTable";
 import TableSortLabel from "@components/base/table/TableSortLabel";
-import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import { useNotifications } from "@hooks/useNotifications";
-import usePaginationParams from "@hooks/usePaginationParams";
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
-import { type EntriesOrderBy, type UpsertEntryInput, getEntriesResponse } from "@ou-ca/common/api/entry";
-import { useApiEntryDeleteLegacy, useApiEntryUpdateLegacy } from "@services/api/entry/api-entry-queries";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { Fragment, type FunctionComponent, useState } from "react";
+import type { EntriesOrderBy, UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-entry-queries";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DeleteEntryConfirmationDialog from "../../observation/entry/delete-entry-confirmation-dialog/DeleteEntryConfirmationDialog";
 import EntryDetailsDialogContainer from "../../observation/entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import UpdateEntryDialogContainer from "../../observation/entry/update-entry-dialog-container/UpdateEntryDialogContainer";
-import { searchEntriesCriteriaAtom } from "../searchEntriesCriteriaAtom";
 import SearchEntriesTableRow from "./SearchEntriesTableRow";
 
 const COLUMNS = [
@@ -36,19 +32,27 @@ const COLUMNS = [
 ] as const;
 
 type SearchEntriesTableProps = {
+  entries: Entry[];
   onEntryUpdated?: (entryId: string) => void;
   onEntryDeleted?: () => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: EntriesOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: EntriesOrderBy) => void;
 };
 
-const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntryUpdated, onEntryDeleted }) => {
+const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({
+  entries,
+  onEntryUpdated,
+  onEntryDeleted,
+  handleRequestSort,
+  hasNextPage,
+  onMoreRequested,
+  orderBy,
+  sortOrder,
+}) => {
   const { t } = useTranslation();
-
-  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EntriesOrderBy>({
-    orderBy: "date",
-    sortOrder: "desc",
-  });
-
-  const queryClient = useQueryClient();
 
   const [deleteDialog, setDeleteDialog] = useState<Entry | null>(null);
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<Entry | undefined>();
@@ -56,33 +60,8 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
 
   const { displayNotification } = useNotifications();
 
-  const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
-
-  const { data, refetch, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
-    {
-      path: "/entries",
-      queryParams: {
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        ...searchCriteria,
-      },
-      schema: getEntriesResponse,
-    },
-    {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-    },
-  );
-
-  const { mutate: updateEntry } = useApiEntryUpdateLegacy({
-    onSettled: async () => {
-      // FIXME: this will only refetch the current filter,
-      // but possibly not ones that are cached and not refetched
-      await refetch();
-    },
+  const { trigger: triggerUpdateEntry } = useApiEntryUpdate(updateEntryDialogEntry?.id ?? null, {
     onSuccess: (updatedEntry) => {
-      queryClient.setQueryData(["API", `/entries/${updatedEntry.id}`], updatedEntry);
       setUpdateEntryDialogEntry(null);
       displayNotification({
         type: "success",
@@ -98,11 +77,9 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     },
   });
 
-  const { mutate } = useApiEntryDeleteLegacy({
-    onSettled: async () => {
-      await refetch();
-    },
+  const { trigger: triggerDeleteEntry } = useApiEntryDelete(deleteDialog?.id ?? null, {
     onSuccess: () => {
+      setDeleteDialog(null);
       displayNotification({
         type: "success",
         message: t("deleteConfirmationMessage"),
@@ -117,9 +94,8 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     },
   });
 
-  const handleSubmitUpdateExistingEntryForm = (entryFormData: UpsertEntryInput, entryId: string) => {
-    updateEntry({
-      entryId,
+  const handleSubmitUpdateExistingEntryForm = async (entryFormData: UpsertEntryInput) => {
+    await triggerUpdateEntry({
       body: entryFormData,
     });
   };
@@ -128,19 +104,6 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
     if (donnee) {
       setDeleteDialog(donnee);
     }
-  };
-
-  const handleDeleteDonneeConfirmation = (donnee: Entry | null) => {
-    if (donnee) {
-      setDeleteDialog(null);
-      mutate({ entryId: donnee.id });
-    }
-  };
-
-  const handleRequestSort = (sortingColumn: EntriesOrderBy) => {
-    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
-    setSortOrder(isAsc ? "desc" : "asc");
-    setOrderBy(sortingColumn);
   };
 
   return (
@@ -164,32 +127,26 @@ const SearchEntriesTable: FunctionComponent<SearchEntriesTableProps> = ({ onEntr
             </th>
           </>
         }
-        tableRows={data?.pages.map((page) => {
+        tableRows={entries.map((entry) => {
           return (
-            <Fragment key={page.meta.pageNumber}>
-              {page.data.map((donnee) => {
-                return (
-                  <SearchEntriesTableRow
-                    key={donnee.id}
-                    donnee={donnee}
-                    onViewAction={() => setViewEntryDialogEntry(donnee)}
-                    onEditAction={() => setUpdateEntryDialogEntry(donnee)}
-                    onDeleteAction={() => handleDeleteDonnee(donnee)}
-                  />
-                );
-              })}
-            </Fragment>
+            <SearchEntriesTableRow
+              key={entry.id}
+              donnee={entry}
+              onViewAction={() => setViewEntryDialogEntry(entry)}
+              onEditAction={() => setUpdateEntryDialogEntry(entry)}
+              onDeleteAction={() => handleDeleteDonnee(entry)}
+            />
           );
         })}
         enableScroll={hasNextPage}
-        onMoreRequested={fetchNextPage}
+        onMoreRequested={onMoreRequested}
       />
 
       <DeleteEntryConfirmationDialog
         open={!!deleteDialog}
         entry={deleteDialog}
         onCancelAction={() => setDeleteDialog(null)}
-        onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}
+        onConfirmAction={() => triggerDeleteEntry()}
       />
 
       <EntryDetailsDialogContainer

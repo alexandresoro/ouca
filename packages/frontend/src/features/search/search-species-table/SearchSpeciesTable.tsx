@@ -1,12 +1,10 @@
-import usePaginationParams from "@hooks/usePaginationParams";
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { Species } from "@ou-ca/common/api/entities/species";
 import type { SpeciesOrderBy } from "@ou-ca/common/api/species";
-import { useApiSearchInfiniteSpecies } from "@services/api/search/api-search-queries";
-import { useAtomValue } from "jotai";
-import { Fragment, type FunctionComponent, useEffect } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
-import { searchEntriesCriteriaAtom } from "../searchEntriesCriteriaAtom";
 import SearchSpeciesTableRow from "./SearchSpeciesTableRow";
 
 const COLUMNS = [
@@ -28,33 +26,24 @@ const COLUMNS = [
   },
 ] as const;
 
-const SearchSpeciesTable: FunctionComponent = () => {
+type SearchSpeciesTableProps = {
+  species: Species[];
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: SpeciesOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: SpeciesOrderBy) => void;
+};
+
+const SearchSpeciesTable: FunctionComponent<SearchSpeciesTableProps> = ({
+  species,
+  handleRequestSort,
+  hasNextPage,
+  onMoreRequested,
+  orderBy,
+  sortOrder,
+}) => {
   const { t } = useTranslation();
-
-  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();
-
-  useEffect(() => {
-    setOrderBy("nbDonnees");
-    setSortOrder("desc");
-  }, [setOrderBy, setSortOrder]);
-
-  const searchCriteria = useAtomValue(searchEntriesCriteriaAtom);
-
-  // TODO: this is not updated properly when modifying an entry
-  // it reuses the cache, so the order by entries count is not updated
-  // (count is OK though)
-  const { data, fetchNextPage, hasNextPage } = useApiSearchInfiniteSpecies({
-    pageSize: 10,
-    orderBy,
-    sortOrder,
-    ...searchCriteria,
-  });
-
-  const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
-    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
-    setSortOrder(isAsc ? "desc" : "asc");
-    setOrderBy(sortingColumn);
-  };
 
   return (
     <InfiniteTable
@@ -82,17 +71,11 @@ const SearchSpeciesTable: FunctionComponent = () => {
           </th>
         </>
       }
-      tableRows={data?.map((page) => {
-        return (
-          <Fragment key={page.meta.pageNumber}>
-            {page.data.map((espece) => {
-              return <SearchSpeciesTableRow key={espece.id} species={espece} />;
-            })}
-          </Fragment>
-        );
+      tableRows={species?.map((oneSpecies) => {
+        return <SearchSpeciesTableRow key={oneSpecies.id} species={oneSpecies} />;
       })}
       enableScroll={hasNextPage}
-      onMoreRequested={fetchNextPage}
+      onMoreRequested={onMoreRequested}
     />
   );
 };

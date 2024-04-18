@@ -66,29 +66,6 @@ export const useApiEntryCreate = (
     mutationOptions,
   );
 
-export const useApiEntryUpdateLegacy = (
-  mutationOptions?: Omit<
-    UseMutationOptions<UpsertEntryResponse, FetchErrorType, { path?: string; body: UpsertEntryInput }>,
-    "mutationFn"
-  >,
-) => {
-  const { mutate, ...restUseMutation } = useApiMutationTQ(
-    {
-      method: "PUT",
-      schema: upsertEntryResponse,
-    },
-    { ...mutationOptions },
-  );
-
-  const mutateApi = ({ entryId, body }: { entryId: string; body: UpsertEntryInput }) =>
-    mutate({
-      path: `/entries/${entryId}`,
-      body,
-    });
-
-  return { ...restUseMutation, mutate: mutateApi };
-};
-
 export const useApiEntryUpdate = (
   id: string | null,
   swrOptions?: SWRMutationConfiguration<z.infer<typeof upsertEntryResponse>, unknown>,
@@ -105,24 +82,6 @@ export const useApiEntryUpdate = (
       ...swrOptions,
     },
   );
-};
-
-export const useApiEntryDeleteLegacy = (
-  mutationOptions?: Omit<UseMutationOptions<unknown, FetchErrorType, { path?: string }>, "mutationFn">,
-) => {
-  const { mutate, ...restUseMutation } = useApiMutationTQ(
-    {
-      method: "DELETE",
-    },
-    { ...mutationOptions },
-  );
-
-  const mutateApi = ({ entryId }: { entryId: string }) =>
-    mutate({
-      path: `/entries/${entryId}`,
-    });
-
-  return { ...restUseMutation, mutate: mutateApi };
 };
 
 export const useApiEntryDelete = (id: string | null, swrOptions?: SWRMutationConfiguration<unknown, unknown>) => {
