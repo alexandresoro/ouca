@@ -75,8 +75,8 @@ importers:
         specifier: 4.5.1
         version: 4.5.1
       ioredis:
-        specifier: 5.4.0
-        version: 5.4.0
+        specifier: 5.4.1
+        version: 5.4.1
       kysely:
         specifier: 0.27.3
         version: 0.27.3
@@ -2957,7 +2957,7 @@ packages:
     resolution: {integrity: sha512-t7FhF2mCGgmjZ1rHuBYIcLwzONm4QFGrO1+9mF7hpjWtXalGfy+nGciVcb69L7aPcdJMR2XTe6bNMWHGbKy8mQ==}
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.4.0
+      ioredis: 5.4.1
       msgpackr: 1.10.1
       node-abort-controller: 3.1.1
       semver: 7.6.0
@@ -4127,8 +4127,8 @@ packages:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
     dev: false
 
-  /ioredis@5.4.0:
-    resolution: {integrity: sha512-lGiiZyWFOskPu3pH4P8+uicHOZHpzYpgfKZFre68wLK6059zBo+KDTQpwxAVibBajKqpcrRJ5k+jl/uNHcCo3A==}
+  /ioredis@5.4.1:
+    resolution: {integrity: sha512-2YZsvl7jopIa1gaePkeMtd9rAcSjOOjPtpcLlOeusyO+XH2SK5ZcT+UCrElPP+WVIInh2TzeI4XW9ENaSLVVHA==}
     engines: {node: '>=12.22.0'}
     dependencies:
       '@ioredis/commands': 1.2.0
