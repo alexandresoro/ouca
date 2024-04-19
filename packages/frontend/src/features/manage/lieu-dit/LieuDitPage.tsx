@@ -5,10 +5,12 @@ import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesOrderBy, type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
 import { getTownResponse } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiLocalitiesInfiniteQuery } from "@services/api/locality/api-locality-queries";
 import { useApiFetch } from "@services/api/useApiFetch";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -42,6 +44,13 @@ const LieuDitPage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiLocalitiesInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: LocalitiesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

@@ -5,9 +5,11 @@ import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entities
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { type UpsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiSexesInfiniteQuery } from "@services/api/sex/api-sex-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -40,6 +42,13 @@ const SexePage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiSexesInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

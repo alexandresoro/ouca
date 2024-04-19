@@ -7,10 +7,12 @@ import {
   type UpsertEnvironmentInput,
   upsertEnvironmentResponse,
 } from "@ou-ca/common/api/environment";
+import { useApiEnvironmentsInfiniteQuery } from "@services/api/environment/api-environment-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -44,6 +46,13 @@ const MilieuPage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiEnvironmentsInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: EnvironmentsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

@@ -5,9 +5,11 @@ import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entities
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiWeathersInfiniteQuery } from "@services/api/weather/api-weather-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -40,6 +42,13 @@ const MeteoPage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiWeathersInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

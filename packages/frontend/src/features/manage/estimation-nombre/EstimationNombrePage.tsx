@@ -8,9 +8,11 @@ import {
   upsertNumberEstimateResponse,
 } from "@ou-ca/common/api/number-estimate";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiNumberEstimatesInfiniteQuery } from "@services/api/number-estimate/api-number-estimate-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -44,6 +46,13 @@ const EstimationNombrePage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiNumberEstimatesInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: NumberEstimatesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

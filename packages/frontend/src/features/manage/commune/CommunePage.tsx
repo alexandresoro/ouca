@@ -4,9 +4,11 @@ import { useUser } from "@hooks/useUser";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import { type TownsOrderBy, type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiTownsInfiniteQuery } from "@services/api/town/api-town-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -40,6 +42,13 @@ const CommunePage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiTownsInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: TownsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

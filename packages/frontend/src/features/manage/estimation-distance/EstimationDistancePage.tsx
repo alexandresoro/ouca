@@ -4,10 +4,12 @@ import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
+import { useApiDistanceEstimatesInfiniteQuery } from "@services/api/distance-estimate/api-distance-estimate-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -40,6 +42,13 @@ const EstimationDistancePage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiDistanceEstimatesInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

@@ -4,9 +4,11 @@ import { useUser } from "@hooks/useUser";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import { type SpeciesOrderBy, type UpsertSpeciesInput, upsertSpeciesResponse } from "@ou-ca/common/api/species";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
+import { useApiSpeciesInfiniteQuery } from "@services/api/species/api-species-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -40,6 +42,13 @@ const EspecePage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiSpeciesInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";

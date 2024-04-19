@@ -7,10 +7,12 @@ import {
   upsertDepartmentResponse,
 } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
+import { useApiDepartmentsInfiniteQuery } from "@services/api/department/api-department-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
@@ -44,6 +46,13 @@ const DepartementPage: FunctionComponent = () => {
     orderBy,
     sortOrder,
   };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiDepartmentsInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: DepartmentsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
