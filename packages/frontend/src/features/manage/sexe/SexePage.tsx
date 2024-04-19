@@ -200,6 +200,11 @@ const SexePage: FunctionComponent = () => {
           sexes={data?.flatMap((page) => page.data)}
           onClickUpdateSex={handleUpdateClick}
           onClickDeleteSex={setSexToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

@@ -175,13 +175,13 @@ const ObservateurPage: FunctionComponent = () => {
         />
         <ObservateurTable
           observers={data?.flatMap((page) => page.data)}
-          handleRequestSort={handleRequestSort}
           onClickUpdateObserver={handleUpdateClick}
           onClickDeleteObserver={setObserverToDelete}
           hasNextPage={hasNextPage}
           onMoreRequested={fetchNextPage}
           orderBy={orderBy}
           sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

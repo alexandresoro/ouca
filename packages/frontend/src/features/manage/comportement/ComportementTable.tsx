@@ -1,4 +1,5 @@
 import { type BehaviorsOrderBy, getBehaviorsResponse } from "@ou-ca/common/api/behavior";
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,6 +14,11 @@ type ComportementTableProps = {
   behaviors: Behavior[] | undefined;
   onClickUpdateBehavior: (behavior: Behavior) => void;
   onClickDeleteBehavior: (behavior: Behavior) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: BehaviorsOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: BehaviorsOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -34,6 +40,7 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
   behaviors,
   onClickUpdateBehavior,
   onClickDeleteBehavior,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

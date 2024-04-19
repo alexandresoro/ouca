@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import { type SpeciesOrderBy, getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,6 +14,11 @@ type EspeceTableProps = {
   species: Species[] | undefined;
   onClickUpdateSpecies: (species: Species) => void;
   onClickDeleteSpecies: (species: Species) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: SpeciesOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: SpeciesOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -34,7 +40,12 @@ const COLUMNS = [
   },
 ] as const;
 
-const EspeceTable: FunctionComponent<EspeceTableProps> = ({ species, onClickUpdateSpecies, onClickDeleteSpecies }) => {
+const EspeceTable: FunctionComponent<EspeceTableProps> = ({
+  species,
+  onClickUpdateSpecies,
+  onClickDeleteSpecies,
+  onMoreRequested,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({

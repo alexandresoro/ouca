@@ -200,6 +200,11 @@ const MeteoPage: FunctionComponent = () => {
           weathers={data?.flatMap((page) => page.data)}
           onClickUpdateWeather={handleUpdateClick}
           onClickDeleteWeather={setWeatherToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import { type NumberEstimatesOrderBy, getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,6 +14,11 @@ type EstimationNombreTableProps = {
   numberEstimates: NumberEstimate[] | undefined;
   onClickUpdateNumberEstimate: (numberEstimate: NumberEstimate) => void;
   onClickDeleteNumberEstimate: (numberEstimate: NumberEstimate) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: NumberEstimatesOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: NumberEstimatesOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -30,6 +36,7 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
   numberEstimates,
   onClickUpdateNumberEstimate,
   onClickDeleteNumberEstimate,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

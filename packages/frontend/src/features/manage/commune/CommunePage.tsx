@@ -197,6 +197,11 @@ const CommunePage: FunctionComponent = () => {
           towns={data?.flatMap((page) => page.data)}
           onClickUpdateTown={handleUpdateClick}
           onClickDeleteTown={setTownToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

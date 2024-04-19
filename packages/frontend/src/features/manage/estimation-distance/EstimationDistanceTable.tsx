@@ -1,4 +1,4 @@
-import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { Fragment, type FunctionComponent } from "react";
@@ -14,6 +14,11 @@ type EstimationDistanceTableProps = {
   distanceEstimates: DistanceEstimate[] | undefined;
   onClickUpdateDistanceEstimate: (distanceEstimate: DistanceEstimate) => void;
   onClickDeleteDistanceEstimate: (distanceEstimate: DistanceEstimate) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: EntitiesWithLabelOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: EntitiesWithLabelOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -27,6 +32,7 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
   distanceEstimates,
   onClickUpdateDistanceEstimate,
   onClickDeleteDistanceEstimate,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

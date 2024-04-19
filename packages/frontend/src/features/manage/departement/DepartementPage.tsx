@@ -201,6 +201,11 @@ const DepartementPage: FunctionComponent = () => {
           departments={data?.flatMap((page) => page.data)}
           onClickUpdateDepartment={handleUpdateClick}
           onClickDeleteDepartment={setDepartmentToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

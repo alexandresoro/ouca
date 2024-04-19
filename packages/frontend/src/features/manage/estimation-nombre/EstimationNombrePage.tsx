@@ -205,6 +205,11 @@ const EstimationNombrePage: FunctionComponent = () => {
           numberEstimates={data?.flatMap((page) => page.data)}
           onClickUpdateNumberEstimate={handleUpdateClick}
           onClickDeleteNumberEstimate={setNumberEstimateToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

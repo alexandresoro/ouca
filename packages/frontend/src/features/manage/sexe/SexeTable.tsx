@@ -1,4 +1,4 @@
-import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
 import { Fragment, type FunctionComponent } from "react";
@@ -14,6 +14,11 @@ type SexeTableProps = {
   sexes: Sex[] | undefined;
   onClickUpdateSex: (sex: Sex) => void;
   onClickDeleteSex: (sex: Sex) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: EntitiesWithLabelOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: EntitiesWithLabelOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -23,7 +28,12 @@ const COLUMNS = [
   },
 ] as const;
 
-const SexeTable: FunctionComponent<SexeTableProps> = ({ sexes, onClickUpdateSex, onClickDeleteSex }) => {
+const SexeTable: FunctionComponent<SexeTableProps> = ({
+  sexes,
+  onClickUpdateSex,
+  onClickDeleteSex,
+  onMoreRequested,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

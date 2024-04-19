@@ -204,6 +204,11 @@ const MilieuPage: FunctionComponent = () => {
           environments={data?.flatMap((page) => page.data)}
           onClickUpdateEnvironment={handleUpdateClick}
           onClickDeleteEnvironment={setEnvironmentToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

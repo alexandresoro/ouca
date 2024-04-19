@@ -197,6 +197,11 @@ const ComportementPage: FunctionComponent = () => {
           behaviors={data?.flatMap((page) => page.data)}
           onClickUpdateBehavior={handleUpdateClick}
           onClickDeleteBehavior={setBehaviorToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { type DepartmentsOrderBy, getDepartmentsResponse } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,6 +14,11 @@ type DepartementTableProps = {
   departments: Department[] | undefined;
   onClickUpdateDepartment: (department: Department) => void;
   onClickDeleteDepartment: (department: Department) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: DepartmentsOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: DepartmentsOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -26,6 +32,7 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({
   departments,
   onClickUpdateDepartment,
   onClickDeleteDepartment,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

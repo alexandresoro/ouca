@@ -57,7 +57,7 @@ const ClassePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
-  const handleUpsertSpeciessError = (e: unknown) => {
+  const handleUpsertSpeciesError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
         type: "error",
@@ -197,6 +197,11 @@ const ClassePage: FunctionComponent = () => {
           speciesClasses={data?.flatMap((page) => page.data)}
           onClickUpdateSpeciesClass={handleUpdateClick}
           onClickDeleteSpeciesClass={setSpeciesClassToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

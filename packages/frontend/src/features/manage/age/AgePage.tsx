@@ -197,6 +197,11 @@ const AgePage: FunctionComponent = () => {
           ages={data?.flatMap((page) => page.data)}
           onClickUpdateAge={handleUpdateClick}
           onClickDeleteAge={setAgeToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

@@ -200,6 +200,11 @@ const EstimationDistancePage: FunctionComponent = () => {
           distanceEstimates={data?.flatMap((page) => page.data)}
           onClickUpdateDistanceEstimate={handleUpdateClick}
           onClickDeleteDistanceEstimate={setDistanceEstimateToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

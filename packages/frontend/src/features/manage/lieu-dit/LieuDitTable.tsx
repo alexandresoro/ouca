@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { type LocalitiesOrderBy, getLocalitiesResponse } from "@ou-ca/common/api/locality";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,6 +14,11 @@ type LieuDitTableProps = {
   localities: Locality[] | undefined;
   onClickUpdateLocality: (locality: Locality) => void;
   onClickDeleteLocality: (locality: Locality) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: LocalitiesOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: LocalitiesOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -50,6 +56,7 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({
   localities,
   onClickUpdateLocality,
   onClickDeleteLocality,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

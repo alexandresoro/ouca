@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { type EnvironmentsOrderBy, getEnvironmentsResponse } from "@ou-ca/common/api/environment";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,6 +14,11 @@ type MilieuTableProps = {
   environments: Environment[] | undefined;
   onClickUpdateEnvironment: (environment: Environment) => void;
   onClickDeleteEnvironment: (environment: Environment) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: EnvironmentsOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: EnvironmentsOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -30,6 +36,7 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({
   environments,
   onClickUpdateEnvironment,
   onClickDeleteEnvironment,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import { type TownsOrderBy, getTownsResponse } from "@ou-ca/common/api/town";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,9 +14,19 @@ type CommuneTableProps = {
   towns: Town[] | undefined;
   onClickUpdateTown: (town: Town) => void;
   onClickDeleteTown: (town: Town) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: TownsOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: TownsOrderBy) => void;
 };
 
-const CommuneTable: FunctionComponent<CommuneTableProps> = ({ towns, onClickUpdateTown, onClickDeleteTown }) => {
+const CommuneTable: FunctionComponent<CommuneTableProps> = ({
+  towns,
+  onClickUpdateTown,
+  onClickDeleteTown,
+  onMoreRequested,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>({

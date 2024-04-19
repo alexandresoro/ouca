@@ -216,6 +216,11 @@ const LieuDitPage: FunctionComponent = () => {
           localities={data?.flatMap((page) => page.data)}
           onClickUpdateLocality={handleUpdateClick}
           onClickDeleteLocality={setLocalityToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

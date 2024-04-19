@@ -1,5 +1,5 @@
 import { getAgesResponse } from "@ou-ca/common/api/age";
-import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age } from "@ou-ca/common/api/entities/age";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,11 @@ type AgeTableProps = {
   ages: Age[] | undefined;
   onClickUpdateAge: (age: Age) => void;
   onClickDeleteAge: (age: Age) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: EntitiesWithLabelOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: EntitiesWithLabelOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -23,7 +28,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const AgeTable: FunctionComponent<AgeTableProps> = ({ ages, onClickUpdateAge, onClickDeleteAge }) => {
+const AgeTable: FunctionComponent<AgeTableProps> = ({ ages, onClickUpdateAge, onClickDeleteAge, onMoreRequested }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

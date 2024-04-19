@@ -26,13 +26,13 @@ const COLUMNS = [
 
 const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
   observers,
-  handleRequestSort,
   onClickUpdateObserver,
   onClickDeleteObserver,
   hasNextPage,
   onMoreRequested,
   orderBy,
   sortOrder,
+  handleRequestSort,
 }) => {
   const { t } = useTranslation();
 

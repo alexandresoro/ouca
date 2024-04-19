@@ -198,6 +198,11 @@ const EspecePage: FunctionComponent = () => {
           species={data?.flatMap((page) => page.data)}
           onClickUpdateSpecies={handleUpdateClick}
           onClickDeleteSpecies={setSpeciesToDelete}
+          hasNextPage={hasNextPage}
+          onMoreRequested={fetchNextPage}
+          orderBy={orderBy}
+          sortOrder={sortOrder}
+          handleRequestSort={handleRequestSort}
         />
       </ContentContainerLayout>
       <EntityUpsertDialog

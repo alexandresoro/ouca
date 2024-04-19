@@ -1,3 +1,4 @@
+import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { type ClassesOrderBy, getClassesResponse } from "@ou-ca/common/api/species-class";
 import { Fragment, type FunctionComponent } from "react";
@@ -13,6 +14,11 @@ type ClasseTableProps = {
   speciesClasses: SpeciesClass[] | undefined;
   onClickUpdateSpeciesClass: (speciesClass: SpeciesClass) => void;
   onClickDeleteSpeciesClass: (speciesClass: SpeciesClass) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: ClassesOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: ClassesOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -26,6 +32,7 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({
   speciesClasses,
   onClickUpdateSpeciesClass,
   onClickDeleteSpeciesClass,
+  onMoreRequested,
 }) => {
   const { t } = useTranslation();
 

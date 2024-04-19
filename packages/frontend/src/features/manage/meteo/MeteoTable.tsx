@@ -1,4 +1,4 @@
-import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { getWeathersResponse } from "@ou-ca/common/api/weather";
 import { Cloud, Wind } from "@styled-icons/boxicons-regular";
@@ -15,6 +15,11 @@ type MeteoTableProps = {
   weathers: Weather[] | undefined;
   onClickUpdateWeather: (weather: Weather) => void;
   onClickDeleteWeather: (weather: Weather) => void;
+  hasNextPage?: boolean;
+  onMoreRequested?: () => void;
+  orderBy: EntitiesWithLabelOrderBy | undefined;
+  sortOrder: SortOrder;
+  handleRequestSort: (sortingColumn: EntitiesWithLabelOrderBy) => void;
 };
 
 const COLUMNS = [
@@ -24,7 +29,12 @@ const COLUMNS = [
   },
 ] as const;
 
-const MeteoTable: FunctionComponent<MeteoTableProps> = ({ weathers, onClickUpdateWeather, onClickDeleteWeather }) => {
+const MeteoTable: FunctionComponent<MeteoTableProps> = ({
+  weathers,
+  onClickUpdateWeather,
+  onClickDeleteWeather,
+  onMoreRequested,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
