@@ -42,10 +42,6 @@ updates:
         update-types:
           - "major"
           - "minor"
-      react-query:
-        patterns:
-          - "@tanstack/react-query"
-          - "@tanstack/react-query-devtools"
       sentry:
         patterns:
           - "@sentry/*"

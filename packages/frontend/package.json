@@ -66,7 +66,6 @@
     "@biomejs/biome": "1.7.0",
     "@ou-ca/eslint-config": "workspace:*",
     "@sentry/vite-plugin": "2.16.1",
-    "@tanstack/react-query-devtools": "4.29.25",
     "@testing-library/react": "15.0.2",
     "@testing-library/user-event": "14.5.2",
     "@types/geojson": "7946.0.14",
