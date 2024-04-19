@@ -11,7 +11,7 @@ export const initSentry = () => {
     dsn: sentryConfig.dsn,
     environment: sentryConfig.environment,
     release: sentryConfig.release,
-    tracesSampleRate: 1.0,
+    tracesSampleRate: sentryConfig.tracesSampleRate,
     integrations: [new Sentry.Integrations.Postgres()],
   });
 };

@@ -60,6 +60,7 @@ The following options are available as environment variables:
 | `OIDC_CLIENT_ID`* | `string` | none | Client ID to connect to OIDC. |
 | `OIDC_CLIENT_SECRET`* | `string` | none | Client secret to connect to OIDC. The app implements the Client Credentials flow with Basic auth.|
 | `SENTRY_DSN` | `string` | none | A [Sentry](https://sentry.io/) DSN used for error reporting |
+| `SENTRY_TRACES_SAMPLE_RATE` | `number` | `1.0` | Sentry traces sample rate ratio |
 
 Values with `*` are required and must be provided.
 

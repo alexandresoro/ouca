@@ -8,6 +8,8 @@ const envSentrySchema = z.object({
   SENTRY_ENV: z.string().optional(),
   // biome-ignore lint/style/useNamingConvention: <explanation>
   SENTRY_RELEASE: z.string().trim().min(1).optional(),
+  // biome-ignore lint/style/useNamingConvention: <explanation>
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().default(1.0),
 });
 
 export const getSentryConfig = () => {
@@ -21,6 +23,7 @@ export const getSentryConfig = () => {
     dsn: env.SENTRY_DSN,
     environment: env.SENTRY_ENV,
     release: env.SENTRY_RELEASE,
+    tracesSampleRate: env.SENTRY_TRACES_SAMPLE_RATE,
   };
 };
 
