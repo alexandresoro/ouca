@@ -1,12 +1,12 @@
 import { useNotifications } from "@hooks/useNotifications";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { useApiEntryCreate } from "@services/api/entry/api-entry-queries";
+import { useApiInventoryCreate } from "@services/api/inventory/api-inventory-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useApiEntryCreate } from "../../../../services/api/entry/api-entry-queries";
-import { useApiInventoryCreate } from "../../../../services/api/inventory/api-inventory-queries";
 import { ENTRY_STEP, INVENTORY_STEP, type NewEntryStep } from "../new-entry-page/new-entry-hash-step-mapper";
 import EntryStepContainer from "../steps/entry-step-container/EntryStepContainer";
 import InventoryStepContainer from "../steps/inventory-step-container/InventoryStepContainer";
@@ -31,50 +31,49 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
     navigate(`/create-new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`, { replace: true });
   };
 
-  const { mutate: createInventory } = useApiInventoryCreate({
-    onSuccess: async (updatedInventory) => {
-      queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
-      await queryClient.invalidateQueries(["API", "indexInventory"]);
-      displayNotification({
-        type: "success",
-        message: t("inventoryForm.createSuccess"),
-      });
-      goToEntryStep(updatedInventory.id);
-    },
-    onError: () => {
-      displayNotification({
-        type: "error",
-        message: t("inventoryForm.createError"),
-      });
-    },
-  });
+  const createInventory = useApiInventoryCreate();
 
-  const { mutate: createEntry } = useApiEntryCreate({
-    onSettled: async () => {
-      await queryClient.invalidateQueries(["API", "entriesForInventoryDetails"]);
-    },
-    onSuccess: (createdEntry) => {
-      queryClient.setQueryData(["API", `/entries/${createdEntry.id}`], createdEntry);
-      displayNotification({
-        type: "success",
-        message: t("inventoryForm.entries.createSuccess"),
-      });
-      setEntryFormKey(new Date().getTime());
-    },
-    onError: () => {
-      displayNotification({
-        type: "error",
-        message: t("inventoryForm.entries.createError"),
-      });
-    },
-  });
+  const createEntry = useApiEntryCreate();
 
   const handleSubmitInventoryForm = (inventoryFormData: UpsertInventoryInput) => {
-    createInventory({ body: inventoryFormData });
+    createInventory({ body: inventoryFormData })
+      .then(async (createdInventory) => {
+        await queryClient.invalidateQueries(["API", "indexInventory"]);
+
+        queryClient.setQueryData(["API", `/inventories/${createdInventory.id}`], createdInventory);
+        displayNotification({
+          type: "success",
+          message: t("inventoryForm.createSuccess"),
+        });
+        goToEntryStep(createdInventory.id);
+      })
+      .catch(() => {
+        displayNotification({
+          type: "error",
+          message: t("inventoryForm.createError"),
+        });
+      });
   };
 
   const handleSubmitEntryForm = (entryFormData: UpsertEntryInput) => {
-    createEntry({ body: entryFormData });
+    createEntry({ body: entryFormData })
+      .then((createdEntry) => {
+        queryClient.setQueryData(["API", `/entries/${createdEntry.id}`], createdEntry);
+        displayNotification({
+          type: "success",
+          message: t("inventoryForm.entries.createSuccess"),
+        });
+        setEntryFormKey(new Date().getTime());
+      })
+      .catch(() => {
+        displayNotification({
+          type: "error",
+          message: t("inventoryForm.entries.createError"),
+        });
+      })
+      .finally(() => {
+        void queryClient.invalidateQueries(["API", "entriesForInventoryDetails"]);
+      });
   };
 
   return (

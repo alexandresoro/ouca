@@ -1,11 +1,5 @@
-import useApiMutationTQ from "@hooks/api/useApiMutation";
-import {
-  type UpsertEntryInput,
-  type UpsertEntryResponse,
-  getEntriesResponse,
-  type getEntryResponse,
-  upsertEntryResponse,
-} from "@ou-ca/common/api/entry";
+import { getEntriesResponse, type getEntryResponse, upsertEntryResponse } from "@ou-ca/common/api/entry";
+import { useApiFetch } from "@services/api/useApiFetch";
 import {
   type UseApiInfiniteQueryCommonParams,
   type UseApiQuerySWRInfiniteOptions,
@@ -13,8 +7,6 @@ import {
 } from "@services/api/useApiInfiniteQuery";
 import { useApiMutation } from "@services/api/useApiMutation";
 import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
-import type { UseMutationOptions } from "@tanstack/react-query";
-import type { FetchErrorType } from "@utils/fetch-api";
 import type { SWRMutationConfiguration } from "swr/dist/mutation";
 import type { z } from "zod";
 
@@ -51,20 +43,13 @@ export const useApiEntriesInfiniteQuery = (
   );
 };
 
-export const useApiEntryCreate = (
-  mutationOptions?: Omit<
-    UseMutationOptions<UpsertEntryResponse, FetchErrorType, { body: UpsertEntryInput }>,
-    "mutationFn"
-  >,
-) =>
-  useApiMutationTQ(
-    {
-      path: "/entries",
-      method: "POST",
-      schema: upsertEntryResponse,
-    },
-    mutationOptions,
-  );
+export const useApiEntryCreate = () => {
+  return useApiFetch({
+    path: "/entries",
+    method: "POST",
+    schema: upsertEntryResponse,
+  });
+};
 
 export const useApiEntryUpdate = (
   id: string | null,

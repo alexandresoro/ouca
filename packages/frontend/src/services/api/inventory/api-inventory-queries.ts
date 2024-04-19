@@ -1,14 +1,7 @@
-import useApiMutationTQ from "@hooks/api/useApiMutation";
-import {
-  type UpsertInventoryInput,
-  type UpsertInventoryResponse,
-  getInventoryResponse,
-  upsertInventoryResponse,
-} from "@ou-ca/common/api/inventory";
+import { getInventoryResponse, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
+import { useApiFetch } from "@services/api/useApiFetch";
 import { useApiMutation } from "@services/api/useApiMutation";
 import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
-import type { UseMutationOptions } from "@tanstack/react-query";
-import type { FetchErrorType } from "@utils/fetch-api";
 import type { SWRMutationConfiguration } from "swr/dist/mutation";
 import type { z } from "zod";
 
@@ -27,20 +20,13 @@ export const useApiInventoryQuery = (
   );
 };
 
-export const useApiInventoryCreate = (
-  mutationOptions?: Omit<
-    UseMutationOptions<UpsertInventoryResponse, FetchErrorType, { body: UpsertInventoryInput }>,
-    "mutationFn"
-  >,
-) =>
-  useApiMutationTQ(
-    {
-      path: "/inventories",
-      method: "POST",
-      schema: upsertInventoryResponse,
-    },
-    mutationOptions,
-  );
+export const useApiInventoryCreate = () => {
+  return useApiFetch({
+    path: "/inventories",
+    method: "POST",
+    schema: upsertInventoryResponse,
+  });
+};
 
 export const useApiInventoryUpdate = (
   id: string | null,
