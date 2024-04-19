@@ -193,7 +193,11 @@ const ComportementPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <ComportementTable onClickUpdateBehavior={handleUpdateClick} onClickDeleteBehavior={setBehaviorToDelete} />
+        <ComportementTable
+          behaviors={data?.flatMap((page) => page.data)}
+          onClickUpdateBehavior={handleUpdateClick}
+          onClickDeleteBehavior={setBehaviorToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertBehaviorDialog != null}

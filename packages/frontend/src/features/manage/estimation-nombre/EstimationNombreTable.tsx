@@ -10,6 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import NumberEstimateTableRow from "./NumberEstimateTableRow";
 
 type EstimationNombreTableProps = {
+  numberEstimates: NumberEstimate[] | undefined;
   onClickUpdateNumberEstimate: (numberEstimate: NumberEstimate) => void;
   onClickDeleteNumberEstimate: (numberEstimate: NumberEstimate) => void;
 };
@@ -26,6 +27,7 @@ const COLUMNS = [
 ] as const;
 
 const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
+  numberEstimates,
   onClickUpdateNumberEstimate,
   onClickDeleteNumberEstimate,
 }) => {

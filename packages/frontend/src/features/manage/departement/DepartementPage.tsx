@@ -197,7 +197,11 @@ const DepartementPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <DepartementTable onClickUpdateDepartment={handleUpdateClick} onClickDeleteDepartment={setDepartmentToDelete} />
+        <DepartementTable
+          departments={data?.flatMap((page) => page.data)}
+          onClickUpdateDepartment={handleUpdateClick}
+          onClickDeleteDepartment={setDepartmentToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertDepartmentDialog != null}

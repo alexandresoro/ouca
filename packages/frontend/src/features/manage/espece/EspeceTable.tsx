@@ -10,6 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import SpeciesTableRow from "./SpeciesTableRow";
 
 type EspeceTableProps = {
+  species: Species[] | undefined;
   onClickUpdateSpecies: (species: Species) => void;
   onClickDeleteSpecies: (species: Species) => void;
 };
@@ -33,7 +34,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies, onClickDeleteSpecies }) => {
+const EspeceTable: FunctionComponent<EspeceTableProps> = ({ species, onClickUpdateSpecies, onClickDeleteSpecies }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({

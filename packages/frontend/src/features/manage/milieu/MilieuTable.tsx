@@ -10,6 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import EnvironmentTableRow from "./EnvironmentTableRow";
 
 type MilieuTableProps = {
+  environments: Environment[] | undefined;
   onClickUpdateEnvironment: (environment: Environment) => void;
   onClickDeleteEnvironment: (environment: Environment) => void;
 };
@@ -25,7 +26,11 @@ const COLUMNS = [
   },
 ] as const;
 
-const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment, onClickDeleteEnvironment }) => {
+const MilieuTable: FunctionComponent<MilieuTableProps> = ({
+  environments,
+  onClickUpdateEnvironment,
+  onClickDeleteEnvironment,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>({

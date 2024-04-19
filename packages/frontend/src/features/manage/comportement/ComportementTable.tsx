@@ -10,6 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import BehaviorTableRow from "./BehaviorTableRow";
 
 type ComportementTableProps = {
+  behaviors: Behavior[] | undefined;
   onClickUpdateBehavior: (behavior: Behavior) => void;
   onClickDeleteBehavior: (behavior: Behavior) => void;
 };
@@ -30,6 +31,7 @@ const COLUMNS = [
 ] as const;
 
 const ComportementTable: FunctionComponent<ComportementTableProps> = ({
+  behaviors,
   onClickUpdateBehavior,
   onClickDeleteBehavior,
 }) => {

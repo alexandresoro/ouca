@@ -202,6 +202,7 @@ const EstimationNombrePage: FunctionComponent = () => {
 
       <ContentContainerLayout>
         <EstimationNombreTable
+          numberEstimates={data?.flatMap((page) => page.data)}
           onClickUpdateNumberEstimate={handleUpdateClick}
           onClickDeleteNumberEstimate={setNumberEstimateToDelete}
         />

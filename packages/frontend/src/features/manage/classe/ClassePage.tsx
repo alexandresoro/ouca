@@ -194,6 +194,7 @@ const ClassePage: FunctionComponent = () => {
       />
       <ContentContainerLayout>
         <ClasseTable
+          speciesClasses={data?.flatMap((page) => page.data)}
           onClickUpdateSpeciesClass={handleUpdateClick}
           onClickDeleteSpeciesClass={setSpeciesClassToDelete}
         />

@@ -11,6 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import AgeTableRow from "./AgeTableRow";
 
 type AgeTableProps = {
+  ages: Age[] | undefined;
   onClickUpdateAge: (age: Age) => void;
   onClickDeleteAge: (age: Age) => void;
 };
@@ -22,7 +23,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickDeleteAge }) => {
+const AgeTable: FunctionComponent<AgeTableProps> = ({ ages, onClickUpdateAge, onClickDeleteAge }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

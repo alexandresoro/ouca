@@ -194,7 +194,11 @@ const EspecePage: FunctionComponent = () => {
       />
 
       <ContentContainerLayout>
-        <EspeceTable onClickUpdateSpecies={handleUpdateClick} onClickDeleteSpecies={setSpeciesToDelete} />
+        <EspeceTable
+          species={data?.flatMap((page) => page.data)}
+          onClickUpdateSpecies={handleUpdateClick}
+          onClickDeleteSpecies={setSpeciesToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertSpeciesDialog != null}

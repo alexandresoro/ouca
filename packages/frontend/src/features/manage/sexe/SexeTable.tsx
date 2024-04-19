@@ -11,6 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import SexTableRow from "./SexTableRow";
 
 type SexeTableProps = {
+  sexes: Sex[] | undefined;
   onClickUpdateSex: (sex: Sex) => void;
   onClickDeleteSex: (sex: Sex) => void;
 };
@@ -22,7 +23,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClickDeleteSex }) => {
+const SexeTable: FunctionComponent<SexeTableProps> = ({ sexes, onClickUpdateSex, onClickDeleteSex }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

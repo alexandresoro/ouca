@@ -212,7 +212,11 @@ const LieuDitPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <LieuDitTable onClickUpdateLocality={handleUpdateClick} onClickDeleteLocality={setLocalityToDelete} />
+        <LieuDitTable
+          localities={data?.flatMap((page) => page.data)}
+          onClickUpdateLocality={handleUpdateClick}
+          onClickDeleteLocality={setLocalityToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertLocalityDialog != null}

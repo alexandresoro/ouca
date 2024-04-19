@@ -193,7 +193,11 @@ const CommunePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <CommuneTable onClickUpdateTown={handleUpdateClick} onClickDeleteTown={setTownToDelete} />
+        <CommuneTable
+          towns={data?.flatMap((page) => page.data)}
+          onClickUpdateTown={handleUpdateClick}
+          onClickDeleteTown={setTownToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertTownDialog != null}

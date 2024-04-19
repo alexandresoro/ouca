@@ -11,6 +11,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import DistanceEstimateTableRow from "./DistanceEstimateTableRow";
 
 type EstimationDistanceTableProps = {
+  distanceEstimates: DistanceEstimate[] | undefined;
   onClickUpdateDistanceEstimate: (distanceEstimate: DistanceEstimate) => void;
   onClickDeleteDistanceEstimate: (distanceEstimate: DistanceEstimate) => void;
 };
@@ -23,6 +24,7 @@ const COLUMNS = [
 ] as const;
 
 const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({
+  distanceEstimates,
   onClickUpdateDistanceEstimate,
   onClickDeleteDistanceEstimate,
 }) => {

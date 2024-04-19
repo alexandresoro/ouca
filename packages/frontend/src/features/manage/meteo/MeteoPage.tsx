@@ -196,7 +196,11 @@ const MeteoPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <MeteoTable onClickUpdateWeather={handleUpdateClick} onClickDeleteWeather={setWeatherToDelete} />
+        <MeteoTable
+          weathers={data?.flatMap((page) => page.data)}
+          onClickUpdateWeather={handleUpdateClick}
+          onClickDeleteWeather={setWeatherToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertWeatherDialog != null}

@@ -193,7 +193,11 @@ const AgePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <AgeTable onClickUpdateAge={handleUpdateClick} onClickDeleteAge={setAgeToDelete} />
+        <AgeTable
+          ages={data?.flatMap((page) => page.data)}
+          onClickUpdateAge={handleUpdateClick}
+          onClickDeleteAge={setAgeToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertAgeDialog != null}

@@ -10,11 +10,12 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TownTableRow from "./TownTableRow";
 
 type CommuneTableProps = {
+  towns: Town[] | undefined;
   onClickUpdateTown: (town: Town) => void;
   onClickDeleteTown: (town: Town) => void;
 };
 
-const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown, onClickDeleteTown }) => {
+const CommuneTable: FunctionComponent<CommuneTableProps> = ({ towns, onClickUpdateTown, onClickDeleteTown }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>({

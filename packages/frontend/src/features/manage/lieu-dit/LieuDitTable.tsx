@@ -10,6 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import LocalityTableRow from "./LocalityTableRow";
 
 type LieuDitTableProps = {
+  localities: Locality[] | undefined;
   onClickUpdateLocality: (locality: Locality) => void;
   onClickDeleteLocality: (locality: Locality) => void;
 };
@@ -45,7 +46,11 @@ const COLUMNS = [
   },
 ] as const;
 
-const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality, onClickDeleteLocality }) => {
+const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({
+  localities,
+  onClickUpdateLocality,
+  onClickDeleteLocality,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>({

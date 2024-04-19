@@ -10,6 +10,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import DepartmentTableRow from "./DepartmentTableRow";
 
 type DepartementTableProps = {
+  departments: Department[] | undefined;
   onClickUpdateDepartment: (department: Department) => void;
   onClickDeleteDepartment: (department: Department) => void;
 };
@@ -22,6 +23,7 @@ const COLUMNS = [
 ] as const;
 
 const DepartementTable: FunctionComponent<DepartementTableProps> = ({
+  departments,
   onClickUpdateDepartment,
   onClickDeleteDepartment,
 }) => {

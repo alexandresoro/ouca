@@ -196,7 +196,11 @@ const SexePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <SexeTable onClickUpdateSex={handleUpdateClick} onClickDeleteSex={setSexToDelete} />
+        <SexeTable
+          sexes={data?.flatMap((page) => page.data)}
+          onClickUpdateSex={handleUpdateClick}
+          onClickDeleteSex={setSexToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertSexDialog != null}

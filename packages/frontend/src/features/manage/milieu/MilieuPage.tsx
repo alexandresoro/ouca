@@ -200,7 +200,11 @@ const MilieuPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
-        <MilieuTable onClickUpdateEnvironment={handleUpdateClick} onClickDeleteEnvironment={setEnvironmentToDelete} />
+        <MilieuTable
+          environments={data?.flatMap((page) => page.data)}
+          onClickUpdateEnvironment={handleUpdateClick}
+          onClickDeleteEnvironment={setEnvironmentToDelete}
+        />
       </ContentContainerLayout>
       <EntityUpsertDialog
         open={upsertEnvironmentDialog != null}

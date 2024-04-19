@@ -197,6 +197,7 @@ const EstimationDistancePage: FunctionComponent = () => {
       />
       <ContentContainerLayout>
         <EstimationDistanceTable
+          distanceEstimates={data?.flatMap((page) => page.data)}
           onClickUpdateDistanceEstimate={handleUpdateClick}
           onClickDeleteDistanceEstimate={setDistanceEstimateToDelete}
         />

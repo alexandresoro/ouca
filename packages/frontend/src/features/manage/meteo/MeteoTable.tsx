@@ -12,6 +12,7 @@ import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import WeatherTableRow from "./WeatherTableRow";
 
 type MeteoTableProps = {
+  weathers: Weather[] | undefined;
   onClickUpdateWeather: (weather: Weather) => void;
   onClickDeleteWeather: (weather: Weather) => void;
 };
@@ -23,7 +24,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, onClickDeleteWeather }) => {
+const MeteoTable: FunctionComponent<MeteoTableProps> = ({ weathers, onClickUpdateWeather, onClickDeleteWeather }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
