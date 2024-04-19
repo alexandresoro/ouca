@@ -1,5 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
 import { type UpsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
@@ -28,6 +30,16 @@ const SexePage: FunctionComponent = () => {
     null,
   );
   const [sexToDelete, setSexToDelete] = useState<Sex | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createSex } = useApiMutation(
     {

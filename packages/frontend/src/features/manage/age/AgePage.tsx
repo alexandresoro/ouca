@@ -1,6 +1,8 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import { type UpsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age } from "@ou-ca/common/api/entities/age";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +30,16 @@ const AgePage: FunctionComponent = () => {
     null,
   );
   const [ageToDelete, setAgeToDelete] = useState<Age | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createAge } = useApiMutation(
     {

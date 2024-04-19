@@ -1,5 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
@@ -28,6 +30,16 @@ const EstimationDistancePage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; distanceEstimate: DistanceEstimate }
   >(null);
   const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimate | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createDistanceEstimate } = useApiMutation(
     {

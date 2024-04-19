@@ -1,7 +1,8 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Species } from "@ou-ca/common/api/entities/species";
-import { type UpsertSpeciesInput, upsertSpeciesResponse } from "@ou-ca/common/api/species";
+import { type SpeciesOrderBy, type UpsertSpeciesInput, upsertSpeciesResponse } from "@ou-ca/common/api/species";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -28,6 +29,17 @@ const EspecePage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; species: Species }
   >(null);
   const [speciesToDelete, setSpeciesToDelete] = useState<Species | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({
+    orderBy: "nomFrancais",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createSpecies } = useApiMutation(
     {

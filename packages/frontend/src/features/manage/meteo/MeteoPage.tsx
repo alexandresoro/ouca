@@ -1,5 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
+import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
@@ -28,6 +30,16 @@ const MeteoPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; weather: Weather }
   >(null);
   const [weatherToDelete, setWeatherToDelete] = useState<Weather | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createWeather } = useApiMutation(
     {

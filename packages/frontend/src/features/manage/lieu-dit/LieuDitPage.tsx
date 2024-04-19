@@ -1,7 +1,8 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
-import { type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
+import { type LocalitiesOrderBy, type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
 import { getTownResponse } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiFetch } from "@services/api/useApiFetch";
@@ -30,6 +31,17 @@ const LieuDitPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; locality: Locality; departmentId: string }
   >(null);
   const [localityToDelete, setLocalityToDelete] = useState<Locality | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>({
+    orderBy: "nom",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const fetchTown = useApiFetch({
     schema: getTownResponse,

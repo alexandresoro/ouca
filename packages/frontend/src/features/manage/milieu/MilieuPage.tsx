@@ -1,7 +1,12 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
-import { type UpsertEnvironmentInput, upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
+import {
+  type EnvironmentsOrderBy,
+  type UpsertEnvironmentInput,
+  upsertEnvironmentResponse,
+} from "@ou-ca/common/api/environment";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -28,6 +33,17 @@ const MilieuPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; environment: Environment }
   >(null);
   const [environmentToDelete, setEnvironmentToDelete] = useState<Environment | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>({
+    orderBy: "code",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createEnvironment } = useApiMutation(
     {

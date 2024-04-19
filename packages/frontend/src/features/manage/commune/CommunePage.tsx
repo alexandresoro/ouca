@@ -1,7 +1,8 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Town } from "@ou-ca/common/api/entities/town";
-import { type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
+import { type TownsOrderBy, type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -28,6 +29,17 @@ const CommunePage: FunctionComponent = () => {
     null,
   );
   const [townToDelete, setTownToDelete] = useState<Town | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>({
+    orderBy: "nom",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createTown } = useApiMutation(
     {

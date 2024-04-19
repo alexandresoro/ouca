@@ -1,6 +1,11 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
-import { type UpsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
+import {
+  type DepartmentsOrderBy,
+  type UpsertDepartmentInput,
+  upsertDepartmentResponse,
+} from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +33,17 @@ const DepartementPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; department: Department }
   >(null);
   const [departmentToDelete, setDepartmentToDelete] = useState<Department | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>({
+    orderBy: "code",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createDepartment } = useApiMutation(
     {

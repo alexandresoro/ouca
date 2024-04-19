@@ -1,7 +1,12 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type UpsertNumberEstimateInput, upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
+import {
+  type NumberEstimatesOrderBy,
+  type UpsertNumberEstimateInput,
+  upsertNumberEstimateResponse,
+} from "@ou-ca/common/api/number-estimate";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -28,6 +33,17 @@ const EstimationNombrePage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; numberEstimate: NumberEstimate }
   >(null);
   const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimate | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<NumberEstimatesOrderBy>(
+    { orderBy: "libelle" },
+  );
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createNumberEstimate } = useApiMutation(
     {

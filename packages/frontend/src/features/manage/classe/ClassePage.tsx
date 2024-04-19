@@ -1,7 +1,8 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
-import { type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
+import { type ClassesOrderBy, type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
@@ -28,6 +29,17 @@ const ClassePage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; speciesClass: SpeciesClass }
   >(null);
   const [speciesClassToDelete, setSpeciesClassToDelete] = useState<SpeciesClass | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>({
+    orderBy: "libelle",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createSpeciesClass } = useApiMutation(
     {

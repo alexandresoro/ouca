@@ -1,6 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
+import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
-import { type UpsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
+import { type BehaviorsOrderBy, type UpsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +29,17 @@ const ComportementPage: FunctionComponent = () => {
     null | { mode: "create" } | { mode: "update"; behavior: Behavior }
   >(null);
   const [behaviorToDelete, setBehaviorToDelete] = useState<Behavior | null>(null);
+
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>({
+    orderBy: "code",
+  });
+
+  const queryParams = {
+    q: query,
+    pageSize: 10,
+    orderBy,
+    sortOrder,
+  };
 
   const { mutate: createBehavior } = useApiMutation(
     {
