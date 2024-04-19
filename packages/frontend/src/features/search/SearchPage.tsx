@@ -7,8 +7,9 @@ import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiSearchInfiniteSpecies } from "@services/api/search/api-search-queries";
 import { Export } from "@styled-icons/boxicons-regular";
 import { useAtomValue } from "jotai";
-import { Fragment, type FunctionComponent, useState } from "react";
+import { Fragment, type FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import SearchEntriesTable from "./search-entries-table/SearchEntriesTable";
 import SearchFilterPanel from "./search-filter-panel/SearchFilterPanel";
 import SearchSpeciesTable from "./search-species-table/SearchSpeciesTable";
@@ -87,9 +88,23 @@ const SearchPage: FunctionComponent = () => {
     queryParams: searchCriteria,
   });
 
-  const handleEntryChange = async () => {
+  const handleEntryChange = useCallback(async () => {
     await Promise.all([mutateEntries(), mutateSpecies()]);
-  };
+  }, [mutateEntries, mutateSpecies]);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void handleEntryChange();
+  }, [searchCriteria, handleEntryChange]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    void mutateEntries();
+  }, [orderByEntries, sortOrderEntries, mutateEntries]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    void mutateSpecies();
+  }, [orderBySpecies, sortOrderSpecies, mutateSpecies]);
 
   const handleExportRequested = async () => {
     setIsExporting(true);

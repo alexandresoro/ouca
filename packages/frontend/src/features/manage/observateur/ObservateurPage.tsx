@@ -14,6 +14,7 @@ import {
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDeepCompareEffect from "use-deep-compare-effect";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -38,12 +39,19 @@ const ObservateurPage: FunctionComponent = () => {
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
 
-  const { data, fetchNextPage, hasNextPage, mutate } = useApiObserversInfiniteQuery({
+  const queryParams = {
     q: query,
     pageSize: 10,
     orderBy,
     sortOrder,
-  });
+  };
+
+  const { data, fetchNextPage, hasNextPage, mutate } = useApiObserversInfiniteQuery(queryParams);
+
+  // When query params change, we need to refetch the data
+  useDeepCompareEffect(() => {
+    void mutate();
+  }, [queryParams, mutate]);
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
