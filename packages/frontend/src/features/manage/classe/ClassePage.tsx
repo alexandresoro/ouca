@@ -2,17 +2,21 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
-import { type ClassesOrderBy, type UpsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
+import type { ClassesOrderBy, UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiSpeciesClassesInfiniteQuery } from "@services/api/species-class/api-species-class-queries";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useApiSpeciesClassCreate,
+  useApiSpeciesClassDelete,
+  useApiSpeciesClassUpdate,
+  useApiSpeciesClassesInfiniteQuery,
+} from "@services/api/species-class/api-species-class-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import ClasseCreate from "./ClasseCreate";
 import ClasseDeleteDialog from "./ClasseDeleteDialog";
@@ -23,8 +27,6 @@ const ClassePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,7 +59,9 @@ const ClassePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
-  const handleUpsertSpeciesError = (e: unknown) => {
+  const createSpeciesClass = useApiSpeciesClassCreate();
+
+  const handleUpsertSpeciesClassError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
         type: "error",
@@ -71,17 +75,12 @@ const ClassePage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createSpeciesClass } = useApiMutation(
+  const { trigger: updateSpeciesClass } = useApiSpeciesClassUpdate(
+    upsertSpeciesClassDialog?.mode === "update" ? upsertSpeciesClassDialog.speciesClass?.id : null,
     {
-      path: "/classes",
-      method: "POST",
-      schema: upsertClassResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "speciesClassTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -89,74 +88,32 @@ const ClassePage: FunctionComponent = () => {
         setUpsertSpeciesClassDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("speciesClassAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertSpeciesClassError(e);
       },
     },
   );
 
-  const { mutate: updateSpeciesClass } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertClassResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "speciesClassTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertSpeciesClassDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("speciesClassAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteSpeciesClass } = useApiSpeciesClassDelete(speciesClassToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteSpeciesClass } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "speciesClassTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setSpeciesClassToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setSpeciesClassToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({ filename: t("speciesClasses"), path: "/generate-export/classes" });
 
@@ -173,15 +130,28 @@ const ClassePage: FunctionComponent = () => {
   };
 
   const handleCreateSpeciesClass = (input: UpsertClassInput) => {
-    createSpeciesClass({ body: input });
+    createSpeciesClass({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertSpeciesClassDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertSpeciesClassError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateSpeciesClass = (id: string, input: UpsertClassInput) => {
-    updateSpeciesClass({ path: `/classes/${id}`, body: input });
+  const handleUpdateSpeciesClass = (_id: string, input: UpsertClassInput) => {
+    void updateSpeciesClass({ body: input });
   };
 
-  const handleDeleteSpeciesClass = (speciesClassToDelete: SpeciesClass) => {
-    deleteSpeciesClass({ path: `/classes/${speciesClassToDelete.id}` });
+  const handleDeleteSpeciesClass = () => {
+    void deleteSpeciesClass();
   };
 
   return (
@@ -193,6 +163,13 @@ const ClassePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <ClasseTable
           speciesClasses={data?.flatMap((page) => page.data)}
           onClickUpdateSpeciesClass={handleUpdateClick}

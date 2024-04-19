@@ -2,19 +2,23 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
-import { type LocalitiesOrderBy, type UpsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
+import type { LocalitiesOrderBy, UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { getTownResponse } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiLocalitiesInfiniteQuery } from "@services/api/locality/api-locality-queries";
+import {
+  useApiLocalitiesInfiniteQuery,
+  useApiLocalityCreate,
+  useApiLocalityDelete,
+  useApiLocalityUpdate,
+} from "@services/api/locality/api-locality-queries";
 import { useApiFetch } from "@services/api/useApiFetch";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import LieuDitCreate from "./LieuDitCreate";
 import LieuDitDeleteDialog from "./LieuDitDeleteDialog";
@@ -25,8 +29,6 @@ const LieuDitPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -59,6 +61,8 @@ const LieuDitPage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createLocality = useApiLocalityCreate();
+
   const handleUpsertLocalityError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -77,17 +81,12 @@ const LieuDitPage: FunctionComponent = () => {
     schema: getTownResponse,
   });
 
-  const { mutate: createLocality } = useApiMutation(
+  const { trigger: updateLocality } = useApiLocalityUpdate(
+    upsertLocalityDialog?.mode === "update" ? upsertLocalityDialog.locality?.id : null,
     {
-      path: "/localities",
-      method: "POST",
-      schema: upsertLocalityResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "localityTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -95,74 +94,32 @@ const LieuDitPage: FunctionComponent = () => {
         setUpsertLocalityDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("localityAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertLocalityError(e);
       },
     },
   );
 
-  const { mutate: updateLocality } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertLocalityResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "localityTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertLocalityDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("localityAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteLocality } = useApiLocalityDelete(localityToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteLocality } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "localityTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setLocalityToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setLocalityToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({
     filename: t("localities"),
@@ -192,15 +149,28 @@ const LieuDitPage: FunctionComponent = () => {
   };
 
   const handleCreateLocality = (input: UpsertLocalityInput) => {
-    createLocality({ body: input });
+    createLocality({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertLocalityDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertLocalityError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateLocality = (id: string, input: UpsertLocalityInput) => {
-    updateLocality({ path: `/localities/${id}`, body: input });
+  const handleUpdateLocality = (_id: string, input: UpsertLocalityInput) => {
+    void updateLocality({ body: input });
   };
 
-  const handleDeleteLocality = (localityToDelete: Locality) => {
-    deleteLocality({ path: `/localities/${localityToDelete.id}` });
+  const handleDeleteLocality = () => {
+    void deleteLocality();
   };
 
   return (
@@ -212,6 +182,13 @@ const LieuDitPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <LieuDitTable
           localities={data?.flatMap((page) => page.data)}
           onClickUpdateLocality={handleUpdateClick}

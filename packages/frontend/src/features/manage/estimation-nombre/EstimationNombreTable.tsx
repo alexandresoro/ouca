@@ -1,13 +1,10 @@
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import { type NumberEstimatesOrderBy, getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
-import { Fragment, type FunctionComponent } from "react";
+import type { NumberEstimatesOrderBy } from "@ou-ca/common/api/number-estimate";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
 import TableSortLabel from "../../../components/base/table/TableSortLabel";
-import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import usePaginationParams from "../../../hooks/usePaginationParams";
-import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import NumberEstimateTableRow from "./NumberEstimateTableRow";
 
 type EstimationNombreTableProps = {
@@ -36,90 +33,57 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
   numberEstimates,
   onClickUpdateNumberEstimate,
   onClickDeleteNumberEstimate,
+  hasNextPage,
   onMoreRequested,
+  orderBy,
+  sortOrder,
+  handleRequestSort,
 }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<NumberEstimatesOrderBy>(
-    { orderBy: "libelle" },
-  );
-
-  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
-    path: "/number-estimates",
-    queryKeyPrefix: "numberEstimateTable",
-    queryParams: {
-      q: query,
-      pageSize: 10,
-      orderBy,
-      sortOrder,
-    },
-    schema: getNumberEstimatesResponse,
-  });
-
-  const handleRequestSort = (sortingColumn: NumberEstimatesOrderBy) => {
-    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
-    setSortOrder(isAsc ? "desc" : "asc");
-    setOrderBy(sortingColumn);
-  };
-
   return (
-    <>
-      <ManageEntitiesHeader
-        value={query}
-        onChange={(e) => {
-          setQuery(e.currentTarget.value);
-        }}
-        count={data?.pages?.[0].meta.count}
-      />
-      <InfiniteTable
-        tableHead={
-          <>
-            {COLUMNS.map((column) => (
-              <th key={column.key}>
-                <TableSortLabel
-                  active={orderBy === column.key}
-                  direction={orderBy === column.key ? sortOrder : "asc"}
-                  onClick={() => handleRequestSort(column.key)}
-                >
-                  {t(column.locKey)}
-                </TableSortLabel>
-              </th>
-            ))}
-            <th className="w-32">
+    <InfiniteTable
+      tableHead={
+        <>
+          {COLUMNS.map((column) => (
+            <th key={column.key}>
               <TableSortLabel
-                active={orderBy === "nbDonnees"}
-                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
-                onClick={() => handleRequestSort("nbDonnees")}
+                active={orderBy === column.key}
+                direction={orderBy === column.key ? sortOrder : "asc"}
+                onClick={() => handleRequestSort(column.key)}
               >
-                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+                {t(column.locKey)}
               </TableSortLabel>
             </th>
-            <th align="center" className="w-32 first-letter:capitalize">
-              {t("owner")}
-            </th>
-            <th align="center" className="w-32">
-              {t("actions")}
-            </th>
-          </>
-        }
-        tableRows={data?.pages.map((page) => {
-          return (
-            <Fragment key={page.meta.pageNumber}>
-              {page.data.map((numberEstimate) => (
-                <NumberEstimateTableRow
-                  key={numberEstimate.id}
-                  numberEstimate={numberEstimate}
-                  onEditClicked={onClickUpdateNumberEstimate}
-                  onDeleteClicked={onClickDeleteNumberEstimate}
-                />
-              ))}
-            </Fragment>
-          );
-        })}
-        enableScroll={hasNextPage}
-        onMoreRequested={fetchNextPage}
-      />
-    </>
+          ))}
+          <th className="w-32">
+            <TableSortLabel
+              active={orderBy === "nbDonnees"}
+              direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+              onClick={() => handleRequestSort("nbDonnees")}
+            >
+              <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+            </TableSortLabel>
+          </th>
+          <th align="center" className="w-32 first-letter:capitalize">
+            {t("owner")}
+          </th>
+          <th align="center" className="w-32">
+            {t("actions")}
+          </th>
+        </>
+      }
+      tableRows={numberEstimates?.map((numberEstimate) => (
+        <NumberEstimateTableRow
+          key={numberEstimate.id}
+          numberEstimate={numberEstimate}
+          onEditClicked={onClickUpdateNumberEstimate}
+          onDeleteClicked={onClickDeleteNumberEstimate}
+        />
+      ))}
+      enableScroll={hasNextPage}
+      onMoreRequested={onMoreRequested}
+    />
   );
 };
 

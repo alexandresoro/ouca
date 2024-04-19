@@ -2,17 +2,21 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Town } from "@ou-ca/common/api/entities/town";
-import { type TownsOrderBy, type UpsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
+import type { TownsOrderBy, UpsertTownInput } from "@ou-ca/common/api/town";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiTownsInfiniteQuery } from "@services/api/town/api-town-queries";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useApiTownCreate,
+  useApiTownDelete,
+  useApiTownUpdate,
+  useApiTownsInfiniteQuery,
+} from "@services/api/town/api-town-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import CommuneCreate from "./CommuneCreate";
 import CommuneDeleteDialog from "./CommuneDeleteDialog";
@@ -23,8 +27,6 @@ const CommunePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,6 +59,8 @@ const CommunePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createTown = useApiTownCreate();
+
   const handleUpsertTownError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -71,17 +75,12 @@ const CommunePage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createTown } = useApiMutation(
+  const { trigger: updateTown } = useApiTownUpdate(
+    upsertTownDialog?.mode === "update" ? upsertTownDialog.town?.id : null,
     {
-      path: "/towns",
-      method: "POST",
-      schema: upsertTownResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "townTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -89,74 +88,32 @@ const CommunePage: FunctionComponent = () => {
         setUpsertTownDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("townAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertTownError(e);
       },
     },
   );
 
-  const { mutate: updateTown } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertTownResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "townTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertTownDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("townAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteTown } = useApiTownDelete(townToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteTown } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "townTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setTownToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setTownToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({ filename: t("towns"), path: "/generate-export/towns" });
 
@@ -173,15 +130,28 @@ const CommunePage: FunctionComponent = () => {
   };
 
   const handleCreateTown = (input: UpsertTownInput) => {
-    createTown({ body: input });
+    createTown({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertTownDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertTownError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateTown = (id: string, input: UpsertTownInput) => {
-    updateTown({ path: `/towns/${id}`, body: input });
+  const handleUpdateTown = (_id: string, input: UpsertTownInput) => {
+    void updateTown({ body: input });
   };
 
-  const handleDeleteTown = (townToDelete: Town) => {
-    deleteTown({ path: `/towns/${townToDelete.id}` });
+  const handleDeleteTown = () => {
+    void deleteTown();
   };
 
   return (
@@ -193,6 +163,13 @@ const CommunePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <CommuneTable
           towns={data?.flatMap((page) => page.data)}
           onClickUpdateTown={handleUpdateClick}

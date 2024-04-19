@@ -2,21 +2,21 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
+import type { EnvironmentsOrderBy, UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import {
-  type EnvironmentsOrderBy,
-  type UpsertEnvironmentInput,
-  upsertEnvironmentResponse,
-} from "@ou-ca/common/api/environment";
-import { useApiEnvironmentsInfiniteQuery } from "@services/api/environment/api-environment-queries";
+  useApiEnvironmentCreate,
+  useApiEnvironmentDelete,
+  useApiEnvironmentUpdate,
+  useApiEnvironmentsInfiniteQuery,
+} from "@services/api/environment/api-environment-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import MilieuCreate from "./MilieuCreate";
 import MilieuDeleteDialog from "./MilieuDeleteDialog";
@@ -27,8 +27,6 @@ const MilieuPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -61,6 +59,8 @@ const MilieuPage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createEnvironment = useApiEnvironmentCreate();
+
   const handleUpsertEnvironmentError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -75,17 +75,12 @@ const MilieuPage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createEnvironment } = useApiMutation(
+  const { trigger: updateEnvironment } = useApiEnvironmentUpdate(
+    upsertEnvironmentDialog?.mode === "update" ? upsertEnvironmentDialog.environment?.id : null,
     {
-      path: "/environments",
-      method: "POST",
-      schema: upsertEnvironmentResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "environmentTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -93,74 +88,32 @@ const MilieuPage: FunctionComponent = () => {
         setUpsertEnvironmentDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("environmentAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertEnvironmentError(e);
       },
     },
   );
 
-  const { mutate: updateEnvironment } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertEnvironmentResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "environmentTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertEnvironmentDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("environmentAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteEnvironment } = useApiEnvironmentDelete(environmentToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteEnvironment } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "environmentTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setEnvironmentToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setEnvironmentToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({
     filename: t("environments"),
@@ -180,15 +133,28 @@ const MilieuPage: FunctionComponent = () => {
   };
 
   const handleCreateEnvironment = (input: UpsertEnvironmentInput) => {
-    createEnvironment({ body: input });
+    createEnvironment({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertEnvironmentDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertEnvironmentError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateEnvironment = (id: string, input: UpsertEnvironmentInput) => {
-    updateEnvironment({ path: `/environments/${id}`, body: input });
+  const handleUpdateEnvironment = (_id: string, input: UpsertEnvironmentInput) => {
+    void updateEnvironment({ body: input });
   };
 
-  const handleDeleteEnvironment = (environmentToDelete: Environment) => {
-    deleteEnvironment({ path: `/environments/${environmentToDelete.id}` });
+  const handleDeleteEnvironment = () => {
+    void deleteEnvironment();
   };
 
   return (
@@ -200,6 +166,13 @@ const MilieuPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <MilieuTable
           environments={data?.flatMap((page) => page.data)}
           onClickUpdateEnvironment={handleUpdateClick}

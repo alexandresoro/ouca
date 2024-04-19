@@ -2,21 +2,21 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
-import {
-  type NumberEstimatesOrderBy,
-  type UpsertNumberEstimateInput,
-  upsertNumberEstimateResponse,
-} from "@ou-ca/common/api/number-estimate";
+import type { NumberEstimatesOrderBy, UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiNumberEstimatesInfiniteQuery } from "@services/api/number-estimate/api-number-estimate-queries";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useApiNumberEstimateCreate,
+  useApiNumberEstimateDelete,
+  useApiNumberEstimateUpdate,
+  useApiNumberEstimatesInfiniteQuery,
+} from "@services/api/number-estimate/api-number-estimate-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import EstimationNombreCreate from "./EstimationNombreCreate";
 import EstimationNombreDeleteDialog from "./EstimationNombreDeleteDialog";
@@ -27,8 +27,6 @@ const EstimationNombrePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -61,6 +59,8 @@ const EstimationNombrePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createNumberEstimate = useApiNumberEstimateCreate();
+
   const handleUpsertNumberEstimateError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -75,17 +75,12 @@ const EstimationNombrePage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createNumberEstimate } = useApiMutation(
+  const { trigger: updateNumberEstimate } = useApiNumberEstimateUpdate(
+    upsertNumberEstimateDialog?.mode === "update" ? upsertNumberEstimateDialog.numberEstimate?.id : null,
     {
-      path: "/number-estimates",
-      method: "POST",
-      schema: upsertNumberEstimateResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "numberEstimateTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -93,74 +88,32 @@ const EstimationNombrePage: FunctionComponent = () => {
         setUpsertNumberEstimateDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("numberPrecisionAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertNumberEstimateError(e);
       },
     },
   );
 
-  const { mutate: updateNumberEstimate } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertNumberEstimateResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "numberEstimateTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertNumberEstimateDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("numberPrecisionAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteNumberEstimate } = useApiNumberEstimateDelete(numberEstimateToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteNumberEstimate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "numberEstimateTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setNumberEstimateToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setNumberEstimateToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({
     filename: t("numberPrecisions"),
@@ -180,15 +133,28 @@ const EstimationNombrePage: FunctionComponent = () => {
   };
 
   const handleCreateNumberEstimate = (input: UpsertNumberEstimateInput) => {
-    createNumberEstimate({ body: input });
+    createNumberEstimate({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertNumberEstimateDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertNumberEstimateError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateNumberEstimate = (id: string, input: UpsertNumberEstimateInput) => {
-    updateNumberEstimate({ path: `/number-estimates/${id}`, body: input });
+  const handleUpdateNumberEstimate = (_id: string, input: UpsertNumberEstimateInput) => {
+    void updateNumberEstimate({ body: input });
   };
 
-  const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimate) => {
-    deleteNumberEstimate({ path: `/number-estimates/${numberEstimateToDelete.id}` });
+  const handleDeleteNumberEstimate = () => {
+    void deleteNumberEstimate();
   };
 
   return (
@@ -201,6 +167,13 @@ const EstimationNombrePage: FunctionComponent = () => {
       />
 
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <EstimationNombreTable
           numberEstimates={data?.flatMap((page) => page.data)}
           onClickUpdateNumberEstimate={handleUpdateClick}

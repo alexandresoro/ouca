@@ -1,19 +1,23 @@
 import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
-import { type UpsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
+import type { UpsertAgeInput } from "@ou-ca/common/api/age";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age } from "@ou-ca/common/api/entities/age";
-import { useApiAgesInfiniteQuery } from "@services/api/age/api-age-queries";
+import {
+  useApiAgeCreate,
+  useApiAgeDelete,
+  useApiAgeUpdate,
+  useApiAgesInfiniteQuery,
+} from "@services/api/age/api-age-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import AgeCreate from "./AgeCreate";
 import AgeDeleteDialog from "./AgeDeleteDialog";
@@ -24,8 +28,6 @@ const AgePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,6 +59,8 @@ const AgePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createAge = useApiAgeCreate();
+
   const handleUpsertAgeError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -71,92 +75,42 @@ const AgePage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createAge } = useApiMutation(
-    {
-      path: "/ages",
-      method: "POST",
-      schema: upsertAgeResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "ageTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertAgeDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("ageAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: updateAge } = useApiAgeUpdate(upsertAgeDialog?.mode === "update" ? upsertAgeDialog.age?.id : null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: updateAge } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertAgeResponse,
+      displayNotification({
+        type: "success",
+        message: t("retrieveGenericSaveSuccess"),
+      });
+      setUpsertAgeDialog(null);
     },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "ageTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertAgeDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("ageAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+    onError: (e) => {
+      void mutate();
 
-  const { mutate: deleteAge } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "ageTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setAgeToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      handleUpsertAgeError(e);
     },
-  );
+  });
+
+  const { trigger: deleteAge } = useApiAgeDelete(ageToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
+
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setAgeToDelete(null);
+    },
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({ filename: t("ages"), path: "/generate-export/ages" });
 
@@ -173,15 +127,28 @@ const AgePage: FunctionComponent = () => {
   };
 
   const handleCreateAge = (input: UpsertAgeInput) => {
-    createAge({ body: input });
+    createAge({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertAgeDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertAgeError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateAge = (id: string, input: UpsertAgeInput) => {
-    updateAge({ path: `/ages/${id}`, body: input });
+  const handleUpdateAge = (_id: string, input: UpsertAgeInput) => {
+    void updateAge({ body: input });
   };
 
-  const handleDeleteAge = (ageToDelete: Age) => {
-    deleteAge({ path: `/ages/${ageToDelete.id}` });
+  const handleDeleteAge = () => {
+    void deleteAge();
   };
 
   return (
@@ -193,6 +160,13 @@ const AgePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <AgeTable
           ages={data?.flatMap((page) => page.data)}
           onClickUpdateAge={handleUpdateClick}

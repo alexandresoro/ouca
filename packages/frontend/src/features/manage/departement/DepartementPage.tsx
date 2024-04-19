@@ -1,22 +1,22 @@
 import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
-import {
-  type DepartmentsOrderBy,
-  type UpsertDepartmentInput,
-  upsertDepartmentResponse,
-} from "@ou-ca/common/api/department";
+import type { DepartmentsOrderBy, UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
-import { useApiDepartmentsInfiniteQuery } from "@services/api/department/api-department-queries";
+import {
+  useApiDepartmentCreate,
+  useApiDepartmentDelete,
+  useApiDepartmentUpdate,
+  useApiDepartmentsInfiniteQuery,
+} from "@services/api/department/api-department-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import DepartementCreate from "./DepartementCreate";
 import DepartementDeleteDialog from "./DepartementDeleteDialog";
@@ -27,8 +27,6 @@ const DepartementPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -61,6 +59,8 @@ const DepartementPage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createDepartment = useApiDepartmentCreate();
+
   const handleUpsertDepartmentError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -75,17 +75,12 @@ const DepartementPage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createDepartment } = useApiMutation(
+  const { trigger: updateDepartment } = useApiDepartmentUpdate(
+    upsertDepartmentDialog?.mode === "update" ? upsertDepartmentDialog.department?.id : null,
     {
-      path: "/departments",
-      method: "POST",
-      schema: upsertDepartmentResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "departmentTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -93,74 +88,32 @@ const DepartementPage: FunctionComponent = () => {
         setUpsertDepartmentDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("departmentAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertDepartmentError(e);
       },
     },
   );
 
-  const { mutate: updateDepartment } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertDepartmentResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "departmentTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertDepartmentDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("departmentAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteDepartment } = useApiDepartmentDelete(departmentToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteDepartment } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "departmentTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setDepartmentToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setDepartmentToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({ filename: t("departments"), path: "/generate-export/departments" });
 
@@ -177,15 +130,28 @@ const DepartementPage: FunctionComponent = () => {
   };
 
   const handleCreateDepartment = (input: UpsertDepartmentInput) => {
-    createDepartment({ body: input });
+    createDepartment({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertDepartmentDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertDepartmentError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateDepartment = (id: string, input: UpsertDepartmentInput) => {
-    updateDepartment({ path: `/departments/${id}`, body: input });
+  const handleUpdateDepartment = (_id: string, input: UpsertDepartmentInput) => {
+    void updateDepartment({ body: input });
   };
 
-  const handleDeleteDepartment = (departmentToDelete: Department) => {
-    deleteDepartment({ path: `/departments/${departmentToDelete.id}` });
+  const handleDeleteDepartment = () => {
+    void deleteDepartment();
   };
 
   return (
@@ -197,6 +163,13 @@ const DepartementPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <DepartementTable
           departments={data?.flatMap((page) => page.data)}
           onClickUpdateDepartment={handleUpdateClick}

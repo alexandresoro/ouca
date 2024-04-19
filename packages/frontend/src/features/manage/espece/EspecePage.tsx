@@ -2,17 +2,21 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { Species } from "@ou-ca/common/api/entities/species";
-import { type SpeciesOrderBy, type UpsertSpeciesInput, upsertSpeciesResponse } from "@ou-ca/common/api/species";
+import type { SpeciesOrderBy, UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiSpeciesInfiniteQuery } from "@services/api/species/api-species-queries";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useApiSpeciesCreate,
+  useApiSpeciesDelete,
+  useApiSpeciesInfiniteQuery,
+  useApiSpeciesUpdate,
+} from "@services/api/species/api-species-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import EspeceCreate from "./EspeceCreate";
 import EspeceDeleteDialog from "./EspeceDeleteDialog";
@@ -23,8 +27,6 @@ const EspecePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,6 +59,8 @@ const EspecePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createSpecies = useApiSpeciesCreate();
+
   const handleUpsertSpeciesError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -71,17 +75,12 @@ const EspecePage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createSpecies } = useApiMutation(
+  const { trigger: updateSpecies } = useApiSpeciesUpdate(
+    upsertSpeciesDialog?.mode === "update" ? upsertSpeciesDialog.species?.id : null,
     {
-      path: "/species",
-      method: "POST",
-      schema: upsertSpeciesResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "speciesTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -89,74 +88,32 @@ const EspecePage: FunctionComponent = () => {
         setUpsertSpeciesDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("speciesAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertSpeciesError(e);
       },
     },
   );
 
-  const { mutate: updateSpecies } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertSpeciesResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "speciesTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertSpeciesDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("speciesAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteSpecies } = useApiSpeciesDelete(speciesToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteSpecies } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "speciesTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setSpeciesToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setSpeciesToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({ filename: t("species"), path: "/generate-export/species" });
 
@@ -173,15 +130,28 @@ const EspecePage: FunctionComponent = () => {
   };
 
   const handleCreateSpecies = (input: UpsertSpeciesInput) => {
-    createSpecies({ body: input });
+    createSpecies({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertSpeciesDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertSpeciesError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateSpecies = (id: string, input: UpsertSpeciesInput) => {
-    updateSpecies({ path: `/species/${id}`, body: input });
+  const handleUpdateSpecies = (_id: string, input: UpsertSpeciesInput) => {
+    void updateSpecies({ body: input });
   };
 
-  const handleDeleteSpecies = (speciesToDelete: Species) => {
-    deleteSpecies({ path: `/species/${speciesToDelete.id}` });
+  const handleDeleteSpecies = () => {
+    void deleteSpecies();
   };
 
   return (
@@ -194,6 +164,13 @@ const EspecePage: FunctionComponent = () => {
       />
 
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <EspeceTable
           species={data?.flatMap((page) => page.data)}
           onClickUpdateSpecies={handleUpdateClick}

@@ -1,14 +1,10 @@
 import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
-import { getWeathersResponse } from "@ou-ca/common/api/weather";
 import { Cloud, Wind } from "@styled-icons/boxicons-regular";
-import { Fragment, type FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
 import TableSortLabel from "../../../components/base/table/TableSortLabel";
-import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import usePaginationParams from "../../../hooks/usePaginationParams";
-import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import WeatherTableRow from "./WeatherTableRow";
 
 type MeteoTableProps = {
@@ -33,41 +29,16 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({
   weathers,
   onClickUpdateWeather,
   onClickDeleteWeather,
+  hasNextPage,
   onMoreRequested,
+  orderBy,
+  sortOrder,
+  handleRequestSort,
 }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginationParams<EntitiesWithLabelOrderBy>({ orderBy: "libelle" });
-
-  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
-    path: "/weathers",
-    queryKeyPrefix: "weatherTable",
-    queryParams: {
-      q: query,
-      pageSize: 10,
-      orderBy,
-      sortOrder,
-    },
-    schema: getWeathersResponse,
-  });
-
-  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
-    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
-    setSortOrder(isAsc ? "desc" : "asc");
-    setOrderBy(sortingColumn);
-  };
-
   return (
     <>
-      <ManageEntitiesHeader
-        value={query}
-        onChange={(e) => {
-          setQuery(e.currentTarget.value);
-        }}
-        count={data?.pages?.[0].meta.count}
-      />
-
       <div className="flex flex-col gap-2">
         <div role="alert" className="alert bg-info-content border-none">
           <Cloud className="h-6 w-6" />
@@ -110,22 +81,16 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({
             </th>
           </>
         }
-        tableRows={data?.pages.map((page) => {
-          return (
-            <Fragment key={page.meta.pageNumber}>
-              {page.data.map((weather) => (
-                <WeatherTableRow
-                  key={weather.id}
-                  weather={weather}
-                  onEditClicked={onClickUpdateWeather}
-                  onDeleteClicked={onClickDeleteWeather}
-                />
-              ))}
-            </Fragment>
-          );
-        })}
+        tableRows={weathers?.map((weather) => (
+          <WeatherTableRow
+            key={weather.id}
+            weather={weather}
+            onEditClicked={onClickUpdateWeather}
+            onDeleteClicked={onClickDeleteWeather}
+          />
+        ))}
         enableScroll={hasNextPage}
-        onMoreRequested={fetchNextPage}
+        onMoreRequested={onMoreRequested}
       />
     </>
   );

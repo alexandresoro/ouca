@@ -1,18 +1,22 @@
 import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
-import { type BehaviorsOrderBy, type UpsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
+import type { BehaviorsOrderBy, UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
-import { useApiBehaviorsInfiniteQuery } from "@services/api/behavior/api-behavior-queries";
+import {
+  useApiBehaviorCreate,
+  useApiBehaviorDelete,
+  useApiBehaviorUpdate,
+  useApiBehaviorsInfiniteQuery,
+} from "@services/api/behavior/api-behavior-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import ComportementCreate from "./ComportementCreate";
 import ComportementDeleteDialog from "./ComportementDeleteDialog";
@@ -23,8 +27,6 @@ const ComportementPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,6 +59,8 @@ const ComportementPage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createBehavior = useApiBehaviorCreate();
+
   const handleUpsertBehaviorError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -71,17 +75,12 @@ const ComportementPage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createBehavior } = useApiMutation(
+  const { trigger: updateBehavior } = useApiBehaviorUpdate(
+    upsertBehaviorDialog?.mode === "update" ? upsertBehaviorDialog.behavior?.id : null,
     {
-      path: "/behaviors",
-      method: "POST",
-      schema: upsertBehaviorResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "behaviorTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -89,74 +88,32 @@ const ComportementPage: FunctionComponent = () => {
         setUpsertBehaviorDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("behaviorAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertBehaviorError(e);
       },
     },
   );
 
-  const { mutate: updateBehavior } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertBehaviorResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "behaviorTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertBehaviorDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("behaviorAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteBehavior } = useApiBehaviorDelete(behaviorToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteBehavior } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "behaviorTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setBehaviorToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setBehaviorToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({ filename: t("behaviors"), path: "/generate-export/behaviors" });
 
@@ -173,15 +130,28 @@ const ComportementPage: FunctionComponent = () => {
   };
 
   const handleCreateBehavior = (input: UpsertBehaviorInput) => {
-    createBehavior({ body: input });
+    createBehavior({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertBehaviorDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertBehaviorError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateBehavior = (id: string, input: UpsertBehaviorInput) => {
-    updateBehavior({ path: `/behaviors/${id}`, body: input });
+  const handleUpdateBehavior = (_id: string, input: UpsertBehaviorInput) => {
+    void updateBehavior({ body: input });
   };
 
-  const handleDeleteBehavior = (behaviorToDelete: Behavior) => {
-    deleteBehavior({ path: `/behaviors/${behaviorToDelete.id}` });
+  const handleDeleteBehavior = () => {
+    void deleteBehavior();
   };
 
   return (
@@ -193,6 +163,13 @@ const ComportementPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <ComportementTable
           behaviors={data?.flatMap((page) => page.data)}
           onClickUpdateBehavior={handleUpdateClick}

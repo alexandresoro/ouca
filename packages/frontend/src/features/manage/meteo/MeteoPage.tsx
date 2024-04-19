@@ -3,17 +3,21 @@ import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
-import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
+import type { UpsertWeatherInput } from "@ou-ca/common/api/weather";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useApiWeathersInfiniteQuery } from "@services/api/weather/api-weather-queries";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useApiWeatherCreate,
+  useApiWeatherDelete,
+  useApiWeatherUpdate,
+  useApiWeathersInfiniteQuery,
+} from "@services/api/weather/api-weather-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import MeteoCreate from "./MeteoCreate";
 import MeteoDeleteDialog from "./MeteoDeleteDialog";
@@ -24,8 +28,6 @@ const MeteoPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,6 +59,8 @@ const MeteoPage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createWeather = useApiWeatherCreate();
+
   const handleUpsertWeatherError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -71,17 +75,12 @@ const MeteoPage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createWeather } = useApiMutation(
+  const { trigger: updateWeather } = useApiWeatherUpdate(
+    upsertWeatherDialog?.mode === "update" ? upsertWeatherDialog.weather?.id : null,
     {
-      path: "/weathers",
-      method: "POST",
-      schema: upsertWeatherResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "weatherTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -89,74 +88,32 @@ const MeteoPage: FunctionComponent = () => {
         setUpsertWeatherDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("weatherAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertWeatherError(e);
       },
     },
   );
 
-  const { mutate: updateWeather } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertWeatherResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "weatherTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertWeatherDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("weatherAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteWeather } = useApiWeatherDelete(weatherToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteWeather } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "weatherTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setWeatherToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setWeatherToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({
     filename: t("weathers"),
@@ -176,15 +133,28 @@ const MeteoPage: FunctionComponent = () => {
   };
 
   const handleCreateWeather = (input: UpsertWeatherInput) => {
-    createWeather({ body: input });
+    createWeather({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertWeatherDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertWeatherError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateWeather = (id: string, input: UpsertWeatherInput) => {
-    updateWeather({ path: `/weathers/${id}`, body: input });
+  const handleUpdateWeather = (_id: string, input: UpsertWeatherInput) => {
+    void updateWeather({ body: input });
   };
 
-  const handleDeleteWeather = (weatherToDelete: Weather) => {
-    deleteWeather({ path: `/weathers/${weatherToDelete.id}` });
+  const handleDeleteWeather = () => {
+    void deleteWeather();
   };
 
   return (
@@ -196,6 +166,13 @@ const MeteoPage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <MeteoTable
           weathers={data?.flatMap((page) => page.data)}
           onClickUpdateWeather={handleUpdateClick}

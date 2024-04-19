@@ -2,18 +2,22 @@ import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
-import { type UpsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
+import type { UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
-import { useApiDistanceEstimatesInfiniteQuery } from "@services/api/distance-estimate/api-distance-estimate-queries";
+import {
+  useApiDistanceEstimateCreate,
+  useApiDistanceEstimateDelete,
+  useApiDistanceEstimateUpdate,
+  useApiDistanceEstimatesInfiniteQuery,
+} from "@services/api/distance-estimate/api-distance-estimate-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";
 import EstimationDistanceCreate from "./EstimationDistanceCreate";
 import EstimationDistanceDeleteDialog from "./EstimationDistanceDeleteDialog";
@@ -24,8 +28,6 @@ const EstimationDistancePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const user = useUser();
-
-  const queryClient = useQueryClient();
 
   const { displayNotification } = useNotifications();
 
@@ -57,6 +59,8 @@ const EstimationDistancePage: FunctionComponent = () => {
     setOrderBy(sortingColumn);
   };
 
+  const createDistanceEstimate = useApiDistanceEstimateCreate();
+
   const handleUpsertDistanceEstimateError = (e: unknown) => {
     if (e instanceof FetchError && e.status === 409) {
       displayNotification({
@@ -71,17 +75,12 @@ const EstimationDistancePage: FunctionComponent = () => {
     }
   };
 
-  const { mutate: createDistanceEstimate } = useApiMutation(
+  const { trigger: updateDistanceEstimate } = useApiDistanceEstimateUpdate(
+    upsertDistanceEstimateDialog?.mode === "update" ? upsertDistanceEstimateDialog.distanceEstimate?.id : null,
     {
-      path: "/distance-estimates",
-      method: "POST",
-      schema: upsertDistanceEstimateResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
-      },
       onSuccess: () => {
+        void mutate();
+
         displayNotification({
           type: "success",
           message: t("retrieveGenericSaveSuccess"),
@@ -89,74 +88,32 @@ const EstimationDistancePage: FunctionComponent = () => {
         setUpsertDistanceEstimateDialog(null);
       },
       onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("distancePrecisionAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
+        void mutate();
+
+        handleUpsertDistanceEstimateError(e);
       },
     },
   );
 
-  const { mutate: updateDistanceEstimate } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertDistanceEstimateResponse,
-    },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        setUpsertDistanceEstimateDialog(null);
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("distancePrecisionAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    },
-  );
+  const { trigger: deleteDistanceEstimate } = useApiDistanceEstimateDelete(distanceEstimateToDelete?.id ?? null, {
+    onSuccess: () => {
+      void mutate();
 
-  const { mutate: deleteDistanceEstimate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(["API", "distanceEstimateTable"]);
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-        setDistanceEstimateToDelete(null);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+      setDistanceEstimateToDelete(null);
     },
-  );
+    onError: () => {
+      void mutate();
+
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const downloadExport = useApiDownloadExport({
     filename: t("distancePrecisions"),
@@ -176,15 +133,28 @@ const EstimationDistancePage: FunctionComponent = () => {
   };
 
   const handleCreateDistanceEstimate = (input: UpsertDistanceEstimateInput) => {
-    createDistanceEstimate({ body: input });
+    createDistanceEstimate({ body: input })
+      .then(() => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        setUpsertDistanceEstimateDialog(null);
+      })
+      .catch((e) => {
+        handleUpsertDistanceEstimateError(e);
+      })
+      .finally(() => {
+        void mutate();
+      });
   };
 
-  const handleUpdateDistanceEstimate = (id: string, input: UpsertDistanceEstimateInput) => {
-    updateDistanceEstimate({ path: `/distance-estimates/${id}`, body: input });
+  const handleUpdateDistanceEstimate = (_id: string, input: UpsertDistanceEstimateInput) => {
+    void updateDistanceEstimate({ body: input });
   };
 
-  const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimate) => {
-    deleteDistanceEstimate({ path: `/distance-estimates/${distanceEstimateToDelete.id}` });
+  const handleDeleteDistanceEstimate = () => {
+    void deleteDistanceEstimate();
   };
 
   return (
@@ -196,6 +166,13 @@ const EstimationDistancePage: FunctionComponent = () => {
         onClickExport={handleExportClick}
       />
       <ContentContainerLayout>
+        <ManageEntitiesHeader
+          value={query}
+          onChange={(e) => {
+            setQuery(e.currentTarget.value);
+          }}
+          count={data?.[0].meta.count}
+        />
         <EstimationDistanceTable
           distanceEstimates={data?.flatMap((page) => page.data)}
           onClickUpdateDistanceEstimate={handleUpdateClick}

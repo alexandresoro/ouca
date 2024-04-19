@@ -1,13 +1,10 @@
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Species } from "@ou-ca/common/api/entities/species";
-import { type SpeciesOrderBy, getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
-import { Fragment, type FunctionComponent } from "react";
+import type { SpeciesOrderBy } from "@ou-ca/common/api/species";
+import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InfiniteTable from "../../../components/base/table/InfiniteTable";
 import TableSortLabel from "../../../components/base/table/TableSortLabel";
-import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import usePaginationParams from "../../../hooks/usePaginationParams";
-import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import SpeciesTableRow from "./SpeciesTableRow";
 
 type EspeceTableProps = {
@@ -44,90 +41,57 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({
   species,
   onClickUpdateSpecies,
   onClickDeleteSpecies,
+  hasNextPage,
   onMoreRequested,
+  orderBy,
+  sortOrder,
+  handleRequestSort,
 }) => {
   const { t } = useTranslation();
 
-  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>({
-    orderBy: "nomFrancais",
-  });
-
-  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
-    path: "/species",
-    queryKeyPrefix: "speciesTable",
-    queryParams: {
-      q: query,
-      pageSize: 10,
-      orderBy,
-      sortOrder,
-    },
-    schema: getSpeciesPaginatedResponse,
-  });
-
-  const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
-    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
-    setSortOrder(isAsc ? "desc" : "asc");
-    setOrderBy(sortingColumn);
-  };
-
   return (
-    <>
-      <ManageEntitiesHeader
-        value={query}
-        onChange={(e) => {
-          setQuery(e.currentTarget.value);
-        }}
-        count={data?.pages?.[0].meta.count}
-      />
-      <InfiniteTable
-        tableHead={
-          <>
-            {COLUMNS.map((column) => (
-              <th key={column.key}>
-                <TableSortLabel
-                  active={orderBy === column.key}
-                  direction={orderBy === column.key ? sortOrder : "asc"}
-                  onClick={() => handleRequestSort(column.key)}
-                >
-                  {t(column.locKey)}
-                </TableSortLabel>
-              </th>
-            ))}
-            <th className="w-32">
+    <InfiniteTable
+      tableHead={
+        <>
+          {COLUMNS.map((column) => (
+            <th key={column.key}>
               <TableSortLabel
-                active={orderBy === "nbDonnees"}
-                direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
-                onClick={() => handleRequestSort("nbDonnees")}
+                active={orderBy === column.key}
+                direction={orderBy === column.key ? sortOrder : "asc"}
+                onClick={() => handleRequestSort(column.key)}
               >
-                <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+                {t(column.locKey)}
               </TableSortLabel>
             </th>
-            <th align="center" className="w-32 first-letter:capitalize">
-              {t("owner")}
-            </th>
-            <th align="center" className="w-32">
-              {t("actions")}
-            </th>
-          </>
-        }
-        tableRows={data?.pages.map((page) => {
-          return (
-            <Fragment key={page.meta.pageNumber}>
-              {page.data.map((species) => (
-                <SpeciesTableRow
-                  key={species.id}
-                  species={species}
-                  onEditClicked={onClickUpdateSpecies}
-                  onDeleteClicked={onClickDeleteSpecies}
-                />
-              ))}
-            </Fragment>
-          );
-        })}
-        enableScroll={hasNextPage}
-        onMoreRequested={fetchNextPage}
-      />
-    </>
+          ))}
+          <th className="w-32">
+            <TableSortLabel
+              active={orderBy === "nbDonnees"}
+              direction={orderBy === "nbDonnees" ? sortOrder : "asc"}
+              onClick={() => handleRequestSort("nbDonnees")}
+            >
+              <span className="first-letter:capitalize">{t("numberOfObservations")}</span>
+            </TableSortLabel>
+          </th>
+          <th align="center" className="w-32 first-letter:capitalize">
+            {t("owner")}
+          </th>
+          <th align="center" className="w-32">
+            {t("actions")}
+          </th>
+        </>
+      }
+      tableRows={species?.map((oneSpecies) => (
+        <SpeciesTableRow
+          key={oneSpecies.id}
+          species={oneSpecies}
+          onEditClicked={onClickUpdateSpecies}
+          onDeleteClicked={onClickDeleteSpecies}
+        />
+      ))}
+      enableScroll={hasNextPage}
+      onMoreRequested={onMoreRequested}
+    />
   );
 };
 
