@@ -41,6 +41,12 @@ const ComportementPage: FunctionComponent = () => {
     sortOrder,
   };
 
+  const handleRequestSort = (sortingColumn: BehaviorsOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const { mutate: createBehavior } = useApiMutation(
     {
       path: "/behaviors",

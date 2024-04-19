@@ -41,6 +41,12 @@ const MeteoPage: FunctionComponent = () => {
     sortOrder,
   };
 
+  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const { mutate: createWeather } = useApiMutation(
     {
       path: "/weathers",

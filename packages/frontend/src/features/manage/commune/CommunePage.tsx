@@ -41,6 +41,12 @@ const CommunePage: FunctionComponent = () => {
     sortOrder,
   };
 
+  const handleRequestSort = (sortingColumn: TownsOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const { mutate: createTown } = useApiMutation(
     {
       path: "/towns",

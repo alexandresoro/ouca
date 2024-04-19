@@ -43,6 +43,12 @@ const LieuDitPage: FunctionComponent = () => {
     sortOrder,
   };
 
+  const handleRequestSort = (sortingColumn: LocalitiesOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const fetchTown = useApiFetch({
     schema: getTownResponse,
   });

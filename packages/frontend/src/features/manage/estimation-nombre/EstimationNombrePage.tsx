@@ -45,6 +45,12 @@ const EstimationNombrePage: FunctionComponent = () => {
     sortOrder,
   };
 
+  const handleRequestSort = (sortingColumn: NumberEstimatesOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const { mutate: createNumberEstimate } = useApiMutation(
     {
       path: "/number-estimates",

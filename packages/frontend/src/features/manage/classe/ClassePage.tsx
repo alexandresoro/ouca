@@ -41,6 +41,12 @@ const ClassePage: FunctionComponent = () => {
     sortOrder,
   };
 
+  const handleRequestSort = (sortingColumn: ClassesOrderBy) => {
+    const isAsc = orderBy === sortingColumn && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setOrderBy(sortingColumn);
+  };
+
   const { mutate: createSpeciesClass } = useApiMutation(
     {
       path: "/classes",
