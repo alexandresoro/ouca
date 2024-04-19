@@ -10,6 +10,7 @@ import {
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiNumberEstimatesInfiniteQuery } from "@services/api/number-estimate/api-number-estimate-queries";
 import { useQueryClient } from "@tanstack/react-query";
+import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
@@ -58,6 +59,20 @@ const EstimationNombrePage: FunctionComponent = () => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
+  };
+
+  const handleUpsertNumberEstimateError = (e: unknown) => {
+    if (e instanceof FetchError && e.status === 409) {
+      displayNotification({
+        type: "error",
+        message: t("numberPrecisionAlreadyExistingError"),
+      });
+    } else {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericSaveError"),
+      });
+    }
   };
 
   const { mutate: createNumberEstimate } = useApiMutation(

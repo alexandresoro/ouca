@@ -7,6 +7,7 @@ import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estim
 import { useApiDistanceEstimatesInfiniteQuery } from "@services/api/distance-estimate/api-distance-estimate-queries";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useQueryClient } from "@tanstack/react-query";
+import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
@@ -54,6 +55,20 @@ const EstimationDistancePage: FunctionComponent = () => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
+  };
+
+  const handleUpsertDistanceEstimateError = (e: unknown) => {
+    if (e instanceof FetchError && e.status === 409) {
+      displayNotification({
+        type: "error",
+        message: t("distancePrecisionAlreadyExistingError"),
+      });
+    } else {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericSaveError"),
+      });
+    }
   };
 
   const { mutate: createDistanceEstimate } = useApiMutation(

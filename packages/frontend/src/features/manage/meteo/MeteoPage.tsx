@@ -7,6 +7,7 @@ import { type UpsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/ap
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
 import { useApiWeathersInfiniteQuery } from "@services/api/weather/api-weather-queries";
 import { useQueryClient } from "@tanstack/react-query";
+import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
@@ -54,6 +55,20 @@ const MeteoPage: FunctionComponent = () => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
+  };
+
+  const handleUpsertWeatherError = (e: unknown) => {
+    if (e instanceof FetchError && e.status === 409) {
+      displayNotification({
+        type: "error",
+        message: t("weatherAlreadyExistingError"),
+      });
+    } else {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericSaveError"),
+      });
+    }
   };
 
   const { mutate: createWeather } = useApiMutation(
