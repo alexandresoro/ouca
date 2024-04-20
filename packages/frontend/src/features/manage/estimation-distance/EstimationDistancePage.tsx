@@ -171,7 +171,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <EstimationDistanceTable
           distanceEstimates={data?.flatMap((page) => page.data)}

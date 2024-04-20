@@ -168,7 +168,7 @@ const ClassePage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <ClasseTable
           speciesClasses={data?.flatMap((page) => page.data)}

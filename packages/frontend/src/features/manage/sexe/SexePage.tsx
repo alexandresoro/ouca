@@ -168,7 +168,7 @@ const SexePage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <SexeTable
           sexes={data?.flatMap((page) => page.data)}

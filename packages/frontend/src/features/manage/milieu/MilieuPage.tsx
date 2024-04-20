@@ -171,7 +171,7 @@ const MilieuPage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <MilieuTable
           environments={data?.flatMap((page) => page.data)}

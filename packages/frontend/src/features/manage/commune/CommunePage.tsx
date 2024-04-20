@@ -168,7 +168,7 @@ const CommunePage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <CommuneTable
           towns={data?.flatMap((page) => page.data)}

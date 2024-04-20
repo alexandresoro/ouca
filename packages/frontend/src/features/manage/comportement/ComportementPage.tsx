@@ -168,7 +168,7 @@ const ComportementPage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <ComportementTable
           behaviors={data?.flatMap((page) => page.data)}

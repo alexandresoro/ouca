@@ -168,7 +168,7 @@ const DepartementPage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <DepartementTable
           departments={data?.flatMap((page) => page.data)}

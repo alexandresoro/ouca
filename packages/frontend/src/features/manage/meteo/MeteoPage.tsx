@@ -171,7 +171,7 @@ const MeteoPage: FunctionComponent = () => {
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          count={data?.[0].meta.count}
+          count={data?.[0]?.meta.count}
         />
         <MeteoTable
           weathers={data?.flatMap((page) => page.data)}
