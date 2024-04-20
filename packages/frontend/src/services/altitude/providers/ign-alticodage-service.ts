@@ -3,16 +3,7 @@ import { z } from "zod";
 const ALTICODAGE_URL = "https://wxs.ign.fr/choisirgeoportail/alti/rest/elevation.json";
 
 const alticodageResponseSchema = z.object({
-  elevations: z
-    .array(
-      z.object({
-        lon: z.number(),
-        lat: z.number(),
-        z: z.number(),
-        acc: z.number(),
-      }),
-    )
-    .length(1),
+  elevations: z.array(z.number()).length(1),
 });
 
 type GetAltitudeForCoordinatesResult =
@@ -31,6 +22,7 @@ export const getAltitudeForCoordinates = async ({
   const searchParams = new URLSearchParams({
     lat: `${latitude}`,
     lon: `${longitude}`,
+    zonly: "true",
   });
 
   try {
@@ -39,13 +31,14 @@ export const getAltitudeForCoordinates = async ({
 
     const responseValidated = alticodageResponseSchema.parse(responseParsed);
 
-    const altitude = responseValidated.elevations[0].z;
+    const altitude = responseValidated.elevations[0];
 
     return {
       outcome: "success",
       altitude,
     };
   } catch (e) {
+    console.error(e);
     return {
       outcome: "error",
     };
