@@ -1,4 +1,4 @@
-import { getInventoryResponse, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
+import { getInventoriesResponse, getInventoryResponse, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
 import { useApiFetch } from "@services/api/useApiFetch";
 import { useApiMutation } from "@services/api/useApiMutation";
 import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
@@ -30,6 +30,22 @@ export const useApiInventoryIndex = (
     {
       queryParams,
       schema: z.number(),
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiInventoriesQuery = (
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<z.infer<typeof getInventoriesResponse>>,
+) => {
+  return useApiQuery(
+    "/inventories",
+    {
+      queryParams,
+      schema: getInventoriesResponse,
     },
     {
       ...swrOptions,

@@ -4,6 +4,7 @@ import { useNotifications } from "@hooks/useNotifications";
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import {
+  useApiInventoriesQuery,
   useApiInventoryDelete,
   useApiInventoryIndex,
   useApiInventoryUpdate,
@@ -42,13 +43,9 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
 
   const [deleteDialog, setDeleteDialog] = useState<Inventory | null>(null);
 
-  const { data: inventoryCountData } = useApiQuery({
-    path: "/inventories",
-    queryParams: {
-      pageNumber: 1,
-      pageSize: 1,
-    },
-    schema: getInventoriesResponse,
+  const { data: inventoryCountData } = useApiInventoriesQuery({
+    pageNumber: 1,
+    pageSize: 1,
   });
 
   const totalInventories = inventoryCountData?.meta.count;
