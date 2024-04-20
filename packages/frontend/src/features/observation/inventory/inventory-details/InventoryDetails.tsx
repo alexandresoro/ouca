@@ -1,7 +1,6 @@
 import type { GetEntriesResponse } from "@ou-ca/common/api/entry";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import { CopyAlt } from "@styled-icons/boxicons-regular";
-import type { InfiniteData } from "@tanstack/react-query";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
@@ -10,7 +9,7 @@ import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPa
 
 type InventoryDetailsProps = {
   inventoryId: string;
-  entriesPages: InfiniteData<GetEntriesResponse> | undefined;
+  entriesPages: GetEntriesResponse[];
   hasMoreEntries?: boolean;
   onMoreEntriesRequested?: () => void;
 };
@@ -60,12 +59,12 @@ const InventoryDetails = ({
       <div className="card border-2 border-primary p-3 shadow-md">
         <div className="flex items-center gap-3 py-2">
           <h3 className="text-lg font-semibold">
-            {t("inventoryPage.entriesPanel.title", { count: entriesPages?.pages[0].meta.count })}
+            {t("inventoryPage.entriesPanel.title", { count: entriesPages?.[0]?.meta.count })}
           </h3>
-          <span className="badge badge-primary badge-outline font-semibold">{entriesPages?.pages[0].meta.count}</span>
+          <span className="badge badge-primary badge-outline font-semibold">{entriesPages?.[0]?.meta.count}</span>
         </div>
         <ul className="flex flex-col gap-1">
-          {entriesPages?.pages.map((page) => {
+          {entriesPages?.map((page) => {
             return (
               <Fragment key={page.meta.pageNumber}>
                 {page.data.map((entry) => {

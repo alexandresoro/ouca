@@ -1,8 +1,7 @@
-import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import { useNotifications } from "@hooks/useNotifications";
-import { type UpsertEntryInput, getEntriesResponse } from "@ou-ca/common/api/entry";
-import { useApiEntryCreate } from "@services/api/entry/api-entry-queries";
-import { type FunctionComponent, useState } from "react";
+import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { useApiEntriesInfiniteQuery, useApiEntryCreate } from "@services/api/entry/api-entry-queries";
+import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import InventoryDetails from "../../../inventory/inventory-details/InventoryDetails";
 import EntryForm from "../../entry-form/EntryForm";
@@ -20,15 +19,25 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
 
   const createEntry = useApiEntryCreate();
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
-    queryKeyPrefix: "entriesForInventoryDetails",
-    path: "/entries",
-    queryParams: {
+  const {
+    data: entriesPages,
+    hasNextPage,
+    fetchNextPage,
+    mutate,
+  } = useApiEntriesInfiniteQuery(
+    {
       pageSize: 10,
       inventoryId,
     },
-    schema: getEntriesResponse,
-  });
+    {
+      revalidateOnMount: true,
+    },
+  );
+  // When inventory id change, we need to refetch the data
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    void mutate();
+  }, [inventoryId]);
 
   const handleSubmitEntryForm = (entryFormData: UpsertEntryInput) => {
     createEntry({ body: entryFormData })
@@ -46,7 +55,7 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
         });
       })
       .finally(() => {
-        void refetch();
+        void mutate();
       });
   };
 
@@ -57,7 +66,7 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
       <div className="basis-1/3">
         <InventoryDetails
           inventoryId={inventoryId}
-          entriesPages={data}
+          entriesPages={entriesPages ?? []}
           hasMoreEntries={hasNextPage}
           onMoreEntriesRequested={fetchNextPage}
         />
