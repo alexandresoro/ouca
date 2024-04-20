@@ -1,10 +1,9 @@
-import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import { useApiBehaviorsQuery } from "@services/api/behavior/api-behavior-queries";
 import { type FunctionComponent, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import { findFirstFocusableElement } from "../../../../utils/dom/find-first-focusable-element";
 import EntryFormBehavior, { renderBehavior } from "./EntryFormBehavior";
 import type { EntryFormState } from "./EntryFormState";
@@ -33,18 +32,15 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
     onUpdateBehaviorsForm(selectedBehaviors.map(({ id }) => id));
   }, [selectedBehaviors, onUpdateBehaviorsForm]);
 
-  const { data: dataBehaviors } = useApiQuery(
+  const { data: dataBehaviors } = useApiBehaviorsQuery(
     {
-      path: "/behaviors",
-      queryParams: {
-        q: newBehaviorInput,
-        pageSize: 5,
-      },
-      schema: getBehaviorsResponse,
+      q: newBehaviorInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 

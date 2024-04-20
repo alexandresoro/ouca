@@ -48,12 +48,14 @@ export const useApiDistanceEstimateInfoQuery = (
 export const useApiDistanceEstimatesQuery = (
   queryParams: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getDistanceEstimatesResponse>>,
+  { paused = false } = {},
 ) => {
   return useApiQuery(
     "/distance-estimates",
     {
       queryParams,
       schema: getDistanceEstimatesResponse,
+      paused,
     },
     {
       ...swrOptions,

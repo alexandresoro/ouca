@@ -1,9 +1,8 @@
-import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
+import { useApiBehaviorsQuery } from "@services/api/behavior/api-behavior-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 
 type EntryFormBehaviorProps = {
   selectedBehavior: Behavior | null;
@@ -29,18 +28,15 @@ const EntryFormBehavior: FunctionComponent<EntryFormBehaviorProps> = ({
     setBehaviorInput(renderBehavior(selectedBehavior));
   }, [selectedBehavior]);
 
-  const { data: dataBehaviors } = useApiQuery(
+  const { data: dataBehaviors } = useApiBehaviorsQuery(
     {
-      path: "/behaviors",
-      queryParams: {
-        q: behaviorInput,
-        pageSize: 5,
-      },
-      schema: getBehaviorsResponse,
+      q: behaviorInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 

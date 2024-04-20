@@ -1,15 +1,14 @@
-import { getAgesResponse } from "@ou-ca/common/api/age";
 import type { Age } from "@ou-ca/common/api/entities/age";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
-import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
-import { getSexesResponse } from "@ou-ca/common/api/sex";
+import { useApiAgesQuery } from "@services/api/age/api-age-queries";
+import { useApiNumberEstimatesQuery } from "@services/api/number-estimate/api-number-estimate-queries";
+import { useApiSexesQuery } from "@services/api/sex/api-sex-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../../components/base/TextInput";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormCharacteristicsProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {
@@ -113,48 +112,39 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
     setSelectedNumberEstimate(newSelectedNumberEstimate);
   };
 
-  const { data: dataNumberEstimates } = useApiQuery(
+  const { data: dataNumberEstimates } = useApiNumberEstimatesQuery(
     {
-      path: "/number-estimates",
-      queryParams: {
-        q: numberEstimateInput,
-        pageSize: 5,
-      },
-      schema: getNumberEstimatesResponse,
+      q: numberEstimateInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 
-  const { data: dataSexes } = useApiQuery(
+  const { data: dataSexes } = useApiSexesQuery(
     {
-      path: "/sexes",
-      queryParams: {
-        q: sexInput,
-        pageSize: 5,
-      },
-      schema: getSexesResponse,
+      q: sexInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 
-  const { data: dataAges } = useApiQuery(
+  const { data: dataAges } = useApiAgesQuery(
     {
-      path: "/ages",
-      queryParams: {
-        q: ageInput,
-        pageSize: 5,
-      },
-      schema: getAgesResponse,
+      q: ageInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 

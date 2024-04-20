@@ -1,11 +1,10 @@
-import { getDistanceEstimatesResponse } from "@ou-ca/common/api/distance-estimate";
 import type { DistanceEstimate } from "@ou-ca/common/api/entities/distance-estimate";
+import { useApiDistanceEstimatesQuery } from "@services/api/distance-estimate/api-distance-estimate-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../../components/base/TextInput";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormDistanceProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {
@@ -47,20 +46,17 @@ const EntryFormDistance: FunctionComponent<EntryFormDistanceProps> = ({
     onChangeDistanceEstimateForm(selectedDistanceEstimate?.id ?? null);
   }, [selectedDistanceEstimate, onChangeDistanceEstimateForm]);
 
-  const { data: dataDistanceEstimates } = useApiQuery(
+  const { data: dataDistanceEstimates } = useApiDistanceEstimatesQuery(
     {
-      path: "/distance-estimates",
-      queryParams: {
-        q: distanceEstimateInput,
-        pageSize: 5,
-      },
-      schema: getDistanceEstimatesResponse,
+      q: distanceEstimateInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-      enabled: isDistanceDisplayed,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
+    { paused: !isDistanceDisplayed },
   );
 
   return (

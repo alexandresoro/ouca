@@ -1,10 +1,9 @@
 import type { Environment } from "@ou-ca/common/api/entities/environment";
-import { getEnvironmentsResponse } from "@ou-ca/common/api/environment";
+import { useApiEnvironmentsQuery } from "@services/api/environment/api-environment-queries";
 import { type FunctionComponent, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import { findFirstFocusableElement } from "../../../../utils/dom/find-first-focusable-element";
 import EntryFormEnvironment, { renderEnvironment } from "./EntryFormEnvironment";
 import type { EntryFormState } from "./EntryFormState";
@@ -33,18 +32,15 @@ const EntryFormEnvironments: FunctionComponent<EntryFormEnvironmentsProps> = ({ 
     onUpdateEnvironmentsForm(selectedEnvironments.map(({ id }) => id));
   }, [selectedEnvironments, onUpdateEnvironmentsForm]);
 
-  const { data: dataEnvironments } = useApiQuery(
+  const { data: dataEnvironments } = useApiEnvironmentsQuery(
     {
-      path: "/environments",
-      queryParams: {
-        q: newEnvironmentInput,
-        pageSize: 5,
-      },
-      schema: getEnvironmentsResponse,
+      q: newEnvironmentInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 

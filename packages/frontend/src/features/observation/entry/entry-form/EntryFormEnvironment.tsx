@@ -1,9 +1,8 @@
 import type { Environment } from "@ou-ca/common/api/entities/environment";
-import { getEnvironmentsResponse } from "@ou-ca/common/api/environment";
+import { useApiEnvironmentsQuery } from "@services/api/environment/api-environment-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 
 type EntryFormEnvironmentProps = {
   selectedEnvironment: Environment | null;
@@ -29,18 +28,15 @@ const EntryFormEnvironment: FunctionComponent<EntryFormEnvironmentProps> = ({
     setEnvironmentInput(renderEnvironment(selectedEnvironment));
   }, [selectedEnvironment]);
 
-  const { data: dataEnvironments } = useApiQuery(
+  const { data: dataEnvironments } = useApiEnvironmentsQuery(
     {
-      path: "/environments",
-      queryParams: {
-        q: environmentInput,
-        pageSize: 5,
-      },
-      schema: getEnvironmentsResponse,
+      q: environmentInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 
