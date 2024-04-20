@@ -8,7 +8,7 @@ type InventoryStepContainerProps = {
 };
 
 const InventoryStepContainer = ({ fromExistingInventoryId, onSubmitInventoryForm }: InventoryStepContainerProps) => {
-  const { data: initialDataInventory, isValidating } = useApiInventoryQuery(fromExistingInventoryId ?? null);
+  const { data: initialDataInventory, isValidating } = useApiInventoryQuery(fromExistingInventoryId);
 
   if (fromExistingInventoryId && isValidating) {
     return (
