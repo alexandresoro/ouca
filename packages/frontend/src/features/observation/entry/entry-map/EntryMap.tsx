@@ -1,5 +1,6 @@
 import { getLocalityResponse } from "@ou-ca/common/api/locality";
 import type { GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+import { useApiLocalitiesGeoJsonQuery } from "@services/api/locality/api-localities-geojson-queries";
 import { useApiFetch } from "@services/api/useApiFetch";
 import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
@@ -23,7 +24,6 @@ import {
   Source,
   type ViewState,
 } from "react-map-gl/maplibre";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import { boundingPolygon } from "../../../../utils/map/bounding-polygon";
 import MapInstance from "../../../maps/MapInstance";
 import { clusterCountLayer, clusterLayer, selectionLayer, singleLocalityLayer } from "../../../maps/localities-layers";
@@ -76,15 +76,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
   const localitySelection = useAtomValue(localitySelectionAtom);
   const previousSelection = useRef<LocalitySelectionType>(null);
 
-  const { data: localitiesGeoJson } = useApiQuery<FeatureCollection<Point>>(
-    {
-      path: "/geojson/localities.json",
-    },
-    {
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 2 * 60 * 60 * 1000,
-    },
-  );
+  const { data: localitiesGeoJson } = useApiLocalitiesGeoJsonQuery();
 
   // Compute the polygon for the selection
   const selectionFeatureCollectionPolygon = useMemo(() => {
