@@ -1,37 +1,16 @@
-import { type UpsertInventoryInput, getInventoryResponse } from "@ou-ca/common/api/inventory";
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import useApiQuery from "../../../../../hooks/api/useApiQuery";
+import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import InventoryFormWithMap from "../../../inventory/inventory-form-with-map/InventoryFormWithMap";
 
 type InventoryStepContainerProps = {
+  fromExistingInventoryId: string | null;
   onSubmitInventoryForm?: (inventoryFormData: UpsertInventoryInput) => void;
 };
 
-const InventoryStepContainer = ({ onSubmitInventoryForm }: InventoryStepContainerProps) => {
-  const [searchParams] = useSearchParams();
-  const createFromInventoryId = searchParams.get("createFromInventory") ?? undefined;
+const InventoryStepContainer = ({ fromExistingInventoryId, onSubmitInventoryForm }: InventoryStepContainerProps) => {
+  const { data: initialDataInventory, isValidating } = useApiInventoryQuery(fromExistingInventoryId ?? null);
 
-  const {
-    data: initialDataInventory,
-    isFetching,
-    refetch,
-  } = useApiQuery(
-    {
-      path: `/inventories/${createFromInventoryId!}`,
-      schema: getInventoryResponse,
-    },
-    {
-      enabled: false,
-    },
-  );
-  useEffect(() => {
-    if (createFromInventoryId) {
-      void refetch();
-    }
-  }, [createFromInventoryId, refetch]);
-
-  if (isFetching) {
+  if (fromExistingInventoryId && isValidating) {
     return (
       <div className="flex justify-center items-center">
         <progress className="progress progress-primary w-56" />
@@ -41,7 +20,7 @@ const InventoryStepContainer = ({ onSubmitInventoryForm }: InventoryStepContaine
 
   return (
     <>
-      {(!createFromInventoryId || initialDataInventory) && (
+      {(!fromExistingInventoryId || initialDataInventory) && (
         <InventoryFormWithMap
           mode="create"
           initialData={initialDataInventory}

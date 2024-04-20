@@ -21,7 +21,7 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   const queryClient = useQueryClient();
 
   const [searchParams] = useSearchParams();
-  const inventoryIdParam = searchParams.get("inventoryId") ?? undefined;
+  const inventoryIdParam = searchParams.get("inventoryId");
 
   const { displayNotification } = useNotifications();
 
@@ -79,7 +79,10 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   return (
     <>
       {currentStep.id === INVENTORY_STEP.id && (
-        <InventoryStepContainer onSubmitInventoryForm={handleSubmitInventoryForm} />
+        <InventoryStepContainer
+          fromExistingInventoryId={inventoryIdParam}
+          onSubmitInventoryForm={handleSubmitInventoryForm}
+        />
       )}
       {currentStep.id === ENTRY_STEP.id && inventoryIdParam && (
         <EntryStepContainer
