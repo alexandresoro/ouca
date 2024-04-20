@@ -17,7 +17,7 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
     {
       path: "/",
       element: (
-        <GlobalErrorBoundary showDialog fallback={<ErrorBoundary />}>
+        <GlobalErrorBoundary fallback={<ErrorBoundary />}>
           <AuthHandler>
             <Layout />
           </AuthHandler>

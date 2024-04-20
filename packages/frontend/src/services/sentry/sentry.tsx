@@ -48,12 +48,6 @@ export const initializeSentry = (config: AppConfig) => {
         return null;
       }
 
-      if (event.exception && event.event_id) {
-        Sentry.showReportDialog({
-          eventId: event.event_id,
-          user: { name: event.user?.username, email: event.user?.email },
-        });
-      }
       return event;
     },
   });
