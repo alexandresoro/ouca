@@ -21,7 +21,10 @@ export const geojsonController: FastifyPluginAsync<{
       }
     }
 
-    const geoJsonLocalitiesStr = JSON.stringify(geoJsonLocalitiesResult.value);
-    return await reply.cacheControl("private").cacheControl("max-age", 300).send(geoJsonLocalitiesStr);
+    return await reply
+      .header("Content-Type", "application/json; charset=utf-8")
+      .cacheControl("private")
+      .cacheControl("max-age", 300)
+      .send(geoJsonLocalitiesResult.value);
   });
 };

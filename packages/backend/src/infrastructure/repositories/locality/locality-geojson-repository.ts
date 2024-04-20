@@ -3,12 +3,10 @@ import { logger } from "../../../utils/logger.js";
 
 const GEOJSON_DATA_REDIS_KEY = "geoJsonLocalities";
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-const getLocalities = async (): Promise<unknown | null> => {
-  const cachedLocalitiesStr = await redis.get(GEOJSON_DATA_REDIS_KEY);
+const getLocalities = async (): Promise<Buffer | null> => {
+  const cachedLocalitiesStr = await redis.getBuffer(GEOJSON_DATA_REDIS_KEY);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return cachedLocalitiesStr ? JSON.parse(cachedLocalitiesStr) : null;
+  return cachedLocalitiesStr ?? null;
 };
 
 const saveLocalities = async (localitiesCollection: unknown): Promise<void> => {

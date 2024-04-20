@@ -17,7 +17,7 @@ export const buildGeoJSONService = ({
   localityRepository,
   localitiesGeoJSONRepository,
 }: GeoJSONServiceDependencies) => {
-  const getLocalities = async (loggedUser: LoggedUser | null): Promise<Result<unknown, AccessFailureReason>> => {
+  const getLocalities = async (loggedUser: LoggedUser | null): Promise<Result<Buffer, AccessFailureReason>> => {
     if (!loggedUser) {
       return err("notAllowed");
     }
@@ -32,7 +32,7 @@ export const buildGeoJSONService = ({
     return ok(geojsonData);
   };
 
-  const updateGeoJSONData = async (): Promise<unknown> => {
+  const updateGeoJSONData = async (): Promise<Buffer> => {
     const geoJsonLocalities = await localityRepository.getLocalitiesForGeoJSON();
 
     const localityPoints = geoJsonLocalities.map((geoJsonLocality) => {
@@ -47,8 +47,7 @@ export const buildGeoJSONService = ({
     // Store collection as cache
     await localitiesGeoJSONRepository.saveLocalities(localitiesCollection);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return localitiesCollection;
+    return Buffer.from(JSON.stringify(localitiesCollection));
   };
 
   return {
