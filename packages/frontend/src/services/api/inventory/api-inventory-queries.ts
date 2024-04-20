@@ -1,9 +1,9 @@
 import { getInventoryResponse, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
 import { useApiFetch } from "@services/api/useApiFetch";
 import { useApiMutation } from "@services/api/useApiMutation";
-import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
+import { type UseApiQueryCommonParams, type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import type { SWRMutationConfiguration } from "swr/dist/mutation";
-import type { z } from "zod";
+import { z } from "zod";
 
 export const useApiInventoryQuery = (
   id: string | null,
@@ -13,6 +13,23 @@ export const useApiInventoryQuery = (
     id != null ? `/inventories/${id}` : null,
     {
       schema: getInventoryResponse,
+    },
+    {
+      ...swrOptions,
+    },
+  );
+};
+
+export const useApiInventoryIndex = (
+  id: string | null,
+  queryParams: UseApiQueryCommonParams["queryParams"],
+  swrOptions?: UseApiQuerySWROptions<number>,
+) => {
+  return useApiQuery(
+    id ? `/inventories/${id}/index` : null,
+    {
+      queryParams,
+      schema: z.number(),
     },
     {
       ...swrOptions,

@@ -3,7 +3,11 @@ import { Menu } from "@headlessui/react";
 import { useNotifications } from "@hooks/useNotifications";
 import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
-import { useApiInventoryDelete, useApiInventoryUpdate } from "@services/api/inventory/api-inventory-queries";
+import {
+  useApiInventoryDelete,
+  useApiInventoryIndex,
+  useApiInventoryUpdate,
+} from "@services/api/inventory/api-inventory-queries";
 import {
   ChevronLeft,
   ChevronRight,
@@ -16,7 +20,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import useApiQuery from "../../../../hooks/api/useApiQuery";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
@@ -50,19 +53,10 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
 
   const totalInventories = inventoryCountData?.meta.count;
 
-  const { data: inventoryIndex } = useApiQuery(
-    {
-      path: `/inventories/${inventory.id}/index`,
-      queryParams: {
-        orderBy: "creationDate",
-        sortOrder: "desc",
-      },
-      schema: z.number(),
-    },
-    {
-      enabled: inventory != null,
-    },
-  );
+  const { data: inventoryIndex } = useApiInventoryIndex(inventory.id, {
+    orderBy: "creationDate",
+    sortOrder: "desc",
+  });
 
   const previousInventoryIndex =
     inventoryIndex != null && totalInventories != null && inventoryIndex < totalInventories
