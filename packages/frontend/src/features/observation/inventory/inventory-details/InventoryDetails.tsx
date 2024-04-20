@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
 import useApiInfiniteQuery from "../../../../hooks/api/useApiInfiniteQuery";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
 type InventoryDetailsProps = { inventoryId: string };
@@ -25,17 +24,6 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
   });
 
   const { data: inventory } = useApiInventoryQuery(inventoryId);
-
-  const { data: entriesForCount } = useApiQuery({
-    queryKeyPrefix: "entriesForInventoryDetails",
-    path: "/entries",
-    queryParams: {
-      pageNumber: 1,
-      pageSize: 1,
-      inventoryId,
-    },
-    schema: getEntriesResponse,
-  });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     queryKeyPrefix: "entriesForInventoryDetails",
@@ -72,9 +60,9 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
       <div className="card border-2 border-primary p-3 shadow-md">
         <div className="flex items-center gap-3 py-2">
           <h3 className="text-lg font-semibold">
-            {t("inventoryPage.entriesPanel.title", { count: entriesForCount?.meta.count })}
+            {t("inventoryPage.entriesPanel.title", { count: data?.pages[0].meta.count })}
           </h3>
-          <span className="badge badge-primary badge-outline font-semibold">{entriesForCount?.meta.count}</span>
+          <span className="badge badge-primary badge-outline font-semibold">{data?.pages[0].meta.count}</span>
         </div>
         <ul className="flex flex-col gap-1">
           {data?.pages.map((page) => {
