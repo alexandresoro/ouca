@@ -37,10 +37,7 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
 
   const handleSubmitInventoryForm = (inventoryFormData: UpsertInventoryInput) => {
     createInventory({ body: inventoryFormData })
-      .then(async (createdInventory) => {
-        await queryClient.invalidateQueries(["API", "indexInventory"]);
-
-        queryClient.setQueryData(["API", `/inventories/${createdInventory.id}`], createdInventory);
+      .then((createdInventory) => {
         displayNotification({
           type: "success",
           message: t("inventoryForm.createSuccess"),
@@ -57,8 +54,7 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
 
   const handleSubmitEntryForm = (entryFormData: UpsertEntryInput) => {
     createEntry({ body: entryFormData })
-      .then((createdEntry) => {
-        queryClient.setQueryData(["API", `/entries/${createdEntry.id}`], createdEntry);
+      .then(() => {
         displayNotification({
           type: "success",
           message: t("inventoryForm.entries.createSuccess"),

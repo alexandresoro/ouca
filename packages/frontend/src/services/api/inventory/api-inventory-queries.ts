@@ -40,12 +40,14 @@ export const useApiInventoryIndex = (
 export const useApiInventoriesQuery = (
   queryParams: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getInventoriesResponse>>,
+  { paused = false } = {},
 ) => {
   return useApiQuery(
     "/inventories",
     {
       queryParams,
       schema: getInventoriesResponse,
+      paused,
     },
     {
       ...swrOptions,

@@ -2,7 +2,7 @@ import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, u
 import { Menu } from "@headlessui/react";
 import { useNotifications } from "@hooks/useNotifications";
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
-import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
+import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import {
   useApiInventoriesQuery,
   useApiInventoryDelete,
@@ -17,12 +17,10 @@ import {
   EditAlt,
   Trash,
 } from "@styled-icons/boxicons-regular";
-import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
 import InventoryMap from "../inventory-map/InventoryMap";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
@@ -38,8 +36,6 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
   const navigate = useNavigate();
 
   const { displayNotification } = useNotifications();
-
-  const queryClient = useQueryClient();
 
   const [deleteDialog, setDeleteDialog] = useState<Inventory | null>(null);
 
@@ -61,39 +57,29 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
       : undefined;
   const nextInventoryIndex = inventoryIndex != null && inventoryIndex > 1 ? inventoryIndex - 1 : undefined;
 
-  const { data: previousInventoryData, isFetching: isFetchingPrevious } = useApiQuery(
+  const { data: previousInventoryData, isValidating: isValidatingPrevious } = useApiInventoriesQuery(
     {
-      queryKeyPrefix: "indexInventory",
-      path: "/inventories",
-      queryParams: {
-        pageNumber: previousInventoryIndex,
-        pageSize: 1,
-        orderBy: "creationDate",
-        sortOrder: "desc",
-      },
-      schema: getInventoriesResponse,
+      pageNumber: previousInventoryIndex,
+      pageSize: 1,
+      orderBy: "creationDate",
+      sortOrder: "desc",
     },
+    {},
     {
-      enabled: previousInventoryIndex != null,
-      staleTime: 30000,
+      paused: previousInventoryIndex == null,
     },
   );
 
-  const { data: nextInventoryData, isFetching: isFetchingNext } = useApiQuery(
+  const { data: nextInventoryData, isValidating: isValidatingNext } = useApiInventoriesQuery(
     {
-      queryKeyPrefix: "indexInventory",
-      path: "/inventories",
-      queryParams: {
-        pageNumber: nextInventoryIndex,
-        pageSize: 1,
-        orderBy: "creationDate",
-        sortOrder: "desc",
-      },
-      schema: getInventoriesResponse,
+      pageNumber: nextInventoryIndex,
+      pageSize: 1,
+      orderBy: "creationDate",
+      sortOrder: "desc",
     },
+    {},
     {
-      enabled: nextInventoryIndex != null,
-      staleTime: 30000,
+      paused: nextInventoryIndex == null,
     },
   );
 
@@ -120,15 +106,13 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
         message: t("inventoryForm.deleteSuccess"),
       });
       setDeleteDialog(null);
-      void queryClient.invalidateQueries(["API", "indexInventory"]).then(() => {
-        if (previousInventoryId != null) {
-          navigate(`../${previousInventoryId}`, { replace: true, relative: "path" });
-        } else if (nextInventoryId != null) {
-          navigate(`../${nextInventoryId}`, { replace: true, relative: "path" });
-        } else {
-          navigate("/", { replace: true });
-        }
-      });
+      if (previousInventoryId != null) {
+        navigate(`../${previousInventoryId}`, { replace: true, relative: "path" });
+      } else if (nextInventoryId != null) {
+        navigate(`../${nextInventoryId}`, { replace: true, relative: "path" });
+      } else {
+        navigate("/", { replace: true });
+      }
     },
     onError: () => {
       displayNotification({
@@ -248,7 +232,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
             >
               <Link
                 className={`btn btn-sm btn-square ${
-                  hasPreviousInventory && !isFetchingPrevious ? "btn-primary" : "btn-disabled"
+                  hasPreviousInventory && !isValidatingPrevious ? "btn-primary" : "btn-disabled"
                 }`}
                 // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
                 to={`../${previousInventoryId as string}`}
@@ -264,7 +248,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
             >
               <Link
                 className={`btn btn-sm btn-square ${
-                  hasNextInventory && !isFetchingNext ? "btn-primary" : "btn-disabled"
+                  hasNextInventory && !isValidatingNext ? "btn-primary" : "btn-disabled"
                 }`}
                 // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
                 to={`../${nextInventoryId as string}`}
