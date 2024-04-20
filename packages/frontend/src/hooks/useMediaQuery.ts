@@ -15,6 +15,7 @@ const useMediaQuery = (query: string): boolean => {
     setMatches(getMatches(query));
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const matchMedia = window.matchMedia(query);
 
