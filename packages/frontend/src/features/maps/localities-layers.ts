@@ -1,7 +1,7 @@
 import type { LayerProps } from "react-map-gl/maplibre";
 import { type MapProvider, getFontFamily } from "./map-style-providers";
 
-export const clusterLayer: LayerProps = {
+export const clusterLayer = {
   id: "clusters-localities",
   type: "circle",
   source: "localities",
@@ -21,7 +21,7 @@ export const clusterLayer: LayerProps = {
     "circle-stroke-color": "#fff",
     "circle-opacity": 0.8,
   },
-};
+} satisfies LayerProps;
 
 export const clusterCountLayer: (mapStyle: MapProvider) => LayerProps = (mapStyle) => {
   return {
@@ -37,7 +37,7 @@ export const clusterCountLayer: (mapStyle: MapProvider) => LayerProps = (mapStyl
   };
 };
 
-export const singleLocalityLayer: LayerProps = {
+export const singleLocalityLayer = {
   id: "single-locality-point",
   type: "circle",
   source: "localities",
@@ -49,9 +49,9 @@ export const singleLocalityLayer: LayerProps = {
     "circle-stroke-color": "#fff",
     "circle-opacity": 0.8,
   },
-};
+} satisfies LayerProps;
 
-export const selectionLayer: LayerProps = {
+export const selectionLayer = {
   id: "selection-layer",
   type: "line",
   source: "selected-localities",
@@ -60,4 +60,4 @@ export const selectionLayer: LayerProps = {
     "line-width": 3,
     "line-opacity": 0.85,
   },
-};
+} satisfies LayerProps;

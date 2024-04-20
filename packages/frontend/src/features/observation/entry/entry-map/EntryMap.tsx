@@ -221,7 +221,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
       if (feature?.properties?.cluster_id != null) {
         const clusterId = feature.properties.cluster_id as number;
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
         const mapboxSource = mapRef.current!.getSource("localities")! as GeoJSONSource;
 
         const zoom = await mapboxSource.getClusterExpansionZoom(clusterId);
@@ -275,7 +275,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
       {...viewState}
       onLoad={handleOnMapLoad}
       onMove={(evt) => setViewState(evt.viewState)}
-      interactiveLayerIds={[clusterLayer.id!, singleLocalityLayer.id!]}
+      interactiveLayerIds={[clusterLayer.id, singleLocalityLayer.id]}
       onMouseMove={onHoverMap}
       onClick={onClickMap}
     >

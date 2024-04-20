@@ -58,7 +58,6 @@ type ImportInstructionsPanelProps = {
 const ImportInstructionsPanel: FunctionComponent<ImportInstructionsPanelProps> = ({ importType }) => {
   const { t } = useTranslation();
 
-  // biome-ignore lint/style/useNamingConvention: <explanation>
   const ImportComponent = getImportComponent(importType);
 
   return (

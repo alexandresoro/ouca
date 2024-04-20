@@ -140,7 +140,7 @@ export const inventoryCoordinatesAtom = atom(
 
 const inventoryCoordinatesWithAltitudeSetAtom = atom(
   null,
-  async (get, set, newCoordinates: CoordinatesWithAltitude | typeof RESET) => {
+  async (_get, set, newCoordinates: CoordinatesWithAltitude | typeof RESET) => {
     await set(inventoryCoordinatesAtom, newCoordinates);
     set(inventoryAltitudeAtom, newCoordinates === RESET ? newCoordinates : newCoordinates.altitude);
   },
@@ -173,7 +173,7 @@ export const inventoryLocalityAtom = atom(
 // Write-only atom to update data when a new inventory is the current one
 export const inventorySetAtom = atom(
   null,
-  async (get, set, newInventory: Inventory | Omit<Inventory, "id"> | typeof RESET) => {
+  async (_get, set, newInventory: Inventory | Omit<Inventory, "id"> | typeof RESET) => {
     if (newInventory === RESET) {
       set(storedCustomizedCoordinatesAtom, RESET);
       await set(inventoryLocalityAtom, RESET);
