@@ -1,5 +1,5 @@
 import { getEntriesResponse } from "@ou-ca/common/api/entry";
-import { getInventoryResponse } from "@ou-ca/common/api/inventory";
+import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import { CopyAlt } from "@styled-icons/boxicons-regular";
 import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,10 +24,7 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
     },
   });
 
-  const { data: inventory } = useApiQuery({
-    path: `/inventories/${inventoryId}`,
-    schema: getInventoryResponse,
-  });
+  const { data: inventory } = useApiInventoryQuery(inventoryId);
 
   const { data: entriesForCount } = useApiQuery({
     queryKeyPrefix: "entriesForInventoryDetails",
