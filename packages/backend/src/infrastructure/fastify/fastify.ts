@@ -1,6 +1,7 @@
 import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
+import { fastifySensible } from "@fastify/sensible";
 import fastifyUnderPressure from "@fastify/under-pressure";
 import { buildBullBoardAdapter } from "@infrastructure/bullmq/bullboard.js";
 import type { Queues } from "@infrastructure/bullmq/queues.js";
@@ -34,6 +35,7 @@ export const buildServer = async (
   });
 
   // Middlewares
+  await server.register(fastifySensible);
   await server.register(fastifyMultipart);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {

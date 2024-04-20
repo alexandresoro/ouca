@@ -1,4 +1,3 @@
-import { fastifyCaching } from "@fastify/caching";
 import { fastifyEtag } from "@fastify/etag";
 import type { FastifyPluginAsync } from "fastify";
 import type { Services } from "../../services/services.js";
@@ -7,11 +6,6 @@ export const geojsonController: FastifyPluginAsync<{
   services: Services;
 }> = async (fastify, { services }) => {
   const { geojsonService } = services;
-
-  await fastify.register(fastifyCaching, {
-    privacy: fastifyCaching.privacy.PRIVATE,
-    expiresIn: 300,
-  });
 
   await fastify.register(fastifyEtag, {
     algorithm: "sha256",
@@ -28,6 +22,6 @@ export const geojsonController: FastifyPluginAsync<{
     }
 
     const geoJsonLocalitiesStr = JSON.stringify(geoJsonLocalitiesResult.value);
-    return await reply.send(geoJsonLocalitiesStr);
+    return await reply.cacheControl("private").cacheControl("max-age", 300).send(geoJsonLocalitiesStr);
   });
 };
