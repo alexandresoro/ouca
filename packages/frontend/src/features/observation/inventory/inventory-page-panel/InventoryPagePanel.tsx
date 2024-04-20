@@ -1,7 +1,7 @@
 import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
 import { useNotifications } from "@hooks/useNotifications";
-import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory, InventoryExtended } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import {
   useApiInventoryDelete,
@@ -40,7 +40,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
 
   const queryClient = useQueryClient();
 
-  const [deleteDialog, setDeleteDialog] = useState<InventoryExtended | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<Inventory | null>(null);
 
   const { data: inventoryCountData } = useApiQuery({
     path: "/inventories",
