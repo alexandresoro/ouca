@@ -26,9 +26,6 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
 
   const { data: inventory } = useApiQuery({
     path: `/inventories/${inventoryId}`,
-    queryParams: {
-      extended: true,
-    },
     schema: getInventoryResponse,
   });
 

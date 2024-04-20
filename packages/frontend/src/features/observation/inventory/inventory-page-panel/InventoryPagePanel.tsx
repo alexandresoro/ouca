@@ -1,7 +1,7 @@
 import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
 import { useNotifications } from "@hooks/useNotifications";
-import type { Inventory, InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { type UpsertInventoryInput, getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import {
   useApiInventoryDelete,
@@ -27,7 +27,7 @@ import InventoryMap from "../inventory-map/InventoryMap";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
 type InventoryPagePanelProps = {
-  inventory: InventoryExtended;
+  inventory: Inventory;
   isInventoryDeletionAllowed?: boolean;
 };
 

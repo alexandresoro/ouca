@@ -1,4 +1,4 @@
-import type { Inventory, InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -11,7 +11,7 @@ import InventoryForm from "../inventory-form/InventoryForm";
 type InventoryFormWithMapProps =
   | {
       mode: "update";
-      inventory: InventoryExtended;
+      inventory: Inventory;
       onSubmitInventoryForm?: (inventoryFormData: UpsertInventoryInput, inventoryId: string) => void;
     }
   | {

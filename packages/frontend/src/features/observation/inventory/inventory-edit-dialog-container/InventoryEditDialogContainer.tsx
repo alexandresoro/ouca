@@ -1,12 +1,12 @@
 import { Dialog } from "@headlessui/react";
-import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventoryFormWithMap from "../inventory-form-with-map/InventoryFormWithMap";
 
 type InventoryEditDialogContainerProps = {
-  inventory: InventoryExtended;
+  inventory: Inventory;
   open: boolean;
   onClose: (value: boolean) => void;
   onInventoryUpdate?: (inventoryFormData: UpsertInventoryInput, inventoryId: string) => void;

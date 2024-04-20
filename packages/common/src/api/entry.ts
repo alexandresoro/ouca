@@ -38,7 +38,7 @@ export const getEntriesQueryParamsSchema = paginationQueryParamsSchema
   })
   .merge(getSearchCriteriaParamsSchema);
 
-export type EntriesSearchParams = Omit<z.infer<typeof getEntriesQueryParamsSchema>, "extended">;
+export type EntriesSearchParams = z.infer<typeof getEntriesQueryParamsSchema>;
 
 export const getEntriesResponse = getPaginatedResponseSchema(entrySchema);
 
