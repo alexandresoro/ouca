@@ -1,14 +1,14 @@
 import { type UpsertInventoryInput, getInventoryResponse } from "@ou-ca/common/api/inventory";
-import { type FunctionComponent, useEffect } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import useApiQuery from "../../../../../hooks/api/useApiQuery";
 import InventoryFormWithMap from "../../../inventory/inventory-form-with-map/InventoryFormWithMap";
 
-type InventoryEditContainerProps = {
+type InventoryStepContainerProps = {
   onSubmitInventoryForm?: (inventoryFormData: UpsertInventoryInput) => void;
 };
 
-const InventoryEditContainer: FunctionComponent<InventoryEditContainerProps> = ({ onSubmitInventoryForm }) => {
+const InventoryStepContainer = ({ onSubmitInventoryForm }: InventoryStepContainerProps) => {
   const [searchParams] = useSearchParams();
   const createFromInventoryId = searchParams.get("createFromInventory") ?? undefined;
 
@@ -52,4 +52,4 @@ const InventoryEditContainer: FunctionComponent<InventoryEditContainerProps> = (
   );
 };
 
-export default InventoryEditContainer;
+export default InventoryStepContainer;
