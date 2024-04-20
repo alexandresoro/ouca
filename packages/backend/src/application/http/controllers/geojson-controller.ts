@@ -1,6 +1,5 @@
 import { fastifyCaching } from "@fastify/caching";
 import type { FastifyPluginAsync } from "fastify";
-import { sha256 } from "../../../utils/crypto.js";
 import type { Services } from "../../services/services.js";
 
 export const geojsonController: FastifyPluginAsync<{
@@ -24,6 +23,7 @@ export const geojsonController: FastifyPluginAsync<{
     }
 
     const geoJsonLocalitiesStr = JSON.stringify(geoJsonLocalitiesResult.value);
-    return await reply.etag(`"${sha256(geoJsonLocalitiesStr)}"`).send(geoJsonLocalitiesStr);
+    return await reply.send(geoJsonLocalitiesStr);
+    // return await reply.etag(`"${sha256(geoJsonLocalitiesStr)}"`).send(geoJsonLocalitiesStr);
   });
 };
