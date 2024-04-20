@@ -1,5 +1,4 @@
 import { oidcConfigAtom } from "@services/auth/oidc-config";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { addProtocol, removeProtocol } from "maplibre-gl";
 import { Protocol } from "pmtiles";
@@ -10,8 +9,6 @@ import { RouterProvider, type createBrowserRouter } from "react-router-dom";
 type AppProps = {
   router: ReturnType<typeof createBrowserRouter>;
 };
-
-const queryClient = new QueryClient();
 
 const App: FunctionComponent<AppProps> = ({ router }) => {
   const oidcConfig = useAtomValue(oidcConfigAtom);
@@ -32,9 +29,7 @@ const App: FunctionComponent<AppProps> = ({ router }) => {
           window.history.replaceState({}, document.title, window.location.pathname);
         }}
       >
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
+        <RouterProvider router={router} />
       </AuthProvider>
     </div>
   );
