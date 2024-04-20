@@ -67,11 +67,3 @@ export const fetchApi = async <T = unknown>({
 
   return jsonResponse;
 };
-
-/**
- * @deprecated use FetchError class instead
- */
-export type FetchErrorType = {
-  status: number;
-  statusText?: string;
-};
