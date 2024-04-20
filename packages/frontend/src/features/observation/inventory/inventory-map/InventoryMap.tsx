@@ -1,11 +1,11 @@
-import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Marker, Popup, type ViewState } from "react-map-gl/maplibre";
 import MapInstance from "../../../maps/MapInstance";
 
 type InventoryMapProps = {
-  inventory: InventoryExtended;
+  inventory: Inventory;
 };
 
 const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {

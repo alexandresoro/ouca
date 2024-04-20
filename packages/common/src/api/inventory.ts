@@ -8,8 +8,6 @@ import { inventoryExtendedSchema } from "./entities/inventory.js";
  */
 export const getInventoryResponse = inventoryExtendedSchema;
 
-export type GetInventoryResponse = z.infer<typeof getInventoryResponse>;
-
 /**
  * `GET` `/inventories`
  *  Retrieve paginated inventories results
