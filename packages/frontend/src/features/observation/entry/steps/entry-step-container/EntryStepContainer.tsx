@@ -1,7 +1,7 @@
+import useApiInfiniteQuery from "@hooks/api/useApiInfiniteQuery";
 import { useNotifications } from "@hooks/useNotifications";
-import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type UpsertEntryInput, getEntriesResponse } from "@ou-ca/common/api/entry";
 import { useApiEntryCreate } from "@services/api/entry/api-entry-queries";
-import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import InventoryDetails from "../../../inventory/inventory-details/InventoryDetails";
@@ -18,9 +18,17 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
 
   const [entryFormKey, setEntryFormKey] = useState(0);
 
-  const queryClient = useQueryClient();
-
   const createEntry = useApiEntryCreate();
+
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    queryKeyPrefix: "entriesForInventoryDetails",
+    path: "/entries",
+    queryParams: {
+      pageSize: 10,
+      inventoryId,
+    },
+    schema: getEntriesResponse,
+  });
 
   const handleSubmitEntryForm = (entryFormData: UpsertEntryInput) => {
     createEntry({ body: entryFormData })
@@ -38,7 +46,7 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
         });
       })
       .finally(() => {
-        void queryClient.invalidateQueries(["API", "entriesForInventoryDetails"]);
+        void refetch();
       });
   };
 
@@ -47,7 +55,12 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
   return (
     <div className="container mx-auto flex gap-10 pt-4">
       <div className="basis-1/3">
-        <InventoryDetails inventoryId={inventoryId} />
+        <InventoryDetails
+          inventoryId={inventoryId}
+          entriesPages={data}
+          hasMoreEntries={hasNextPage}
+          onMoreEntriesRequested={fetchNextPage}
+        />
       </div>
       <div className="basis-2/3">
         <h2 className="text-xl font-semibold mb-3">{t("entryDetailsForm.title")}</h2>

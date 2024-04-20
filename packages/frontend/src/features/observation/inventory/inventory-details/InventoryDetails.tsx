@@ -1,16 +1,26 @@
-import { getEntriesResponse } from "@ou-ca/common/api/entry";
+import type { GetEntriesResponse } from "@ou-ca/common/api/entry";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
 import { CopyAlt } from "@styled-icons/boxicons-regular";
-import { Fragment, type FunctionComponent } from "react";
+import type { InfiniteData } from "@tanstack/react-query";
+import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import useApiInfiniteQuery from "../../../../hooks/api/useApiInfiniteQuery";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
-type InventoryDetailsProps = { inventoryId: string };
+type InventoryDetailsProps = {
+  inventoryId: string;
+  entriesPages: InfiniteData<GetEntriesResponse> | undefined;
+  hasMoreEntries?: boolean;
+  onMoreEntriesRequested?: () => void;
+};
 
-const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryId }) => {
+const InventoryDetails = ({
+  inventoryId,
+  entriesPages,
+  hasMoreEntries,
+  onMoreEntriesRequested,
+}: InventoryDetailsProps) => {
   const { t } = useTranslation();
 
   const { ref } = useInView({
@@ -18,22 +28,12 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
     rootMargin: "0px 0px 250px 0px",
     onChange: (inView) => {
       if (inView) {
-        void fetchNextPage();
+        void onMoreEntriesRequested?.();
       }
     },
   });
 
   const { data: inventory } = useApiInventoryQuery(inventoryId);
-
-  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
-    queryKeyPrefix: "entriesForInventoryDetails",
-    path: "/entries",
-    queryParams: {
-      pageSize: 10,
-      inventoryId,
-    },
-    schema: getEntriesResponse,
-  });
 
   return (
     <div className="flex flex-col gap-4 pb-2">
@@ -60,12 +60,12 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
       <div className="card border-2 border-primary p-3 shadow-md">
         <div className="flex items-center gap-3 py-2">
           <h3 className="text-lg font-semibold">
-            {t("inventoryPage.entriesPanel.title", { count: data?.pages[0].meta.count })}
+            {t("inventoryPage.entriesPanel.title", { count: entriesPages?.pages[0].meta.count })}
           </h3>
-          <span className="badge badge-primary badge-outline font-semibold">{data?.pages[0].meta.count}</span>
+          <span className="badge badge-primary badge-outline font-semibold">{entriesPages?.pages[0].meta.count}</span>
         </div>
         <ul className="flex flex-col gap-1">
-          {data?.pages.map((page) => {
+          {entriesPages?.pages.map((page) => {
             return (
               <Fragment key={page.meta.pageNumber}>
                 {page.data.map((entry) => {
@@ -94,8 +94,13 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
             );
           })}
         </ul>
-        {hasNextPage && (
-          <button ref={ref} type="button" className="btn btn-xs btn-link no-underline" onClick={() => fetchNextPage()}>
+        {hasMoreEntries && (
+          <button
+            ref={ref}
+            type="button"
+            className="btn btn-xs btn-link no-underline"
+            onClick={() => onMoreEntriesRequested?.()}
+          >
             {t("infiniteScroll.more")}
           </button>
         )}
