@@ -1,17 +1,16 @@
 import type { Inventory } from "@domain/inventory/inventory.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
-import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory as InventoryApi } from "@ou-ca/common/api/entities/inventory";
 import { Result, err, ok } from "neverthrow";
 import { getDateOnlyAsLocalISOString } from "../../../utils/time-utils.js";
 import type { Services } from "../../services/services.js";
-import { enrichedLocality } from "./localities-enricher.js";
 
 export const enrichedInventory = async (
   services: Services,
   inventory: Inventory,
   user: LoggedUser | null,
-): Promise<Result<InventoryExtended, AccessFailureReason | "extendedDataNotFound">> => {
+): Promise<Result<InventoryApi, AccessFailureReason | "extendedDataNotFound">> => {
   const enrichedResult = Result.combine([
     await services.observerService.findObserver(Number.parseInt(inventory.observerId), user),
     await services.observerService.findObservers(inventory.associateIds, user),
@@ -29,12 +28,6 @@ export const enrichedInventory = async (
     return err("extendedDataNotFound");
   }
 
-  const localityEnrichedResult = await enrichedLocality(services, locality, user);
-
-  if (localityEnrichedResult.isErr()) {
-    return err(localityEnrichedResult.error);
-  }
-
   const { time, duration, date, ...restInventory } = inventory;
 
   return ok({
@@ -44,7 +37,7 @@ export const enrichedInventory = async (
     date: getDateOnlyAsLocalISOString(date),
     observer,
     associates,
-    locality: localityEnrichedResult.value,
+    locality,
     weathers,
   });
 };

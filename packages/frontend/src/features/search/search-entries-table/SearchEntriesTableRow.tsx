@@ -1,6 +1,7 @@
 import IconButton from "@components/base/IconButton";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
+import { useApiLocalityInfoQuery } from "@services/api/locality/api-locality-queries";
 import { Detail, EditAlt, Trash } from "@styled-icons/boxicons-regular";
 import { Binoculars } from "@styled-icons/boxicons-solid";
 import type { FunctionComponent } from "react";
@@ -21,13 +22,15 @@ const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (pr
 
   const { data: inventory } = useApiInventoryQuery(donnee.inventoryId);
 
+  const { data: localityInfo } = useApiLocalityInfoQuery(inventory?.locality.id ?? null);
+
   return (
     <>
       <tr className="table-hover">
         <td>{donnee.species?.nomFrancais}</td>
         <td>{donnee.number}</td>
         <td>
-          {inventory?.locality.townName} ({inventory?.locality.departmentCode}), {inventory?.locality.nom}
+          {localityInfo?.townName} ({localityInfo?.departmentCode}), {inventory?.locality.nom}
         </td>
         <td>{inventory?.date ? new Intl.DateTimeFormat().format(new Date(inventory.date)) : ""}</td>
         <td align="right" className="w-40 flex gap-1">

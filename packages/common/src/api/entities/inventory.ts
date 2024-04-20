@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { coordinatesSchema } from "./coordinates.js";
-import { localityExtendedSchema, localitySchema } from "./locality.js";
+import { localitySchema } from "./locality.js";
 import { observerSchema } from "./observer.js";
 import { weatherSchema } from "./weather.js";
 
@@ -18,9 +18,3 @@ export const inventorySchema = z.object({
 });
 
 export type Inventory = z.infer<typeof inventorySchema>;
-
-export const inventoryExtendedSchema = inventorySchema.omit({ locality: true }).extend({
-  locality: localityExtendedSchema.omit({ inventoriesCount: true, entriesCount: true }),
-});
-
-export type InventoryExtended = z.infer<typeof inventoryExtendedSchema>;

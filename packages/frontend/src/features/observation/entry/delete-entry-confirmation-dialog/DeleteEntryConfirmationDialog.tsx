@@ -1,6 +1,7 @@
 import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
+import { useApiLocalityInfoQuery } from "@services/api/locality/api-locality-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -21,6 +22,8 @@ const DeleteEntryConfirmationDialog: FunctionComponent<DeleteEntryConfirmationDi
 
   const { data: inventory } = useApiInventoryQuery(entry?.inventoryId ?? null);
 
+  const { data: localityInfo } = useApiLocalityInfoQuery(inventory?.locality.id ?? null);
+
   if (!inventory) {
     return null;
   }
@@ -31,8 +34,8 @@ const DeleteEntryConfirmationDialog: FunctionComponent<DeleteEntryConfirmationDi
       messageContent={t("deleteObservationDialogMsg", {
         species: entry?.species.nomFrancais,
         locality: inventory.locality.nom,
-        city: inventory.locality.townName,
-        department: inventory.locality.departmentCode,
+        city: localityInfo?.townName,
+        department: localityInfo?.departmentCode,
         date: inventory.date,
       })}
       onCancelAction={onCancelAction}

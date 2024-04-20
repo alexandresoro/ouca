@@ -10,19 +10,3 @@ export const localitySchema = z.object({
 });
 
 export type Locality = z.infer<typeof localitySchema>;
-
-/**
- * @deprecated Use `localitySchema` instead.
- */
-export const localityExtendedSchema = localitySchema.extend({
-  townCode: z.number(),
-  townName: z.string(),
-  departmentCode: z.string(),
-  inventoriesCount: z.number(),
-  entriesCount: z.number(),
-});
-
-/**
- * @deprecated Use `Locality` instead.
- */
-export type LocalityExtended = z.infer<typeof localityExtendedSchema>;
