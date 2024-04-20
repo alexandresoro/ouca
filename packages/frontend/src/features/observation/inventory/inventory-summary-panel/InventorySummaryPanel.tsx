@@ -1,14 +1,17 @@
-import type { InventoryExtended } from "@ou-ca/common/api/entities/inventory";
+import type { Inventory } from "@ou-ca/common/api/entities/inventory";
+import { useApiLocalityInfoQuery } from "@services/api/locality/api-locality-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { getInventaireCoordinates } from "../../../../utils/coordinates-helper";
 
 type InventorySummaryPanelProps = {
-  inventory: InventoryExtended;
+  inventory: Inventory;
 };
 
 const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ inventory }) => {
   const { t } = useTranslation();
+
+  const { data: localityInfo } = useApiLocalityInfoQuery(inventory.locality.id);
 
   return (
     <div className="card gap-5 border-2 border-primary shadow-xl py-6">
@@ -46,9 +49,11 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
 
       <div className="px-4">
         <div className="title-with-divider">{t("observationDetails.locality")}</div>
-        <div>
-          {inventory.locality.nom} – {`${inventory.locality.townName} (${inventory.locality.departmentCode})`}
-        </div>
+        {localityInfo && (
+          <div>
+            {inventory.locality.nom} – {`${localityInfo?.townName} (${localityInfo?.departmentCode})`}
+          </div>
+        )}
         <div className="opacity-70">
           <div className="first-letter:capitalize">
             {t("observationDetails.coordinates", {
