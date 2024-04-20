@@ -1,10 +1,10 @@
-import { getDepartmentResponse, getDepartmentsResponse } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { Town } from "@ou-ca/common/api/entities/town";
-import { getLocalitiesResponse } from "@ou-ca/common/api/locality";
-import { getTownResponse, getTownsResponse } from "@ou-ca/common/api/town";
 import { altitudeServiceStatusAtom } from "@services/altitude/altitude-service";
+import { useApiDepartmentQuery, useApiDepartmentsQuery } from "@services/api/department/api-department-queries";
+import { useApiLocalitiesQuery } from "@services/api/locality/api-locality-queries";
+import { useApiTownQuery, useApiTownsQuery } from "@services/api/town/api-town-queries";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -13,7 +13,6 @@ import { type UseFormReturn, useController, useFormState } from "react-hook-form
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../../components/base/TextInput";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import {
   areCoordinatesCustomizedFromLocalityAtom,
   inventoryAltitudeAtom,
@@ -50,34 +49,22 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   const [departmentId, setDepartmentId] = useAtom(departmentIdAtom);
 
   const [departmentsInput, setDepartmentsInput] = useState("");
-  const { data: department } = useApiQuery(
-    {
-      path: `/departments/${departmentId!}`,
-      schema: getDepartmentResponse,
-    },
-    {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-      enabled: departmentId != null,
-    },
-  );
+  const { data: department } = useApiDepartmentQuery(departmentId, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnMount: true,
+  });
   useEffect(() => {
     setDepartmentsInput(renderDepartment(department ?? null));
   }, [department]);
 
   const [townId, setTownId] = useAtom(townIdAtom);
   const [townsInput, setTownsInput] = useState("");
-  const { data: town } = useApiQuery(
-    {
-      path: `/towns/${townId!}`,
-      schema: getTownResponse,
-    },
-    {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-      enabled: townId != null,
-    },
-  );
+  const { data: town } = useApiTownQuery(townId, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnMount: true,
+  });
   useEffect(() => {
     setTownsInput(renderTown(town ?? null));
   }, [town]);
@@ -144,52 +131,47 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 
   const { errors } = useFormState({ control });
 
-  const { data: dataDepartments } = useApiQuery(
+  const { data: dataDepartments } = useApiDepartmentsQuery(
     {
-      path: "/departments",
-      queryParams: {
-        q: departmentsInput,
-        pageSize: 5,
-      },
-      schema: getDepartmentsResponse,
+      q: departmentsInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 
-  const { data: dataTowns } = useApiQuery(
+  const { data: dataTowns } = useApiTownsQuery(
     {
-      path: "/towns",
-      queryParams: {
-        q: townsInput,
-        pageSize: 5,
-        departmentId: department?.id,
-      },
-      schema: getTownsResponse,
+      q: townsInput,
+      pageSize: 5,
+      departmentId: department?.id,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-      enabled: department?.id != null,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+    },
+    {
+      paused: !department?.id,
     },
   );
 
-  const { data: dataLocalities } = useApiQuery(
+  const { data: dataLocalities } = useApiLocalitiesQuery(
     {
-      path: "/localities",
-      queryParams: {
-        q: localityInput,
-        pageSize: 5,
-        townId: town?.id,
-      },
-      schema: getLocalitiesResponse,
+      q: localityInput,
+      pageSize: 5,
+      townId: town?.id,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-      enabled: town?.id != null,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+    },
+    {
+      paused: !town?.id,
     },
   );
 

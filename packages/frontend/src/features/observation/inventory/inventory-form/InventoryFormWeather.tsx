@@ -1,11 +1,10 @@
 import type { Weather } from "@ou-ca/common/api/entities/weather";
-import { getWeathersResponse } from "@ou-ca/common/api/weather";
+import { useApiWeathersQuery } from "@services/api/weather/api-weather-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../../components/base/TextInput";
 import AutocompleteMultiple from "../../../../components/base/autocomplete/AutocompleteMultiple";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import type { InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormWeatherProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register"> & {
@@ -34,18 +33,15 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
     onChangeWeathersForm(selectedWeathers?.map((weather) => weather.id) ?? []);
   }, [selectedWeathers, onChangeWeathersForm]);
 
-  const { data: dataWeathers } = useApiQuery(
+  const { data: dataWeathers } = useApiWeathersQuery(
     {
-      path: "/weathers",
-      queryParams: {
-        q: weathersInput,
-        pageSize: 5,
-      },
-      schema: getWeathersResponse,
+      q: weathersInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 

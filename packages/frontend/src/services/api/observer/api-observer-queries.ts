@@ -49,12 +49,14 @@ export const useApiObserverInfoQuery = (
 export const useApiObserversQuery = (
   queryParams: UseApiQueryCommonParams["queryParams"],
   swrOptions?: UseApiQuerySWROptions<z.infer<typeof getObserversResponse>>,
+  { paused = false } = {},
 ) => {
   return useApiQuery(
     "/observers",
     {
       queryParams,
       schema: getObserversResponse,
+      paused,
     },
     {
       ...swrOptions,

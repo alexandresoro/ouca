@@ -1,11 +1,10 @@
 import type { Observer } from "@ou-ca/common/api/entities/observer";
-import { getObserversResponse } from "@ou-ca/common/api/observer";
+import { useApiObserversQuery } from "@services/api/observer/api-observer-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import AutocompleteMultiple from "../../../../components/base/autocomplete/AutocompleteMultiple";
-import useApiQuery from "../../../../hooks/api/useApiQuery";
 import type { InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormObserverProps = Pick<UseFormReturn<InventoryFormState>, "control"> & {
@@ -60,34 +59,30 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
     onChangeAssociatesForm(selectedAssociates?.map((associate) => associate.id) ?? []);
   }, [selectedAssociates, onChangeAssociatesForm]);
 
-  const { data: dataObservers } = useApiQuery(
+  const { data: dataObservers } = useApiObserversQuery(
     {
-      path: "/observers",
-      queryParams: {
-        q: observateurInput,
-        pageSize: 5,
-      },
-      schema: getObserversResponse,
+      q: observateurInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
     },
   );
 
-  const { data: dataAssociateObservers } = useApiQuery(
+  const { data: dataAssociateObservers } = useApiObserversQuery(
     {
-      path: "/observers",
-      queryParams: {
-        q: associatesInput,
-        pageSize: 5,
-      },
-      schema: getObserversResponse,
+      q: associatesInput,
+      pageSize: 5,
     },
     {
-      staleTime: Number.POSITIVE_INFINITY,
-      refetchOnMount: "always",
-      enabled: areAssociesDisplayed,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+    },
+    {
+      paused: !areAssociesDisplayed,
     },
   );
 
