@@ -24,7 +24,9 @@ const InventoryPage: FunctionComponent = () => {
       pageSize: 10,
       inventoryId: inventory?.id,
     },
-    {},
+    {
+      revalidateOnMount: true,
+    },
     {
       paused: inventory == null,
     },
