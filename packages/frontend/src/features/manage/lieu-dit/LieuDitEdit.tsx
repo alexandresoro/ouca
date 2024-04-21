@@ -1,3 +1,6 @@
+import TextInput from "@components/base/TextInput";
+import Select from "@components/base/select/Select";
+import FormSelect from "@components/form/FormSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@hooks/useNotifications";
 import type { Department } from "@ou-ca/common/api/entities/department";
@@ -7,9 +10,6 @@ import { useApiTownsQuery } from "@services/api/town/api-town-queries";
 import { type FunctionComponent, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TextInput from "../../../components/base/TextInput";
-import Select from "../../../components/base/select/Select";
-import FormSelect from "../../../components/form/FormSelect";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type LieuDitEditProps = {

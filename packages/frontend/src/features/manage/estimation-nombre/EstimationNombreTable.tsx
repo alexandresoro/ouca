@@ -1,10 +1,10 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { NumberEstimatesOrderBy } from "@ou-ca/common/api/number-estimate";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import NumberEstimateTableRow from "./NumberEstimateTableRow";
 
 type EstimationNombreTableProps = {

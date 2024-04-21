@@ -1,3 +1,5 @@
+import TextInput from "@components/base/TextInput";
+import FormSelect from "@components/form/FormSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@hooks/useNotifications";
 import { type UpsertTownInput, upsertTownInput } from "@ou-ca/common/api/town";
@@ -5,8 +7,6 @@ import { useApiDepartmentsQuery } from "@services/api/department/api-department-
 import type { FunctionComponent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TextInput from "../../../components/base/TextInput";
-import FormSelect from "../../../components/form/FormSelect";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 
 type CommuneEditProps = {

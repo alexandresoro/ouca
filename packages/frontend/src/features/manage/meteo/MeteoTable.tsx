@@ -1,10 +1,10 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { Cloud, Wind } from "@styled-icons/boxicons-regular";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import WeatherTableRow from "./WeatherTableRow";
 
 type MeteoTableProps = {

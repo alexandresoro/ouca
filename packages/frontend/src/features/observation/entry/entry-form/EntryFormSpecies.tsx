@@ -1,3 +1,4 @@
+import Autocomplete from "@components/base/autocomplete/Autocomplete";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import { useApiSpeciesClassesQuery } from "@services/api/species-class/api-species-class-queries";
@@ -5,7 +6,6 @@ import { useApiSpeciesQueryAll } from "@services/api/species/api-species-queries
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormSpeciesProps = Pick<UseFormReturn<EntryFormState>, "control"> & {

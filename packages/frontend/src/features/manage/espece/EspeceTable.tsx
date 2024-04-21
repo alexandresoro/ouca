@@ -1,10 +1,10 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import type { SpeciesOrderBy } from "@ou-ca/common/api/species";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import SpeciesTableRow from "./SpeciesTableRow";
 
 type EspeceTableProps = {

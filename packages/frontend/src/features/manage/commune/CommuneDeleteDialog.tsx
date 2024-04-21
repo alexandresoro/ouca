@@ -1,8 +1,8 @@
+import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import { useApiTownInfoQuery } from "@services/api/town/api-town-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type CommuneDeleteDialogProps = {
   townToDelete: Town | null;

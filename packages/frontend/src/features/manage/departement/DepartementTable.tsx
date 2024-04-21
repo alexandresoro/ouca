@@ -1,10 +1,10 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { DepartmentsOrderBy } from "@ou-ca/common/api/department";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import DepartmentTableRow from "./DepartmentTableRow";
 
 type DepartementTableProps = {

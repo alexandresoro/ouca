@@ -1,6 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
+import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import type { SpeciesClass } from "@ou-ca/common/api/entities/species-class";
 import type { ClassesOrderBy, UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { useApiDownloadExport } from "@services/api/export/api-export-queries";
@@ -14,7 +15,6 @@ import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";

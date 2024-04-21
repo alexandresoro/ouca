@@ -1,10 +1,10 @@
+import Autocomplete from "@components/base/autocomplete/Autocomplete";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { useApiEnvironmentsQuery } from "@services/api/environment/api-environment-queries";
+import { findFirstFocusableElement } from "@utils/dom/find-first-focusable-element";
 import { type FunctionComponent, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import { findFirstFocusableElement } from "../../../../utils/dom/find-first-focusable-element";
 import EntryFormEnvironment, { renderEnvironment } from "./EntryFormEnvironment";
 import type { EntryFormState } from "./EntryFormState";
 

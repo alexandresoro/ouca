@@ -1,3 +1,5 @@
+import TextInput from "@components/base/TextInput";
+import Autocomplete from "@components/base/autocomplete/Autocomplete";
 import type { Department } from "@ou-ca/common/api/entities/department";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import type { Town } from "@ou-ca/common/api/entities/town";
@@ -11,8 +13,6 @@ import { RESET } from "jotai/utils";
 import { type ChangeEventHandler, type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TextInput from "../../../../components/base/TextInput";
-import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import {
   areCoordinatesCustomizedFromLocalityAtom,
   inventoryAltitudeAtom,

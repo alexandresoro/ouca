@@ -1,8 +1,8 @@
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import { useApiLocalityInfoQuery } from "@services/api/locality/api-locality-queries";
+import { getInventaireCoordinates } from "@utils/coordinates-helper";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { getInventaireCoordinates } from "../../../../utils/coordinates-helper";
 
 type InventorySummaryPanelProps = {
   inventory: Inventory;

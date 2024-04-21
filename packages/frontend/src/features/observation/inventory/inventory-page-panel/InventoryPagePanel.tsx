@@ -1,3 +1,4 @@
+import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
 import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
 import { useNotifications } from "@hooks/useNotifications";
@@ -20,7 +21,6 @@ import {
 import { type FunctionComponent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import DeletionConfirmationDialog from "../../../../components/common/DeletionConfirmationDialog";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
 import InventoryMap from "../inventory-map/InventoryMap";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";

@@ -1,10 +1,10 @@
+import IconButton from "@components/base/IconButton";
 import { Disclosure } from "@headlessui/react";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { CalendarPlus, ChevronDown, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
 import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import IconButton from "../../../../components/base/IconButton";
 import EntrySummaryContent from "../../entry/entry-summary-content/EntrySummaryContent";
 
 type InventoryPageEntryElementProps = {

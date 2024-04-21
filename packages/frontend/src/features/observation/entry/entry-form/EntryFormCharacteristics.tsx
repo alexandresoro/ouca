@@ -1,3 +1,5 @@
+import TextInput from "@components/base/TextInput";
+import Autocomplete from "@components/base/autocomplete/Autocomplete";
 import type { Age } from "@ou-ca/common/api/entities/age";
 import type { NumberEstimate } from "@ou-ca/common/api/entities/number-estimate";
 import type { Sex } from "@ou-ca/common/api/entities/sex";
@@ -7,8 +9,6 @@ import { useApiSexesQuery } from "@services/api/sex/api-sex-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TextInput from "../../../../components/base/TextInput";
-import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 import type { EntryFormState } from "./EntryFormState";
 
 type EntryFormCharacteristicsProps = Pick<UseFormReturn<EntryFormState>, "control" | "register" | "setValue"> & {

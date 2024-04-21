@@ -1,6 +1,7 @@
 import { useNotifications } from "@hooks/useNotifications";
 import usePaginationParams from "@hooks/usePaginationParams";
 import { useUser } from "@hooks/useUser";
+import ContentContainerLayout from "@layouts/ContentContainerLayout";
 import type { UpsertAgeInput } from "@ou-ca/common/api/age";
 import type { EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age } from "@ou-ca/common/api/entities/age";
@@ -15,7 +16,6 @@ import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDeepCompareEffect from "use-deep-compare-effect";
-import ContentContainerLayout from "../../../layouts/ContentContainerLayout";
 import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import ManageTopBar from "../common/ManageTopBar";

@@ -1,10 +1,10 @@
+import Autocomplete from "@components/base/autocomplete/Autocomplete";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import { useApiBehaviorsQuery } from "@services/api/behavior/api-behavior-queries";
+import { findFirstFocusableElement } from "@utils/dom/find-first-focusable-element";
 import { type FunctionComponent, useEffect, useRef, useState } from "react";
 import { type UseFormReturn, useController } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
-import { findFirstFocusableElement } from "../../../../utils/dom/find-first-focusable-element";
 import EntryFormBehavior, { renderBehavior } from "./EntryFormBehavior";
 import type { EntryFormState } from "./EntryFormState";
 

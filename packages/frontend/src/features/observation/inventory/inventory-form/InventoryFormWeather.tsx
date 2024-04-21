@@ -1,10 +1,10 @@
+import TextInput from "@components/base/TextInput";
+import AutocompleteMultiple from "@components/base/autocomplete/AutocompleteMultiple";
 import type { Weather } from "@ou-ca/common/api/entities/weather";
 import { useApiWeathersQuery } from "@services/api/weather/api-weather-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { type UseFormReturn, useController, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TextInput from "../../../../components/base/TextInput";
-import AutocompleteMultiple from "../../../../components/base/autocomplete/AutocompleteMultiple";
 import type { InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormWeatherProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register"> & {

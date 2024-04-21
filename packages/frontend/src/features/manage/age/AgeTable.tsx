@@ -1,9 +1,9 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { EntitiesWithLabelOrderBy, SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Age } from "@ou-ca/common/api/entities/age";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import AgeTableRow from "./AgeTableRow";
 
 type AgeTableProps = {

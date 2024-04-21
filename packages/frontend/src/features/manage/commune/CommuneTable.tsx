@@ -1,10 +1,10 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Town } from "@ou-ca/common/api/entities/town";
 import type { TownsOrderBy } from "@ou-ca/common/api/town";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import TownTableRow from "./TownTableRow";
 
 type CommuneTableProps = {

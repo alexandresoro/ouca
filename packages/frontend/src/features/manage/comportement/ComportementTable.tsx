@@ -1,10 +1,10 @@
+import InfiniteTable from "@components/base/table/InfiniteTable";
+import TableSortLabel from "@components/base/table/TableSortLabel";
 import type { BehaviorsOrderBy } from "@ou-ca/common/api/behavior";
 import type { SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import type { Behavior } from "@ou-ca/common/api/entities/behavior";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import InfiniteTable from "../../../components/base/table/InfiniteTable";
-import TableSortLabel from "../../../components/base/table/TableSortLabel";
 import BehaviorTableRow from "./BehaviorTableRow";
 
 type ComportementTableProps = {

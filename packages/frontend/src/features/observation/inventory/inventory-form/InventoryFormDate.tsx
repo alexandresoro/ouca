@@ -1,8 +1,8 @@
+import TextInput from "@components/base/TextInput";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import type { FunctionComponent } from "react";
 import { type UseFormReturn, useFormState } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TextInput from "../../../../components/base/TextInput";
 import type { InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormDateProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register">;

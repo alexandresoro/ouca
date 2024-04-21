@@ -8,6 +8,7 @@ import booleanDisjoint from "@turf/boolean-disjoint";
 import booleanWithin from "@turf/boolean-within";
 import { featureCollection, point } from "@turf/helpers";
 import type { BBox2d } from "@turf/helpers/dist/js/lib/geojson";
+import { boundingPolygon } from "@utils/map/bounding-polygon";
 import type { FeatureCollection, Point, Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
@@ -24,7 +25,6 @@ import {
   Source,
   type ViewState,
 } from "react-map-gl/maplibre";
-import { boundingPolygon } from "../../../../utils/map/bounding-polygon";
 import MapInstance from "../../../maps/MapInstance";
 import { clusterCountLayer, clusterLayer, selectionLayer, singleLocalityLayer } from "../../../maps/localities-layers";
 import { mapStyleAtom } from "../../../maps/map-style-atom";

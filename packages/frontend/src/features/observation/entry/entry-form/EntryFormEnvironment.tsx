@@ -1,8 +1,8 @@
+import Autocomplete from "@components/base/autocomplete/Autocomplete";
 import type { Environment } from "@ou-ca/common/api/entities/environment";
 import { useApiEnvironmentsQuery } from "@services/api/environment/api-environment-queries";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Autocomplete from "../../../../components/base/autocomplete/Autocomplete";
 
 type EntryFormEnvironmentProps = {
   selectedEnvironment: Environment | null;

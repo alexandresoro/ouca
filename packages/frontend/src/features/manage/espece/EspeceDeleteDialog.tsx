@@ -1,7 +1,7 @@
+import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
 import type { Species } from "@ou-ca/common/api/entities/species";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import DeletionConfirmationDialog from "../../../components/common/DeletionConfirmationDialog";
 
 type EspeceDeleteDialogProps = {
   speciesToDelete: Species | null;
