@@ -17,7 +17,7 @@ This project also provides a web application that consumes the API and allows a 
 - A Redis instance used as temporary cache.
 - An OIDC provider to provide authentication services. 
 
-Most of the app is independent of the OIDC provider as it follows standard claims except for roles that are expected to be returned in specific claims. 
+Most of the app is independent of the OIDC provider as it follows standard claims except for roles that may be handled differently depending on the provider. 
 Hence, currently only [Zitadel](https://zitadel.com/) is supported, but additional providers can be easily added.
 
 ## API structure
