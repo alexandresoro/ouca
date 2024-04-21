@@ -58,7 +58,7 @@ export default defineConfig(({ mode }) => {
         project: env.SENTRY_PROJECT,
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
-          name: env.VITE_APP_VERSION,
+          name: env.APP_VERSION,
           // Don't inject the release as it will be picked up from sentry init
           inject: false,
           // Disabled while testing GlitchTip as it does not seem to work properly
