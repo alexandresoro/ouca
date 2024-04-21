@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import { type PluginOption, defineConfig, loadEnv } from "vite";
 import { defaultExclude } from "vitest/config";
 
-export const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
+const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
@@ -13,6 +13,12 @@ export const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
       return html.replace("$__APP_VERSION__$", JSON.stringify(env.APP_VERSION ?? "unknown"));
     },
   };
+};
+
+// Dependencies that are set in their own chunk
+const CHUNKS_MAPPING = {
+  react: ["react", "react-dom"],
+  reactrouter: ["react-router-dom"],
 };
 
 export default defineConfig(({ mode }) => {
@@ -37,6 +43,19 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       sourcemap: enableSentry ? "hidden" : false,
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            for (const [chunk, modules] of Object.entries(CHUNKS_MAPPING)) {
+              for (const module of modules) {
+                if (id.includes(`node_modules/${module}/`)) {
+                  return chunk;
+                }
+              }
+            }
+          },
+        },
+      },
     },
     server: {
       port: 3000,
