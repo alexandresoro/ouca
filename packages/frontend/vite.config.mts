@@ -7,6 +7,7 @@ import { defaultExclude } from "vitest/config";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   const API_SERVER_URL = env.API_SERVER_URL ?? "http://localhost:4000";
 
   const enableSentry = env.ENABLE_SENTRY?.toLowerCase() === "true";
@@ -45,7 +46,9 @@ export default defineConfig(({ mode }) => {
         project: env.SENTRY_PROJECT,
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
-          name: env.SENTRY_RELEASE,
+          name: env.VITE_APP_VERSION,
+          // Don't inject the release as it will be picked up from sentry init
+          inject: false,
           // Disabled while testing GlitchTip as it does not seem to work properly
           // Probably because of GlitchTip does not link commits to releases at all
           // setCommits: {

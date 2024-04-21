@@ -37,8 +37,8 @@ jobs:
       - name: Build
         run: pnpm frontend build
         env:
+          VITE_APP_VERSION: ${{ github.sha }}
           ENABLE_SENTRY: ${{ inputs.with-sentry }}
-          SENTRY_RELEASE: ${{ github.sha }}
           SENTRY_URL: ${{ vars.SENTRY_URL }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
