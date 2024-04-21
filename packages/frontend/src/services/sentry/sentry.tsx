@@ -11,20 +11,12 @@ import {
   useNavigationType,
 } from "react-router-dom";
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-  interface Window {
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    APP_VERSION: string;
-  }
-}
-
 // This will bundle the whole sentry package
 // Take care to dynamically load this entry so that it can be lazy loaded
 export const initializeSentry = (config: AppConfig) => {
   const { sentry, apiUrl } = config;
   Sentry.init({
-    release: window.APP_VERSION,
+    release: window.APP_VERSION !== "unknown" ? window.APP_VERSION : undefined,
     ...sentry,
     ...(apiUrl
       ? {

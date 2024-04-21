@@ -1,8 +1,19 @@
 import path from "node:path";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from "@vitejs/plugin-react";
-import { defineConfig, loadEnv } from "vite";
+import { type PluginOption, defineConfig, loadEnv } from "vite";
 import { defaultExclude } from "vitest/config";
+
+export const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    name: "inject-env-html",
+    transformIndexHtml(html: string) {
+      return html.replace("$__APP_VERSION__$", JSON.stringify(env.APP_VERSION ?? "unknown"));
+    },
+  };
+};
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -38,6 +49,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     plugins: [
+      injectEnvIntoHtmlPlugin(mode),
       react(),
       sentryVitePlugin({
         disable: !enableSentry,
