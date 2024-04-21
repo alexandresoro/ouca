@@ -4,7 +4,10 @@ import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 import { AuthHandler } from "../features/AuthHandler";
 import ErrorBoundary from "../features/ErrorBoundary";
 import Layout from "../features/Layout";
+import NewAccount from "../features/new-account/NewAccount";
 import LastInventory from "../features/observation/inventory/last-inventory/LastInventory";
+import SessionExpired from "../features/session-expired/SessionExpired";
+import UserProfilePage from "../features/user-profile/UserProfilePage";
 import { lazyRoute } from "./lazy-route";
 import { routesManage } from "./routes-manage";
 
@@ -52,7 +55,7 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
         },
         {
           path: "profile",
-          lazy: lazyRoute(() => import("../features/user-profile/UserProfilePage")),
+          Component: UserProfilePage,
         },
         {
           path: "settings",
@@ -70,11 +73,11 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
     },
     {
       path: "new-account",
-      lazy: lazyRoute(() => import("../features/new-account/NewAccount")),
+      Component: NewAccount,
     },
     {
       path: "session-expired",
-      lazy: lazyRoute(() => import("../features/session-expired/SessionExpired")),
+      Component: SessionExpired,
     },
   ];
 };
