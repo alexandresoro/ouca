@@ -18,8 +18,3 @@ export const initConfig = (config: AppConfig) => {
   const defaultStore = getDefaultStore();
   defaultStore.set(configAtom, config);
 };
-
-export const getConfig = () => {
-  const defaultStore = getDefaultStore();
-  return defaultStore.get(configAtom);
-};

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { type PropsWithChildren, forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,7 +14,7 @@ import {
   Source,
 } from "react-map-gl/maplibre";
 import { mapStyleAtom } from "./map-style-atom";
-import { type MapProvider, ignSatelliteTileUrl, mapStyleProviders } from "./map-style-providers";
+import { type MapProvider, ignSatelliteTileUrl, mapStyleProvidersAtom } from "./map-style-providers";
 
 type MapInstanceProps = {
   containerClassName?: string;
@@ -28,6 +28,7 @@ const MapInstance = forwardRef<MapRef, PropsWithChildren<MapInstanceProps>>((pro
   const { t } = useTranslation();
 
   const [mapStyle, setMapStyle] = useAtom(mapStyleAtom);
+  const mapStyleProviders = useAtomValue(mapStyleProvidersAtom);
 
   // Ugly workaround to have the satellite layer below the other layers in satellite mode
   const [beforeIdForSatellite, setBeforeIdForSatellite] = useState<string | undefined>(undefined);
