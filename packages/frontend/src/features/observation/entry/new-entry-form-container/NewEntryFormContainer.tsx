@@ -16,7 +16,8 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
-  const inventoryIdParam = searchParams.get("inventoryId");
+  const inventoryIdParam =
+    currentStep.id === ENTRY_STEP.id ? searchParams.get("inventoryId") : searchParams.get("createFromInventory");
 
   const { displayNotification } = useNotifications();
 
