@@ -19,6 +19,15 @@ const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
 const CHUNKS_MAPPING = {
   react: ["react", "react-dom"],
   reactrouter: ["react-router-dom"],
+  reacthookform: ["react-hook-form", "@hookform/resolvers"],
+  zod: ["zod"],
+  maplibregl: ["maplibre-gl"],
+  i18next: ["i18next", "i18next-http-backend"],
+  oidc: ["oidc-client-ts"],
+  floatingui: ["@floating-ui"],
+  headlessui: ["@headlessui/react"],
+  styledicons: ["@styled-icons"],
+  turf: ["@turf"],
 };
 
 export default defineConfig(({ mode }) => {

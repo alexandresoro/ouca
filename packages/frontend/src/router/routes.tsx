@@ -5,8 +5,12 @@ import { AuthHandler } from "../features/AuthHandler";
 import ErrorBoundary from "../features/ErrorBoundary";
 import Layout from "../features/Layout";
 import NewAccount from "../features/new-account/NewAccount";
+import NewEntryPage from "../features/observation/entry/new-entry-page/NewEntryPage";
+import InventoryPage from "../features/observation/inventory/inventory-page/InventoryPage";
 import LastInventory from "../features/observation/inventory/last-inventory/LastInventory";
+import SearchPage from "../features/search/SearchPage";
 import SessionExpired from "../features/session-expired/SessionExpired";
+import SettingsPage from "../features/settings/SettingsPage";
 import UserProfilePage from "../features/user-profile/UserProfilePage";
 import { lazyRoute } from "./lazy-route";
 import { routesManage } from "./routes-manage";
@@ -34,7 +38,7 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
         },
         {
           path: "create-new",
-          lazy: lazyRoute(() => import("../features/observation/entry/new-entry-page/NewEntryPage")),
+          Component: NewEntryPage,
         },
         {
           path: "last-inventory",
@@ -42,11 +46,11 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
         },
         {
           path: "inventory/:id",
-          lazy: lazyRoute(() => import("../features/observation/inventory/inventory-page/InventoryPage")),
+          Component: InventoryPage,
         },
         {
           path: "search",
-          lazy: lazyRoute(() => import("../features/search/SearchPage")),
+          Component: SearchPage,
         },
         {
           path: "manage",
@@ -59,7 +63,7 @@ export const routes: (SentryErrorBoundary?: typeof Sentry.ErrorBoundary) => Rout
         },
         {
           path: "settings",
-          lazy: lazyRoute(() => import("../features/settings/SettingsPage")),
+          Component: SettingsPage,
         },
         {
           path: "import",
