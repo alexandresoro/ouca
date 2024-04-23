@@ -60,7 +60,7 @@
     "zod": "3.23.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.7.0",
+    "@biomejs/biome": "1.7.1",
     "@faker-js/faker": "8.4.1",
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.8",
