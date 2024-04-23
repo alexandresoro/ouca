@@ -16,6 +16,11 @@ jobs:
     with:
       with-sentry: false
 
+  deploy-cloudflare:
+    needs: [validate, build-frontend]
+    uses: ./.github/workflows/_deploy-cloudflare-pages.yml
+    secrets: inherit
+
   build-deploy-frontend:
     needs: [validate, build-frontend]
     concurrency:
