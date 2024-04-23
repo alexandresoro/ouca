@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  validate-pr:    
+  validate:    
     uses: ./.github/workflows/_validate.yml
     secrets: inherit
 
@@ -17,7 +17,7 @@ jobs:
       with-sentry: false
 
   build-deploy-frontend:
-    needs: [validate-pr, build-frontend]
+    needs: [validate, build-frontend]
     concurrency:
       group: deploy-frontend-${{ github.ref }}
       cancel-in-progress: true
@@ -30,7 +30,7 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
-    needs: validate-pr
+    needs: validate
 
     permissions:
       pull-requests: write
