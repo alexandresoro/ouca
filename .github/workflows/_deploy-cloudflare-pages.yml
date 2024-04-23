@@ -27,6 +27,9 @@ jobs:
           name: dist-frontend
           path: dist
 
+      # https://github.com/cloudflare/wrangler-action/issues/181
+      - run: echo "ignore-workspace-root-check=true" >> .npmrc
+
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
