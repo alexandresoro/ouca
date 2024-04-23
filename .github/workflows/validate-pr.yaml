@@ -3,6 +3,10 @@ name: Validate PR
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:    
     uses: ./.github/workflows/_validate.yml
@@ -20,17 +24,6 @@ jobs:
     needs: [validate, build-frontend]
     uses: ./.github/workflows/_deploy-cloudflare-pages.yml
     secrets: inherit
-
-  build-deploy-frontend:
-    needs: [validate, build-frontend]
-    concurrency:
-      group: deploy-frontend-${{ github.ref }}
-      cancel-in-progress: true
-
-    uses: ./.github/workflows/_deploy-cloudflare.yml
-    secrets: inherit
-    with:
-      with-sentry: false
 
   dependabot:
     runs-on: ubuntu-latest
