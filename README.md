@@ -2,6 +2,8 @@
 
 ## About the project
 
+TEST
+
 The aim of the _Où ça ?_ project is to provide naturalists with an application where they can record and visualize their wildlife observations.
 
 This project provides an API to interact with these observations - add new elements, edit them and so on.
