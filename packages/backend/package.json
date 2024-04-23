@@ -57,7 +57,7 @@
     "pino-pretty": "11.0.0",
     "serialize-error": "11.0.3",
     "umzug": "3.8.0",
-    "zod": "3.23.0"
+    "zod": "3.23.3"
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.0",
