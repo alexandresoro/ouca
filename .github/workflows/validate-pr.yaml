@@ -12,9 +12,12 @@ jobs:
   # Let's make sure we don't deploy something that doesn't build
   build-frontend:
     uses: ./.github/workflows/_build-frontend.yml
+    secrets: inherit
+    with:
+      with-sentry: false
 
   build-deploy-frontend:
-    needs: validate-pr
+    needs: [validate-pr, build-frontend]
     concurrency:
       group: deploy-frontend-${{ github.ref }}
       cancel-in-progress: true

@@ -2,6 +2,10 @@ name: Build Frontend
 
 on:
   workflow_call:
+    inputs:
+      with-sentry:
+        required: false
+        type: boolean
 
 jobs:
   build-frontend:
@@ -29,6 +33,13 @@ jobs:
 
       - name: Build
         run: pnpm frontend build
+        env:
+          APP_VERSION: ${{ github.sha }}
+          ENABLE_SENTRY: ${{ inputs.with-sentry }}
+          SENTRY_URL: ${{ vars.SENTRY_URL }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
 
       - uses: actions/upload-artifact@v4
         with:
