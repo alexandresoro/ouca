@@ -17,7 +17,7 @@ const findEntryById = async (id: string): Promise<Entry | null> => {
     .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
     .select([
       "donnee.id",
-      sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+      "donnee.inventaireId",
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
       sql<string>`donnee.age_id::text`.as("ageId"),
@@ -44,7 +44,7 @@ const findExistingEntry = async (criteria: EntryCreateInput): Promise<Entry | nu
     .leftJoin("donnee_milieu", "donnee.id", "donnee_milieu.donneeId")
     .select([
       "donnee.id",
-      sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+      "donnee.inventaireId",
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
       sql<string>`donnee.age_id::text`.as("ageId"),
@@ -60,7 +60,7 @@ const findExistingEntry = async (criteria: EntryCreateInput): Promise<Entry | nu
     .where((eb) => {
       const clause: OperandExpression<SqlBool>[] = [];
 
-      clause.push(eb("donnee.inventaireId", "=", Number.parseInt(criteria.inventoryId)));
+      clause.push(eb("donnee.inventaireId", "=", criteria.inventoryId));
       clause.push(eb("donnee.especeId", "=", Number.parseInt(criteria.speciesId)));
       clause.push(eb("donnee.sexeId", "=", Number.parseInt(criteria.sexId)));
       clause.push(eb("donnee.ageId", "=", Number.parseInt(criteria.ageId)));
@@ -179,7 +179,7 @@ const findEntries = async ({
     .leftJoin("espece", "donnee.especeId", "espece.id")
     .select([
       "donnee.id",
-      sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+      "donnee.inventaireId",
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
       sql<string>`donnee.age_id::text`.as("ageId"),
@@ -306,7 +306,7 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
       .insertInto("donnee")
       .values({
         id: nanoid(12),
-        inventaireId: Number.parseInt(entryInput.inventoryId),
+        inventaireId: entryInput.inventoryId,
         especeId: Number.parseInt(entryInput.speciesId),
         sexeId: Number.parseInt(entryInput.sexId),
         ageId: Number.parseInt(entryInput.ageId),
@@ -320,7 +320,7 @@ const createEntry = async (entryInput: EntryCreateInput): Promise<Entry> => {
       })
       .returning([
         "donnee.id",
-        sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+        "donnee.inventaireId",
         sql<string>`donnee.espece_id::text`.as("especeId"),
         sql<string>`donnee.sexe_id::text`.as("sexeId"),
         sql<string>`donnee.age_id::text`.as("ageId"),
@@ -374,7 +374,7 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
     const entryResult = await trx
       .updateTable("donnee")
       .set({
-        inventaireId: Number.parseInt(entryInput.inventoryId),
+        inventaireId: entryInput.inventoryId,
         especeId: Number.parseInt(entryInput.speciesId),
         sexeId: Number.parseInt(entryInput.sexId),
         ageId: Number.parseInt(entryInput.ageId),
@@ -388,7 +388,7 @@ const updateEntry = async (entryId: string, entryInput: EntryCreateInput): Promi
       .where("id", "=", entryId)
       .returning([
         "donnee.id",
-        sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+        "donnee.inventaireId",
         sql<string>`donnee.espece_id::text`.as("especeId"),
         sql<string>`donnee.sexe_id::text`.as("sexeId"),
         sql<string>`donnee.age_id::text`.as("ageId"),
@@ -459,7 +459,7 @@ const deleteEntryById = async (entryId: string): Promise<Entry | null> => {
     .where("id", "=", entryId)
     .returning([
       "donnee.id",
-      sql<string>`donnee.inventaire_id::text`.as("inventaireId"),
+      "donnee.inventaireId",
       sql<string>`donnee.espece_id::text`.as("especeId"),
       sql<string>`donnee.sexe_id::text`.as("sexeId"),
       sql<string>`donnee.age_id::text`.as("ageId"),
@@ -487,9 +487,9 @@ const updateAssociatedInventory = async (currentInventoryId: string, newInventor
   await kysely
     .updateTable("donnee")
     .set({
-      inventaireId: Number.parseInt(newInventoryId),
+      inventaireId: newInventoryId,
     })
-    .where("inventaireId", "=", Number.parseInt(currentInventoryId))
+    .where("inventaireId", "=", currentInventoryId)
     .execute();
 };
 

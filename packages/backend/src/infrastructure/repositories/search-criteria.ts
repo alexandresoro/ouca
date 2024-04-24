@@ -16,7 +16,7 @@ export const withSearchCriteriaMinimal = (
     }
 
     if (searchCriteria.inventoryId != null) {
-      expressions.push(eb("donnee.inventaireId", "=", Number.parseInt(searchCriteria.inventoryId)));
+      expressions.push(eb("donnee.inventaireId", "=", searchCriteria.inventoryId));
     }
 
     if (searchCriteria.observerIds?.length) {
@@ -182,7 +182,7 @@ export const withSearchCriteria = (searchCriteria: SearchCriteria) => {
     }
 
     if (searchCriteria.inventoryId != null) {
-      expressions.push(eb("donnee.inventaireId", "=", Number.parseInt(searchCriteria.inventoryId)));
+      expressions.push(eb("donnee.inventaireId", "=", searchCriteria.inventoryId));
     }
 
     if (searchCriteria.observerIds?.length) {

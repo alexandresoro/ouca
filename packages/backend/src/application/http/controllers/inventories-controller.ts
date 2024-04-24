@@ -22,7 +22,7 @@ export const inventoriesController: FastifyPluginCallback<{
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
-      id: number;
+      id: string;
     };
   }>("/:id", async (req, reply) => {
     const inventoryResult = await inventoryService.findInventory(req.params.id, req.user);

@@ -53,7 +53,7 @@ const findLocalityByInventoryId = async (inventoryId: string | undefined): Promi
       sql<string>`lieudit.commune_id::text`.as("communeId"),
       "lieudit.ownerId",
     ])
-    .where("inventaire.id", "=", Number.parseInt(inventoryId))
+    .where("inventaire.id", "=", inventoryId)
     .executeTakeFirst();
 
   return localityResult ? localitySchema.parse(reshapeRawLocality(localityResult)) : null;

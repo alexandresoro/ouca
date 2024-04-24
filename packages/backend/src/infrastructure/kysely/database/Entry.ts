@@ -1,6 +1,6 @@
 export type Entry = {
   id: string;
-  inventaireId: number;
+  inventaireId: string;
   especeId: number;
   sexeId: number;
   ageId: number;

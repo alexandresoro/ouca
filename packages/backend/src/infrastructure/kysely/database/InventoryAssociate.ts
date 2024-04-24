@@ -1,4 +1,4 @@
 export type InventoryAssociate = {
-  inventaireId: number;
+  inventaireId: string;
   observateurId: number;
 };

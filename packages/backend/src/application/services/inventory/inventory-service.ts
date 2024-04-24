@@ -28,7 +28,7 @@ export const buildInventoryService = ({
   localityRepository,
 }: InventoryServiceDependencies) => {
   const findInventory = async (
-    id: number,
+    id: string,
     loggedUser: LoggedUser | null,
   ): Promise<Result<Inventory | null, AccessFailureReason>> => {
     if (!loggedUser) {
@@ -228,7 +228,7 @@ export const buildInventoryService = ({
 
     // Check that the user is allowed to modify the existing inventory
     if (!loggedUser.permissions.canManageAllEntries) {
-      const existingInventory = await inventoryRepository.findInventoryById(Number.parseInt(id));
+      const existingInventory = await inventoryRepository.findInventoryById(id);
 
       if (existingInventory?.ownerId !== loggedUser?.id) {
         return err("notAllowed");

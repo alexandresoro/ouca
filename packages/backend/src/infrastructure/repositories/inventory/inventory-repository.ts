@@ -6,18 +6,19 @@ import {
 } from "@domain/inventory/inventory.js";
 import { kysely } from "@infrastructure/kysely/kysely.js";
 import { type Expression, type OperandExpression, type SqlBool, sql } from "kysely";
+import { nanoid } from "nanoid";
 import { z } from "zod";
 import { areSetsContainingSameValues } from "../../../utils/utils.js";
 import { countSchema } from "../common.js";
 import { reshapeRawInventory } from "./inventory-repository-reshape.js";
 
-const findInventoryById = async (id: number): Promise<Inventory | null> => {
+const findInventoryById = async (id: string): Promise<Inventory | null> => {
   const inventoryResult = await kysely
     .selectFrom("inventaire")
     .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
     .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
     .select([
-      sql<string>`id::text`.as("id"),
+      "id",
       sql<string>`inventaire.observateur_id::text`.as("observateurId"),
       "date",
       "heure",
@@ -46,7 +47,7 @@ const findInventoryByEntryId = async (entryId: string): Promise<Inventory | null
     .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
     .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
     .select([
-      sql<string>`inventaire.id::text`.as("id"),
+      "inventaire.id",
       sql<string>`inventaire.observateur_id::text`.as("observateurId"),
       "inventaire.date",
       "inventaire.heure",
@@ -103,7 +104,7 @@ const findInventoryIndex = async (
         .as("result"),
     )
     .select("result.index")
-    .where("result.id", "=", Number.parseInt(id))
+    .where("result.id", "=", id)
     .executeTakeFirst();
 
   return indexResult ? z.object({ index: z.coerce.number() }).parse(indexResult).index : null;
@@ -121,7 +122,7 @@ const findInventories = async ({
     .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
     .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
     .select([
-      sql<string>`id::text`.as("id"),
+      "id",
       sql<string>`inventaire.observateur_id::text`.as("observateurId"),
       "date",
       "heure",
@@ -165,7 +166,7 @@ const findExistingInventory = async (criteria: InventoryCreateInput): Promise<In
     .leftJoin("inventaire_associe", "inventaire.id", "inventaire_associe.inventaireId")
     .leftJoin("inventaire_meteo", "inventaire.id", "inventaire_meteo.inventaireId")
     .select([
-      sql<string>`inventaire.id::text`.as("id"),
+      "inventaire.id",
       sql<string>`inventaire.observateur_id::text`.as("observateurId"),
       "inventaire.date",
       "inventaire.heure",
@@ -263,7 +264,7 @@ const getEntriesCountById = async (id: string): Promise<number> => {
   const countResult = await kysely
     .selectFrom("donnee")
     .select((eb) => eb.fn.countAll().as("count"))
-    .where("inventaireId", "=", Number.parseInt(id))
+    .where("inventaireId", "=", id)
     .executeTakeFirstOrThrow();
 
   return countSchema.parse(countResult).count;
@@ -284,6 +285,7 @@ const createInventory = async (inventoryInput: InventoryCreateInput): Promise<In
     const inventoryResult = await trx
       .insertInto("inventaire")
       .values({
+        id: nanoid(12),
         observateurId: Number.parseInt(inventoryInput.observerId),
         date: new Date(inventoryInput.date),
         heure: inventoryInput.time,
@@ -297,7 +299,7 @@ const createInventory = async (inventoryInput: InventoryCreateInput): Promise<In
         ownerId: inventoryInput.ownerId,
       })
       .returning([
-        sql<string>`id::text`.as("id"),
+        "id",
         sql<string>`observateur_id::text`.as("observateurId"),
         "date",
         "heure",
@@ -318,7 +320,7 @@ const createInventory = async (inventoryInput: InventoryCreateInput): Promise<In
         .insertInto("inventaire_associe")
         .values(
           inventoryInput.associateIds.map((associateId) => {
-            return { inventaireId: Number.parseInt(inventoryResult.id), observateurId: Number.parseInt(associateId) };
+            return { inventaireId: inventoryResult.id, observateurId: Number.parseInt(associateId) };
           }),
         )
         .returning(sql<string>`inventaire_associe.observateur_id::text`.as("observateurId"))
@@ -331,7 +333,7 @@ const createInventory = async (inventoryInput: InventoryCreateInput): Promise<In
         .insertInto("inventaire_meteo")
         .values(
           inventoryInput.weatherIds.map((weatherId) => {
-            return { inventaireId: Number.parseInt(inventoryResult.id), meteoId: Number.parseInt(weatherId) };
+            return { inventaireId: inventoryResult.id, meteoId: Number.parseInt(weatherId) };
           }),
         )
         .returning(sql<string>`inventaire_meteo.meteo_id::text`.as("meteoId"))
@@ -364,9 +366,9 @@ const updateInventory = async (inventoryId: string, inventoryInput: InventoryCre
         temperature: inventoryInput.temperature,
         ownerId: inventoryInput.ownerId,
       })
-      .where("id", "=", Number.parseInt(inventoryId))
+      .where("id", "=", inventoryId)
       .returning([
-        sql<string>`id::text`.as("id"),
+        "id",
         sql<string>`observateur_id::text`.as("observateurId"),
         "date",
         "heure",
@@ -381,7 +383,7 @@ const updateInventory = async (inventoryId: string, inventoryInput: InventoryCre
       ])
       .executeTakeFirstOrThrow();
 
-    await kysely.deleteFrom("inventaire_associe").where("inventaireId", "=", Number.parseInt(inventoryId)).execute();
+    await kysely.deleteFrom("inventaire_associe").where("inventaireId", "=", inventoryId).execute();
 
     let associateIdsResult: { observateurId: string }[] = [];
     if (inventoryInput.associateIds.length) {
@@ -389,14 +391,14 @@ const updateInventory = async (inventoryId: string, inventoryInput: InventoryCre
         .insertInto("inventaire_associe")
         .values(
           inventoryInput.associateIds.map((associateId) => {
-            return { inventaireId: Number.parseInt(inventoryResult.id), observateurId: Number.parseInt(associateId) };
+            return { inventaireId: inventoryResult.id, observateurId: Number.parseInt(associateId) };
           }),
         )
         .returning(sql<string>`inventaire_associe.observateur_id::text`.as("observateurId"))
         .execute();
     }
 
-    await kysely.deleteFrom("inventaire_meteo").where("inventaireId", "=", Number.parseInt(inventoryId)).execute();
+    await kysely.deleteFrom("inventaire_meteo").where("inventaireId", "=", inventoryId).execute();
 
     let weatherIdsResult: { meteoId: string }[] = [];
     if (inventoryInput.weatherIds.length) {
@@ -404,7 +406,7 @@ const updateInventory = async (inventoryId: string, inventoryInput: InventoryCre
         .insertInto("inventaire_meteo")
         .values(
           inventoryInput.weatherIds.map((weatherId) => {
-            return { inventaireId: Number.parseInt(inventoryResult.id), meteoId: Number.parseInt(weatherId) };
+            return { inventaireId: inventoryResult.id, meteoId: Number.parseInt(weatherId) };
           }),
         )
         .returning(sql<string>`inventaire_meteo.meteo_id::text`.as("meteoId"))
@@ -425,20 +427,20 @@ const deleteInventoryById = async (inventoryId: string): Promise<Inventory | nul
   const associateIdsResult = await kysely
     .selectFrom("inventaire_associe")
     .select(sql<string>`observateur_id::text`.as("observateurId"))
-    .where("inventaireId", "=", Number.parseInt(inventoryId))
+    .where("inventaireId", "=", inventoryId)
     .execute();
 
   const weatherIdsResult = await kysely
     .selectFrom("inventaire_meteo")
     .select(sql<string>`meteo_id::text`.as("meteoId"))
-    .where("inventaireId", "=", Number.parseInt(inventoryId))
+    .where("inventaireId", "=", inventoryId)
     .execute();
 
   const deletedInventory = await kysely
     .deleteFrom("inventaire")
-    .where("id", "=", Number.parseInt(inventoryId))
+    .where("id", "=", inventoryId)
     .returning([
-      sql<string>`id::text`.as("id"),
+      "id",
       sql<string>`observateur_id::text`.as("observateurId"),
       "date",
       "heure",

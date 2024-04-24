@@ -1,4 +1,4 @@
 export type InventoryWeather = {
-  inventaireId: number;
+  inventaireId: string;
   meteoId: number;
 };

@@ -1,8 +1,7 @@
 import type { Inventory } from "@domain/inventory/inventory.js";
 import type { Inventory as InventoryRepository } from "@infrastructure/kysely/database/Inventory.js";
 
-type RawInventory = Omit<InventoryRepository, "id" | "observateurId" | "lieuditId"> & {
-  id: string;
+type RawInventory = Omit<InventoryRepository, "observateurId" | "lieuditId"> & {
   observateurId: string;
   lieuditId: string;
 } & {

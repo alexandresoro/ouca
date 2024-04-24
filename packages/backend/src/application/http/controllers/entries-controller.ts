@@ -19,10 +19,10 @@ export const entriesController: FastifyPluginCallback<{
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
-      id: number;
+      id: string;
     };
   }>("/:id", async (req, reply) => {
-    const entryResult = await entryService.findEntry(`${req.params.id}`, req.user);
+    const entryResult = await entryService.findEntry(req.params.id, req.user);
 
     if (entryResult.isErr()) {
       switch (entryResult.error) {

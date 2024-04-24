@@ -1,7 +1,5 @@
-import type { Generated } from "kysely";
-
 export type Inventory = {
-  id: Generated<number>;
+  id: string;
   observateurId: number;
   date: Date;
   heure: string | null;

@@ -43,24 +43,24 @@ describe("Find inventory", () => {
 
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(inventoryData));
 
-    await inventaireService.findInventory(12, loggedUser);
+    await inventaireService.findInventory("12", loggedUser);
 
     assert.strictEqual(inventoryRepository.findInventoryById.mock.callCount(), 1);
-    assert.deepStrictEqual(inventoryRepository.findInventoryById.mock.calls[0].arguments, [12]);
+    assert.deepStrictEqual(inventoryRepository.findInventoryById.mock.calls[0].arguments, ["12"]);
   });
 
   test("should handle inventory not found", async () => {
     inventoryRepository.findInventoryById.mock.mockImplementationOnce(() => Promise.resolve(null));
     const loggedUser = loggedUserFactory.build();
 
-    assert.deepStrictEqual(await inventaireService.findInventory(10, loggedUser), ok(null));
+    assert.deepStrictEqual(await inventaireService.findInventory("10", loggedUser), ok(null));
 
     assert.strictEqual(inventoryRepository.findInventoryById.mock.callCount(), 1);
-    assert.deepStrictEqual(inventoryRepository.findInventoryById.mock.calls[0].arguments, [10]);
+    assert.deepStrictEqual(inventoryRepository.findInventoryById.mock.calls[0].arguments, ["10"]);
   });
 
   test("should not be allowed when the no login details are provided", async () => {
-    assert.deepStrictEqual(await inventaireService.findInventory(11, null), err("notAllowed"));
+    assert.deepStrictEqual(await inventaireService.findInventory("11", null), err("notAllowed"));
     assert.strictEqual(inventoryRepository.findInventoryById.mock.callCount(), 0);
   });
 });

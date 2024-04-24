@@ -1,7 +1,7 @@
 import type { Inventory, InventoryCreateInput, InventoryFindManyInput } from "@domain/inventory/inventory.js";
 
 export type InventoryRepository = {
-  findInventoryById(id: number): Promise<Inventory | null>;
+  findInventoryById(id: string): Promise<Inventory | null>;
   findInventoryByEntryId(entryId: string): Promise<Inventory | null>;
   findInventoryIndex(
     id: string,
