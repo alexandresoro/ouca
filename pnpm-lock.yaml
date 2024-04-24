@@ -36,8 +36,8 @@ importers:
         specifier: 8.2.0
         version: 8.2.0
       '@fastify/sensible':
-        specifier: 5.5.0
-        version: 5.5.0
+        specifier: 5.6.0
+        version: 5.6.0
       '@fastify/under-pressure':
         specifier: 8.3.0
         version: 8.3.0
@@ -1308,8 +1308,8 @@ packages:
       mime: 3.0.0
     dev: false
 
-  /@fastify/sensible@5.5.0:
-    resolution: {integrity: sha512-D0zpl+nocsRXLceSbc4gasQaO3ZNQR4dy9Uu8Ym0mh8VUdrjpZ4g8Ca9O3pGXbBVOnPIGHUJNTV7Yf9dg/OYdg==}
+  /@fastify/sensible@5.6.0:
+    resolution: {integrity: sha512-Vq6Z2ZQy10GDqON+hvLF52K99s9et5gVVxTul5n3SIAf0Kq5QjPRUKkAMT3zPAiiGvoHtS3APa/3uaxfDgCODQ==}
     dependencies:
       '@lukeed/ms': 2.0.2
       fast-deep-equal: 3.1.3
