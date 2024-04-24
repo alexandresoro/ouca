@@ -83,7 +83,8 @@
     "search": "Recherche d'observations",
     "displayOnlyMyObservations": "Uniquement mes observations",
     "exportToExcel": "Exporter au format Excel",
-    "exportOnGoing": "Export en cours"
+    "exportOnGoing": "Export en cours",
+    "exportLimitMessage": "L'export est limité à 10000 observations. Veuillez affiner votre recherche."
   },
   "department": "Département",
   "departmentAlreadyExistingError": "Il existe déjà un département identique.",

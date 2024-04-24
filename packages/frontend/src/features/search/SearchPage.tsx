@@ -147,27 +147,42 @@ const SearchPage: FunctionComponent = () => {
                 )}
               </Tab>
             </Tab.List>
-            <div className="grow justify-end items-center ml-12 text-sm font-bold uppercase text-base-content">
+            <div className="grow justify-end items-center ml-12">
               {SELECTED_TAB_MAPPING[selectedTab] === "entries" && entriesInfinite?.[0]?.meta != null && (
                 <div className="flex justify-between items-center">
-                  <button
-                    type="button"
-                    // TODO: Test what happens w/ big data sets before enabling this
-                    disabled={
-                      entriesInfinite[0].meta.count === 0 || entriesInfinite[0].meta.count > 10000 || isExporting
-                    }
-                    className="btn btn-sm btn-outline btn-secondary uppercase"
-                    onClick={() => handleExportRequested()}
-                  >
-                    {isExporting ? <span className="loading loading-spinner loading-xs" /> : <Export className="h-5" />}
-                    {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
-                    <span className="badge badge-secondary uppercase text-xs ml-auto">{t("beta")}</span>
-                  </button>
-                  <span>{t("search.entriesCount", { count: entriesInfinite[0].meta.count })}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      // TODO: Test what happens w/ big data sets before enabling this
+                      disabled={
+                        entriesInfinite[0].meta.count === 0 || entriesInfinite[0].meta.count > 10000 || isExporting
+                      }
+                      className="btn btn-sm btn-outline btn-secondary uppercase"
+                      onClick={() => handleExportRequested()}
+                    >
+                      {isExporting ? (
+                        <span className="loading loading-spinner loading-xs" />
+                      ) : (
+                        <Export className="h-5" />
+                      )}
+                      {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
+                    </button>
+                    {entriesInfinite[0].meta.count > 10000 && (
+                      <div
+                        className="tooltip tooltip-bottom tooltip-info text-info text-sm cursor-default font-semibold border-info border-2 rounded-full w-6"
+                        data-tip={t("observationFilter.exportLimitMessage")}
+                      >
+                        ?
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-sm font-bold uppercase text-base-content">
+                    {t("search.entriesCount", { count: entriesInfinite[0].meta.count })}
+                  </span>
                 </div>
               )}
               {SELECTED_TAB_MAPPING[selectedTab] === "species" && speciesInfinite?.[0]?.meta != null && (
-                <span className="flex justify-end">
+                <span className="flex justify-end text-sm font-bold uppercase text-base-content">
                   {t("search.speciesCount", { count: speciesInfinite[0].meta.count })}
                 </span>
               )}
