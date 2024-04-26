@@ -69,7 +69,7 @@
     "dotenv": "16.4.5",
     "fishery": "2.2.2",
     "tsc-alias": "1.8.8",
-    "tsx": "4.7.2",
+    "tsx": "4.7.3",
     "typescript": "5.4.5"
   },
   "volta": {
