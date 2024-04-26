@@ -339,8 +339,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(vite@5.2.10)
       '@vitest/coverage-v8':
-        specifier: 1.5.1
-        version: 1.5.1(vitest@1.5.2)
+        specifier: 1.5.2
+        version: 1.5.2(vitest@1.5.2)
       autoprefixer:
         specifier: 10.4.19
         version: 10.4.19(postcss@8.4.38)
@@ -2517,10 +2517,10 @@ packages:
       - supports-color
     dev: true
 
-  /@vitest/coverage-v8@1.5.1(vitest@1.5.2):
-    resolution: {integrity: sha512-Zx+dYEDcZg+44ksjIWvWosIGlPLJB1PPpN3O8+Xrh/1qa7WSFA6Y8H7lsZJTYrxu4G2unk9tvP5TgjIGDliF1w==}
+  /@vitest/coverage-v8@1.5.2(vitest@1.5.2):
+    resolution: {integrity: sha512-QJqxRnbCwNtbbegK9E93rBmhN3dbfG1bC/o52Bqr0zGCYhQzwgwvrJBG7Q8vw3zilX6Ryy6oa/mkZku2lLJx1Q==}
     peerDependencies:
-      vitest: 1.5.1
+      vitest: 1.5.2
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
