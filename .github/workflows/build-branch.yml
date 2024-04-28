@@ -68,13 +68,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Rewrite Node version fo Docker
+        id: rewrite-node-version
+        run: |
+          echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
+
       - name: Build and push to GitHub Container Registry
         id: docker_build
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
-            "NODE_IMAGE_VERSION=${{ steps.setup-node.outputs.node-version | cut -c2- }}"
+            "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
             "GIT_SHA=${{ github.sha }}"
           context: .
           platforms: |
