@@ -74,7 +74,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
-            "NODE_IMAGE_VERSION=${{ steps.setup-node.outputs.node-version }}"
+            "NODE_IMAGE_VERSION=${{ steps.setup-node.outputs.node-version | cut -c2- }}"
             "GIT_SHA=${{ github.sha }}"
           context: .
           platforms: |
