@@ -6,8 +6,7 @@ FROM node:${NODE_IMAGE_VERSION}-alpine as build
 
 WORKDIR /app
 
-ARG PNPM_VERSION=latest
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN corepack enable
 
 COPY ./ /app/
 
@@ -17,8 +16,7 @@ RUN pnpm run backend build
 # 2. Run the NodeJS backend
 FROM node:${NODE_IMAGE_VERSION}-alpine as final
 
-ARG PNPM_VERSION=latest
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN corepack enable
 
 # Sets to production, it also sets the install script to install deps only
 ENV NODE_ENV production
