@@ -39,6 +39,11 @@ jobs:
         run: |
           echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
 
+      - uses: actions/setup-node@v4
+        id: setup-node
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - uses: docker/metadata-action@v5
         id: meta
         with:
@@ -69,7 +74,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
-            "NODE_IMAGE_VERSION=${{ env.NODE_VERSION }}"
+            "NODE_IMAGE_VERSION=${{ steps.setup-node.outputs.node-version }}"
             "GIT_SHA=${{ github.sha }}"
           context: .
           platforms: |
