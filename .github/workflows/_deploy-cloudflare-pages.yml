@@ -20,11 +20,8 @@ jobs:
       - name: Setup versions
         run: |
           echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
-          echo "PNPM_VERSION=$(jq -r .engines.pnpm package.json | sed -En 's/^(~|\^|>=)*([0-9]+\.[0-9]+\.[0-9]+$)/\2/p')" >> $GITHUB_ENV
 
       - uses: pnpm/action-setup@v3
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@v4
         with:
