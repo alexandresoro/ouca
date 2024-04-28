@@ -29,8 +29,5 @@
   "engines": {
     "node": "20.12.2"
   },
-  "packageManager": "pnpm@8.15.2",
-  "volta": {
-    "node": "20.12.2"
-  }
+  "packageManager": "pnpm@8.15.2"
 }
