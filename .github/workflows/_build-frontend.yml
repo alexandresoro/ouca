@@ -17,15 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup versions
-        run: |
-          echo "NODE_VERSION=$(jq -r .engines.node package.json)" >> $GITHUB_ENV
-
       - uses: pnpm/action-setup@v3
 
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: .tool-versions
           cache: "pnpm"
 
       - name: Install dependencies
