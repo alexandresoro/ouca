@@ -1,3 +1,4 @@
+rc: '"${XDG_CONFIG_HOME:-$HOME/.config}/lefthookrc"'
 pre-commit:
   commands:
     eslint-frontend:
