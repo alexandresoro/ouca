@@ -1,5 +1,6 @@
 import { useApiEntriesInfiniteQuery } from "@services/api/entry/api-entry-queries";
 import { useApiInventoryQuery } from "@services/api/inventory/api-inventory-queries";
+import { XCircle } from "@styled-icons/boxicons-regular";
 import { FetchError } from "@utils/fetch-api";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,9 +53,23 @@ const InventoryPage: FunctionComponent = () => {
 
   if (error) {
     if (error instanceof FetchError && error.status === 404) {
-      return <>{t("inventoryPage.inventoryNotFound")}</>;
+      return (
+        <div className="container mx-auto mt-6">
+          <div className="alert bg-error-content border-none">
+            <XCircle className="h-6" />
+            {t("inventoryPage.inventoryNotFound")}
+          </div>
+        </div>
+      );
     }
-    return <>{t("inventoryPage.genericError")}</>;
+    return (
+      <div className="container mx-auto mt-6">
+        <div className="alert bg-error-content border-none">
+          <XCircle className="h-6" />
+          {t("inventoryPage.genericError")}
+        </div>
+      </div>
+    );
   }
 
   return (

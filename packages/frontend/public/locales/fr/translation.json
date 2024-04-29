@@ -58,8 +58,8 @@
   "deleteWeatherDialogMsg": "Êtes-vous certain de vouloir supprimer la météo {{name}} ?",
   "displayData": {
     "dataId": "ID",
-    "genericError": "Une erreur est survenue lors de la récupération de cette entité.",
-    "dataNotFound": "L'entité que vous recherchez n'existe pas."
+    "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
+    "dataNotFound": "La donnée que vous recherchez n'existe pas."
   },
   "observationFilter": {
     "search": "Recherche d'observations",
@@ -130,10 +130,10 @@
     "deleteSuccess": "L'inventaire a été supprimé",
     "deleteError": "Une erreur est survenue lors de la suppression de l'inventaire",
     "entries": {
-      "createSuccess": "L'entité a été créée avec succès",
-      "createError": "Une erreur est survenue lors de la création de l'entité",
-      "updateSuccess": "L'entité a été mise à jour avec succès",
-      "updateError": "Une erreur est survenue lors de la mise à jour de l'entité"
+      "createSuccess": "La donnée a été créée avec succès",
+      "createError": "Une erreur est survenue lors de la création de la donnée",
+      "updateSuccess": "La donnée a été mise à jour avec succès",
+      "updateError": "Une erreur est survenue lors de la mise à jour de la donnée"
     }
   },
   "inventoryMap": {
@@ -329,9 +329,9 @@
     "resultsCount_one": "{{count}} résultat"
   },
   "search": {
-    "entriesCount": "{{count}} données",
-    "entriesCount_zero": "Aucune donnée",
-    "entriesCount_one": "{{count}} donnée",
+    "entriesCount": "{{count}} observations",
+    "entriesCount_zero": "Aucune observation",
+    "entriesCount_one": "{{count}} observation",
     "speciesCount": "{{count}} espèces",
     "speciesCount_zero": "Aucune espèce",
     "speciesCount_one": "{{count}} espèce"
@@ -365,16 +365,15 @@
   "displayAssociateObservers": "Afficher les observateurs associés",
   "displayWeather": "Afficher la météo",
   "displayDistance": "Afficher la distance",
-  "coordinatesSystem": "Système de coordonnées",
-  "retrieveGenericError": "Une erreur est survenue lors de la récupération des données. Veuillez réessayer",
-  "retrieveGenericSaveError": "Une erreur est survenue lors de la sauvegarde des données. Veuillez réessayer",
+  "retrieveGenericError": "Une erreur est survenue lors de la récupération des données. Veuillez réessayer.",
+  "retrieveGenericSaveError": "Une erreur est survenue lors de la sauvegarde des données. Veuillez réessayer.",
   "retrieveGenericSaveSuccess": "Les données ont été sauvegardées avec succès",
-  "retrieveSettingsError": "Une erreur est survenue lors de la récupération des préférences. Veuillez réessayer",
+  "retrieveSettingsError": "Une erreur est survenue lors de la récupération des préférences. Veuillez réessayer.",
   "saveProfileSuccess": "Votre profil a été mis à jour",
-  "saveProfileError": "Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer",
+  "saveProfileError": "Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer.",
   "updateProfileButton": "Modifier mon profil",
   "saveSettingsSuccess": "Vos préférences sont sauvegardées",
-  "saveSettingsError": "Une erreur est survenue lors de la sauvegarde de vos préférences. Veuillez réessayer",
+  "saveSettingsError": "Une erreur est survenue lors de la sauvegarde de vos préférences. Veuillez réessayer.",
   "exportDatabaseButton": "Sauvegarde de la base",
   "importFromFile": "Import depuis un fichier",
   "importPage": {
@@ -407,7 +406,7 @@
       "ongoingStep": {
         "processStarted": "Lancement de l'import",
         "importRetrieved": "Fichier d'import récupéré",
-        "retrievingRequiredData": "Recupération des données requises",
+        "retrievingRequiredData": "Recupération des données utiles",
         "validatingInputFile": "Validation du fichier d'import",
         "insertingImportedData": "Import des données vers la base"
       },
