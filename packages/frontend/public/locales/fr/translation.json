@@ -37,28 +37,14 @@
     }
   },
   "createPage": {
-    "headerTitle": "Donnée",
-    "newEntryTitle": "Nouvelle observation",
-    "newBadge": "Nouvelle"
+    "newEntryTitle": "Nouvelle observation"
   },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
   "deleteBehaviorDialogMsg": "Êtes-vous certain de vouloir supprimer le comportement {{name}} ?",
   "deleteCityDialogMsg": "Êtes-vous certain de vouloir supprimer la commune {{name}} ({{department}}) ?",
-  "deleteCityDialogMsgImpactedLocalities_zero": "Aucun lieu-dit n'existe dans cette commune.",
-  "deleteCityDialogMsgImpactedLocalities_one": "L'unique lieu-dit dans cette commune sera supprimé.",
-  "deleteCityDialogMsgImpactedLocalities_other": "Les {{count}} lieux-dits  dans cette commune seront supprimés.",
   "deleteClassDialogMsg": "Êtes-vous certain de vouloir supprimer la classe espèce {{name}} ?",
-  "deleteClassDialogMsgImpactedSpecies_zero": "Aucune espèce n'existe dans cette classe espèce.",
-  "deleteClassDialogMsgImpactedSpecies_one": "L'unique espèce dans cette classe espèce sera supprimée.",
-  "deleteClassDialogMsgImpactedSpecies_other": "Les {{count}} espèces  dans cette classe espèce seront supprimées.",
   "deleteConfirmationMessage": "La suppression a été effectuée avec succès.",
   "deleteDepartmentDialogMsg": "Êtes-vous certain de vouloir supprimer le département {{code}} ?",
-  "deleteDepartmentDialogMsgImpactedCities_zero": "Aucune commune n'existe dans ce département.",
-  "deleteDepartmentDialogMsgImpactedCities_one": "L'unique commune dans ce département sera supprimée.",
-  "deleteDepartmentDialogMsgImpactedCities_other": "Les {{count}} communes dans ce departement seront supprimées.",
-  "deleteDepartmentDialogMsgImpactedLocalities_zero": "Aucun lieu-dit n'existe dans ce département.",
-  "deleteDepartmentDialogMsgImpactedLocalities_one": "L'unique lieu-dit dans ce département sera supprimé.",
-  "deleteDepartmentDialogMsgImpactedLocalities_other": "Les {{count}} lieux-dits  dans ce département seront supprimés.",
   "deleteDistancePrecisionDialogMsg": "Êtes-vous certain de vouloir supprimer l'estimation de la distance {{name}} ?",
   "deleteEnvironmentDialogMsg": "Êtes-vous certain de vouloir supprimer le milieu {{name}} ?",
   "deleteErrorMessage": "Une erreur est survenue pendant la suppression.",
@@ -68,16 +54,12 @@
   "deleteNumberPrecisionDialogMsg": "Êtes-vous certain de vouloir supprimer l'estimation du nombre {{name}} ?",
   "deleteObservationDialogMsg": "Êtes-vous certain de vouloir supprimer l'observation [Espèce: {{species}}, Localisation: {{city}} ({{department}}), {{locality}}, Date: {{date}}] ?",
   "deleteObserverDialogMsg": "Êtes-vous certain de vouloir supprimer l'observateur {{name}} ?",
-  "deleteRequiredDialogMsgImpactedObservations_zero": "Aucune donnée associée n'existe.",
-  "deleteRequiredDialogMsgImpactedObservations_one": "L'unique donnée associée sera supprimée.",
-  "deleteRequiredDialogMsgImpactedObservations_other": "Les {{count}} données associées seront supprimées.",
   "deleteSpeciesDialogMsg": "Êtes-vous certain de vouloir supprimer l'espèce {{name}} ({{code}}) ?",
   "deleteWeatherDialogMsg": "Êtes-vous certain de vouloir supprimer la météo {{name}} ?",
   "displayData": {
-    "headerTitle": "Donnée",
     "dataId": "ID",
-    "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
-    "dataNotFound": "La donnée que vous recherchez n'existe pas."
+    "genericError": "Une erreur est survenue lors de la récupération de cette entité.",
+    "dataNotFound": "L'entité que vous recherchez n'existe pas."
   },
   "observationFilter": {
     "search": "Recherche d'observations",
@@ -126,11 +108,6 @@
     "createNewButton": "Nouvel inventaire",
     "createNewButtonTooltip": "Créer un nouvel inventaire"
   },
-  "inventoryDetails": {
-    "entries": {
-      "title": "Données appartenant à cet inventaire"
-    }
-  },
   "inventoryForm": {
     "title": "Inventaire",
     "createNewEntryFromInventory": "Créer une nouvelle fiche espèce à partir de cet inventaire",
@@ -153,10 +130,10 @@
     "deleteSuccess": "L'inventaire a été supprimé",
     "deleteError": "Une erreur est survenue lors de la suppression de l'inventaire",
     "entries": {
-      "createSuccess": "La donnée a été créée avec succès",
-      "createError": "Une erreur est survenue lors de la création de la donnée",
-      "updateSuccess": "La donnée a été mise à jour avec succès",
-      "updateError": "Une erreur est survenue lors de la mise à jour de la donnée"
+      "createSuccess": "L'entité a été créée avec succès",
+      "createError": "Une erreur est survenue lors de la création de l'entité",
+      "updateSuccess": "L'entité a été mise à jour avec succès",
+      "updateError": "Une erreur est survenue lors de la mise à jour de l'entité"
     }
   },
   "inventoryMap": {
@@ -241,7 +218,7 @@
       "entry": "Observation"
     }
   },
-  "noInventoryExists": "Il n'existe actuellement aucun inventaire. Créez votre premiere donnée pour parcourir les inventaires.",
+  "noInventoryExists": "Il n'existe actuellement aucune observation. Cliquez sur \"Saisir une observation\" pour enregistrer votre premiere donnée.",
   "numberOfCities": "communes",
   "numberOfLocalities": "lieux-dits",
   "numberOfSpecies": "espèces",
