@@ -168,11 +168,10 @@ const SearchPage: FunctionComponent = () => {
                       {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
                     </button>
                     {entriesInfinite[0].meta.count > 10000 && (
-                      <div
-                        className="tooltip tooltip-bottom tooltip-info text-info text-sm cursor-default font-semibold border-info border-2 rounded-full w-6"
-                        data-tip={t("observationFilter.exportLimitMessage")}
-                      >
-                        ?
+                      <div className="tooltip tooltip-bottom" data-tip={t("observationFilter.exportLimitMessage")}>
+                        <div className="w-6 border-info border-2 rounded-full text-sm text-info font-semibold cursor-default">
+                          ?
+                        </div>
                       </div>
                     )}
                   </div>
