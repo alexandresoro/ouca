@@ -7,7 +7,7 @@ const ErrorBoundary: FunctionComponent = () => {
 
   return (
     <div className="container mx-auto mt-6">
-      <div className="alert bg-error-content border-none">
+      <div className="alert alert-error">
         <XCircle className="h-6" />
         {t("genericError")}
       </div>

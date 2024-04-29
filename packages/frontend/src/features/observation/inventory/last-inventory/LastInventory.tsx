@@ -35,8 +35,8 @@ const LastInventory: FunctionComponent = () => {
   if (inventoryId === null) {
     return (
       <div className="container mx-auto mt-10">
-        <div className="alert bg-info-content border-none">
-          <InfoCircle className="h-6 w-6" />
+        <div className="alert alert-info">
+          <InfoCircle className="h-6" />
           {t("noInventoryExists")}
         </div>
       </div>

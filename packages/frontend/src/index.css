@@ -49,6 +49,22 @@
   .table-hover {
     @apply odd:hover:bg-primary-content even:hover:bg-primary-content;
   }
+
+  .alert-info {
+    @apply bg-info-content border-info text-neutral dark:bg-info;
+  }
+
+  .alert-success {
+    @apply bg-success-content border-success text-neutral dark:bg-success;
+  }
+
+  .alert-warning {
+    @apply bg-warning-content border-warning text-neutral dark:bg-warning;
+  }
+
+  .alert-error {
+    @apply bg-error-content border-error text-neutral dark:bg-error;
+  }
 }
   
 .display-linebreak {

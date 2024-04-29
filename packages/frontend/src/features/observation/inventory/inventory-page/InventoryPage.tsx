@@ -55,7 +55,7 @@ const InventoryPage: FunctionComponent = () => {
     if (error instanceof FetchError && error.status === 404) {
       return (
         <div className="container mx-auto mt-6">
-          <div className="alert bg-error-content border-none">
+          <div className="alert alert-error">
             <XCircle className="h-6" />
             {t("inventoryPage.inventoryNotFound")}
           </div>
@@ -64,8 +64,8 @@ const InventoryPage: FunctionComponent = () => {
     }
     return (
       <div className="container mx-auto mt-6">
-        <div className="alert bg-error-content border-none">
-          <XCircle className="h-6" />
+        <div className="alert alert-error">
+          <XCircle className="h-6 " />
           {t("inventoryPage.genericError")}
         </div>
       </div>

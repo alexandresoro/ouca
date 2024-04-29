@@ -40,12 +40,12 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({
   return (
     <>
       <div className="flex flex-col gap-2">
-        <div role="alert" className="alert bg-info-content border-none">
-          <Cloud className="h-6 w-6" />
+        <div role="alert" className="alert alert-info">
+          <Cloud className="h-6" />
           {t("weather.cloudCoverLegend")}
         </div>
-        <div role="alert" className="alert bg-info-content border-none">
-          <Wind className="h-6 w-6" />
+        <div role="alert" className="alert alert-info">
+          <Wind className="h-6" />
           {t("weather.windLegend")}
         </div>
       </div>
