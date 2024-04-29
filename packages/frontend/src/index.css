@@ -50,20 +50,24 @@
     @apply odd:hover:bg-primary-content even:hover:bg-primary-content;
   }
 
+  .alert {
+    @apply font-medium;
+  }
+
   .alert-info {
-    @apply bg-info-content border-info text-neutral dark:bg-info;
+    @apply border-info bg-info-content text-info dark:bg-info dark:text-info-content;
   }
 
   .alert-success {
-    @apply bg-success-content border-success text-neutral dark:bg-success;
+    @apply border-success bg-success-content text-success dark:bg-success dark:text-info-content;
   }
 
   .alert-warning {
-    @apply bg-warning-content border-warning text-neutral dark:bg-warning;
+    @apply border-warning bg-warning-content text-warning dark:bg-warning dark:text-info-content;
   }
 
   .alert-error {
-    @apply bg-error-content border-error text-neutral dark:bg-error;
+    @apply border-error bg-error-content text-error dark:bg-error dark:text-info-content;
   }
 }
   

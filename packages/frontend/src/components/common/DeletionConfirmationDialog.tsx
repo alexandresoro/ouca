@@ -29,7 +29,7 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
           <div>{messageContent}</div>
         </Dialog.Description>
         <div className="modal-action">
-          <button type="button" className="btn btn-primary btn-outline" onClick={onCancelAction}>
+          <button type="button" className="btn btn-primary btn-outline uppercase" onClick={onCancelAction}>
             {t("deleteConfirmationDialogCancelAction")}
           </button>
           <button
