@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { CommonFailureReason } from "../shared/failure-reason.js";
 
-export type ProviderFailureReason = "fetchError" | "parseError";
+export type ProviderFailureReason = "fetchError" | "parseError" | "coordinatesNotSupported";
 
 export type AltitudeFailureReason = CommonFailureReason | ProviderFailureReason;
 

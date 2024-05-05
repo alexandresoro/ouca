@@ -20,6 +20,8 @@ export const altitudeController: FastifyPluginCallback<{
 
     if (altitudeResult.isErr()) {
       switch (altitudeResult.error) {
+        case "coordinatesNotSupported":
+          return await reply.notFound();
         case "fetchError":
           return await reply.internalServerError();
         case "parseError":
