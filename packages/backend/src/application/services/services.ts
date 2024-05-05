@@ -1,3 +1,4 @@
+import { altitudeFetcher } from "@infrastructure/altitude/altitude-fetcher.js";
 import { type Queues, createQueues } from "@infrastructure/bullmq/queues.js";
 import { ageRepository } from "@infrastructure/repositories/age/age-repository.js";
 import { behaviorRepository } from "@infrastructure/repositories/behavior/behavior-repository.js";
@@ -19,6 +20,7 @@ import { userRepository } from "@infrastructure/repositories/user/user-repositor
 import { weatherRepository } from "@infrastructure/repositories/weather/weather-repository.js";
 import { logger } from "../../utils/logger.js";
 import { type AgeService, buildAgeService } from "./age/age-service.js";
+import { type AltitudeService, buildAltitudeService } from "./altitude/altitude-service.js";
 import { type BehaviorService, buildBehaviorService } from "./behavior/behavior-service.js";
 import { type DepartmentService, buildDepartmentService } from "./department/department-service.js";
 import {
@@ -45,6 +47,7 @@ import { type WeatherService, buildWeatherService } from "./weather/weather-serv
 export type Services = {
   queues: Queues;
   ageService: AgeService;
+  altitudeService: AltitudeService;
   behaviorService: BehaviorService;
   classService: SpeciesClassService;
   departmentService: DepartmentService;
@@ -170,6 +173,10 @@ export const buildServices = (): Services => {
     weatherService,
   });
 
+  const altitudeService = buildAltitudeService({
+    altitudeFetcher,
+  });
+
   const importService = buildImportService({
     importQueue: queues.import,
   });
@@ -179,6 +186,7 @@ export const buildServices = (): Services => {
   return {
     queues,
     ageService,
+    altitudeService,
     behaviorService,
     classService,
     departmentService,

@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { Services } from "../services/services.js";
 import { agesController } from "./controllers/ages-controller.js";
+import { altitudeController } from "./controllers/altitude-controller.js";
 import { behaviorsController } from "./controllers/behaviors-controller.js";
 import { classesController } from "./controllers/classes-controller.js";
 import { departmentsController } from "./controllers/departments-controller.js";
@@ -49,6 +50,8 @@ export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fast
   await fastify.register(generateExportController, { services, prefix: "/generate-export" });
 
   await fastify.register(geojsonController, { services, prefix: "/geojson" });
+
+  await fastify.register(altitudeController, { services, prefix: "/altitude" });
 
   await fastify.register(meController, { services, prefix: "/me" });
 };
