@@ -301,6 +301,12 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           {t("inventoryForm.altitudeCallOngoing")}
         </div>
       )}
+      {altitudeServiceStatus === "unsupportedArea" && (
+        <div className="alert alert-warning py-1 text-sm">
+          <InfoCircle className="h-4 flex-shrink-0" />
+          {t("inventoryForm.altitudeCallUnsupportedArea")}
+        </div>
+      )}
       {altitudeServiceStatus === "error" && (
         <div className="alert alert-warning py-1 text-sm">
           <InfoCircle className="h-4 flex-shrink-0" />

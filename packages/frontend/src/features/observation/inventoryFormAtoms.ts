@@ -1,6 +1,8 @@
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import type { Locality } from "@ou-ca/common/api/entities/locality";
 import { getAltitudeToDisplay } from "@services/altitude/altitude-service";
+import { apiUrlAtom } from "@services/api/api-url-atom";
+import { oidcUserAtom } from "@services/auth/oidc-config";
 import type { Coordinates, CoordinatesWithAltitude } from "@typings/Coordinates";
 import { atom } from "jotai";
 import { RESET, atomWithReset } from "jotai/utils";
@@ -22,7 +24,10 @@ export const inventoryLatitudeAtom = atom(
       const localityCoordinates = get(inventoryLocalityAtom)?.coordinates;
       const customizedCoordinates = get(storedCustomizedCoordinatesAtom);
 
-      if (longitude != null && localityCoordinates != null) {
+      const apiUrl = get(apiUrlAtom);
+      const token = get(oidcUserAtom)?.access_token;
+
+      if (longitude != null && localityCoordinates != null && token != null) {
         const altitudeResult = await getAltitudeToDisplay(
           {
             latitude: roundedLatitude,
@@ -34,9 +39,15 @@ export const inventoryLatitudeAtom = atom(
             altitude: localityCoordinates.altitude,
           },
           customizedCoordinates,
+          {
+            apiUrl,
+            token,
+          },
         );
         if (altitudeResult.outcome === "success") {
           set(inventoryAltitudeAtom, altitudeResult.altitude);
+        } else if (altitudeResult.reason === "unsupportedCoordinates") {
+          set(inventoryAltitudeAtom, null);
         }
       }
     }
@@ -60,7 +71,9 @@ export const inventoryLongitudeAtom = atom(
       const localityCoordinates = get(inventoryLocalityAtom)?.coordinates;
       const customizedCoordinates = get(storedCustomizedCoordinatesAtom);
 
-      if (latitude != null && localityCoordinates != null) {
+      const apiUrl = get(apiUrlAtom);
+      const token = get(oidcUserAtom)?.access_token;
+      if (latitude != null && localityCoordinates != null && token != null) {
         const altitudeResult = await getAltitudeToDisplay(
           {
             latitude,
@@ -72,9 +85,15 @@ export const inventoryLongitudeAtom = atom(
             altitude: localityCoordinates.altitude,
           },
           customizedCoordinates,
+          {
+            apiUrl,
+            token,
+          },
         );
         if (altitudeResult.outcome === "success") {
           set(inventoryAltitudeAtom, altitudeResult.altitude);
+        } else if (altitudeResult.reason === "unsupportedCoordinates") {
+          set(inventoryAltitudeAtom, null);
         }
       }
     }
@@ -117,7 +136,9 @@ export const inventoryCoordinatesAtom = atom(
       const localityCoordinates = get(inventoryLocalityAtom)?.coordinates;
       const customizedCoordinates = get(storedCustomizedCoordinatesAtom);
 
-      if (localityCoordinates != null) {
+      const apiUrl = get(apiUrlAtom);
+      const token = get(oidcUserAtom)?.access_token;
+      if (localityCoordinates != null && token != null) {
         const altitudeResult = await getAltitudeToDisplay(
           {
             latitude: roundedCoordinates.lat,
@@ -129,9 +150,15 @@ export const inventoryCoordinatesAtom = atom(
             altitude: localityCoordinates.altitude,
           },
           customizedCoordinates,
+          {
+            apiUrl,
+            token,
+          },
         );
         if (altitudeResult.outcome === "success") {
           set(inventoryAltitudeAtom, altitudeResult.altitude);
+        } else if (altitudeResult.reason === "unsupportedCoordinates") {
+          set(inventoryAltitudeAtom, null);
         }
       }
     }

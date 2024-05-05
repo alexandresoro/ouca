@@ -1,22 +1,57 @@
+import { fetchApiAltitude } from "@services/api/altitude/api-altitude-queries";
 import type { CoordinatesWithAltitude } from "@typings/Coordinates";
+import { FetchError } from "@utils/fetch-api";
 import { atom, getDefaultStore } from "jotai";
 import { LRUCache } from "lru-cache";
-import { getAltitudeForCoordinates } from "./providers/ign-alticodage-service";
 
-const altitudeServiceCache = new LRUCache<string, number>({
+type AltitudeServiceResult =
+  | {
+      outcome: "success";
+      altitude: number;
+    }
+  | {
+      outcome: "error";
+      reason: "unsupportedCoordinates" | "unknownError";
+    };
+
+const altitudeServiceCache = new LRUCache<string, AltitudeServiceResult>({
   max: 1000,
   fetchMethod: async (key) => {
-    const coordinates = JSON.parse(key) as {
+    const { latitude, longitude, apiUrl, token } = JSON.parse(key) as {
+      apiUrl: string;
+      token: string;
       latitude: number;
       longitude: number;
     };
-    const ignAltimetrieServiceResult = await getAltitudeForCoordinates(coordinates);
-    switch (ignAltimetrieServiceResult.outcome) {
-      case "success":
-        // Round the altitude returned by the service
-        return Math.round(ignAltimetrieServiceResult.altitude);
-      case "error":
-        return undefined;
+
+    try {
+      const ignAltimetrieServiceResult = await fetchApiAltitude(
+        {
+          latitude,
+          longitude,
+        },
+        {
+          apiUrl,
+          token,
+        },
+      );
+      // Round the altitude returned by the service
+      return {
+        outcome: "success",
+        altitude: Math.round(ignAltimetrieServiceResult.altitude),
+      };
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return {
+          outcome: "error",
+          reason: "unsupportedCoordinates",
+        };
+      }
+
+      return {
+        outcome: "error",
+        reason: "unknownError",
+      };
     }
   },
 });
@@ -24,16 +59,17 @@ const altitudeServiceCache = new LRUCache<string, number>({
 const defaultAtomStore = getDefaultStore();
 
 // Atom to retrieve the current status of altitude retrieval
-export const altitudeServiceStatusAtom = atom<"idle" | "ongoing" | "error">("idle");
+export const altitudeServiceStatusAtom = atom<"idle" | "ongoing" | "unsupportedArea" | "error">("idle");
 
 type AltitudeToDisplayResult =
   | {
       outcome: "success";
-      source: "customCoordinates" | "localityCoordinates" | "ign";
+      source: "customCoordinates" | "localityCoordinates" | "api";
       altitude: number;
     }
   | {
       outcome: "error";
+      reason: "unsupportedCoordinates" | "unknownError";
     };
 
 // Method that handles the altitude that corresponds to the given coordinates and parameters
@@ -47,6 +83,13 @@ export const getAltitudeToDisplay = async (
   },
   localityCoordinates: CoordinatesWithAltitude,
   customizedCoordinates: CoordinatesWithAltitude | null,
+  {
+    apiUrl,
+    token,
+  }: {
+    apiUrl: string;
+    token: string;
+  },
 ): Promise<AltitudeToDisplayResult> => {
   defaultAtomStore.set(altitudeServiceStatusAtom, "ongoing");
 
@@ -71,21 +114,33 @@ export const getAltitudeToDisplay = async (
   }
 
   // Check in the LRU cache if the altitude is already present
-  // Otherwise, retrieve the altitude from the ign service
-  const altitude = await altitudeServiceCache.fetch(JSON.stringify({ latitude, longitude }));
+  // Otherwise, retrieve the altitude from the api
+  const altitudeResult = await altitudeServiceCache.fetch(JSON.stringify({ latitude, longitude, apiUrl, token }));
 
-  if (altitude !== undefined) {
+  if (altitudeResult !== undefined) {
+    if (altitudeResult.outcome === "error") {
+      defaultAtomStore.set(
+        altitudeServiceStatusAtom,
+        altitudeResult.reason === "unsupportedCoordinates" ? "unsupportedArea" : "error",
+      );
+      return {
+        outcome: "error",
+        reason: altitudeResult.reason,
+      };
+    }
+
     defaultAtomStore.set(altitudeServiceStatusAtom, "idle");
     return {
       outcome: "success",
-      source: "ign",
+      source: "api",
       // Round the altitude returned by the service
-      altitude,
+      altitude: altitudeResult.altitude,
     };
   }
 
   defaultAtomStore.set(altitudeServiceStatusAtom, "error");
   return {
     outcome: "error",
+    reason: "unknownError",
   };
 };
