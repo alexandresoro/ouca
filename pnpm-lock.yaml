@@ -136,8 +136,8 @@ importers:
         specifier: 1.8.8
         version: 1.8.8
       tsx:
-        specifier: 4.8.2
-        version: 4.8.2
+        specifier: 4.9.3
+        version: 4.9.3
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -173,8 +173,8 @@ importers:
         specifier: 2.5.5
         version: 2.5.5
       tsx:
-        specifier: 4.8.2
-        version: 4.8.2
+        specifier: 4.9.3
+        version: 4.9.3
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -6031,8 +6031,8 @@ packages:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: false
 
-  /tsx@4.8.2:
-    resolution: {integrity: sha512-hmmzS4U4mdy1Cnzpl/NQiPUC2k34EcNSTZYVJThYKhdqTwuBeF+4cG9KUK/PFQ7KHaAaYwqlb7QfmsE2nuj+WA==}
+  /tsx@4.9.3:
+    resolution: {integrity: sha512-czVbetlILiyJZI5zGlj2kw9vFiSeyra9liPD4nG+Thh4pKTi0AmMEQ8zdV/L2xbIVKrIqif4sUNrsMAOksx9Zg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     dependencies:
