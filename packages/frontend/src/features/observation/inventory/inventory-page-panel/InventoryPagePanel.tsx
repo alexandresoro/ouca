@@ -1,6 +1,5 @@
 import DeletionConfirmationDialog from "@components/common/DeletionConfirmationDialog";
-import { FloatingArrow, type VirtualElement, arrow, autoUpdate, offset, shift, useFloating } from "@floating-ui/react";
-import { Menu } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, MenuSection, MenuSeparator } from "@headlessui/react";
 import { useNotifications } from "@hooks/useNotifications";
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
@@ -18,7 +17,7 @@ import {
   EditAlt,
   Trash,
 } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent, useRef, useState } from "react";
+import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
@@ -122,20 +121,6 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     },
   });
 
-  const arrowRef = useRef(null);
-  const floatingMoreInventory = useFloating<HTMLButtonElement | VirtualElement>({
-    middleware: [
-      offset(12),
-      shift({
-        padding: 12,
-      }),
-      arrow({
-        element: arrowRef,
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
-
   const [inventoryEditDialogOpen, setInventoryEditDialogOpen] = useState<boolean>(false);
 
   const handleInventoryUpdate = async (inventoryFormData: UpsertInventoryInput) => {
@@ -158,72 +143,77 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
         </div>
         <div className="flex items-center gap-4">
           <Menu>
-            <Menu.Button as="div" ref={floatingMoreInventory.refs.setReference} className="flex items-center">
-              {({ open }) => (
-                <button type="button" className={`btn btn-xs btn-circle btn-primary ${open ? "" : "btn-outline"}`}>
-                  <DotsHorizontalRounded className="h-5" />
-                </button>
-              )}
-            </Menu.Button>
-            <Menu.Items
-              ref={floatingMoreInventory.refs.setFloating}
-              style={{
-                position: floatingMoreInventory.strategy,
-                top: floatingMoreInventory.y ?? 0,
-                left: floatingMoreInventory.x ?? 0,
-              }}
-              className="z-10 flex flex-col gap-1.5 p-1.5 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max"
-            >
-              <FloatingArrow
-                className="fill-primary"
-                ref={arrowRef}
-                context={floatingMoreInventory.context}
-                tipRadius={2}
-              />
-              <Menu.Item key="edit">
-                {({ active }) => (
+            <MenuButton as="div" className="flex items-center">
+              {({ active }) => (
+                <div className="flex relative">
                   <button
                     type="button"
-                    className={`btn btn-xs text-primary uppercase ${
-                      active ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                    className={`btn btn-xs btn-circle btn-primary ${
+                      active ? "btn-active outline outline-2 outline-offset-2" : "btn-outline"
                     }`}
-                    onClick={() => setInventoryEditDialogOpen(true)}
                   >
-                    <EditAlt className="h-5" />
-                    {t("inventoryPage.inventoryPanel.edit")}
+                    <DotsHorizontalRounded className="h-5" />
                   </button>
-                )}
-              </Menu.Item>
-              <Menu.Item key="createNewFrom">
-                {({ active }) => (
-                  <Link
-                    className={`btn btn-xs text-primary uppercase ${
-                      active ? "bg-opacity-20 bg-base-content" : "btn-ghost"
-                    }`}
-                    to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
-                  >
-                    <CopyAlt className="h-5" />
-                    {t("inventoryPage.inventoryPanel.createNewFrom")}
-                  </Link>
-                )}
-              </Menu.Item>
-              {isInventoryDeletionAllowed && (
-                <Menu.Item key="delete">
-                  {({ active }) => (
+                </div>
+              )}
+            </MenuButton>
+            <MenuItems
+              anchor={{
+                to: "bottom",
+                gap: 8,
+                padding: 12,
+              }}
+              className="z-10 flex flex-col gap-1.5 p-1.5 outline-none shadow-xl ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max"
+            >
+              <MenuSection className="flex flex-col gap-1.5">
+                <MenuItem key="edit">
+                  {({ focus }) => (
                     <button
                       type="button"
-                      className={`btn btn-xs text-error uppercase ${
-                        active ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                      className={`btn btn-xs text-primary uppercase ${
+                        focus ? "bg-opacity-20 bg-base-content" : "btn-ghost"
                       }`}
-                      onClick={() => setDeleteDialog(inventory)}
+                      onClick={() => setInventoryEditDialogOpen(true)}
                     >
-                      <Trash className="h-5" />
-                      {t("inventoryPage.inventoryPanel.delete")}
+                      <EditAlt className="h-5" />
+                      {t("inventoryPage.inventoryPanel.edit")}
                     </button>
                   )}
-                </Menu.Item>
+                </MenuItem>
+                <MenuItem key="createNewFrom">
+                  {({ focus }) => (
+                    <Link
+                      className={`btn btn-xs text-primary uppercase ${
+                        focus ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                      }`}
+                      to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
+                    >
+                      <CopyAlt className="h-5" />
+                      {t("inventoryPage.inventoryPanel.createNewFrom")}
+                    </Link>
+                  )}
+                </MenuItem>
+              </MenuSection>
+              {isInventoryDeletionAllowed && (
+                <>
+                  <MenuSeparator className="h-px mx-4 bg-primary/70 rounded" />
+                  <MenuItem key="delete">
+                    {({ focus }) => (
+                      <button
+                        type="button"
+                        className={`btn btn-xs text-error uppercase ${
+                          focus ? "bg-opacity-20 bg-base-content" : "btn-ghost"
+                        }`}
+                        onClick={() => setDeleteDialog(inventory)}
+                      >
+                        <Trash className="h-5" />
+                        {t("inventoryPage.inventoryPanel.delete")}
+                      </button>
+                    )}
+                  </MenuItem>
+                </>
               )}
-            </Menu.Items>
+            </MenuItems>
           </Menu>
           <div className="flex gap-2">
             <div
