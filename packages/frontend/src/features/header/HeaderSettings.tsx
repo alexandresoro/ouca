@@ -67,7 +67,7 @@ const HeaderSettings: FunctionComponent = () => {
           padding: 8,
           gap: 8,
         }}
-        className="flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
+        className="z-10 flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
       >
         {getMenuOptions(enableImport).map(({ Icon, localizationKey, to }) => {
           const CurrentMenuItem = (
