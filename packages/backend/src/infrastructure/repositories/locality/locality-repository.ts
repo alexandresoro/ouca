@@ -178,7 +178,7 @@ const findLocalities = async (
       }
 
       if (orderBy) {
-        queryLocality = queryLocality.orderBy(orderBy, sortOrder ?? undefined);
+        queryLocality = queryLocality.orderBy(orderBy, sortOrder ?? undefined).orderBy("lieudit.id asc");
       } else {
         // If no explicit order is requested and a query is provided, return the matches in the following order:
         // The ones for which nom starts with query
