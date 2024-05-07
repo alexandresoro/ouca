@@ -56,9 +56,9 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
             data?.length ? "ring-2" : ""
           } ring-primary rounded-lg`}
           anchor={{
-            to: value ? "selection" : "bottom",
+            to: "bottom",
             padding: 16,
-            gap: value ? 0 : 8,
+            gap: 8,
           }}
         >
           {data?.map((option) => {
