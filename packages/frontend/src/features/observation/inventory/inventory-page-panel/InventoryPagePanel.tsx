@@ -163,7 +163,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 gap: 8,
                 padding: 12,
               }}
-              className="z-10 flex flex-col gap-1.5 p-1.5 outline-none shadow-xl ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max"
+              className="flex flex-col gap-1.5 p-1.5 outline-none shadow-xl ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max"
             >
               <MenuSection className="flex flex-col gap-1.5">
                 <MenuItem key="edit">
