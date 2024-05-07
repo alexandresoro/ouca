@@ -24,7 +24,7 @@
     "@floating-ui/react": "0.26.13",
     "@fontsource-variable/nunito": "5.0.19",
     "@fontsource/carter-one": "5.0.12",
-    "@headlessui/react": "1.7.19",
+    "@headlessui/react": "2.0.1",
     "@hookform/resolvers": "3.3.4",
     "@ou-ca/common": "workspace:*",
     "@sentry/integrations": "7.113.0",
