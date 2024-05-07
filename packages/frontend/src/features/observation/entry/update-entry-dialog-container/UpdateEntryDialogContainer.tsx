@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import type { UpsertEntryInput } from "@ou-ca/common/api/entry";
 import type { FunctionComponent } from "react";
@@ -22,10 +22,8 @@ const UpdateEntryDialogContainer: FunctionComponent<UpdateEntryDialogContainerPr
 
   return (
     <Dialog className={`modal ${open ? "modal-open" : ""}`} open={open} onClose={onClose}>
-      <Dialog.Panel className="modal-box max-w-7xl">
-        <Dialog.Title className="text-2xl font-semibold py-4">
-          {t("inventoryPage.entriesPanel.updateEntry")}
-        </Dialog.Title>
+      <DialogPanel className="modal-box max-w-7xl">
+        <DialogTitle className="text-2xl font-semibold py-4">{t("inventoryPage.entriesPanel.updateEntry")}</DialogTitle>
         {entry != null && (
           <EntryForm
             mode="update"
@@ -35,7 +33,7 @@ const UpdateEntryDialogContainer: FunctionComponent<UpdateEntryDialogContainerPr
             disableIfNoChanges
           />
         )}
-      </Dialog.Panel>
+      </DialogPanel>
     </Dialog>
   );
 };

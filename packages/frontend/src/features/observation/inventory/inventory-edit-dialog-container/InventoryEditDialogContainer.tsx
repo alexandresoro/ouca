@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import type { Inventory } from "@ou-ca/common/api/entities/inventory";
 import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import type { FunctionComponent } from "react";
@@ -22,12 +22,12 @@ const InventoryEditDialogContainer: FunctionComponent<InventoryEditDialogContain
 
   return (
     <Dialog className={`modal ${open ? "modal-open" : ""}`} open={open} onClose={onClose}>
-      <Dialog.Panel className="modal-box max-w-7xl">
-        <Dialog.Title className="text-2xl font-semibold py-4 first-letter:uppercase">
+      <DialogPanel className="modal-box max-w-7xl">
+        <DialogTitle className="text-2xl font-semibold py-4 first-letter:uppercase">
           {t("inventoryPage.inventoryEdition")}
-        </Dialog.Title>
+        </DialogTitle>
         <InventoryFormWithMap mode="update" inventory={inventory} onSubmitInventoryForm={onInventoryUpdate} />
-      </Dialog.Panel>
+      </DialogPanel>
     </Dialog>
   );
 };
