@@ -105,8 +105,8 @@ importers:
         specifier: 3.8.0
         version: 3.8.0(@types/node@20.12.10)
       zod:
-        specifier: 3.23.6
-        version: 3.23.6
+        specifier: 3.23.7
+        version: 3.23.7
     devDependencies:
       '@biomejs/biome':
         specifier: 1.7.3
@@ -160,8 +160,8 @@ importers:
         specifier: 2.11.0
         version: 2.11.0
       zod:
-        specifier: 3.23.6
-        version: 3.23.6
+        specifier: 3.23.7
+        version: 3.23.7
     devDependencies:
       '@biomejs/biome':
         specifier: 1.7.3
@@ -305,8 +305,8 @@ importers:
         specifier: 1.8.1
         version: 1.8.1(react@18.3.1)
       zod:
-        specifier: 3.23.6
-        version: 3.23.6
+        specifier: 3.23.7
+        version: 3.23.7
     devDependencies:
       '@biomejs/biome':
         specifier: 1.7.3
@@ -6475,6 +6475,6 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /zod@3.23.6:
-    resolution: {integrity: sha512-RTHJlZhsRbuA8Hmp/iNL7jnfc4nZishjsanDAfEY1QpDQZCahUp3xDzl+zfweE9BklxMUcgBgS1b7Lvie/ZVwA==}
+  /zod@3.23.7:
+    resolution: {integrity: sha512-NBeIoqbtOiUMomACV/y+V3Qfs9+Okr18vR5c/5pHClPpufWOrsx8TENboDPe265lFdfewX2yBtNTLPvnmCxwog==}
     dev: false
