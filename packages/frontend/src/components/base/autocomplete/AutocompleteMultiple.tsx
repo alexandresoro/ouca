@@ -1,5 +1,12 @@
-import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
-import { Combobox, Field, Label } from "@headlessui/react";
+import {
+  Combobox,
+  ComboboxButton,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+  Field,
+  Label,
+} from "@headlessui/react";
 import { ExpandVertical } from "@styled-icons/boxicons-regular";
 import { type ComponentPropsWithRef, type FocusEventHandler, type ForwardedRef, type Key, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,25 +63,6 @@ const AutocompleteMultiple = <T extends object>(
 
   const { t } = useTranslation();
 
-  const { x, y, strategy, refs } = useFloating<HTMLInputElement>({
-    placement: "bottom-start",
-    middleware: [
-      offset(8),
-      shift(),
-      flip({ padding: 8 }),
-      size({
-        apply({ rects, elements, availableHeight }) {
-          Object.assign(elements.floating.style, {
-            maxHeight: `${Math.min(availableHeight, 36 * 8)}px`,
-            width: `${rects.reference.width}px`,
-          });
-        },
-        padding: 8,
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
-
   // TODO: try to improve type inference
   const key = by ?? ("id" as keyof T);
 
@@ -113,6 +101,7 @@ const AutocompleteMultiple = <T extends object>(
       </div>
       <Combobox
         as="div"
+        className="flex flex-col"
         ref={ref}
         name={name}
         value={values}
@@ -136,49 +125,50 @@ const AutocompleteMultiple = <T extends object>(
                 ))}
               </div>
             )}
-            <div
-              className={`w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 
-            ${hasError ? "focus-within:outline-error" : "focus-within:outline-primary"} focus-within:outline-offset-2 ${
-              hasError ? "input-error" : inputProps?.disabled ? "" : "input-primary"
-            } gap-3 px-2`}
-              ref={refs.setReference}
-            >
-              <Combobox.Input
+            <div className="w-full relative">
+              <ComboboxButton className="absolute z-[1] inset-y-0 right-0 flex items-center pr-2">
+                <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
+              </ComboboxButton>
+              <ComboboxInput
                 autoComplete="off"
                 {...inputProps}
-                className="flex-grow outline-none bg-transparent text-base-content placeholder-shown:text-ellipsis"
+                className={`flex-grow w-full input input-bordered ${
+                  hasError ? "input-error" : "input-primary"
+                } text-base-content pr-10`}
                 onChange={handleInputChange}
                 onBlur={handleOnBlur}
               />
-              <Combobox.Button className="flex items-center">
-                <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
-              </Combobox.Button>
             </div>
-            <Combobox.Options
-              className="menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ring-2 ring-primary rounded-lg overflow-y-auto"
-              style={{
-                position: strategy,
-                top: y ?? 0,
-                left: x ?? 0,
+            <ComboboxOptions
+              className="w-[var(--input-width)] [--anchor-max-height:304px] flex flex-col flex-nowrap p-2 dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ring-2 ring-primary rounded-lg"
+              anchor={{
+                to: "bottom",
+                padding: 16,
+                gap: 8,
               }}
-              ref={refs.setFloating}
             >
               {searchResults.length > 0 &&
                 searchResults.map((option) => (
-                  <Combobox.Option className="font-semibold" key={option[key] as Key} value={option}>
-                    {({ active, disabled }) => (
-                      <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
-                        {renderValue(option)}
+                  <ComboboxOption
+                    className="cursor-default font-semibold select-none"
+                    key={option[key] as Key}
+                    value={option}
+                  >
+                    {({ focus, disabled }) => (
+                      <div className={`flex px-3 py-2 rounded-lg disabled ${focus && !disabled ? "bg-neutral" : ""}`}>
+                        <span className={`text-sm ${focus ? "text-neutral-content" : "text-base-content"}`}>
+                          {renderValue(option)}
+                        </span>
                       </div>
                     )}
-                  </Combobox.Option>
+                  </ComboboxOption>
                 ))}
               {!searchResults.length && (
                 <li className="pointer-events-none font-semibold text-base-content">
                   <span className="">{t("components.autocomplete.noResults")}</span>
                 </li>
               )}
-            </Combobox.Options>
+            </ComboboxOptions>
           </>
         )}
       </Combobox>
