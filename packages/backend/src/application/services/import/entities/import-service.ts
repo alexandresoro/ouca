@@ -41,7 +41,6 @@ export abstract class ImportService {
       step: "importRetrieved",
     } satisfies ImportStatus);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const content: string[][] = parse(importData, {
       delimiter: ";",
       encoding: "utf-8",

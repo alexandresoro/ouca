@@ -24,7 +24,6 @@ export const AuthHandler = ({ children }: { children: ReactElement }): ReactElem
       void auth.clearStaleState();
       void auth.signinRedirect();
     }
-    // eslint-disable-next-line @typescript-eslint/unbound-method
   }, [auth.isAuthenticated, auth.activeNavigator, auth.isLoading, auth.signinRedirect, auth]);
 
   useEffect(() => {

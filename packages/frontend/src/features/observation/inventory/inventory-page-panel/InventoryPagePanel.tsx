@@ -234,7 +234,6 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 className={`btn btn-sm btn-square ${
                   hasPreviousInventory && !isValidatingPrevious ? "btn-primary" : "btn-disabled"
                 }`}
-                // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
                 to={`../${previousInventoryId as string}`}
                 tabIndex={hasPreviousInventory ? 0 : -1}
                 relative="path"
@@ -250,7 +249,6 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 className={`btn btn-sm btn-square ${
                   hasNextInventory && !isValidatingNext ? "btn-primary" : "btn-disabled"
                 }`}
-                // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
                 to={`../${nextInventoryId as string}`}
                 tabIndex={hasNextInventory ? 0 : -1}
                 relative="path"

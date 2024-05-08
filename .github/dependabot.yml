@@ -48,9 +48,6 @@ updates:
           - "@sentry/*"
         exclude-patterns:
           - "@sentry/vite-plugin"
-      typescript-eslint:
-        patterns:
-          - "@typescript-eslint/*"
       bull-board:
         patterns:
           - "@bull-board/*"

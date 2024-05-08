@@ -34,7 +34,6 @@ const getMenuOptions = (enableImport: boolean) => [
 const HeaderSettings: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { removeUser } = useAuth();
   const user = useUser();
   const enableImport = user?.permissions.canImport ?? false;
@@ -113,7 +112,6 @@ const HeaderSettings: FunctionComponent = () => {
           if (localizationKey === "settings") {
             Dividers.push(<hr key={`divider-${to}`} />);
           }
-          // biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
           return [CurrentMenuItem, ...Dividers];
         })}
         <hr className="w-full border-t-[1px] my-1" />

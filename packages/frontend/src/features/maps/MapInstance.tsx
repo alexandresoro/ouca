@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAtom, useAtomValue } from "jotai";
 import { type PropsWithChildren, forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";

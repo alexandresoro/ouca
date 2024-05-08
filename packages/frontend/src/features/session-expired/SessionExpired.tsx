@@ -4,7 +4,6 @@ import { useAuth } from "react-oidc-context";
 
 const SessionExpired: FunctionComponent = () => {
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { removeUser } = useAuth();
 
   const handleReconnect = async () => {

@@ -1,14 +1,6 @@
 rc: '"${XDG_CONFIG_HOME:-$HOME/.config}/lefthookrc"'
 pre-commit:
   commands:
-    eslint-frontend:
-      root: "packages/frontend/"
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
-      run: pnpm eslint {staged_files}
-    eslint-backend:
-      root: "packages/backend/"
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
-      run: pnpm eslint {staged_files}
     biome:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: pnpm biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
