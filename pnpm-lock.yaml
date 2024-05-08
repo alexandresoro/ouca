@@ -178,9 +178,6 @@ importers:
 
   packages/frontend:
     dependencies:
-      '@floating-ui/react':
-        specifier: 0.26.13
-        version: 0.26.13(react-dom@18.3.1)(react@18.3.1)
       '@fontsource-variable/nunito':
         specifier: 5.0.19
         version: 5.0.19

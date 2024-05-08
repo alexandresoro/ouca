@@ -24,7 +24,6 @@ const CHUNKS_MAPPING = {
   maplibregl: ["maplibre-gl"],
   i18next: ["i18next", "i18next-http-backend"],
   oidc: ["oidc-client-ts"],
-  floatingui: ["@floating-ui"],
   headlessui: ["@headlessui/react"],
   styledicons: ["@styled-icons"],
   turf: ["@turf"],
