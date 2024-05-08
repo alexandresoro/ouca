@@ -18,8 +18,7 @@
     "start": "tsx watch -r dotenv/config src/main.ts",
     "start:tsc": "pnpm run compile:tsc:dev && node -r dotenv/config dist/main",
     "test": "find ./src -name '*.test.ts' | tr '\\n' ' ' | xargs node --import tsx --test",
-    "lint": "eslint .",
-    "lint:ci": "eslint .",
+    "lint": "biome lint *",
     "typecheck": "tsc --build tsconfig.build.json",
     "biome:ci": "biome ci *",
     "compile:tsc": "tsc --build tsconfig.build.json && tsc-alias",
@@ -62,7 +61,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.7.3",
     "@faker-js/faker": "8.4.1",
-    "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.8",
     "@types/node": "20.12.10",
     "@types/pg": "8.11.6",

@@ -192,7 +192,6 @@ const HeaderActions: FunctionComponent = () => {
             if (["inventories", "viewObservations", "weathers"].includes(localizationKey)) {
               Dividers.push(<hr key={`divider-${to}`} className="w-full border-t-[1px] flex" />);
             }
-            // biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
             return [CurrentMenuItem, ...Dividers];
           })}
         </Menu.Items>

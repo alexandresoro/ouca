@@ -5,7 +5,6 @@ import type { Services } from "../../services/services.js";
 import { getAccessToken } from "../controllers/access-token-utils.js";
 
 declare module "fastify" {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface FastifyRequest {
     user: (LoggedUser & { oidcUser: OIDCUser }) | null;
   }

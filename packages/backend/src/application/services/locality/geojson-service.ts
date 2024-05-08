@@ -3,7 +3,6 @@ import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { LocalityGeoJSONRepository } from "@interfaces/locality-geojson-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
 // FIXME: https://github.com/Turfjs/turf/issues/2414
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
 import { type Result, err, ok } from "neverthrow";
@@ -37,11 +36,9 @@ export const buildGeoJSONService = ({
 
     const localityPoints = geoJsonLocalities.map((geoJsonLocality) => {
       const { longitude, latitude, ...restLocality } = geoJsonLocality;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       return point([longitude, latitude], restLocality);
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const localitiesCollection = featureCollection(localityPoints);
 
     // Store collection as cache

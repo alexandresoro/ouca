@@ -67,7 +67,6 @@ const FormAutocompleteMultiple = <TFieldValues extends FieldValues, T extends ob
       label={label}
       required={required}
       data={data}
-      // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
       by={by as ConditionalKeys<T, Key> & string}
       values={value}
       onChange={handleOnChange}

@@ -1,6 +1,4 @@
 {
-  "eslint.validate": ["typescript", "javascript"],
-  "eslint.workingDirectories": [{ "pattern": "./packages/*/" }],
   "editor.codeActionsOnSave": {
     "source.organizeImports": "never",
     "source.organizeImports.biome": "explicit",
