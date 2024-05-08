@@ -158,9 +158,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
                   );
                 })
               ) : (
-                <li className="pointer-events-none font-semibold text-base-content">
-                  <span className="">{t("components.autocomplete.noResults")}</span>
-                </li>
+                <span className="px-3 py-2 pointer-events-none font-semibold text-base-content text-sm">
+                  {t("components.autocomplete.noResults")}
+                </span>
               )}
             </ComboboxOptions>
           </>
