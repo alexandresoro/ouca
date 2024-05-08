@@ -55,6 +55,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormSelect
+        autoFocus
         name="departmentId"
         label={t("department")}
         required

@@ -16,6 +16,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   renderValue: (value: T) => string;
   selectClassName?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
 } & (T extends { id: Key } | string
   ? {
       by?: K;
@@ -23,8 +24,21 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   : { by: K });
 
 const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLButtonElement>) => {
-  const { data, name, value, required, onChange, onBlur, by, renderValue, hasError, label, selectClassName, disabled } =
-    props;
+  const {
+    data,
+    name,
+    value,
+    required,
+    onChange,
+    onBlur,
+    by,
+    renderValue,
+    hasError,
+    label,
+    selectClassName,
+    disabled,
+    autoFocus,
+  } = props;
 
   // TODO: try to improve type inference
   const key = by ?? ("id" as ConditionalKeys<T, Key>);
@@ -43,6 +57,7 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
       </div>
       <Listbox name={name} value={value} onChange={onChange} disabled={disabled}>
         <ListboxButton
+          autoFocus={autoFocus}
           ref={ref}
           className={`w-full select select-bordered ${
             hasError ? "select-error" : "select-primary"

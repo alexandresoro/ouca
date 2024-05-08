@@ -57,6 +57,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSelect
+          autoFocus
           name="classId"
           label={t("speciesClass")}
           required
