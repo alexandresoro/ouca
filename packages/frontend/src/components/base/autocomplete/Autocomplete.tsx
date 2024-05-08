@@ -112,7 +112,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
                   {value?.[decorationKey] as string | number}
                 </span>
               )}
-              <ComboboxButton className="absolute z-[1] inset-y-0 right-0 flex items-center pr-2">
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
                 <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
               </ComboboxButton>
               <ComboboxInput

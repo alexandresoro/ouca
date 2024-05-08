@@ -126,7 +126,7 @@ const AutocompleteMultiple = <T extends object>(
               </div>
             )}
             <div className="w-full relative">
-              <ComboboxButton className="absolute z-[1] inset-y-0 right-0 flex items-center pr-2">
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
                 <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
               </ComboboxButton>
               <ComboboxInput
