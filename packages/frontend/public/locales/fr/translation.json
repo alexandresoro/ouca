@@ -156,8 +156,7 @@
       "title_one": "Observation",
       "title_other": "Observations",
       "addNewEntry": "Ajouter une observation",
-      "updateEntry": "Mettre à jour une observation",
-      "newEntry": "Nouvelle observation"
+      "updateEntry": "Mettre à jour une observation"
     },
     "inventoryEdition": "Modification de l'inventaire"
   },

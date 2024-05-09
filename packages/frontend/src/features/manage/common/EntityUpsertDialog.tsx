@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import type { FunctionComponent, PropsWithChildren } from "react";
 
 type EntityUpsertDialogProps = {
@@ -15,10 +15,10 @@ const EntityUpsertDialog: FunctionComponent<PropsWithChildren<EntityUpsertDialog
 }) => {
   return (
     <Dialog className={`modal ${open ? "modal-open" : ""}`} open={open} onClose={onClose}>
-      <Dialog.Panel className="modal-box max-w-3xl">
-        <Dialog.Title className="text-2xl font-semibold py-4 first-letter:uppercase">{title}</Dialog.Title>
+      <DialogPanel className="modal-box max-w-3xl">
+        <DialogTitle className="text-2xl font-semibold py-4 first-letter:uppercase">{title}</DialogTitle>
         {children}
-      </Dialog.Panel>
+      </DialogPanel>
     </Dialog>
   );
 };

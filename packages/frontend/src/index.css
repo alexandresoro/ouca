@@ -35,6 +35,18 @@
   z-index: 40;
 }
 
+/*
+ * Daisy modals leverages grid layout for content
+ * This causes the modal to be centered in the viewport, unless there's a sibling element
+ * which is the case whenever a portal from headlessui is used from within a modal.
+ * To fix this, could either override the modal layout to use flexbox or
+ * apply the `contents` display property to the portal element.
+ * See https://caniuse.com/css-display-contents
+ */
+.modal [data-headlessui-portal] {
+  @apply contents
+}
+
 /* Apply small backdrop blur effect on opened modals to improve readability
 */
 .modal-open {

@@ -103,6 +103,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex gap-4">
         <Select
+          autoFocus
           selectClassName="basis-1/4"
           label={t("department")}
           data={departments?.data}

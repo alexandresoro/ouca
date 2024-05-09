@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react";
+import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { type FunctionComponent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -23,11 +23,11 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
       onClose={onCancelAction}
       initialFocus={confirmButtonRef}
     >
-      <Dialog.Panel className="modal-box text-base-content">
-        <Dialog.Title className="text-2xl font-semibold">{t("deleteConfirmationDialogTitle")}</Dialog.Title>
-        <Dialog.Description as={"div"} className="flex flex-col gap-4 mt-4 mb-2">
+      <DialogPanel className="modal-box text-base-content">
+        <DialogTitle className="text-2xl font-semibold">{t("deleteConfirmationDialogTitle")}</DialogTitle>
+        <Description as={"div"} className="flex flex-col gap-4 mt-4 mb-2">
           <div>{messageContent}</div>
-        </Dialog.Description>
+        </Description>
         <div className="modal-action">
           <button type="button" className="btn btn-primary btn-outline uppercase" onClick={onCancelAction}>
             {t("deleteConfirmationDialogCancelAction")}
@@ -41,7 +41,7 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
             {t("deleteConfirmationDialogConfirmAction")}
           </button>
         </div>
-      </Dialog.Panel>
+      </DialogPanel>
     </Dialog>
   );
 };

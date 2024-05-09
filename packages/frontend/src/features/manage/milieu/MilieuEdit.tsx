@@ -32,7 +32,7 @@ const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput label={t("code")} type="text" required {...register("code")} hasError={!!errors.code} />
+      <TextInput autoFocus label={t("code")} type="text" required {...register("code")} hasError={!!errors.code} />
 
       <TextInput label={t("label")} type="text" required {...register("libelle")} hasError={!!errors.libelle} />
 

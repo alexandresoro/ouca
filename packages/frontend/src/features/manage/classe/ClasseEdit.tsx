@@ -32,7 +32,14 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextInput label={t("label")} type="text" required {...register("libelle")} hasError={!!errors.libelle} />
+        <TextInput
+          autoFocus
+          label={t("label")}
+          type="text"
+          required
+          {...register("libelle")}
+          hasError={!!errors.libelle}
+        />
         <EntityUpsertFormActionButtons className="mt-6" onCancelClick={onCancel} disabled={!isValid || !isDirty} />
       </form>
     </>

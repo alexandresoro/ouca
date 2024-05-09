@@ -1,5 +1,4 @@
-import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
-import { Listbox } from "@headlessui/react";
+import { Field, Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { Check } from "@styled-icons/boxicons-regular";
 import { type FocusEventHandler, type ForwardedRef, type Key, forwardRef } from "react";
 import type { ConditionalKeys } from "type-fest";
@@ -17,37 +16,29 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   renderValue: (value: T) => string;
   selectClassName?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
 } & (T extends { id: Key } | string
   ? {
       by?: K;
     }
   : { by: K });
 
-const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
-  const { data, name, value, required, onChange, onBlur, by, renderValue, hasError, label, selectClassName, disabled } =
-    props;
-
-  const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
-    placement: "bottom-start",
-    middleware: [
-      offset(({ rects }) => {
-        const shiftToCenter = data && data?.length > 4 ? 3 : 2; // Center if few elements, otherwise shift in order to give room to flip if needed
-        return -rects.reference.height / shiftToCenter - rects.floating.height / shiftToCenter;
-      }),
-      shift(),
-      flip({ padding: 8 }),
-      size({
-        apply({ rects, elements, availableHeight }) {
-          Object.assign(elements.floating.style, {
-            maxHeight: `${Math.min(availableHeight, 36 * 8)}px`,
-            width: `${rects.reference.width}px`,
-          });
-        },
-        padding: 8,
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
+const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLButtonElement>) => {
+  const {
+    data,
+    name,
+    value,
+    required,
+    onChange,
+    onBlur,
+    by,
+    renderValue,
+    hasError,
+    label,
+    selectClassName,
+    disabled,
+    autoFocus,
+  } = props;
 
   // TODO: try to improve type inference
   const key = by ?? ("id" as ConditionalKeys<T, Key>);
@@ -57,59 +48,63 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
   };
 
   return (
-    <Listbox
-      as="div"
-      ref={ref}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`form-control py-2 ${selectClassName ?? ""}`}
-      disabled={disabled}
-    >
+    <Field className={`form-control py-2 ${selectClassName ?? ""}`}>
       <div className="label">
-        <Listbox.Label className="label-text">
+        <Label className="label-text">
           {label}
           {required && <RequiredField />}
-        </Listbox.Label>
+        </Label>
       </div>
-      <Listbox.Button
-        className={`w-full select select-bordered ${
-          hasError ? "select-error" : "select-primary"
-        } items-center text-base-content`}
-        ref={refs.setReference}
-        onBlur={onBlur}
-      >
-        {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
-      </Listbox.Button>
-      <Listbox.Options
-        className={`menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ${
-          data?.length ? "ring-2" : ""
-        } ring-primary rounded-lg overflow-y-auto`}
-        style={{
-          position: strategy,
-          top: y ?? 0,
-          left: x ?? 0,
-        }}
-        ref={refs.setFloating}
-      >
-        {data?.map((option) => {
-          return (
-            <Listbox.Option
-              className="font-semibold"
-              key={typeof option === "string" ? option : (option[key] as Key)}
-              value={option}
-            >
-              {({ active, selected, disabled }) => (
-                <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
-                  <span>{renderValue(option)}</span>
-                  {selected && <Check className={`h-5 ${active ? "text-primary-content" : "text-primary"}`} />}
-                </div>
-              )}
-            </Listbox.Option>
-          );
-        })}
-      </Listbox.Options>
-    </Listbox>
+      <Listbox name={name} value={value} onChange={onChange} disabled={disabled}>
+        <ListboxButton
+          autoFocus={autoFocus}
+          ref={ref}
+          className={`w-full select select-bordered ${
+            hasError ? "select-error" : "select-primary"
+          } items-center text-base-content`}
+          onBlur={onBlur}
+        >
+          {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
+        </ListboxButton>
+        <ListboxOptions
+          className={`z-10 w-[var(--button-width)] [--anchor-max-height:304px] flex flex-col flex-nowrap p-2 shadow-xl bg-gray-100 dark:bg-base-300 ${
+            data?.length ? "ring-2" : ""
+          } ring-primary rounded-lg`}
+          anchor={{
+            to: "bottom",
+            padding: 16,
+            gap: 8,
+          }}
+        >
+          {data?.map((option) => {
+            return (
+              <ListboxOption
+                className="cursor-default font-semibold select-none"
+                key={typeof option === "string" ? option : (option[key] as Key)}
+                value={option}
+              >
+                {({ focus, selected, disabled }) => (
+                  <div
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg disabled ${
+                      focus && !disabled ? "bg-neutral" : ""
+                    }`}
+                  >
+                    <Check
+                      className={`size-5 ${focus ? "fill-neutral-content" : "fill-primary"} dark:fill-primary ${
+                        selected ? "" : "invisible"
+                      }`}
+                    />{" "}
+                    <span className={`text-sm ${focus ? "text-neutral-content" : "text-base-content"}`}>
+                      {renderValue(option)}
+                    </span>
+                  </div>
+                )}
+              </ListboxOption>
+            );
+          })}
+        </ListboxOptions>
+      </Listbox>
+    </Field>
   );
 };
 

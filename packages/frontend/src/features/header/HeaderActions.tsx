@@ -1,5 +1,4 @@
-import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react";
-import { Menu } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useIsSizeLarge } from "@hooks/useMediaQuery";
 import {
   Angry,
@@ -114,24 +113,6 @@ const HeaderActions: FunctionComponent = () => {
 
   const isSizeLarge = useIsSizeLarge();
 
-  const floatingManage = useFloating<HTMLButtonElement>({
-    middleware: [
-      offset(8),
-      shift({
-        padding: 8,
-      }),
-      size({
-        apply({ elements, availableHeight }) {
-          Object.assign(elements.floating.style, {
-            maxHeight: `${availableHeight}px`,
-          });
-        },
-        padding: 8,
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
-
   const entries = [...(isSizeLarge ? [] : OBSERVATIONS_OPTIONS), ...MANAGEMENT_MENU_OPTIONS];
 
   return (
@@ -150,32 +131,31 @@ const HeaderActions: FunctionComponent = () => {
       </Link>
 
       <Menu>
-        <Menu.Button ref={floatingManage.refs.setReference} className="btn btn-sm btn-ghost font-normal normal-case">
-          {({ open }) => (
+        <MenuButton className="btn btn-sm btn-ghost font-normal normal-case data-[active]:btn-active">
+          {({ active }) => (
             <>
               <ListUl className="h-5 mr-1.5" />
               <span className="hidden lg:inline">{t("appHeader.databaseManagement")}</span>
-              <ChevronDown className={`h-6 ${open ? "rotate-180" : ""}`} />
+              <ChevronDown className={`h-6 ${active ? "rotate-180" : ""}`} />
             </>
           )}
-        </Menu.Button>
+        </MenuButton>
 
-        <Menu.Items
-          ref={floatingManage.refs.setFloating}
-          style={{
-            position: floatingManage.strategy,
-            top: floatingManage.y ?? 0,
-            left: floatingManage.x ?? 0,
+        <MenuItems
+          anchor={{
+            to: "bottom",
+            padding: 8,
+            gap: 8,
           }}
-          className="flex flex-col flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
+          className="z-10 flex flex-col flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
         >
           {entries.map(({ Icon, localizationKey, to }) => {
             const CurrentMenuItem = (
-              <Menu.Item key={to}>
-                {({ active }) => (
+              <MenuItem key={to}>
+                {({ focus }) => (
                   <Link
                     className={`flex items-center gap-3 px-4 py-2 text-sm rounded-lg ${
-                      active ? "bg-opacity-20 bg-base-content" : "bg-transparent"
+                      focus ? "bg-opacity-20 bg-base-content" : "bg-transparent"
                     }`}
                     to={to}
                   >
@@ -185,7 +165,7 @@ const HeaderActions: FunctionComponent = () => {
                     </>
                   </Link>
                 )}
-              </Menu.Item>
+              </MenuItem>
             );
 
             const Dividers = [];
@@ -194,7 +174,7 @@ const HeaderActions: FunctionComponent = () => {
             }
             return [CurrentMenuItem, ...Dividers];
           })}
-        </Menu.Items>
+        </MenuItems>
       </Menu>
     </div>
   );

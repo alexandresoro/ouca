@@ -1,4 +1,4 @@
-import { Tab } from "@headlessui/react";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import usePaginationParams from "@hooks/usePaginationParams";
 import type { EntriesOrderBy } from "@ou-ca/common/api/entry";
 import type { SpeciesOrderBy } from "@ou-ca/common/api/species";
@@ -118,101 +118,95 @@ const SearchPage: FunctionComponent = () => {
         <SearchFilterPanel />
       </div>
 
-      <div className="flex-grow">
-        <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
-          <div className="flex justify-between items-center mb-12 mr-12">
-            <Tab.List className="join">
-              <Tab as={Fragment}>
-                {({ selected }) => (
+      <TabGroup selectedIndex={selectedTab} onChange={setSelectedTab} className="flex-grow">
+        <div className="flex justify-between items-center mb-12 mr-12">
+          <TabList className="join">
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <button
+                  type="button"
+                  className={`join-item btn btn-primary uppercase ${
+                    selected ? "btn-active" : "btn-primary btn-outline"
+                  }`}
+                >
+                  {t("view.tab.observations")}
+                </button>
+              )}
+            </Tab>
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <button
+                  type="button"
+                  className={`join-item btn btn-primary uppercase ${
+                    selected ? "btn-active" : "btn-primary btn-outline"
+                  }`}
+                >
+                  {t("view.tab.species")}
+                </button>
+              )}
+            </Tab>
+          </TabList>
+          <div className="grow justify-end items-center ml-12">
+            {SELECTED_TAB_MAPPING[selectedTab] === "entries" && entriesInfinite?.[0]?.meta != null && (
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className={`join-item btn btn-primary uppercase ${
-                      selected ? "btn-active" : "btn-primary btn-outline"
-                    }`}
+                    // TODO: Test what happens w/ big data sets before enabling this
+                    disabled={
+                      entriesInfinite[0].meta.count === 0 || entriesInfinite[0].meta.count > 10000 || isExporting
+                    }
+                    className="btn btn-sm btn-outline btn-secondary uppercase"
+                    onClick={() => handleExportRequested()}
                   >
-                    {t("view.tab.observations")}
+                    {isExporting ? <span className="loading loading-spinner loading-xs" /> : <Export className="h-5" />}
+                    {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
                   </button>
-                )}
-              </Tab>
-              <Tab as={Fragment}>
-                {({ selected }) => (
-                  <button
-                    type="button"
-                    className={`join-item btn btn-primary uppercase ${
-                      selected ? "btn-active" : "btn-primary btn-outline"
-                    }`}
-                  >
-                    {t("view.tab.species")}
-                  </button>
-                )}
-              </Tab>
-            </Tab.List>
-            <div className="grow justify-end items-center ml-12">
-              {SELECTED_TAB_MAPPING[selectedTab] === "entries" && entriesInfinite?.[0]?.meta != null && (
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      // TODO: Test what happens w/ big data sets before enabling this
-                      disabled={
-                        entriesInfinite[0].meta.count === 0 || entriesInfinite[0].meta.count > 10000 || isExporting
-                      }
-                      className="btn btn-sm btn-outline btn-secondary uppercase"
-                      onClick={() => handleExportRequested()}
-                    >
-                      {isExporting ? (
-                        <span className="loading loading-spinner loading-xs" />
-                      ) : (
-                        <Export className="h-5" />
-                      )}
-                      {isExporting ? t("observationFilter.exportOnGoing") : t("observationFilter.exportToExcel")}
-                    </button>
-                    {entriesInfinite[0].meta.count > 10000 && (
-                      <div className="tooltip tooltip-bottom" data-tip={t("observationFilter.exportLimitMessage")}>
-                        <div className="w-6 border-info border-2 rounded-full text-sm text-info font-semibold cursor-default">
-                          ?
-                        </div>
+                  {entriesInfinite[0].meta.count > 10000 && (
+                    <div className="tooltip tooltip-bottom" data-tip={t("observationFilter.exportLimitMessage")}>
+                      <div className="w-6 border-info border-2 rounded-full text-sm text-info font-semibold cursor-default">
+                        ?
                       </div>
-                    )}
-                  </div>
-                  <span className="text-sm font-bold uppercase text-base-content">
-                    {t("search.entriesCount", { count: entriesInfinite[0].meta.count })}
-                  </span>
+                    </div>
+                  )}
                 </div>
-              )}
-              {SELECTED_TAB_MAPPING[selectedTab] === "species" && speciesInfinite?.[0]?.meta != null && (
-                <span className="flex justify-end text-sm font-bold uppercase text-base-content">
-                  {t("search.speciesCount", { count: speciesInfinite[0].meta.count })}
+                <span className="text-sm font-bold uppercase text-base-content">
+                  {t("search.entriesCount", { count: entriesInfinite[0].meta.count })}
                 </span>
-              )}
-            </div>
+              </div>
+            )}
+            {SELECTED_TAB_MAPPING[selectedTab] === "species" && speciesInfinite?.[0]?.meta != null && (
+              <span className="flex justify-end text-sm font-bold uppercase text-base-content">
+                {t("search.speciesCount", { count: speciesInfinite[0].meta.count })}
+              </span>
+            )}
           </div>
-          <Tab.Panels>
-            <Tab.Panel>
-              <SearchEntriesTable
-                entries={entriesInfinite?.flatMap((page) => page.data) ?? []}
-                handleRequestSort={handleRequestSortEntries}
-                orderBy={orderByEntries}
-                sortOrder={sortOrderEntries}
-                onEntryUpdated={() => handleEntryChange()}
-                onEntryDeleted={() => handleEntryChange()}
-                hasNextPage={hasNextPageEntries}
-                onMoreRequested={fetchNextPageEntries}
-              />
-            </Tab.Panel>
-            <Tab.Panel>
-              <SearchSpeciesTable
-                species={speciesInfinite?.flatMap((page) => page.data) ?? []}
-                handleRequestSort={handleRequestSortSpecies}
-                orderBy={orderBySpecies}
-                sortOrder={sortOrderSpecies}
-                hasNextPage={hasNextPageSpecies}
-                onMoreRequested={fetchNextPageSpecies}
-              />
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
-      </div>
+        </div>
+        <TabPanels>
+          <TabPanel>
+            <SearchEntriesTable
+              entries={entriesInfinite?.flatMap((page) => page.data) ?? []}
+              handleRequestSort={handleRequestSortEntries}
+              orderBy={orderByEntries}
+              sortOrder={sortOrderEntries}
+              onEntryUpdated={() => handleEntryChange()}
+              onEntryDeleted={() => handleEntryChange()}
+              hasNextPage={hasNextPageEntries}
+              onMoreRequested={fetchNextPageEntries}
+            />
+          </TabPanel>
+          <TabPanel>
+            <SearchSpeciesTable
+              species={speciesInfinite?.flatMap((page) => page.data) ?? []}
+              handleRequestSort={handleRequestSortSpecies}
+              orderBy={orderBySpecies}
+              sortOrder={sortOrderSpecies}
+              hasNextPage={hasNextPageSpecies}
+              onMoreRequested={fetchNextPageSpecies}
+            />
+          </TabPanel>
+        </TabPanels>
+      </TabGroup>
     </div>
   );
 };

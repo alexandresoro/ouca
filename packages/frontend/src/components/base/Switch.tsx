@@ -1,4 +1,4 @@
-import { Switch as SwitchHeadless } from "@headlessui/react";
+import { Field, Label, Switch as SwitchHeadless } from "@headlessui/react";
 import { type ForwardedRef, forwardRef } from "react";
 import RequiredField from "./RequiredField";
 
@@ -15,12 +15,12 @@ const Switch = (props: SwitchProps, ref: ForwardedRef<HTMLButtonElement>) => {
   const { checked, required, switchClassName, label, name, onChange } = props;
 
   return (
-    <SwitchHeadless.Group as="div" className={`flex gap-4 p-1 justify-between ${switchClassName ?? ""}`}>
-      <SwitchHeadless.Label className="label-text cursor-pointer">
+    <Field className={`flex gap-4 p-1 justify-between ${switchClassName ?? ""}`}>
+      <Label className="label-text cursor-pointer">
         {label} {required && <RequiredField />}
-      </SwitchHeadless.Label>
+      </Label>
       <SwitchHeadless ref={ref} name={name} checked={checked} onChange={onChange} className="toggle toggle-primary" />
-    </SwitchHeadless.Group>
+    </Field>
   );
 };
 

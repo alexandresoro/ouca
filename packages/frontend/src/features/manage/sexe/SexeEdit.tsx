@@ -32,6 +32,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <TextInput
+        autoFocus
         label={t("label")}
         type="text"
         required

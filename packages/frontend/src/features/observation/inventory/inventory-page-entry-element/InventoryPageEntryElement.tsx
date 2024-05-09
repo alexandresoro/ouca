@@ -1,5 +1,5 @@
 import IconButton from "@components/base/IconButton";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import type { Entry } from "@ou-ca/common/api/entities/entry";
 import { CalendarPlus, ChevronDown, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
 import { capitalizeFirstLetter } from "@utils/capitalize-first-letter";
@@ -24,7 +24,7 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
     <Disclosure as="div" className="card border-2 border-primary shadow-md">
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex gap-4 p-4">
+          <DisclosureButton as="div" className="flex gap-4 p-4 cursor-pointer">
             <div className="flex grow gap-16 items-center justify-between">
               <div className="flex flex-grow items-center justify-between">
                 <div className="flex items-center gap-2.5 font-semibold">
@@ -79,13 +79,13 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
                 </IconButton>
               </div>
             </div>
-            <ChevronDown
-              className={`${open ? "rotate-180 transform" : ""} btn btn-ghost btn-circle btn-sm text-primary`}
-            />
-          </Disclosure.Button>
-          <Disclosure.Panel className="text-md pb-4 pt-2">
+            <button type="button" className="btn btn-ghost btn-circle btn-sm">
+              <ChevronDown className={`${open ? "rotate-180 transform" : ""} text-primary`} />
+            </button>
+          </DisclosureButton>
+          <DisclosurePanel className="text-md pb-4 pt-2">
             <EntrySummaryContent entry={entry} />
-          </Disclosure.Panel>
+          </DisclosurePanel>
         </>
       )}
     </Disclosure>
