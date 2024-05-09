@@ -89,7 +89,11 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
                       focus && !disabled ? "bg-neutral" : ""
                     }`}
                   >
-                    <Check className={`size-5 fill-primary ${selected ? "" : "invisible"}`} />
+                    <Check
+                      className={`size-5 ${focus ? "fill-neutral-content" : "fill-primary"} dark:fill-primary ${
+                        selected ? "" : "invisible"
+                      }`}
+                    />{" "}
                     <span className={`text-sm ${focus ? "text-neutral-content" : "text-base-content"}`}>
                       {renderValue(option)}
                     </span>
