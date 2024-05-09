@@ -140,7 +140,7 @@ const AutocompleteMultiple = <T extends object>(
               />
             </div>
             <ComboboxOptions
-              className="w-[var(--input-width)] [--anchor-max-height:304px] flex flex-col flex-nowrap p-2 dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ring-2 ring-primary rounded-lg"
+              className="z-10 w-[var(--input-width)] [--anchor-max-height:304px] flex flex-col flex-nowrap p-2 dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ring-2 ring-primary rounded-lg"
               anchor={{
                 to: "bottom",
                 padding: 16,
