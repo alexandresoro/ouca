@@ -67,7 +67,7 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
           {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
         </ListboxButton>
         <ListboxOptions
-          className={`z-10 w-[var(--button-width)] [--anchor-max-height:304px] flex flex-col flex-nowrap p-2 dark:shadow shadow-primary bg-gray-100 dark:bg-base-300 ${
+          className={`z-10 w-[var(--button-width)] [--anchor-max-height:304px] flex flex-col flex-nowrap p-2 shadow-xl bg-gray-100 dark:bg-base-300 ${
             data?.length ? "ring-2" : ""
           } ring-primary rounded-lg`}
           anchor={{
