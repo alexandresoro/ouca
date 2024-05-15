@@ -1,4 +1,3 @@
-import { extraErrorDataIntegration, httpClientIntegration } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
 import type { AppConfig } from "@services/config/config";
 import type { User } from "oidc-client-ts";
@@ -32,8 +31,8 @@ export const initializeSentry = (config: AppConfig) => {
         matchRoutes,
       }),
       Sentry.replayIntegration(),
-      extraErrorDataIntegration(),
-      httpClientIntegration(),
+      Sentry.extraErrorDataIntegration(),
+      Sentry.httpClientIntegration(),
     ],
     beforeSend(event) {
       // Check if it is an exception, and if so, show the report dialog
