@@ -27,7 +27,7 @@
     "@hookform/resolvers": "3.4.0",
     "@ou-ca/common": "workspace:*",
     "@sentry/integrations": "7.114.0",
-    "@sentry/react": "7.114.0",
+    "@sentry/react": "8.0.0",
     "@sentry/tracing": "7.114.0",
     "@styled-icons/boxicons-regular": "10.47.0",
     "@styled-icons/boxicons-solid": "10.47.0",
