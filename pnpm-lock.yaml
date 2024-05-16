@@ -236,8 +236,8 @@ importers:
         specifier: 10.2.2
         version: 10.2.2
       maplibre-gl:
-        specifier: 4.2.0
-        version: 4.2.0
+        specifier: 4.3.0
+        version: 4.3.0
       oidc-client-ts:
         specifier: 3.0.1
         version: 3.0.1
@@ -264,7 +264,7 @@ importers:
         version: 9.10.2(react-dom@18.3.1)(react@18.3.1)
       react-map-gl:
         specifier: 7.1.7
-        version: 7.1.7(maplibre-gl@4.2.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 7.1.7(maplibre-gl@4.3.0)(react-dom@18.3.1)(react@18.3.1)
       react-oidc-context:
         specifier: 3.1.0
         version: 3.1.0(oidc-client-ts@3.0.1)(react@18.3.1)
@@ -4067,8 +4067,8 @@ packages:
       semver: 7.6.2
     dev: true
 
-  /maplibre-gl@4.2.0:
-    resolution: {integrity: sha512-x5GgYyKKn5UDvbUZFK7ng3Pq829/uYWDSVN/itZoP2slWSzKbjIXKi/Qhz5FnYiMXwpRgM08UIcVjtn1PLK9Tg==}
+  /maplibre-gl@4.3.0:
+    resolution: {integrity: sha512-lmv1iUJAWYde6KyGk0ln2WIJbQ/S3Fu3HZTQ9sCgVxPaB3X0aXJbFDsIer+kGrh2+ArhyuM7NzF1dB2nPl4bGQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
@@ -4894,7 +4894,7 @@ packages:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
     dev: true
 
-  /react-map-gl@7.1.7(maplibre-gl@4.2.0)(react-dom@18.3.1)(react@18.3.1):
+  /react-map-gl@7.1.7(maplibre-gl@4.3.0)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-mwjc0obkBJOXCcoXQr3VoLqmqwo9vS4bXfbGsdxXzEgVCv/PM0v+1QggL7W0d/ccIy+VCjbXNlGij+PENz6VNg==}
     peerDependencies:
       mapbox-gl: '>=1.13.0'
@@ -4909,7 +4909,7 @@ packages:
     dependencies:
       '@maplibre/maplibre-gl-style-spec': 19.3.3
       '@types/mapbox-gl': 3.1.0
-      maplibre-gl: 4.2.0
+      maplibre-gl: 4.3.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     dev: false
