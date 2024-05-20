@@ -37,7 +37,7 @@
     "@turf/helpers": "6.5.0",
     "csv-stringify": "6.5.0",
     "i18next": "23.11.4",
-    "i18next-http-backend": "2.5.1",
+    "i18next-http-backend": "2.5.2",
     "jotai": "2.8.0",
     "lru-cache": "10.2.2",
     "maplibre-gl": "4.3.2",
