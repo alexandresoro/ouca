@@ -288,8 +288,8 @@ importers:
         specifier: 1.7.3
         version: 1.7.3
       '@sentry/vite-plugin':
-        specifier: 2.16.1
-        version: 2.16.1
+        specifier: 2.17.0
+        version: 2.17.0
       '@testing-library/react':
         specifier: 15.0.7
         version: 15.0.7(@types/react@18.3.2)(react-dom@18.3.1)(react@18.3.1)
@@ -1625,8 +1625,8 @@ packages:
       '@sentry/utils': 7.114.0
     dev: false
 
-  /@sentry/babel-plugin-component-annotate@2.16.1:
-    resolution: {integrity: sha512-pJka66URsqQbk6hTs9H1XFpUeI0xxuqLYf9Dy5pRGNHSJMtfv91U+CaYSWt03aRRMGDXMduh62zAAY7Wf0HO+A==}
+  /@sentry/babel-plugin-component-annotate@2.17.0:
+    resolution: {integrity: sha512-njBWwVVFEb5SuGqk1KYiIcuKU3dEPuiaDN42hY72mfuQgeMR/RUZtibAQ5yu2Ii7yok6kewLe4OvztP2oP/IVQ==}
     engines: {node: '>= 14'}
     dev: true
 
@@ -1643,12 +1643,12 @@ packages:
       '@sentry/utils': 8.0.0
     dev: false
 
-  /@sentry/bundler-plugin-core@2.16.1:
-    resolution: {integrity: sha512-n6z8Ts3T9HROLuY7tVEYpBKvS+P7+b8NdqxP7QBcwp2nuPUlN5Ola1ivFjk1p5a7wRYeN9zM8orGe4l2HeNfYA==}
+  /@sentry/bundler-plugin-core@2.17.0:
+    resolution: {integrity: sha512-aIjCexNsB6DXtl/IngJcUxN7OalsyP5tS/4rqxj6pvqZbeg/7JMlMgy2nOOWsNhy+chX8swThS39dY8pCcEYLQ==}
     engines: {node: '>= 14'}
     dependencies:
       '@babel/core': 7.24.5
-      '@sentry/babel-plugin-component-annotate': 2.16.1
+      '@sentry/babel-plugin-component-annotate': 2.17.0
       '@sentry/cli': 2.31.2
       dotenv: 16.4.5
       find-up: 5.0.0
@@ -1828,11 +1828,11 @@ packages:
       '@sentry/types': 8.0.0
     dev: false
 
-  /@sentry/vite-plugin@2.16.1:
-    resolution: {integrity: sha512-RSIyeqFG3PR5iJsZnagQxzOhM22z1Kh9DG+HQQsfVrxokzrWKRu/G17O2MIDh2I5iYEaL0Fkd/9RAXE4/b0aVg==}
+  /@sentry/vite-plugin@2.17.0:
+    resolution: {integrity: sha512-Zb/dz+8afIt9mFeYc9LclwZQDBUmlVe/FSo2os/jD/6DED21/NQZnPmMIvy2tIRxsa6yTDtBl2rfkNaQLuevsg==}
     engines: {node: '>= 14'}
     dependencies:
-      '@sentry/bundler-plugin-core': 2.16.1
+      '@sentry/bundler-plugin-core': 2.17.0
       unplugin: 1.0.1
     transitivePeerDependencies:
       - encoding
