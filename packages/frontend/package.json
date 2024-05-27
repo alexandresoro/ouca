@@ -23,7 +23,7 @@
   "dependencies": {
     "@fontsource-variable/nunito": "5.0.19",
     "@fontsource/carter-one": "5.0.12",
-    "@headlessui/react": "2.0.3",
+    "@headlessui/react": "2.0.4",
     "@hookform/resolvers": "3.4.2",
     "@ou-ca/common": "workspace:*",
     "@sentry/react": "8.0.0",
