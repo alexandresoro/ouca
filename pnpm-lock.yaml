@@ -87,8 +87,8 @@ importers:
         specifier: 5.0.7
         version: 5.0.7
       neverthrow:
-        specifier: 6.2.1
-        version: 6.2.1
+        specifier: 6.2.2
+        version: 6.2.2
       pg:
         specifier: 8.11.5
         version: 8.11.5
@@ -4282,8 +4282,8 @@ packages:
     hasBin: true
     dev: false
 
-  /neverthrow@6.2.1:
-    resolution: {integrity: sha512-amlnNvPXmiUOmNsDfUngNWPdZYOmCUGExQy/kuPCmLbhrXVXIYhY4bnE4D3dWl7OMhSEr9NndUrl4aKGFhFIQg==}
+  /neverthrow@6.2.2:
+    resolution: {integrity: sha512-POR1FACqdK9jH0S2kRPzaZEvzT11wsOxLW520PQV/+vKi9dQe+hXq19EiOvYx7lSRaF5VB9lYGsPInynrnN05w==}
     dev: false
 
   /node-abort-controller@3.1.1:
