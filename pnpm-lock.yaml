@@ -102,8 +102,8 @@ importers:
         specifier: 11.0.3
         version: 11.0.3
       umzug:
-        specifier: 3.8.0
-        version: 3.8.0(@types/node@20.14.1)
+        specifier: 3.8.1
+        version: 3.8.1(@types/node@20.14.1)
       zod:
         specifier: 3.23.8
         version: 3.23.8
@@ -5680,8 +5680,8 @@ packages:
     resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
     dev: true
 
-  /umzug@3.8.0(@types/node@20.14.1):
-    resolution: {integrity: sha512-FRBvdZxllW3eUzsqG3CIfgOVChUONrKNZozNOJfvmcfBn5pMKcJjICuMMEsDLHYa/aqd7a2NtXfYEG86XHe1lQ==}
+  /umzug@3.8.1(@types/node@20.14.1):
+    resolution: {integrity: sha512-k0HjOc3b/s8vH24BUTvnaFiKhfWI9UQAGpqHDG+3866CGlBTB83Xs5wZ1io1mwYLj/GHvQ34AxKhbpYnWtkRJg==}
     engines: {node: '>=12'}
     dependencies:
       '@rushstack/ts-command-line': 4.22.0(@types/node@20.14.1)
