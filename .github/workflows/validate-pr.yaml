@@ -25,9 +25,9 @@ jobs:
     uses: ./.github/workflows/_deploy-cloudflare-pages.yml
     secrets: inherit
 
-  dependabot:
+  auto-approve:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: ${{ github.actor == 'dependabot[bot]' || github.actor == 'renovate[bot]' }}
     needs: validate
 
     permissions:
