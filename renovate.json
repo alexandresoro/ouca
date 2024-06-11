@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":label(dependencies)",
+    ":automergePatch",
+    ":automergeDigest",
+    ":maintainLockFilesWeekly",
+    "customManagers:biomeVersions"
+  ],
+  "automergeSchedule": ["after 23:30 every weekday", "before 6:00 every weekday", "before 7:00 every weekend"],
+  "timezone": "Europe/Paris"
+}
