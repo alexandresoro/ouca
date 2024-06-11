@@ -39,18 +39,18 @@ jobs:
       # https://github.com/dependabot/fetch-metadata/issues/111
       - name: Generate app token
         id: generate-app-token
-        uses: tibdex/github-app-token@v2.1.0
+        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
         with:
           app_id: ${{ secrets.BOT_APP_ID }}
           private_key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Dependabot metadata
         id: dependabot-metadata
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@5e5f99653a5b510e8555840e80cbf1514ad4af38 # v2
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
       - name: Authenticate gh cli with app token
         run: echo "${{ steps.generate-app-token.outputs.token }}" | gh auth login --with-token
@@ -88,12 +88,12 @@ jobs:
       # https://github.com/dependabot/fetch-metadata/issues/111
       - name: Generate app token
         id: generate-app-token
-        uses: tibdex/github-app-token@v2.1.0
+        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
         with:
           app_id: ${{ secrets.BOT_APP_ID }}
           private_key: ${{ secrets.BOT_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
       - name: Authenticate gh cli with app token
         run: echo "${{ steps.generate-app-token.outputs.token }}" | gh auth login --with-token

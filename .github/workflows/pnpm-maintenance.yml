@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
         with:
           node-version-file: .tool-versions
           cache: "pnpm"
@@ -36,7 +36,7 @@ jobs:
         if: steps.git-diff.outputs.has-changes == 'true'
         run: echo "branch=deps/pnpm-update-$(date +%s)" >> $GITHUB_OUTPUT
 
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9
         if: steps.git-diff.outputs.has-changes == 'true'
         with:
           add: "pnpm-lock.yaml"
@@ -47,7 +47,7 @@ jobs:
       - name: Generate app token
         if: steps.git-diff.outputs.has-changes == 'true'
         id: generate-app-token
-        uses: tibdex/github-app-token@v2.1.0
+        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
         with:
           app_id: ${{ secrets.BOT_APP_ID }}
           private_key: ${{ secrets.BOT_PRIVATE_KEY }}
