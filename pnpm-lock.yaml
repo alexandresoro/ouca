@@ -96,8 +96,8 @@ importers:
         specifier: 9.2.0
         version: 9.2.0
       pino-pretty:
-        specifier: 11.1.0
-        version: 11.1.0
+        specifier: 11.2.0
+        version: 11.2.0
       serialize-error:
         specifier: 11.0.3
         version: 11.0.3
@@ -4840,8 +4840,8 @@ packages:
       split2: 4.2.0
     dev: false
 
-  /pino-pretty@11.1.0:
-    resolution: {integrity: sha512-PjBzFL7IMSl1YkS9cSVWC+4gONmW0Fi+fvUzy74zK6RJHk4RkfW+e22NydRrGEtBRa5n6/oPNLPqjUeQrzqcLQ==}
+  /pino-pretty@11.2.0:
+    resolution: {integrity: sha512-k6VHtZBcfLDB1mB8TWPE19OyLygfNdqOgX/uACqBbVMaUK2JeXHBUTINvJ/QPs5Vazwfq4gWIDpTYDnhkfy7Jw==}
     hasBin: true
     dependencies:
       colorette: 2.0.20
