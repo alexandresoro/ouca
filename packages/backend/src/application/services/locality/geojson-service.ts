@@ -2,8 +2,6 @@ import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import type { LoggedUser } from "@domain/user/logged-user.js";
 import type { LocalityGeoJSONRepository } from "@interfaces/locality-geojson-repository-interface.js";
 import type { LocalityRepository } from "@interfaces/locality-repository-interface.js";
-// FIXME: https://github.com/Turfjs/turf/issues/2414
-// @ts-ignore
 import { featureCollection, point } from "@turf/helpers";
 import { type Result, err, ok } from "neverthrow";
 

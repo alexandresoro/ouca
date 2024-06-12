@@ -7,12 +7,11 @@ import bboxPolygon from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
 import { booleanWithin } from "@turf/boolean-within";
 import { featureCollection, point } from "@turf/helpers";
-import type { BBox2d } from "@turf/helpers/dist/js/lib/geojson";
 import { boundingPolygon } from "@utils/map/bounding-polygon";
 import type { FeatureCollection, Point, Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
-import type { GeoJSONSource } from "maplibre-gl";
+import type { GeoJSONSource, LngLatBoundsLike } from "maplibre-gl";
 import { type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -149,7 +148,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
       booleanDisjoint(selectionCollectionPolygon.features[0], currentMapBoundsPolygon);
 
     if (shouldMoveToSelection) {
-      const selectionBoundingBox = bbox(selectionCollectionPolygon) as BBox2d;
+      const selectionBoundingBox = bbox(selectionCollectionPolygon) as LngLatBoundsLike;
       currentMap.fitBounds(selectionBoundingBox, { linear: true, padding: 20, duration: 300, maxZoom: 15 });
     }
   };
