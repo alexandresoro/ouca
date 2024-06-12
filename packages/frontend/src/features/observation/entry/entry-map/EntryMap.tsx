@@ -3,7 +3,7 @@ import type { GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
 import { useApiLocalitiesGeoJsonQuery } from "@services/api/locality/api-localities-geojson-queries";
 import { useApiFetch } from "@services/api/useApiFetch";
 import { bbox } from "@turf/bbox";
-import bboxPolygon from "@turf/bbox-polygon";
+import { bboxPolygon } from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
 import { booleanWithin } from "@turf/boolean-within";
 import { featureCollection, point } from "@turf/helpers";

@@ -1,5 +1,5 @@
 import { bbox } from "@turf/bbox";
-import bboxPolygon from "@turf/bbox-polygon";
+import { bboxPolygon } from "@turf/bbox-polygon";
 import { convex } from "@turf/convex";
 import type { Feature, FeatureCollection, Point, Polygon } from "geojson";
 
