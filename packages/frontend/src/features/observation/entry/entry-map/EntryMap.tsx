@@ -5,7 +5,7 @@ import { useApiFetch } from "@services/api/useApiFetch";
 import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
-import booleanWithin from "@turf/boolean-within";
+import { booleanWithin } from "@turf/boolean-within";
 import { featureCollection, point } from "@turf/helpers";
 import type { BBox2d } from "@turf/helpers/dist/js/lib/geojson";
 import { boundingPolygon } from "@utils/map/bounding-polygon";
