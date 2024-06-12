@@ -212,8 +212,8 @@ importers:
         specifier: 6.5.0
         version: 6.5.0
       '@turf/boolean-within':
-        specifier: 6.5.0
-        version: 6.5.0
+        specifier: 7.0.0
+        version: 7.0.0
       '@turf/convex':
         specifier: 7.0.0
         version: 7.0.0
@@ -2203,6 +2203,14 @@ packages:
       '@turf/meta': 6.5.0
     dev: false
 
+  /@turf/bbox@7.0.0:
+    resolution: {integrity: sha512-IyXG5HAsn6IZLdAtQo7aWYccjU5WsV+uzIzhGaXrh/qTVylSYmRiWgLdiekHZVED9nv9r7D/EJUMOT4zyA6POA==}
+    dependencies:
+      '@turf/helpers': 7.0.0
+      '@turf/meta': 7.0.0
+      tslib: 2.6.3
+    dev: false
+
   /@turf/boolean-disjoint@6.5.0:
     resolution: {integrity: sha512-rZ2ozlrRLIAGo2bjQ/ZUu4oZ/+ZjGvLkN5CKXSKBcu6xFO6k2bgqeM8a1836tAW+Pqp/ZFsTA5fZHsJZvP2D5g==}
     dependencies:
@@ -2220,21 +2228,32 @@ packages:
       '@turf/invariant': 6.5.0
     dev: false
 
-  /@turf/boolean-point-on-line@6.5.0:
-    resolution: {integrity: sha512-A1BbuQ0LceLHvq7F/P7w3QvfpmZqbmViIUPHdNLvZimFNLo4e6IQunmzbe+8aSStH9QRZm3VOflyvNeXvvpZEQ==}
+  /@turf/boolean-point-in-polygon@7.0.0:
+    resolution: {integrity: sha512-Z9swETfICqUJ8iVLZimvIOh8r4Wrlu9/X/c/5vIEeVvG4Lu78Ztmgu1KaobZJFC93/ntOAjMBavc9aNgw7TXgQ==}
     dependencies:
-      '@turf/helpers': 6.5.0
-      '@turf/invariant': 6.5.0
+      '@turf/helpers': 7.0.0
+      '@turf/invariant': 7.0.0
+      point-in-polygon-hao: 1.1.0
+      tslib: 2.6.3
     dev: false
 
-  /@turf/boolean-within@6.5.0:
-    resolution: {integrity: sha512-YQB3oU18Inx35C/LU930D36RAVe7LDXk1kWsQ8mLmuqYn9YdPsDQTMTkLJMhoQ8EbN7QTdy333xRQ4MYgToteQ==}
+  /@turf/boolean-point-on-line@7.0.0:
+    resolution: {integrity: sha512-9/1hj2MxcUU4fZu+MQC6rdMsdvAYNTtfxssLrZ1dGXo+NcAoWFbZSrfk62pSJBflveyKY5kXPYY+xQfLT0NeDQ==}
     dependencies:
-      '@turf/bbox': 6.5.0
-      '@turf/boolean-point-in-polygon': 6.5.0
-      '@turf/boolean-point-on-line': 6.5.0
-      '@turf/helpers': 6.5.0
-      '@turf/invariant': 6.5.0
+      '@turf/helpers': 7.0.0
+      '@turf/invariant': 7.0.0
+      tslib: 2.6.3
+    dev: false
+
+  /@turf/boolean-within@7.0.0:
+    resolution: {integrity: sha512-QmOX34T7z9wzuzUVsXx3KMCMsxLi71/SOcrgkcHhcWsThx+VPPmyIUtTa8XnBt1BBlx7IIrR2pAeORkUi0CdEg==}
+    dependencies:
+      '@turf/bbox': 7.0.0
+      '@turf/boolean-point-in-polygon': 7.0.0
+      '@turf/boolean-point-on-line': 7.0.0
+      '@turf/helpers': 7.0.0
+      '@turf/invariant': 7.0.0
+      tslib: 2.6.3
     dev: false
 
   /@turf/convex@7.0.0:
@@ -2261,6 +2280,13 @@ packages:
     resolution: {integrity: sha512-Wv8PRNCtPD31UVbdJE/KVAWKe7l6US+lJItRR/HOEW3eh+U/JwRCSUl/KZ7bmjM/C+zLNoreM2TU6OoLACs4eg==}
     dependencies:
       '@turf/helpers': 6.5.0
+    dev: false
+
+  /@turf/invariant@7.0.0:
+    resolution: {integrity: sha512-Kayszfz3W8yJ1/cIA3/aNSzAuw7QgSp+IwsSmhLAfp4DbjV0o6sjxRZXRY2gRstZHqkNHSSEeir8V/icdO8sjA==}
+    dependencies:
+      '@turf/helpers': 7.0.0
+      tslib: 2.6.3
     dev: false
 
   /@turf/line-intersect@6.5.0:
@@ -5209,6 +5235,10 @@ packages:
     dependencies:
       '@types/leaflet': 1.9.12
       fflate: 0.8.2
+    dev: false
+
+  /point-in-polygon-hao@1.1.0:
+    resolution: {integrity: sha512-3hTIM2j/v9Lio+wOyur3kckD4NxruZhpowUbEgmyikW+a2Kppjtu1eN+AhnMQtoHW46zld88JiYWv6fxpsDrTQ==}
     dev: false
 
   /point-in-polygon@1.1.0:
