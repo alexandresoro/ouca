@@ -51,8 +51,8 @@ importers:
         specifier: 7.114.0
         version: 7.114.0
       '@turf/helpers':
-        specifier: 6.5.0
-        version: 6.5.0
+        specifier: 7.0.0
+        version: 7.0.0
       bullmq:
         specifier: 5.8.1
         version: 5.8.1
@@ -218,8 +218,8 @@ importers:
         specifier: 7.0.0
         version: 7.0.0
       '@turf/helpers':
-        specifier: 6.5.0
-        version: 6.5.0
+        specifier: 7.0.0
+        version: 7.0.0
       csv-stringify:
         specifier: 6.5.0
         version: 6.5.0
