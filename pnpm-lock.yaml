@@ -236,8 +236,8 @@ importers:
         specifier: 10.2.2
         version: 10.2.2
       maplibre-gl:
-        specifier: 4.3.2
-        version: 4.3.2
+        specifier: 4.4.0
+        version: 4.4.0
       oidc-client-ts:
         specifier: 3.0.1
         version: 3.0.1
@@ -264,7 +264,7 @@ importers:
         version: 9.10.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-map-gl:
         specifier: 7.1.7
-        version: 7.1.7(maplibre-gl@4.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.1.7(maplibre-gl@4.4.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-oidc-context:
         specifier: 3.1.0
         version: 3.1.0(oidc-client-ts@3.0.1)(react@18.3.1)
@@ -2546,8 +2546,8 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
 
-  maplibre-gl@4.3.2:
-    resolution: {integrity: sha512-/oXDsb9I+LkjweL/28aFMLDZoIcXKNEhYNAZDLA4xgTNkfvKQmV/r0KZdxEMcVthincJzdyc6Y4N8YwZtHKNnQ==}
+  maplibre-gl@4.4.0:
+    resolution: {integrity: sha512-RS5ZYjUfcTuyTjR+jbPNGO+Cbjgid8jtBsUpgmx/m+2voj9oY6DmpanBBm2xvjOxZSfChR2wUpzK22mf6sEOlw==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   media-typer@0.3.0:
@@ -6101,7 +6101,7 @@ snapshots:
     dependencies:
       semver: 7.6.2
 
-  maplibre-gl@4.3.2:
+  maplibre-gl@4.4.0:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -6599,14 +6599,14 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-map-gl@7.1.7(maplibre-gl@4.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-map-gl@7.1.7(maplibre-gl@4.4.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@maplibre/maplibre-gl-style-spec': 19.3.3
       '@types/mapbox-gl': 3.1.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
-      maplibre-gl: 4.3.2
+      maplibre-gl: 4.4.0
 
   react-oidc-context@3.1.0(oidc-client-ts@3.0.1)(react@18.3.1):
     dependencies:
