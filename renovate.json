@@ -12,6 +12,10 @@
     {
       "matchDepTypes": ["devDependencies"],
       "extends": [":automergeStableNonMajor"]
+    },
+    {
+      "groupName": "bull-board",
+      "matchPackagePrefixes": ["@bull-board/"]
     }
   ],
   "automergeSchedule": ["after 23:30 every weekday", "before 6:00 every weekday", "before 7:00 every weekend"],
