@@ -36,6 +36,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
         hasError={!!errors.time}
       />
       <TextInput
+        autoComplete="off"
         {...register("duration", {
           setValueAs: (v: string | number | null) => (typeof v !== "string" || v.length ? v : null),
         })}
