@@ -327,8 +327,8 @@ importers:
         specifier: 3.4.4
         version: 3.4.4
       type-fest:
-        specifier: 4.20.0
-        version: 4.20.0
+        specifier: 4.20.1
+        version: 4.20.1
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -3510,6 +3510,10 @@ packages:
 
   type-fest@4.20.0:
     resolution: {integrity: sha512-MBh+PHUHHisjXf4tlx0CFWoMdjx8zCMLJHOjnV1prABYZFHqtFOyauCIK2/7w4oIfwkF8iNhLtnJEfVY2vn3iw==}
+    engines: {node: '>=16'}
+
+  type-fest@4.20.1:
+    resolution: {integrity: sha512-R6wDsVsoS9xYOpy8vgeBlqpdOyzJ12HNfQhC/aAKWM3YoCV9TtunJzh/QpkMgeDhkoynDcw5f1y+qF9yc/HHyg==}
     engines: {node: '>=16'}
 
   type-is@1.6.18:
@@ -7070,6 +7074,8 @@ snapshots:
   type-fest@2.19.0: {}
 
   type-fest@4.20.0: {}
+
+  type-fest@4.20.1: {}
 
   type-is@1.6.18:
     dependencies:
