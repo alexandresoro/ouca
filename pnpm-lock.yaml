@@ -185,8 +185,8 @@ importers:
         specifier: 5.0.12
         version: 5.0.12
       '@headlessui/react':
-        specifier: 2.0.4
-        version: 2.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.1.1
+        version: 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@hookform/resolvers':
         specifier: 3.6.0
         version: 3.6.0(react-hook-form@7.51.5(react@18.3.1))
@@ -760,8 +760,8 @@ packages:
   '@fontsource/carter-one@5.0.12':
     resolution: {integrity: sha512-L0xIlB1QxwV4NMHDm3vXpCI/iD5XBWPwqyfST0e7W7OKCsP27FOVjFcJ3n9r3Lpk3ncF0gTWlQOw/YoSXvzhpQ==}
 
-  '@headlessui/react@2.0.4':
-    resolution: {integrity: sha512-16d/rOLeYsFsmPlRmXGu8DCBzrWD0zV1Ccx3n73wN87yFu8Y9+X04zflv8EJEt9TAYRyLKOmQXUnOnqQl6NgpA==}
+  '@headlessui/react@2.1.1':
+    resolution: {integrity: sha512-808gVNUbRDbDR3GMNPHy+ON0uvR8b9H7IA+Q2UbhOsNCIjgwuwb2Iuv8VPT/1AW0UzLX8g10tN6LhF15GaUJCQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^18
@@ -4174,7 +4174,7 @@ snapshots:
 
   '@fontsource/carter-one@5.0.12': {}
 
-  '@headlessui/react@2.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@headlessui/react@2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@floating-ui/react': 0.26.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/focus': 3.17.1(react@18.3.1)
