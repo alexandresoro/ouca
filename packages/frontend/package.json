@@ -38,7 +38,7 @@
     "csv-stringify": "6.5.0",
     "i18next": "23.11.5",
     "i18next-http-backend": "2.5.2",
-    "jotai": "2.8.3",
+    "jotai": "2.8.4",
     "lru-cache": "10.2.2",
     "maplibre-gl": "4.4.1",
     "oidc-client-ts": "3.0.1",
