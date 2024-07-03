@@ -51,7 +51,7 @@
     "react-intersection-observer": "9.10.3",
     "react-map-gl": "7.1.7",
     "react-oidc-context": "3.1.0",
-    "react-router-dom": "6.24.0",
+    "react-router-dom": "6.24.1",
     "swr": "2.2.5",
     "unique-names-generator": "4.7.1",
     "use-deep-compare-effect": "1.8.1",
