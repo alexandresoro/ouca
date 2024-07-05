@@ -81,8 +81,8 @@ importers:
         specifier: 5.4.1
         version: 5.4.1
       kysely:
-        specifier: 0.27.3
-        version: 0.27.3
+        specifier: 0.27.4
+        version: 0.27.4
       nanoid:
         specifier: 5.0.7
         version: 5.0.7
@@ -2373,8 +2373,8 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  kysely@0.27.3:
-    resolution: {integrity: sha512-lG03Ru+XyOJFsjH3OMY6R/9U38IjDPfnOfDgO3ynhbDr+Dz8fak+X6L62vqu3iybQnj+lG84OttBuU9KY3L9kA==}
+  kysely@0.27.4:
+    resolution: {integrity: sha512-dyNKv2KRvYOQPLCAOCjjQuCk4YFd33BvGdf/o5bC7FiW+BB6snA81Zt+2wT9QDFzKqxKa5rrOmvlK/anehCcgA==}
     engines: {node: '>=14.0.0'}
 
   lazystream@1.0.1:
@@ -5969,7 +5969,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  kysely@0.27.3: {}
+  kysely@0.27.4: {}
 
   lazystream@1.0.1:
     dependencies:
