@@ -24,7 +24,7 @@
     "@fontsource-variable/nunito": "5.0.19",
     "@fontsource/carter-one": "5.0.12",
     "@headlessui/react": "2.0.4",
-    "@hookform/resolvers": "3.7.0",
+    "@hookform/resolvers": "3.9.0",
     "@ou-ca/common": "workspace:*",
     "@sentry/react": "8.14.0",
     "@styled-icons/boxicons-regular": "10.47.0",
