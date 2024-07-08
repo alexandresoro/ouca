@@ -233,8 +233,8 @@ importers:
         specifier: 2.8.4
         version: 2.8.4(@types/react@18.3.3)(react@18.3.1)
       lru-cache:
-        specifier: 10.3.1
-        version: 10.3.1
+        specifier: 11.0.0
+        version: 11.0.0
       maplibre-gl:
         specifier: 4.4.1
         version: 4.4.1
@@ -2525,6 +2525,10 @@ packages:
   lru-cache@10.3.1:
     resolution: {integrity: sha512-9/8QXrtbGeMB6LxwQd4x1tIMnsmUxMvIH/qWGsccz6bt9Uln3S+sgAaqfQNhbGA8ufzs2fHuP/yqapGgP9Hh2g==}
     engines: {node: '>=18'}
+
+  lru-cache@11.0.0:
+    resolution: {integrity: sha512-Qv32eSV1RSCfhY3fpPE2GNZ8jgM9X7rdAfemLWqTUxwiyIC4jJ6Sy0fZ8H+oLWevO6i4/bizg7c8d8i6bxrzbA==}
+    engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -6090,6 +6094,8 @@ snapshots:
       get-func-name: 2.0.2
 
   lru-cache@10.3.1: {}
+
+  lru-cache@11.0.0: {}
 
   lru-cache@5.1.1:
     dependencies:
