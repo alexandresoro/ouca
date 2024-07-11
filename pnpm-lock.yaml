@@ -54,8 +54,8 @@ importers:
         specifier: 7.0.0
         version: 7.0.0
       bullmq:
-        specifier: 5.8.5
-        version: 5.8.5
+        specifier: 5.8.6
+        version: 5.8.6
       content-disposition:
         specifier: 0.5.4
         version: 0.5.4
@@ -1556,8 +1556,8 @@ packages:
     resolution: {integrity: sha512-9q/rDEGSb/Qsvv2qvzIzdluL5k7AaJOTrw23z9reQthrbF7is4CtlT0DXyO1oei2DCp4uojjzQ7igaSHp1kAEQ==}
     engines: {node: '>=0.2.0'}
 
-  bullmq@5.8.5:
-    resolution: {integrity: sha512-5WwtP/uFE8x5waxuLNQCQph2IJSjj49Ba5NM1crEkKcbTx5ABgDaWDAaL0cId3iqyyKXf3esj9AFBcovCxlEJA==}
+  bullmq@5.8.6:
+    resolution: {integrity: sha512-jc/gV2x8HvdufXvWadUqHeORrQkUzsNCm4P6HlTDspQYbZUnJayf5m/esu1heK1IiDJ6hxOVQsXzUGzycahj0w==}
 
   bytewise-core@1.2.3:
     resolution: {integrity: sha512-nZD//kc78OOxeYtRlVk8/zXqTB4gf/nlguL1ggWA8FuchMyOxcyHR4QPQZMUmA7czC+YnaBrPUCubqAWe50DaA==}
@@ -5090,7 +5090,7 @@ snapshots:
 
   buffers@0.1.1: {}
 
-  bullmq@5.8.5:
+  bullmq@5.8.6:
     dependencies:
       cron-parser: 4.9.0
       ioredis: 5.4.1
