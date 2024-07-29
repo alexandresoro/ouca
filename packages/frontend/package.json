@@ -35,7 +35,7 @@
     "@turf/boolean-within": "7.0.0",
     "@turf/convex": "7.0.0",
     "@turf/helpers": "7.0.0",
-    "csv-stringify": "6.5.0",
+    "csv-stringify": "6.5.1",
     "i18next": "23.12.2",
     "i18next-http-backend": "2.5.2",
     "jotai": "2.8.4",
