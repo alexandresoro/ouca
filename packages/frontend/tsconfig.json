@@ -24,6 +24,6 @@
       "@typings/*": ["./src/@types/*"],
       "@utils/*": ["./src/utils/*"]
     },
-    "types": ["vite/client", "vitest/globals"]
+    "types": ["vite/client"]
   }
 }

@@ -1,3 +1,5 @@
+import assert from "node:assert/strict";
+import { describe, test } from "node:test";
 import { toUrlSearchParams } from "./url-search-params";
 
 describe("toUrlSearchParams()", () => {
@@ -6,7 +8,7 @@ describe("toUrlSearchParams()", () => {
 
     const urlSearchParams = toUrlSearchParams(params);
 
-    expect(urlSearchParams.toString()).toEqual("");
+    assert.equal(urlSearchParams.toString(), "");
   });
 
   test("should handle an empty object", () => {
@@ -14,7 +16,7 @@ describe("toUrlSearchParams()", () => {
 
     const urlSearchParams = toUrlSearchParams(params);
 
-    expect(urlSearchParams.toString()).toEqual("");
+    assert.equal(urlSearchParams.toString(), "");
   });
 
   test("should handle a single param object", () => {
@@ -24,7 +26,7 @@ describe("toUrlSearchParams()", () => {
 
     const urlSearchParams = toUrlSearchParams(params);
 
-    expect(urlSearchParams.toString()).toEqual("par=am");
+    assert.equal(urlSearchParams.toString(), "par=am");
   });
 
   test("should handle multiple params object with different types", () => {
@@ -38,7 +40,7 @@ describe("toUrlSearchParams()", () => {
 
     const urlSearchParams = toUrlSearchParams(params);
 
-    expect(urlSearchParams.toString()).toEqual("par=am&number=12&boolValue=false&arr=1&arr=3&arr=5");
+    assert.equal(urlSearchParams.toString(), "par=am&number=12&boolValue=false&arr=1&arr=3&arr=5");
   });
 
   test("should filter out undefined properties of an object", () => {
@@ -51,6 +53,6 @@ describe("toUrlSearchParams()", () => {
 
     const urlSearchParams = toUrlSearchParams(params);
 
-    expect(urlSearchParams.toString()).toEqual("par=am&number=12");
+    assert.equal(urlSearchParams.toString(), "par=am&number=12");
   });
 });
