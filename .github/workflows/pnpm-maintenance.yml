@@ -1,8 +1,8 @@
 name: PNPM dependencies maintenance
 
 on:
-  schedule:
-    - cron: '0 4 * * SUN'
+  # schedule:
+  #   - cron: '0 4 * * SUN'
   workflow_dispatch:
 
 jobs:
