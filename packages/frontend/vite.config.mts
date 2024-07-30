@@ -9,10 +9,7 @@ const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
   return {
     name: "inject-env-html",
     transformIndexHtml(html: string) {
-      return html.replace(
-        "$__APP_VERSION__$",
-        JSON.stringify(env.APP_VERSION ?? "unknown"),
-      );
+      return html.replace("$__APP_VERSION__$", JSON.stringify(env.APP_VERSION ?? "unknown"));
     },
   };
 };
@@ -34,8 +31,7 @@ const CHUNKS_MAPPING = {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
-  // biome-ignore lint/style/useNamingConvention: <explanation>
-  const API_SERVER_URL = env.API_SERVER_URL ?? "http://localhost:4000";
+  const apiServerUrl = env.API_SERVER_URL ?? "http://localhost:4000";
 
   const enableSentry = env.ENABLE_SENTRY?.toLowerCase() === "true";
 
@@ -71,10 +67,10 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       open: true,
       proxy: {
-        "/api/v1": API_SERVER_URL,
-        "/download": API_SERVER_URL,
-        "/uploads": API_SERVER_URL,
-        "/import-status": API_SERVER_URL,
+        "/api/v1": apiServerUrl,
+        "/download": apiServerUrl,
+        "/uploads": apiServerUrl,
+        "/import-status": apiServerUrl,
       },
     },
     plugins: [
