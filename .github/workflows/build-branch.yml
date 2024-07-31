@@ -113,9 +113,9 @@ jobs:
     steps:
       - name: Dispatch backend image update to forgejo
         run: >
-          curl --silent --show-error --fail \
-          -H 'accept: application/json' \
-          -H 'Authorization: token ${{ secrets.FORGEJO_TOKEN }}' \
-          -H 'Content-Type: application/json' \
-          --data '{"ref":"main"}' \
+          curl --silent --show-error --fail
+          -H 'accept: application/json'
+          -H 'Authorization: token ${{ secrets.FORGEJO_TOKEN }}'
+          -H 'Content-Type: application/json'
+          --data '{"ref":"main"}'
           ${{ secrets.FORGEJO_URL }}/repos/${{ secrets.FORGEJO_OWNER }}/${{ secrets.FORGEJO_REPO }}/actions/workflows/${{ secrets.FORGEJO_WORKFLOW }}/dispatches
