@@ -45,7 +45,7 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}-backend
-            ${{ FORGEJO_DOMAIN }}/${{ secrets.FORGEJO_OWNER }}/${{ github.event.repository.name }}-backend
+            ${{ secrets.FORGEJO_DOMAIN }}/${{ secrets.FORGEJO_OWNER }}/${{ github.event.repository.name }}-backend
           tags: |
             type=ref,event=branch
             type=sha
