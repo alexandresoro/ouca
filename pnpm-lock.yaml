@@ -18,11 +18,11 @@ importers:
   packages/backend:
     dependencies:
       '@bull-board/api':
-        specifier: 5.21.1
-        version: 5.21.1(@bull-board/ui@5.21.1)
+        specifier: 5.21.3
+        version: 5.21.3(@bull-board/ui@5.21.3)
       '@bull-board/fastify':
-        specifier: 5.21.1
-        version: 5.21.1
+        specifier: 5.21.3
+        version: 5.21.3
       '@fastify/compress':
         specifier: 7.0.3
         version: 7.0.3
@@ -490,16 +490,16 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@bull-board/api@5.21.1':
-    resolution: {integrity: sha512-anzTfhOJ93eraT/GYeyxWpxRMarHwuevn6pPBfdOj0LC2eg98OPnkfdMSjcrpL3qrqsxON0RslS7kuPfCEnX6A==}
+  '@bull-board/api@5.21.3':
+    resolution: {integrity: sha512-d3feBl7L1A6gwtIPpeVwsF3DNJmN5ilmFeiuEFsdtLSCrXWvBfIemaUXDH67cQCpQZcefmuwsWkg9cJbEegoUA==}
     peerDependencies:
-      '@bull-board/ui': 5.21.1
+      '@bull-board/ui': 5.21.3
 
-  '@bull-board/fastify@5.21.1':
-    resolution: {integrity: sha512-We33yolc70SALjDdF3cjEaLn1L/vrw85eFCsrviESaW3dFVIdB+xn0fdqMFK6NnaC0JjBa3Ypfev4Co+eaZ+1A==}
+  '@bull-board/fastify@5.21.3':
+    resolution: {integrity: sha512-HXUyppMeHpN3EGqpAJgTrCdHkX6rkbnrsggf0vYi6gjuTOU0PgbReJlsz26JFkzFKjPZxaU0UQ6ouU+b/mqvpQ==}
 
-  '@bull-board/ui@5.21.1':
-    resolution: {integrity: sha512-JBDeCqG7j/c3WE0uGMN9snPkRJz9/D6MpTZzyVj7KOxIJwNKPOICNFZbCrCNi7bcJYHDJ2xGTN9OO1mw7i43BQ==}
+  '@bull-board/ui@5.21.3':
+    resolution: {integrity: sha512-lOPP36qYT7u2EYZELXQ+B3LWdts/GoxTCH+PmFknDqlR9p9WAJl81fx8KFXKPR7uC9TIqjwhGTkuXo/oPdId+A==}
 
   '@cloudflare/workers-types@4.20240729.0':
     resolution: {integrity: sha512-wfe44YQkv5T9aBr/z95P706r2/Ydg32weJYyBOhvge7FqtdY6mM7l39rybNiJrbJoyN16dd0xxyQMf23aJNC6Q==}
@@ -3681,22 +3681,22 @@ snapshots:
   '@biomejs/cli-win32-x64@1.8.3':
     optional: true
 
-  '@bull-board/api@5.21.1(@bull-board/ui@5.21.1)':
+  '@bull-board/api@5.21.3(@bull-board/ui@5.21.3)':
     dependencies:
-      '@bull-board/ui': 5.21.1
+      '@bull-board/ui': 5.21.3
       redis-info: 3.1.0
 
-  '@bull-board/fastify@5.21.1':
+  '@bull-board/fastify@5.21.3':
     dependencies:
-      '@bull-board/api': 5.21.1(@bull-board/ui@5.21.1)
-      '@bull-board/ui': 5.21.1
+      '@bull-board/api': 5.21.3(@bull-board/ui@5.21.3)
+      '@bull-board/ui': 5.21.3
       '@fastify/static': 6.12.0
       '@fastify/view': 8.2.0
       ejs: 3.1.10
 
-  '@bull-board/ui@5.21.1':
+  '@bull-board/ui@5.21.3':
     dependencies:
-      '@bull-board/api': 5.21.1(@bull-board/ui@5.21.1)
+      '@bull-board/api': 5.21.3(@bull-board/ui@5.21.3)
 
   '@cloudflare/workers-types@4.20240729.0': {}
 
