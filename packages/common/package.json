@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
-    "@types/node": "20.14.13",
+    "@types/node": "20.14.14",
     "@types/proj4": "2.5.5",
     "tsx": "4.16.5",
     "typescript": "5.5.4"
