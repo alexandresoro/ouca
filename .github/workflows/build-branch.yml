@@ -45,6 +45,7 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}-backend
+            ${{ FORGEJO_DOMAIN }}/${{ secrets.FORGEJO_OWNER }}/${{ github.event.repository.name }}-backend
           tags: |
             type=ref,event=branch
             type=sha
@@ -63,6 +64,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
+        with:
+          registry: ${{ secrets.FORGEJO_DOMAIN }}
+          username: ${{ secrets.FORGEJO_OWNER }}
+          password: ${{ secrets.FORGEJO_TOKEN }}
 
       - name: Rewrite Node version for Docker
         id: rewrite-node-version
