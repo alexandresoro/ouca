@@ -46,7 +46,7 @@
     "protomaps-themes-base": "3.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-hook-form": "7.51.5",
+    "react-hook-form": "7.52.2",
     "react-i18next": "15.0.1",
     "react-intersection-observer": "9.13.0",
     "react-map-gl": "7.1.7",
