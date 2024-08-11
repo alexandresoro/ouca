@@ -236,8 +236,8 @@ importers:
         specifier: 11.0.0
         version: 11.0.0
       maplibre-gl:
-        specifier: 4.5.1
-        version: 4.5.1
+        specifier: 4.5.2
+        version: 4.5.2
       oidc-client-ts:
         specifier: 3.0.1
         version: 3.0.1
@@ -264,7 +264,7 @@ importers:
         version: 9.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-map-gl:
         specifier: 7.1.7
-        version: 7.1.7(maplibre-gl@4.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.1.7(maplibre-gl@4.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-oidc-context:
         specifier: 3.1.0
         version: 3.1.0(oidc-client-ts@3.0.1)(react@18.3.1)
@@ -2565,8 +2565,8 @@ packages:
     resolution: {integrity: sha512-ISQTe55T2ao7XtlAStud6qwYPZjE4GK1S/BeVPus4jrq6JuOnQ00YKQC581RWhR122W7msZV263KzVeLoqidyQ==}
     engines: {node: '>=12'}
 
-  maplibre-gl@4.5.1:
-    resolution: {integrity: sha512-pKFDK8ZU2atwZWC8gdPVhN7Bf5HIPgtA+IG/iQ7J6WgmqSwCSmylc5q3stahWqXfx9PYUwVNJITrp1Hw96SUiA==}
+  maplibre-gl@4.5.2:
+    resolution: {integrity: sha512-vlWL9EY2bSGg5FAt0mKPfYqlfX15uLW5D3kKv4Xjn54nIVn01MKdfUJMAVIr+8fXVqfSX6c095Iy5XnV+T76kQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   media-typer@0.3.0:
@@ -5964,7 +5964,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  maplibre-gl@4.5.1:
+  maplibre-gl@4.5.2:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -6432,14 +6432,14 @@ snapshots:
 
   react-is@17.0.2: {}
 
-  react-map-gl@7.1.7(maplibre-gl@4.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-map-gl@7.1.7(maplibre-gl@4.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@maplibre/maplibre-gl-style-spec': 19.3.3
       '@types/mapbox-gl': 3.4.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
-      maplibre-gl: 4.5.1
+      maplibre-gl: 4.5.2
 
   react-oidc-context@3.1.0(oidc-client-ts@3.0.1)(react@18.3.1):
     dependencies:
