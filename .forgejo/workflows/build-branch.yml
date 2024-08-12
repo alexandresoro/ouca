@@ -118,6 +118,7 @@ jobs:
             ./Dockerfile
           extra-args: |
             --pull
+            --isolation=chroot
 
 #   trigger-dispatch-release:
 #     environment:
