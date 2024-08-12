@@ -65,7 +65,7 @@ jobs:
 
     steps:
       - run: apt update
-      - run: apt-get install -y podman
+      - run: apt install -y docker
 
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
@@ -87,12 +87,12 @@ jobs:
           flavor: |
             latest=false
 
-      # - uses: https://github.com/docker/setup-qemu-actiNon@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+      # - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
 
       # - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
       #   id: buildx
 
-      - uses: https://github.com/redhat-actions/podman-login@v1
+      - uses: https://github.com/docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
         with:
           registry: ${{ secrets.FORGEJO_DOMAIN }}
           username: ${{ github.actor }}
