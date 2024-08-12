@@ -38,7 +38,7 @@
     "@ou-ca/common": "workspace:*",
     "@sentry/node": "7.118.0",
     "@sentry/tracing": "7.114.0",
-    "@turf/helpers": "7.0.0",
+    "@turf/helpers": "7.1.0",
     "bullmq": "5.12.4",
     "content-disposition": "0.5.4",
     "csv-parse": "5.5.6",
