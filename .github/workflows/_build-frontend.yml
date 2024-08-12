@@ -19,7 +19,7 @@ jobs:
 
       - uses: ./.github/actions/install
 
-      - uses: ./.github/actions/build
+      - uses: ./.github/actions/build-frontend
         with:
           with-sentry: ${{ inputs.with-sentry }}
           sentry-url: ${{ vars.SENTRY_URL }}
