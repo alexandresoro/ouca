@@ -10,6 +10,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/install.yml
+
   validate:
     uses: ./.github/workflows/_validate.yml
     secrets: inherit
