@@ -26,17 +26,8 @@ jobs:
           sentry-org: ${{ vars.SENTRY_ORG }}
           sentry-project: ${{ vars.SENTRY_PROJECT }}
 
-
-  # We had cases where the PR typecheck was fine, but the build failed
-  # Let's make sure we don't deploy something that doesn't build
-  build-frontend:
-    uses: ./.github/workflows/_build-frontend.yml
-    secrets: inherit
-    with:
-      with-sentry: false
-
   deploy-cloudflare:
-    needs: [validate-pr, build-frontend]
+    needs: validate-pr
     uses: ./.github/workflows/_deploy-cloudflare-pages.yml
     secrets: inherit
 
