@@ -71,18 +71,18 @@ jobs:
         with:
           node-version-file: .tool-versions
 
-#       - uses: https://github.com/docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5
-#         id: meta
-#         with:
-#           images: |
-#             ${{ secrets.FORGEJO_DOMAIN }}/${{ secrets.FORGEJO_OWNER }}/${{ github.event.repository.name }}-backend
-#           tags: |
-#             type=ref,event=branch
-#             type=sha
-#             # set latest tag for default branch
-#             type=raw,value=latest,enable={{is_default_branch}}
-#           flavor: |
-#             latest=false
+      - uses: https://github.com/docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5
+        id: meta
+        with:
+          images: |
+            ${{ secrets.FORGEJO_DOMAIN }}/${{ github.repository }}-backend
+          tags: |
+            type=ref,event=branch
+            type=sha
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+          flavor: |
+            latest=false
 
 #       - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
 
