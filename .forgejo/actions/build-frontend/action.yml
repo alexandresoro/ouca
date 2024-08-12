@@ -34,7 +34,7 @@ runs:
         SENTRY_ORG: ${{ inputs.sentry-org }}
         SENTRY_PROJECT: ${{ inputs.sentry-project }}
 
-    - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4
+    - uses: https://code.forgejo.org/forgejo/upload-artifact@v4
       with:
         name: dist-frontend
         path: packages/frontend/dist/
