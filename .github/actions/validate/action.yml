@@ -1,0 +1,20 @@
+name: "validate"
+description: "validate and check codebase"
+
+runs:
+  using: "composite"
+
+  steps:
+    - uses: ./.github/actions/install
+
+    - name: Biome
+      shell: bash
+      run: pnpm --aggregate-output --recursive run biome:ci
+
+    - name: Test
+      shell: bash
+      run: pnpm --aggregate-output --recursive run test
+
+    - name: Typecheck
+      shell: bash
+      run: pnpm --aggregate-output --recursive run typecheck

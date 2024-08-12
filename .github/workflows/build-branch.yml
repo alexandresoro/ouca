@@ -11,8 +11,12 @@ concurrency:
 
 jobs:
   validate:
-    uses: ./.github/workflows/_validate.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - uses: ./.github/actions/validate
 
   build-frontend:
     uses: ./.github/workflows/_build-frontend.yml
