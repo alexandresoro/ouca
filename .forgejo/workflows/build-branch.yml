@@ -87,7 +87,7 @@ jobs:
           flavor: |
             latest=false
 
-      - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+      # - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
 
       # - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
       #   id: buildx
@@ -98,27 +98,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Rewrite Node version for Docker
-      #   id: rewrite-node-version
-      #   run: |
-      #     echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
 
-#       - name: Build and push to GitHub Container Registry
-#         id: docker_build
-#         uses: https://github.com/docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6
-#         with:
-#           builder: ${{ steps.buildx.outputs.name }}
-#           build-args: |
-#             "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
-#             "GIT_SHA=${{ github.sha }}"
-#           context: .
-#           platforms: |
-#             linux/amd64
-#           push: true
-#           tags: ${{ steps.meta.outputs.tags }}
-#           labels: ${{ steps.meta.outputs.labels }}
-#           cache-from: type=gha
-#           cache-to: type=gha,mode=max
+      - name: Rewrite Node version for Docker
+        id: rewrite-node-version
+        run: |
+          echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
+
+      - name: Build and push to registry
+        id: container_build
+        uses: https://github.com/redhat-actions/buildah-build@v2
+        with:
+          layers: false
+          tags: ${{ steps.docker-metadata.outputs.tags }}
+          labels: ${{ steps.docker-metadata.outputs.labels }}
+          build-args: |
+            "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
+            "GIT_SHA=${{ github.sha }}"
+          containerfiles: |
+            ./Dockerfile
+          extra-args: |
+            --pull
 
 #   trigger-dispatch-release:
 #     environment:
