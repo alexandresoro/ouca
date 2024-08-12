@@ -1,4 +1,5 @@
 name: "node & pnpm install"
+description: "Install Node.js and pnpm dependencies"
 
 runs:
   using: "composite"
