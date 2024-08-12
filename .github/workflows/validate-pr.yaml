@@ -29,55 +29,6 @@ jobs:
     uses: ./.github/workflows/_deploy-cloudflare-pages.yml
     secrets: inherit
 
-  dependabot:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
-    needs: validate
-
-    permissions:
-      pull-requests: write
-      contents: write
-
-    steps:
-      # https://gist.github.com/xt0rted/46475099dc0a70ba63e16e3177407872
-      # https://github.com/dependabot/fetch-metadata/issues/111
-      - name: Generate app token
-        id: generate-app-token
-        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
-        with:
-          app_id: ${{ secrets.BOT_APP_ID }}
-          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
-
-      - name: Dependabot metadata
-        id: dependabot-metadata
-        uses: dependabot/fetch-metadata@dbb049abf0d677abbd7f7eee0375145b417fdd34 # v2
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-
-      - name: Authenticate gh cli with app token
-        run: echo "${{ steps.generate-app-token.outputs.token }}" | gh auth login --with-token
-
-      # From https://github.com/dependabot/fetch-metadata
-      - name: Approve a PR if not already approved
-        id: dependabot-approve
-        if: ${{ steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' || ( steps.dependabot-metadata.outputs.dependency-type == 'direct:development' && steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor') }}
-        run: |
-          gh pr checkout "$PR_URL" # sets the upstream metadata for `gh pr status`
-          if [ "$(gh pr status --json reviewDecision -q .currentBranch.reviewDecision)" != "APPROVED" ];
-          then gh pr review --approve "$PR_URL"
-          else echo "PR already approved, skipping additional approvals to minimize emails/notification noise.";
-          fi
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-
-      - name: Set PR as automerge
-        if: ${{ steps.dependabot-approve.conclusion == 'success' }}
-        run: gh pr merge --auto --squash "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-
   auto-approve:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
