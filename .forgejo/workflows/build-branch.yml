@@ -103,6 +103,8 @@ jobs:
           registry: ${{ secrets.FORGEJO_DOMAIN }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          # https://github.com/redhat-actions/podman-login/issues/41
+          auth_file_path: /run/containers/0/auth.json
 
 
       # - name: Rewrite Node version for Docker
