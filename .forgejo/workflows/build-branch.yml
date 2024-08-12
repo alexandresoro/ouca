@@ -104,21 +104,13 @@ jobs:
         run: |
           echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
 
-      - name: Build and push to registry
-        id: container_build
-        uses: https://github.com/redhat-actions/buildah-build@v2
+      - uses: https://github.com/int128/kaniko-action@v1
         with:
-          layers: false
           tags: ${{ steps.docker-metadata.outputs.tags }}
           labels: ${{ steps.docker-metadata.outputs.labels }}
           build-args: |
             "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
             "GIT_SHA=${{ github.sha }}"
-          containerfiles: |
-            ./Dockerfile
-          extra-args: |
-            --pull
-            --isolation=chroot
 
 #   trigger-dispatch-release:
 #     environment:
