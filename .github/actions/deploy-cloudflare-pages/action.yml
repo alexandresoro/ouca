@@ -19,6 +19,11 @@ inputs:
     description: "Cloudflare project name"
     required: true
 
+outputs:
+  deployment-url:
+    description: "Deployment URL"
+    value: ${{ steps.deploy.outputs.deployment-url }}
+
 runs:
   using: "composite"
 
