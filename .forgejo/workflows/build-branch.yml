@@ -64,6 +64,9 @@ jobs:
       image-digest: ${{ steps.docker_build.outputs.digest }}
 
     steps:
+      - run: apt update
+      - run: apt-get install -y podman
+
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
@@ -84,7 +87,7 @@ jobs:
           flavor: |
             latest=false
 
-      # - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+      # - uses: https://github.com/docker/setup-qemu-actiNon@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
 
       # - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
       #   id: buildx
