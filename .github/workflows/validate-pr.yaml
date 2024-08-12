@@ -43,7 +43,7 @@ jobs:
   auto-approve:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
-    needs: validate
+    needs: validate-pr
 
     permissions:
       pull-requests: write
