@@ -59,6 +59,9 @@ jobs:
   publish-backend-image:
     runs-on: docker
 
+    container:
+      image: node:16-bookworm
+
     outputs:
       image-label: ${{ steps.meta.outputs.version }}
       image-digest: ${{ steps.docker_build.outputs.digest }}
