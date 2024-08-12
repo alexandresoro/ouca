@@ -1,0 +1,41 @@
+name: "build frontend"
+description: "Build frontend"
+
+inputs:
+  with-sentry:
+    description: "Enable Sentry"
+    required: false
+    default: "false"
+  sentry-url:
+    description: "Sentry URL"
+    required: false
+  sentry-auth-token:
+    description: "Sentry Auth token"
+    required: false
+  sentry-org:
+    description: "Sentry organization"
+    required: false
+  sentry-project:
+    description: "Sentry project"
+    required: false
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Build
+      shell: bash
+      run: pnpm frontend build
+      env:
+        APP_VERSION: ${{ github.sha }}
+        ENABLE_SENTRY: ${{ inputs.with-sentry }}
+        SENTRY_URL: ${{ inputs.sentry-url }}
+        SENTRY_AUTH_TOKEN: ${{ inputs.sentry-auth-token }}
+        SENTRY_ORG: ${{ inputs.sentry-org }}
+        SENTRY_PROJECT: ${{ inputs.sentry-project }}
+
+    - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4
+      with:
+        name: dist-frontend
+        path: packages/frontend/dist/
+        if-no-files-found: error

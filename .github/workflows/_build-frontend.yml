@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-frontend:
-    environment: 
+    environment:
       name: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && 'production' || 'preview' }}
 
     runs-on: ubuntu-latest
@@ -17,28 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: ./.github/actions/install
 
-      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+      - uses: ./.github/actions/build
         with:
-          node-version-file: .tool-versions
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build
-        run: pnpm frontend build
-        env:
-          APP_VERSION: ${{ github.sha }}
-          ENABLE_SENTRY: ${{ inputs.with-sentry }}
-          SENTRY_URL: ${{ vars.SENTRY_URL }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-
-      - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4
-        with:
-          name: dist-frontend
-          path: packages/frontend/dist/
-          if-no-files-found: error
+          with-sentry: ${{ inputs.with-sentry }}
+          sentry-url: ${{ vars.SENTRY_URL }}
+          sentry-auth-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          sentry-org: ${{ vars.SENTRY_ORG }}
+          sentry-project: ${{ vars.SENTRY_PROJECT }}
