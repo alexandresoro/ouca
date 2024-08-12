@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - run: apt update
-      - run: apt install -y docker.io podman
+      - run: apt install -y podman
 
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
@@ -90,32 +90,32 @@ jobs:
           flavor: |
             latest=false
 
-      - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
-        env:
-          DOCKER_HOST: tcp://localhost:2376
+      # - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+      #   env:
+      #     DOCKER_HOST: tcp://localhost:2376
 
       # - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
       #   id: buildx
 
-      - uses: https://github.com/docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
+      - uses: https://github.com/redhat-actions/podman-login@v1
         with:
           registry: ${{ secrets.FORGEJO_DOMAIN }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
 
-      - name: Rewrite Node version for Docker
-        id: rewrite-node-version
-        run: |
-          echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
+      # - name: Rewrite Node version for Docker
+      #   id: rewrite-node-version
+      #   run: |
+      #     echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
 
-      - uses: https://github.com/int128/kaniko-action@v1
-        with:
-          tags: ${{ steps.docker-metadata.outputs.tags }}
-          labels: ${{ steps.docker-metadata.outputs.labels }}
-          build-args: |
-            "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
-            "GIT_SHA=${{ github.sha }}"
+      # - uses: https://github.com/int128/kaniko-action@v1
+      #   with:
+      #     tags: ${{ steps.docker-metadata.outputs.tags }}
+      #     labels: ${{ steps.docker-metadata.outputs.labels }}
+      #     build-args: |
+      #       "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
+      #       "GIT_SHA=${{ github.sha }}"
 
 #   trigger-dispatch-release:
 #     environment:
