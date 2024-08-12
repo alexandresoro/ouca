@@ -84,21 +84,21 @@ jobs:
           flavor: |
             latest=false
 
-#       - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+      - uses: https://github.com/docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
 
-#       - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
-#         id: buildx
+      - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
+        id: buildx
 
-#       - uses: https://github.com/docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
-#         with:
-#           registry: ${{ secrets.FORGEJO_DOMAIN }}
-#           username: ${{ secrets.FORGEJO_OWNER }}
-#           password: ${{ secrets.FORGEJO_TOKEN }}
+      - uses: https://github.com/docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
+        with:
+          registry: ${{ secrets.FORGEJO_DOMAIN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-#       - name: Rewrite Node version for Docker
-#         id: rewrite-node-version
-#         run: |
-#           echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
+      - name: Rewrite Node version for Docker
+        id: rewrite-node-version
+        run: |
+          echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
 
 #       - name: Build and push to GitHub Container Registry
 #         id: docker_build
