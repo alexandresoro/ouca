@@ -47,13 +47,13 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
-#       - uses: ./.forgejo/actions/deploy-cloudflare-pages
-#         with:
-#           artifact-name: dist-frontend
-#           artifact-path: dist
-#           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-#           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-#           cloudflare-project-name: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+      - uses: ./.forgejo/actions/deploy-cloudflare-pages
+        with:
+          artifact-name: dist-frontend
+          artifact-path: dist
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          cloudflare-project-name: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
 
   publish-backend-image:
     runs-on: docker
