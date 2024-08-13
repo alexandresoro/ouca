@@ -70,7 +70,6 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y podman
-      - run: modprobe fuse
 
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
