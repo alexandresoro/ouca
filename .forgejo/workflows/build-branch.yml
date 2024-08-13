@@ -119,7 +119,7 @@ jobs:
           tags: ${{ steps.docker-metadata.outputs.tags }}
           labels: ${{ steps.docker-metadata.outputs.labels }}
           build-args: |
-            "NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}"
+            NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
             "GIT_SHA=${{ github.sha }}"
           containerfiles: |
             ./Dockerfile
