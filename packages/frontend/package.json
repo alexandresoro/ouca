@@ -70,7 +70,7 @@
     "autoprefixer": "10.4.20",
     "daisyui": "4.12.10",
     "postcss": "8.4.41",
-    "tailwindcss": "3.4.9",
+    "tailwindcss": "3.4.10",
     "tsx": "4.17.0",
     "type-fest": "4.24.0",
     "typescript": "5.5.4",
