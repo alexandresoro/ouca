@@ -60,7 +60,7 @@ jobs:
     runs-on: docker
 
     container:
-      image: node:16-bookworm
+      image: quay.io/podman/stable:v5.1.2
       options: "--privileged --security-opt seccomp=unconfined"
 
     outputs:
