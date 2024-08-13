@@ -60,7 +60,7 @@ jobs:
     runs-on: docker
 
     container:
-      image: quay.io/podman/stable:v5.1.2
+      image: node:20-bookworm
       options: "--privileged --security-opt seccomp=unconfined"
 
     outputs:
@@ -68,11 +68,9 @@ jobs:
       image-digest: ${{ steps.docker_build.outputs.digest }}
 
     steps:
-      - run: dnf install nodejs -y
+      - run: apt update && apt install -y podman docker.io
 
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-
-      - run: node -v
 
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
         id: setup-node
@@ -115,6 +113,7 @@ jobs:
           echo "NODE_IMAGE_VERSION=$(echo '${{ steps.setup-node.outputs.node-version }}' | cut -c2- )" >> $GITHUB_ENV
 
       - uses: https://github.com/redhat-actions/buildah-build@v2
+        id: build-image
         with:
           layers: false
           tags: ${{ steps.docker-metadata.outputs.tags }}
@@ -126,6 +125,14 @@ jobs:
             ./Dockerfile
           extra-args: |
             --pull
+
+      - uses: https://github.com/redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ${{ secrets.FORGEJO_DOMAIN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
 #   trigger-dispatch-release:
 #     environment:
