@@ -8,7 +8,6 @@
     ":maintainLockFilesWeekly",
     "customManagers:biomeVersions"
   ],
-  "autoApprove": true,
   "packageRules": [
     {
       "matchDepTypes": [
