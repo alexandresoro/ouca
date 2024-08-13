@@ -21,11 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
-      - uses: ./.github/actions/validate
+      - uses: ./.forgejo/actions/validate
 
       # We had cases where the PR typecheck was fine, but the build failed
       # Let's make sure we don't deploy something that doesn't build
-      - uses: ./.github/actions/build-frontend
+      - uses: ./.forgejo/actions/build-frontend
         with:
           with-sentry: false
           sentry-url: ${{ vars.SENTRY_URL }}
