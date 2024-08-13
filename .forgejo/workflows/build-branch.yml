@@ -64,7 +64,7 @@ jobs:
 
     outputs:
       image-label: ${{ steps.docker-metadata.outputs.version }}
-      image-digest: ${{ steps.build-image.outputs.digest }}
+      image-digest: ${{ steps.push-image.outputs.digest }}
 
     steps:
       - run: apt update && apt install -y podman
@@ -109,6 +109,7 @@ jobs:
             --pull
 
       - uses: https://github.com/redhat-actions/push-to-registry@v2
+        id: push-image
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
@@ -126,7 +127,6 @@ jobs:
     runs-on: docker
 
     steps:
-      - run: echo '${{ toJSON(needs) }}'
 
       - name: Dispatch backend image update to forgejo
         run: >
