@@ -61,7 +61,7 @@ jobs:
 
     container:
       image: node:16-bookworm
-      options: "--security-opt seccomp=unconfined"
+      options: "--privileged --security-opt seccomp=unconfined"
 
     outputs:
       image-label: ${{ steps.meta.outputs.version }}
