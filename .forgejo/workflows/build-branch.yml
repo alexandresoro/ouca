@@ -91,7 +91,7 @@ jobs:
 
       - name: Login to registry
         run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.PUSH_PACKAGE_TOKEN }} ${{ secrets.FORGEJO_DOMAIN }}
+          podman login -u ${{ github.actor }} -p ${{ secrets.FORGEJO_TOKEN }} ${{ secrets.FORGEJO_DOMAIN }}
 
       - name: Rewrite Node version for Docker
         id: rewrite-node-version
