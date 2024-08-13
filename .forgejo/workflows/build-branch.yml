@@ -68,8 +68,8 @@ jobs:
       image-digest: ${{ steps.docker_build.outputs.digest }}
 
     steps:
-      - run: apt update
-      - run: apt install -y podman docker.io
+      - run: podman -v
+      - run: node -v
 
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
