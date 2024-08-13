@@ -100,9 +100,9 @@ jobs:
 
       - uses: https://github.com/docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
         with:
-          registry: ${{ github.actor }}
-          username: ${{ secrets.GITHUB_TOKEN }}
-          password: ${{ secrets.FORGEJO_DOMAIN }}
+          registry: ${{ secrets.FORGEJO_DOMAIN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Login to registry
       #   run: |
