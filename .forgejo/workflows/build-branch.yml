@@ -104,9 +104,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Login to registry
-      #   run: |
-      #     podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ secrets.FORGEJO_DOMAIN }}
+      - name: Login to registry
+        run: |
+          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ secrets.FORGEJO_DOMAIN }}
 
       - name: Rewrite Node version for Docker
         id: rewrite-node-version
@@ -120,7 +120,7 @@ jobs:
           labels: ${{ steps.docker-metadata.outputs.labels }}
           build-args: |
             NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
-            "GIT_SHA=${{ github.sha }}"
+            GIT_SHA=${{ github.sha }}
           containerfiles: |
             ./Dockerfile
           extra-args: |
