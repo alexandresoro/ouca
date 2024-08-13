@@ -63,8 +63,8 @@ jobs:
       options: "--privileged --security-opt seccomp=unconfined"
 
     outputs:
-      image-label: ${{ steps.meta.outputs.version }}
-      image-digest: ${{ steps.docker_build.outputs.digest }}
+      image-label: ${{ steps.docker-metadata.outputs.version }}
+      image-digest: ${{ steps.build-image.outputs.digest }}
 
     steps:
       - run: apt update && apt install -y podman
@@ -88,10 +88,6 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
           flavor: |
             latest=false
-
-      - name: Login to registry
-        run: |
-          podman login -u ${{ github.actor }} -p ${{ secrets.FORGEJO_TOKEN }} ${{ secrets.FORGEJO_DOMAIN }}
 
       - name: Rewrite Node version for Docker
         id: rewrite-node-version
