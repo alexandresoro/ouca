@@ -33,12 +33,11 @@ jobs:
           sentry-org: ${{ vars.SENTRY_ORG }}
           sentry-project: ${{ vars.SENTRY_PROJECT }}
 
-#       - uses: ./.github/actions/auto-approve-pr
-#         if: ${{ github.actor == 'renovate[bot]' }}
-#         continue-on-error: true
-#         with:
-#           bot-app-id: ${{ secrets.BOT_APP_ID }}
-#           bot-private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - uses: ./.forgejo/actions/auto-approve-pr
+        if: ${{ github.actor == 'renovate' }}
+        continue-on-error: true
+        with:
+          tea-token: ${{ secrets.FORGEJO_TOKEN }}
 
   deploy-cloudflare:
     needs: validate-pr
