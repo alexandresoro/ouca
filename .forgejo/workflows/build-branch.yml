@@ -126,6 +126,8 @@ jobs:
     runs-on: docker
 
     steps:
+      - run: echo '${{ toJSON(needs) }}'
+
       - name: Dispatch backend image update to forgejo
         run: >
           curl --silent --show-error --fail
