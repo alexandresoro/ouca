@@ -98,14 +98,9 @@ jobs:
       # - uses: https://github.com/docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
       #   id: buildx
 
-      - uses: https://github.com/redhat-actions/podman-login@v1
-        with:
-          registry: ${{ secrets.FORGEJO_DOMAIN }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          # https://github.com/redhat-actions/podman-login/issues/41
-          auth_file_path: /run/containers/0/auth.json
-
+      - name: Login to registry
+        run: |
+          podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ secrets.FORGEJO_DOMAIN }}
 
       # - name: Rewrite Node version for Docker
       #   id: rewrite-node-version
