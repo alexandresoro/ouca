@@ -111,6 +111,7 @@ jobs:
           containerfiles: |
             ./Dockerfile
           extra-args: |
+            --cache-from ${{ secrets.FORGEJO_DOMAIN }}/alexandresoro/cache
             --cache-to ${{ secrets.FORGEJO_DOMAIN }}/alexandresoro/cache
 
       - uses: https://github.com/redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
