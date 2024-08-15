@@ -87,8 +87,8 @@ importers:
         specifier: 5.0.7
         version: 5.0.7
       neverthrow:
-        specifier: 7.0.0
-        version: 7.0.0
+        specifier: 7.0.1
+        version: 7.0.1
       pg:
         specifier: 8.12.0
         version: 8.12.0
@@ -2521,8 +2521,8 @@ packages:
     engines: {node: ^18 || >=20}
     hasBin: true
 
-  neverthrow@7.0.0:
-    resolution: {integrity: sha512-GDDz+SQGGZWIGYk3cL2Jf+RX7QYRJOsQltrbpBiSQiNVN4QJi3/YJhaZY4pRlDou+W3YSHk8DYBKMt4CDPBglg==}
+  neverthrow@7.0.1:
+    resolution: {integrity: sha512-NY1sD1wZn6dwwzV9/5KZ4wRIpH4xC7ARy3fGmnEi2Pi8CHDTWlp+WSF+if8cudrwuCWGrk2y2BE/dnGh070iuA==}
     engines: {node: '>=18'}
 
   node-abort-controller@3.1.1:
@@ -5713,7 +5713,7 @@ snapshots:
 
   nanoid@5.0.7: {}
 
-  neverthrow@7.0.0: {}
+  neverthrow@7.0.1: {}
 
   node-abort-controller@3.1.1: {}
 
