@@ -24,11 +24,6 @@
       ]
     }
   ],
-  "automergeSchedule": [
-    "after 23:30 every weekday",
-    "before 6:00 every weekday",
-    "before 7:00 every weekend"
-  ],
   "automergeStrategy": "squash",
   "timezone": "Europe/Paris"
 }
