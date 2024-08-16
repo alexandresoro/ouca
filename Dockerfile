@@ -43,6 +43,6 @@ WORKDIR /app/packages/backend/dist
 ARG GIT_SHA
 ENV SENTRY_RELEASE ${GIT_SHA}
 
-ENTRYPOINT ["node", "main.js"]
+ENTRYPOINT ["node", "--import", "@sentry/node/preload", "main.js"]
 
 EXPOSE 4000/tcp

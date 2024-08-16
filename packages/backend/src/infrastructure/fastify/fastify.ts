@@ -5,6 +5,7 @@ import { fastifySensible } from "@fastify/sensible";
 import fastifyUnderPressure from "@fastify/under-pressure";
 import { buildBullBoardAdapter } from "@infrastructure/bullmq/bullboard.js";
 import type { Queues } from "@infrastructure/bullmq/queues.js";
+import * as Sentry from "@sentry/node";
 import fastify, {
   type FastifyInstance,
   type RawReplyDefaultExpression,
@@ -13,7 +14,6 @@ import fastify, {
 } from "fastify";
 import type { Logger } from "pino";
 import { logger as loggerParent } from "../../utils/logger.js";
-import { sentryPlugin } from "./sentry-plugin.js";
 
 export const buildServer = async (
   queues: Queues,
@@ -59,7 +59,8 @@ export const buildServer = async (
   await server.register(serverAdapter.registerPlugin(), { basePath: "/jobs", prefix: "/jobs" });
   logger.debug("BullBoard successfully registered");
 
-  await server.register(sentryPlugin);
+  // Sentry
+  Sentry.setupFastifyErrorHandler(server);
 
   return server;
 };
