@@ -21,8 +21,8 @@
     "biome:ci": "biome ci *"
   },
   "dependencies": {
-    "@fontsource-variable/nunito": "5.0.19",
-    "@fontsource/carter-one": "5.0.12",
+    "@fontsource-variable/nunito": "5.0.20",
+    "@fontsource/carter-one": "5.0.13",
     "@headlessui/react": "2.1.2",
     "@hookform/resolvers": "3.9.0",
     "@ou-ca/common": "workspace:*",
