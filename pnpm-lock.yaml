@@ -118,8 +118,8 @@ importers:
         specifier: 20.16.2
         version: 20.16.2
       '@types/pg':
-        specifier: 8.11.7
-        version: 8.11.7
+        specifier: 8.11.8
+        version: 8.11.8
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
@@ -1560,8 +1560,8 @@ packages:
   '@types/pg-pool@2.0.4':
     resolution: {integrity: sha512-qZAvkv1K3QbmHHFYSNRYPkRjOWRLBYrL4B9c+wG0GSVGBw0NtJwPcgx/DSddeDJvRGMHCEQ4VMEVfuJ/0gZ3XQ==}
 
-  '@types/pg@8.11.7':
-    resolution: {integrity: sha512-k4VGqp1LQzJP5pSK2TR3bJGr9CnErXeRubUEtJu+l1hFGbUwKyMZEjLAlWpfGkrZAatz0O4jP4YPqDepv8CRbQ==}
+  '@types/pg@8.11.8':
+    resolution: {integrity: sha512-IqpCf8/569txXN/HoP5i1LjXfKZWL76Yr2R77xgeIICUbAYHeoaEZFhYHo2uDftecLWrTJUq63JvQu8q3lnDyA==}
 
   '@types/pg@8.6.1':
     resolution: {integrity: sha512-1Kc4oAGzAl7uqUStZCDvaLFqZrW9qWSjXOmBfdgyBP5La7Us6Mg4GBvRlSoaZMhQF/zSj1C8CtKMBkoiT8eL8w==}
@@ -4979,9 +4979,9 @@ snapshots:
 
   '@types/pg-pool@2.0.4':
     dependencies:
-      '@types/pg': 8.11.7
+      '@types/pg': 8.11.8
 
-  '@types/pg@8.11.7':
+  '@types/pg@8.11.8':
     dependencies:
       '@types/node': 20.16.2
       pg-protocol: 1.6.1
