@@ -10,18 +10,16 @@
   ],
   "packageRules": [
     {
-      "matchDepTypes": [
-        "devDependencies"
-      ],
-      "extends": [
-        ":automergeStableNonMajor"
-      ]
+      "matchDepTypes": ["devDependencies"],
+      "extends": [":automergeStableNonMajor"]
     },
     {
       "groupName": "bull-board",
-      "matchPackageNames": [
-        "@bull-board/{/,}**"
-      ]
+      "matchPackageNames": ["@bull-board/{/,}**"]
+    },
+    {
+      "matchPackageNames": ["@headlessui/react"],
+      "automerge": false
     }
   ],
   "automergeStrategy": "squash",
