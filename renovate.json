@@ -16,10 +16,6 @@
     {
       "groupName": "bull-board",
       "matchPackageNames": ["@bull-board/{/,}**"]
-    },
-    {
-      "matchPackageNames": ["@headlessui/react"],
-      "automerge": false
     }
   ],
   "automergeStrategy": "squash",
