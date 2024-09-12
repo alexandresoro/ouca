@@ -62,7 +62,7 @@
     "@faker-js/faker": "8.4.1",
     "@types/content-disposition": "0.5.8",
     "@types/node": "20.16.5",
-    "@types/pg": "8.11.8",
+    "@types/pg": "8.11.9",
     "dotenv": "16.4.5",
     "fishery": "2.2.2",
     "tsc-alias": "1.8.10",
