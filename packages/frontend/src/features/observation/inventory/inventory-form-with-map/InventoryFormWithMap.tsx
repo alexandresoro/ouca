@@ -29,7 +29,7 @@ const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = (prop
 
   useEffect(() => {
     setIsInventoryReady(false);
-    const inventoryDataToSet = props.mode === "update" ? props.inventory : props.initialData ?? RESET;
+    const inventoryDataToSet = props.mode === "update" ? props.inventory : (props.initialData ?? RESET);
     void setInventory(inventoryDataToSet).then(() => {
       setIsInventoryReady(true);
     });

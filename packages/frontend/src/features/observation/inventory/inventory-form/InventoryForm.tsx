@@ -192,7 +192,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
               <InventoryFormLocation
                 register={register}
                 control={control}
-                defaultDepartment={initialData != null ? undefined : defaultDepartment ?? undefined}
+                defaultDepartment={initialData != null ? undefined : (defaultDepartment ?? undefined)}
               />
             </div>
             {settings?.displayWeather && (

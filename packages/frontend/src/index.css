@@ -44,7 +44,7 @@
  * See https://caniuse.com/css-display-contents
  */
 .modal [data-headlessui-portal] {
-  @apply contents
+  @apply contents;
 }
 
 /* Apply small backdrop blur effect on opened modals to improve readability
@@ -82,7 +82,7 @@
     @apply border-error bg-error-content text-error dark:bg-error dark:text-info-content;
   }
 }
-  
+
 .display-linebreak {
   white-space: pre-line;
 }
