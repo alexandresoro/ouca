@@ -176,11 +176,11 @@ importers:
   packages/frontend:
     dependencies:
       '@fontsource-variable/nunito':
-        specifier: 5.0.20
-        version: 5.0.20
+        specifier: 5.0.21
+        version: 5.0.21
       '@fontsource/carter-one':
-        specifier: 5.0.13
-        version: 5.0.13
+        specifier: 5.0.14
+        version: 5.0.14
       '@headlessui/react':
         specifier: 2.1.2
         version: 2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -873,11 +873,11 @@ packages:
   '@floating-ui/utils@0.2.7':
     resolution: {integrity: sha512-X8R8Oj771YRl/w+c1HqAC1szL8zWQRwFvgDwT129k9ACdBoud/+/rX9V0qiMl6LWUdP9voC2nDVZYPMQQsb6eA==}
 
-  '@fontsource-variable/nunito@5.0.20':
-    resolution: {integrity: sha512-tlqEAxXOuq0usnkfBe22eeIuG6gbiO2P6SWsSMykD8dmLFNotag6Dg7g9ytGTV90NL+Q4lKObhh5duAeLjeDjg==}
+  '@fontsource-variable/nunito@5.0.21':
+    resolution: {integrity: sha512-2lUu3sjnK3jXyhKRjzurdssodD54kuHxbp5UoYzBCq2WLerXmvHH7zrkKSUZIc3sIAKqS86bskWR6hAE0NRQNg==}
 
-  '@fontsource/carter-one@5.0.13':
-    resolution: {integrity: sha512-Sqqr0E/Clz++NdTRgyiTj0297FZyFphEcPEQV8BKknVW8NrsQCoAdDFousq+bcEmuO6bJ9yvjHFdV3KlnNfEmA==}
+  '@fontsource/carter-one@5.0.14':
+    resolution: {integrity: sha512-zD8/KQliGtV39WLKChv1HJD8kqz0JMzqqL5s4g0/m1WqHMYW+oX1208V01CyQmNuXDf2t/u6bXLSGZqGMimNrw==}
 
   '@headlessui/react@2.1.2':
     resolution: {integrity: sha512-Kb3hgk9gRNRcTZktBrKdHhF3xFhYkca1Rk6e1/im2ENf83dgN54orMW0uSKTXFnUpZOUFZ+wcY05LlipwgZIFQ==}
@@ -4141,9 +4141,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.7': {}
 
-  '@fontsource-variable/nunito@5.0.20': {}
+  '@fontsource-variable/nunito@5.0.21': {}
 
-  '@fontsource/carter-one@5.0.13': {}
+  '@fontsource/carter-one@5.0.14': {}
 
   '@headlessui/react@2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
