@@ -109,8 +109,8 @@ importers:
         specifier: 1.8.3
         version: 1.8.3
       '@faker-js/faker':
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: 9.0.0
+        version: 9.0.0
       '@types/content-disposition':
         specifier: 0.5.8
         version: 0.5.8
@@ -792,9 +792,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@faker-js/faker@8.4.1':
-    resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+  '@faker-js/faker@9.0.0':
+    resolution: {integrity: sha512-dTDHJSmz6c1OJ6HO7jiUiIb4sB20Dlkb3pxYsKm0qTXm2Bmj97rlXIhlvaFsW2rvCi+OLlwKLVSS6ZxFUVZvjQ==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@fast-csv/format@4.3.5':
     resolution: {integrity: sha512-8iRn6QF3I8Ak78lNAa+Gdl5MJJBM5vRHivFtMRUWINdevNo00K7OXxS2PshawLKTejVwieIlPmK5YlLu6w4u8A==}
@@ -4007,7 +4007,7 @@ snapshots:
   '@esbuild/win32-x64@0.23.1':
     optional: true
 
-  '@faker-js/faker@8.4.1': {}
+  '@faker-js/faker@9.0.0': {}
 
   '@fast-csv/format@4.3.5':
     dependencies:
