@@ -10,7 +10,7 @@ RUN corepack enable
 
 COPY ./ /app/
 
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --filter @ou-ca/backend... --frozen-lockfile
 RUN pnpm run backend build
 
 # 2. Run the NodeJS backend
@@ -33,7 +33,7 @@ COPY package.json pnpm-*.yaml ./
 COPY /packages/common/package.json packages/common/package.json
 COPY /packages/backend/package.json packages/backend/package.json
 
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --filter @ou-ca/backend... --frozen-lockfile
 
 COPY --from=build /app/packages/common/dist/ packages/common/dist/
 COPY --from=build /app/packages/backend/dist/ packages/backend/dist/
