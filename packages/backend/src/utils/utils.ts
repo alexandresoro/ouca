@@ -1,6 +1,3 @@
-import { parse } from "date-fns";
-import { fr as locale } from "date-fns/locale";
-
 export const areSetsContainingSameValues = <T>(firstArray: Set<T>, secondArray: Set<T>): boolean => {
   // biome-ignore lint/style/useBlockStatements: <explanation>
   if (firstArray.size !== secondArray.size) return false;
@@ -14,16 +11,21 @@ export const isIdInListIds = <T>(ids: Set<T>, idToFind: T): boolean => {
 };
 
 export const getFormattedDate = (value: string): Date | null => {
-  const dateFormat = "dd/MM/yyyy";
+  // Supported format is: dd/MM/yyyy
 
-  const parsedDate = parse(value, dateFormat, new Date(), {
-    locale,
-  });
-
-  // As date-fns parsing is not exact and could provide surprises, we check that we indeed parsed a proper year
-  if (parsedDate.getFullYear() < 1000) {
+  const parts = value.split("/");
+  if (parts.length !== 3) {
     return null;
   }
+  const year = Number.parseInt(parts[2]);
+  const month = Number.parseInt(parts[1]) - 1;
+  const day = Number.parseInt(parts[0]);
+
+  if (year < 1000 || month < 0 || month > 11 || day < 1 || day > 31) {
+    return null;
+  }
+
+  const parsedDate = new Date(year, month, day);
 
   // Invalid date is represented by NaN which is not === to itself
   // biome-ignore lint/suspicious/noSelfCompare: <explanation>

@@ -59,9 +59,6 @@ importers:
       csv-parse:
         specifier: 5.5.6
         version: 5.5.6
-      date-fns:
-        specifier: 3.6.0
-        version: 3.6.0
       escape-string-regexp:
         specifier: 5.0.0
         version: 5.0.0
@@ -1948,9 +1945,6 @@ packages:
   daisyui@4.12.10:
     resolution: {integrity: sha512-jp1RAuzbHhGdXmn957Z2XsTZStXGHzFfF0FgIOZj3Wv9sH7OZgLfXTRZNfKVYxltGUOBsG1kbWAdF5SrqjebvA==}
     engines: {node: '>=16.9.0'}
-
-  date-fns@3.6.0:
-    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   dateformat@4.6.3:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
@@ -5411,8 +5405,6 @@ snapshots:
       postcss-js: 4.0.1(postcss@8.4.47)
     transitivePeerDependencies:
       - postcss
-
-  date-fns@3.6.0: {}
 
   dateformat@4.6.3: {}
 
