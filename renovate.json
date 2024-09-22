@@ -16,6 +16,11 @@
     {
       "groupName": "bull-board",
       "matchPackageNames": ["@bull-board/{/,}**"]
+    },
+    {
+      "groupName": "fastify-major",
+      "matchUpdateTypes": ["major"],
+      "matchPackageNames": ["fastify", "@fastify/{/,}**"]
     }
   ],
   "automergeStrategy": "squash",
