@@ -40,7 +40,7 @@
     "i18next-http-backend": "2.5.2",
     "jotai": "2.9.3",
     "lru-cache": "11.0.1",
-    "maplibre-gl": "4.5.2",
+    "maplibre-gl": "4.7.0",
     "oidc-client-ts": "3.0.1",
     "pmtiles": "3.0.7",
     "protomaps-themes-base": "3.1.0",
