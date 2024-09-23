@@ -93,8 +93,8 @@ importers:
         specifier: 11.0.3
         version: 11.0.3
       umzug:
-        specifier: 3.8.1
-        version: 3.8.1(@types/node@20.16.6)
+        specifier: 3.8.2
+        version: 3.8.2(@types/node@20.16.6)
       zod:
         specifier: 3.23.8
         version: 3.23.8
@@ -3502,8 +3502,8 @@ packages:
   typewise@1.0.3:
     resolution: {integrity: sha512-aXofE06xGhaQSPzt8hlTY+/YWQhm9P0jYUp1f2XtmW/3Bk0qzXcyFWAtPoo2uTGQj1ZwbDuSyuxicq+aDo8lCQ==}
 
-  umzug@3.8.1:
-    resolution: {integrity: sha512-k0HjOc3b/s8vH24BUTvnaFiKhfWI9UQAGpqHDG+3866CGlBTB83Xs5wZ1io1mwYLj/GHvQ34AxKhbpYnWtkRJg==}
+  umzug@3.8.2:
+    resolution: {integrity: sha512-BEWEF8OJjTYVC56GjELeHl/1XjFejrD7aHzn+HldRJTx+pL1siBrKHZC8n4K/xL3bEzVA9o++qD1tK2CpZu4KA==}
     engines: {node: '>=12'}
 
   undici-types@6.19.8:
@@ -6967,7 +6967,7 @@ snapshots:
     dependencies:
       typewise-core: 1.2.0
 
-  umzug@3.8.1(@types/node@20.16.6):
+  umzug@3.8.2(@types/node@20.16.6):
     dependencies:
       '@rushstack/ts-command-line': 4.22.8(@types/node@20.16.6)
       emittery: 0.13.1
