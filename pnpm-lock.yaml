@@ -39,8 +39,8 @@ importers:
         specifier: 5.6.0
         version: 5.6.0
       '@fastify/under-pressure':
-        specifier: 8.5.1
-        version: 8.5.1
+        specifier: 8.5.2
+        version: 8.5.2
       '@ou-ca/common':
         specifier: workspace:*
         version: link:../common
@@ -840,8 +840,8 @@ packages:
   '@fastify/static@6.12.0':
     resolution: {integrity: sha512-KK1B84E6QD/FcQWxDI2aiUCwHxMJBI1KeCUzm1BwYpPY1b742+jeKruGHP2uOluuM6OkBPI8CIANrXcCRtC2oQ==}
 
-  '@fastify/under-pressure@8.5.1':
-    resolution: {integrity: sha512-4PRp1Y29yNSqNnMIwL9CyBtNP6rqLnY0JmZ0TMzCYj28k9Lw0nrqI6A2JxNQZd0jzbls/8LN4TcuRW2HEqQVmw==}
+  '@fastify/under-pressure@8.5.2':
+    resolution: {integrity: sha512-aFLFN2Vt1UPlt4b1m1wEr8eOzwcPUKNhda6g9OFbQ+pHLE6aStm2nGrd7DujqHFJBYEf1j6mPh0ZpsZIqQQz2Q==}
 
   '@fastify/view@8.2.0':
     resolution: {integrity: sha512-hBSiBofCnJNlPHEMZWpO1SL84eqOaqujJ1hR3jntFyZZCkweH5jMs12DKYyGesjVll7SJFRRxPUBB8kmUmneRQ==}
@@ -4105,7 +4105,7 @@ snapshots:
       glob: 8.1.0
       p-limit: 3.1.0
 
-  '@fastify/under-pressure@8.5.1':
+  '@fastify/under-pressure@8.5.2':
     dependencies:
       '@fastify/error': 3.4.1
       fastify-plugin: 4.5.1

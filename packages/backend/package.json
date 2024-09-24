@@ -34,7 +34,7 @@
     "@fastify/etag": "5.2.0",
     "@fastify/multipart": "8.3.0",
     "@fastify/sensible": "5.6.0",
-    "@fastify/under-pressure": "8.5.1",
+    "@fastify/under-pressure": "8.5.2",
     "@ou-ca/common": "workspace:*",
     "@sentry/node": "8.31.0",
     "@turf/helpers": "7.1.0",
