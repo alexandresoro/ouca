@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.2",
-    "lefthook": "1.7.16"
+    "lefthook": "1.7.17"
   },
   "engines": {
     "node": "^20.16"
