@@ -23,7 +23,7 @@ export const fetchAltitudeFromIGNAlticodage = async ({
   });
 
   const responseResult = await fromPromise(fetch(`${ALTICODAGE_URL}?${searchParams.toString()}`), (error) => {
-    logger.error({ error }, "An error has occurred while trying to fetch the altitude provider");
+    logger.error(error, "An error has occurred while trying to fetch the altitude provider");
     return "fetchError" as const;
   });
 
@@ -34,7 +34,7 @@ export const fetchAltitudeFromIGNAlticodage = async ({
   const response = responseResult.value;
 
   const responseBodyResult = await fromPromise(response.json(), (error) => {
-    logger.error({ error }, "An error has occurred while trying to parse the altitude result");
+    logger.error(error, "An error has occurred while trying to parse the altitude result");
     return "parseError" as const;
   });
 
