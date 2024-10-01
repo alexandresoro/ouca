@@ -3,7 +3,8 @@ import { type Result, err, fromPromise, ok } from "neverthrow";
 import { z } from "zod";
 import { logger } from "../../../utils/logger.js";
 
-const ALTICODAGE_URL = "https://wxs.ign.fr/choisirgeoportail/alti/rest/elevation.json";
+// https://geoservices.ign.fr/documentation/services/services-geoplateforme/altimetrie
+const ALTICODAGE_URL = "https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest/elevation.json";
 
 // When IGN does not support the area, it returns -99999 as the altitude
 const UNSUPPORTED_AREA_ALTITUDE_RESULT = -99999;
@@ -20,6 +21,7 @@ export const fetchAltitudeFromIGNAlticodage = async ({
     lat: `${latitude}`,
     lon: `${longitude}`,
     zonly: "true",
+    resource: "ign_rge_alti_wld",
   });
 
   const responseResult = await fromPromise(fetch(`${ALTICODAGE_URL}?${searchParams.toString()}`), (error) => {
