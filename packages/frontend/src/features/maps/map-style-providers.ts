@@ -17,7 +17,7 @@ const osmProtoMapsAtom = atom<MapStyle>((get) => {
           '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
       },
     },
-    layers: layers("protomaps", "light"),
+    layers: layers("protomaps", "light", navigator.language ?? "en"),
   };
 });
 
