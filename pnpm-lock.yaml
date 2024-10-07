@@ -257,8 +257,8 @@ importers:
         specifier: 7.1.7
         version: 7.1.7(maplibre-gl@4.7.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-oidc-context:
-        specifier: 3.1.1
-        version: 3.1.1(oidc-client-ts@3.1.0)(react@18.3.1)
+        specifier: 3.2.0
+        version: 3.2.0(oidc-client-ts@3.1.0)(react@18.3.1)
       react-router-dom:
         specifier: 6.26.2
         version: 6.26.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3109,11 +3109,11 @@ packages:
       maplibre-gl:
         optional: true
 
-  react-oidc-context@3.1.1:
-    resolution: {integrity: sha512-pXZYVUVOU+wnLFZVh5HFGiAyAHpy0mm7mZBVp5oNuCln/7yd+Uhb7KfYI2QN+LLQI0kIv6FHIcqeUFjMIsM5gA==}
+  react-oidc-context@3.2.0:
+    resolution: {integrity: sha512-ZLaCRLWV84Cn9pFdsatmblqxLMv0np69GWVXq9RWGqAjppdOGXNIbIxWMByIio0oSCVUwdeqwYRnJme0tjqd8A==}
     engines: {node: '>=18'}
     peerDependencies:
-      oidc-client-ts: ^3.0.0
+      oidc-client-ts: ^3.1.0
       react: '>=16.8.0'
 
   react-refresh@0.14.2:
@@ -6569,7 +6569,7 @@ snapshots:
     optionalDependencies:
       maplibre-gl: 4.7.1
 
-  react-oidc-context@3.1.1(oidc-client-ts@3.1.0)(react@18.3.1):
+  react-oidc-context@3.2.0(oidc-client-ts@3.1.0)(react@18.3.1):
     dependencies:
       oidc-client-ts: 3.1.0
       react: 18.3.1
