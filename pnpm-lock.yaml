@@ -230,8 +230,8 @@ importers:
         specifier: 4.7.1
         version: 4.7.1
       oidc-client-ts:
-        specifier: 3.0.1
-        version: 3.0.1
+        specifier: 3.1.0
+        version: 3.1.0
       pmtiles:
         specifier: 3.2.0
         version: 3.2.0
@@ -258,7 +258,7 @@ importers:
         version: 7.1.7(maplibre-gl@4.7.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-oidc-context:
         specifier: 3.1.1
-        version: 3.1.1(oidc-client-ts@3.0.1)(react@18.3.1)
+        version: 3.1.1(oidc-client-ts@3.1.0)(react@18.3.1)
       react-router-dom:
         specifier: 6.26.2
         version: 6.26.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2765,8 +2765,8 @@ packages:
   obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
 
-  oidc-client-ts@3.0.1:
-    resolution: {integrity: sha512-xX8unZNtmtw3sOz4FPSqDhkLFnxCDsdo2qhFEH2opgWnF/iXMFoYdBQzkwCxAZVgt3FT3DnuBY3k80EZHT0RYg==}
+  oidc-client-ts@3.1.0:
+    resolution: {integrity: sha512-IDopEXjiwjkmJLYZo6BTlvwOtnlSniWZkKZoXforC/oLZHC9wkIxd25Kwtmo5yKFMMVcsp3JY6bhcNJqdYk8+g==}
     engines: {node: '>=18'}
 
   on-exit-leak-free@2.1.2:
@@ -6249,7 +6249,7 @@ snapshots:
 
   obuf@1.1.2: {}
 
-  oidc-client-ts@3.0.1:
+  oidc-client-ts@3.1.0:
     dependencies:
       jwt-decode: 4.0.0
 
@@ -6569,9 +6569,9 @@ snapshots:
     optionalDependencies:
       maplibre-gl: 4.7.1
 
-  react-oidc-context@3.1.1(oidc-client-ts@3.0.1)(react@18.3.1):
+  react-oidc-context@3.1.1(oidc-client-ts@3.1.0)(react@18.3.1):
     dependencies:
-      oidc-client-ts: 3.0.1
+      oidc-client-ts: 3.1.0
       react: 18.3.1
 
   react-refresh@0.14.2: {}
