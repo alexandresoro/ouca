@@ -5,7 +5,7 @@ import layers from "protomaps-themes-base";
 import type { MapStyle } from "react-map-gl/maplibre";
 
 const osmProtoMapsAtom = atom<MapStyle>((get) => {
-  const protomapsOsmUrl = get(configAtom).protomapsOsmUrl;
+  const protomapsOsmUrl = `${get(configAtom).staticAssetsUrl}${get(configAtom).protomapsUrlPath}`;
   return {
     version: 8,
     glyphs: "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf",
@@ -24,6 +24,7 @@ const osmProtoMapsAtom = atom<MapStyle>((get) => {
 export type MapProvider = "osm" | "ign" | "ignClassique" | "ignSatellite";
 
 export const mapStyleProvidersAtom = atom((get) => {
+  const { staticAssetsUrl } = get(configAtom);
   const osmProtoMaps = get(osmProtoMapsAtom);
   return {
     osm: {
@@ -43,7 +44,7 @@ export const mapStyleProvidersAtom = atom((get) => {
     },
     ignSatellite: {
       nameKey: "maps.maps.ignSatellite.name",
-      mapboxStyle: "https://maps.ou-ca.app/ign-satellite.json",
+      mapboxStyle: `${staticAssetsUrl}/ign-satellite.json`,
     },
   } satisfies Record<
     MapProvider,

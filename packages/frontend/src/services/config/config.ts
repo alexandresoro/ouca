@@ -9,7 +9,8 @@ export type AppConfig = {
   umami?: UmamiConfig;
   oidc: Pick<UserManagerSettings, "authority" | "client_id">;
   sentry?: Sentry.BrowserOptions;
-  protomapsOsmUrl?: string;
+  staticAssetsUrl?: string;
+  protomapsUrlPath?: string;
 };
 
 export const configAtom = atom<AppConfig>(null as unknown as AppConfig);
