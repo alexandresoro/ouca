@@ -46,7 +46,7 @@ runs:
     - run: echo "ignore-workspace-root-check=true" >> .npmrc
       shell: bash
 
-    - uses: https://github.com/cloudflare/wrangler-action@9681c2997648301493e78cacbfb790a9f19c833f # v3
+    - uses: https://github.com/cloudflare/wrangler-action@168bc28b7078db16f6f1ecc26477fc2248592143 # v3
       with:
         apiToken: ${{ inputs.cloudflare-api-token }}
         accountId: ${{ inputs.cloudflare-account-id }}
