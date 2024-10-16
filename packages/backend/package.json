@@ -49,7 +49,7 @@
     "nanoid": "5.0.7",
     "neverthrow": "8.0.0",
     "pg": "8.13.0",
-    "pino": "9.4.0",
+    "pino": "9.5.0",
     "pino-pretty": "11.3.0",
     "serialize-error": "11.0.3",
     "umzug": "3.8.2",
