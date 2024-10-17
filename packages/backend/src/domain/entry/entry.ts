@@ -1,3 +1,4 @@
+import { BREEDER_CODES } from "@domain/behavior/breeder.js";
 import type { AccessFailureReason } from "@domain/shared/failure-reason.js";
 import { z } from "zod";
 import type { SearchCriteria } from "../search/search-criteria.js";
@@ -66,3 +67,40 @@ export type EntryCreateInput = {
   environmentIds: string[];
   comment?: string | null;
 };
+
+export const entryForExportSchema = z.object({
+  id: z.string(),
+  observerName: z.string(),
+  inventoryDate: z.date(),
+  inventoryTime: z.string().nullable(),
+  inventoryDuration: z.string().nullable(),
+  inventoryAltitude: z.number().nullable(),
+  inventoryLatitude: z.number().nullable(),
+  inventoryLongitude: z.number().nullable(),
+  departmentCode: z.string(),
+  townCode: z.number(),
+  townName: z.string(),
+  localityName: z.string(),
+  localityAltitude: z.number(),
+  localityLatitude: z.number(),
+  localityLongitude: z.number(),
+  temperature: z.number().nullable(),
+  className: z.string().nullable(),
+  speciesCode: z.string(),
+  speciesName: z.string(),
+  speciesScientificName: z.string(),
+  sexName: z.string(),
+  ageName: z.string(),
+  number: z.number().nullable(),
+  numberEstimateName: z.string(),
+  distanceEstimateName: z.string().nullable(),
+  distance: z.number().nullable(),
+  comment: z.string().nullable(),
+  behaviors: z.array(z.string()),
+  breeders: z.array(z.enum(BREEDER_CODES)),
+  environments: z.array(z.string()),
+  weathers: z.array(z.string()),
+  associates: z.array(z.string()),
+});
+
+export type EntryForExport = z.infer<typeof entryForExportSchema>;
