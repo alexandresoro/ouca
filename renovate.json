@@ -20,7 +20,7 @@
     {
       "groupName": "fastify-major",
       "matchUpdateTypes": ["major"],
-      "matchPackageNames": ["fastify", "@fastify/{/,}**"]
+      "matchPackageNames": ["fastify", "@fastify/{/,}**", "@bull-board/{/,}**"]
     }
   ],
   "automergeStrategy": "squash",
