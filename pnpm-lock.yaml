@@ -78,8 +78,8 @@ importers:
         specifier: 5.0.7
         version: 5.0.7
       neverthrow:
-        specifier: 8.0.0
-        version: 8.0.0
+        specifier: 8.1.0
+        version: 8.1.0
       pg:
         specifier: 8.13.0
         version: 8.13.0
@@ -2720,8 +2720,8 @@ packages:
     engines: {node: ^18 || >=20}
     hasBin: true
 
-  neverthrow@8.0.0:
-    resolution: {integrity: sha512-SX2Z50+U27I+CF3NwHE9J8MB6+bYRRub3U+1nAKxnL6c+2vW2l/WsYEC0e3Wqg8DwiJvrquqE0YhxlVTzGJGsg==}
+  neverthrow@8.1.0:
+    resolution: {integrity: sha512-DV0klbzcsI0XOJvdGElzJ2sEXmEPwQLWio/ttq7D7CQApUduxqzNG2noc8ZPaAFc9XXINYVb0f5ozM0ZJKGF1w==}
     engines: {node: '>=18'}
 
   node-abort-controller@3.1.1:
@@ -6221,7 +6221,9 @@ snapshots:
 
   nanoid@5.0.7: {}
 
-  neverthrow@8.0.0: {}
+  neverthrow@8.1.0:
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.24.0
 
   node-abort-controller@3.1.1: {}
 
