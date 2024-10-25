@@ -145,8 +145,8 @@ importers:
   packages/common:
     dependencies:
       proj4:
-        specifier: 2.13.1
-        version: 2.13.1
+        specifier: 2.13.2
+        version: 2.13.2
       zod:
         specifier: 3.23.8
         version: 3.23.8
@@ -3012,8 +3012,8 @@ packages:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
 
-  proj4@2.13.1:
-    resolution: {integrity: sha512-jtP/8HwhWTESBjLPpRiIfesFXQnjuufwkiUsDNbdngzD+UrU00svBrEs0bDYnsHp/4p/z8QBw0JMXlOI3tsNZw==}
+  proj4@2.13.2:
+    resolution: {integrity: sha512-M3ls8JWX3hIOA/T9FIgRDfeoh0QqVUUNmk0aovRJxJ6svYZmbx4mAvykzTMXaVgaLh0YBx8Qw8qKYNS9Xn4vvQ==}
 
   protocol-buffers-schema@3.6.0:
     resolution: {integrity: sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw==}
@@ -6488,7 +6488,7 @@ snapshots:
 
   progress@2.0.3: {}
 
-  proj4@2.13.1:
+  proj4@2.13.2:
     dependencies:
       mgrs: 1.0.0
       wkt-parser: 1.3.3
