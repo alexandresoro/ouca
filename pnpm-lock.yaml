@@ -233,8 +233,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0
       pmtiles:
-        specifier: 3.2.0
-        version: 3.2.0
+        specifier: 3.2.1
+        version: 3.2.1
       protomaps-themes-base:
         specifier: 4.2.0
         version: 4.2.0
@@ -2881,8 +2881,8 @@ packages:
     resolution: {integrity: sha512-B7+VDyb8Tl6oMJT9oSO2CW8XC/T4UcJGrwOVoNGwOQsQYhlpfajmrMj5xeejqaASq3V/EqThyOeATEOMuSEXiA==}
     engines: {node: '>=12'}
 
-  pmtiles@3.2.0:
-    resolution: {integrity: sha512-4v3Nw5xeMxaUReLZQTz3PyM4VM/Lx/Xp/rc2GGEWMl0nqAmcb+gjyi+eOTwfPu8LnB0ash36hz0dV76uYvih5A==}
+  pmtiles@3.2.1:
+    resolution: {integrity: sha512-3R4fBwwoli5mw7a6t1IGwOtfmcSAODq6Okz0zkXhS1zi9sz1ssjjIfslwPvcWw5TNhdjNBUg9fgfPLeqZlH6ng==}
 
   point-in-polygon-hao@1.1.0:
     resolution: {integrity: sha512-3hTIM2j/v9Lio+wOyur3kckD4NxruZhpowUbEgmyikW+a2Kppjtu1eN+AhnMQtoHW46zld88JiYWv6fxpsDrTQ==}
@@ -6349,7 +6349,7 @@ snapshots:
     dependencies:
       queue-lit: 1.5.2
 
-  pmtiles@3.2.0:
+  pmtiles@3.2.1:
     dependencies:
       '@types/leaflet': 1.9.14
       fflate: 0.8.2
