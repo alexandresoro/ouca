@@ -39,7 +39,7 @@
     "i18next": "23.16.4",
     "i18next-http-backend": "2.6.2",
     "jotai": "2.9.3",
-    "lru-cache": "11.0.1",
+    "lru-cache": "11.0.2",
     "maplibre-gl": "4.7.1",
     "oidc-client-ts": "3.1.0",
     "pmtiles": "3.2.1",
