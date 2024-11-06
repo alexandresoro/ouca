@@ -11,9 +11,7 @@ import type { AgeService } from "../age/age-service.js";
 import type { BehaviorService } from "../behavior/behavior-service.js";
 import type { DepartmentService } from "../department/department-service.js";
 import type { DistanceEstimateService } from "../distance-estimate/distance-estimate-service.js";
-import type { EntryService } from "../entry/entry-service.js";
 import type { EnvironmentService } from "../environment/environment-service.js";
-import type { InventoryService } from "../inventory/inventory-service.js";
 import type { LocalityService } from "../locality/locality-service.js";
 import type { NumberEstimateService } from "../number-estimate/number-estimate-service.js";
 import type { ObserverService } from "../observer/observer-service.js";
@@ -32,9 +30,7 @@ type ExportServiceDependencies = {
   classService: SpeciesClassService;
   departmentService: DepartmentService;
   distanceEstimateService: DistanceEstimateService;
-  entryService: EntryService;
   environmentService: EnvironmentService;
-  inventoryService: InventoryService;
   localityService: LocalityService;
   numberEstimateService: NumberEstimateService;
   observerService: ObserverService;
@@ -52,9 +48,7 @@ export const buildExportService = (dependencies: ExportServiceDependencies) => {
     classService,
     departmentService,
     distanceEstimateService,
-    entryService,
     environmentService,
-    inventoryService,
     localityService,
     numberEstimateService,
     observerService,
