@@ -40,7 +40,7 @@
     "@turf/helpers": "7.1.0",
     "bullmq": "5.29.1",
     "content-disposition": "0.5.4",
-    "csv-parse": "5.5.6",
+    "csv-parse": "5.6.0",
     "escape-string-regexp": "5.0.0",
     "exceljs": "4.4.0",
     "fastify": "4.28.1",
