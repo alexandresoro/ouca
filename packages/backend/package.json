@@ -61,7 +61,7 @@
     "@types/content-disposition": "0.5.8",
     "@types/node": "20.17.9",
     "@types/pg": "8.11.10",
-    "dotenv": "16.4.5",
+    "dotenv": "16.4.7",
     "fishery": "2.2.2",
     "tsc-alias": "1.8.10",
     "tsx": "4.19.2",
