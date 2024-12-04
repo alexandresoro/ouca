@@ -38,7 +38,7 @@
     "@ou-ca/common": "workspace:*",
     "@sentry/node": "8.40.0",
     "@turf/helpers": "7.1.0",
-    "bullmq": "5.29.1",
+    "bullmq": "5.31.1",
     "content-disposition": "0.5.4",
     "csv-parse": "5.6.0",
     "escape-string-regexp": "5.0.0",
