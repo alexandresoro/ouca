@@ -288,8 +288,8 @@ importers:
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.0)
       '@types/geojson':
-        specifier: 7946.0.14
-        version: 7946.0.14
+        specifier: 7946.0.15
+        version: 7946.0.15
       '@types/node':
         specifier: 20.17.9
         version: 20.17.9
@@ -1586,6 +1586,9 @@ packages:
 
   '@types/geojson@7946.0.14':
     resolution: {integrity: sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==}
+
+  '@types/geojson@7946.0.15':
+    resolution: {integrity: sha512-9oSxFzDCT2Rj6DfcHF8G++jxBKS7mBqXl5xrRW+Kbvjry6Uduya2iiwqHPhVXpasAVMBYKkEPGgKhd3+/HZ6xA==}
 
   '@types/leaflet@1.9.14':
     resolution: {integrity: sha512-sx2q6MDJaajwhKeVgPSvqXd8rhNJSTA3tMidQGduZn9S6WBYxDkCpSpV5xXEmSg7Cgdk/5vJGhVF1kMYLzauBg==}
@@ -4903,14 +4906,14 @@ snapshots:
   '@turf/bbox-polygon@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@turf/bbox@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
       '@turf/meta': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@turf/boolean-disjoint@7.1.0':
@@ -4920,14 +4923,14 @@ snapshots:
       '@turf/line-intersect': 7.1.0
       '@turf/meta': 7.1.0
       '@turf/polygon-to-line': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@turf/boolean-point-in-polygon@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
       '@turf/invariant': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       point-in-polygon-hao: 1.2.1
       tslib: 2.8.1
 
@@ -4935,7 +4938,7 @@ snapshots:
     dependencies:
       '@turf/helpers': 7.1.0
       '@turf/invariant': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@turf/boolean-within@7.1.0':
@@ -4945,14 +4948,14 @@ snapshots:
       '@turf/boolean-point-on-line': 7.1.0
       '@turf/helpers': 7.1.0
       '@turf/invariant': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@turf/convex@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
       '@turf/meta': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       concaveman: 1.2.1
       tslib: 2.8.1
 
@@ -4964,26 +4967,26 @@ snapshots:
   '@turf/invariant@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@turf/line-intersect@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       sweepline-intersections: 1.5.0
       tslib: 2.8.1
 
   '@turf/meta@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@turf/polygon-to-line@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
       '@turf/invariant': 7.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       tslib: 2.8.1
 
   '@types/argparse@1.0.38': {}
@@ -5021,23 +5024,25 @@ snapshots:
 
   '@types/geojson-vt@3.2.5':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/geojson@7946.0.14': {}
 
+  '@types/geojson@7946.0.15': {}
+
   '@types/leaflet@1.9.14':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/mapbox-gl@3.4.1':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/mapbox__point-geometry@0.1.4': {}
 
   '@types/mapbox__vector-tile@1.3.4':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/mapbox__point-geometry': 0.1.4
       '@types/pbf': 3.0.5
 
@@ -5088,7 +5093,7 @@ snapshots:
 
   '@types/supercluster@7.1.3':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/tedious@4.0.14':
     dependencies:
@@ -6113,7 +6118,7 @@ snapshots:
       '@mapbox/vector-tile': 1.3.1
       '@mapbox/whoots-js': 3.1.0
       '@maplibre/maplibre-gl-style-spec': 20.4.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/geojson-vt': 3.2.5
       '@types/mapbox__point-geometry': 0.1.4
       '@types/mapbox__vector-tile': 1.3.4
