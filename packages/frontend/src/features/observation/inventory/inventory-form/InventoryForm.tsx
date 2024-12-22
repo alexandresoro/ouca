@@ -87,7 +87,10 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
           // Brand new inventory
           observerId: settings?.defaultObserverId ?? null,
           associateIds: [],
-          date: new Date().toISOString().slice(0, 10),
+          // https://stackoverflow.com/a/37649046
+          date: new Date()
+            .toLocaleString("en-us", { year: "numeric", month: "2-digit", day: "2-digit" })
+            .replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$1-$2"),
           time: null,
           duration: null,
           localityId: null,
