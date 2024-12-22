@@ -1,11 +1,18 @@
 import { configAtom } from "@services/config/config";
+import { isBrowserUsingDarkModeAtom } from "@utils/dom/browser-dark-mode-atom";
 import type { ParseKeys } from "i18next";
 import { atom } from "jotai";
 import layers from "protomaps-themes-base";
 import type { MapStyle } from "react-map-gl/maplibre";
 
+const protoMapsStyleAtom = atom((get) => {
+  return get(isBrowserUsingDarkModeAtom) ? "dark" : "light";
+});
+
 const osmProtoMapsAtom = atom<MapStyle>((get) => {
   const protomapsOsmUrl = `${get(configAtom).staticAssetsUrl}${get(configAtom).protomapsUrlPath}`;
+  const style = get(protoMapsStyleAtom);
+
   return {
     version: 8,
     glyphs: "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf",
@@ -18,7 +25,7 @@ const osmProtoMapsAtom = atom<MapStyle>((get) => {
           '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
       },
     },
-    layers: layers("protomaps", "light", navigator.language ?? "en"),
+    layers: layers("protomaps", style, navigator.language ?? "en"),
   };
 });
 
