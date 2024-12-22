@@ -254,8 +254,8 @@ importers:
         specifier: 9.13.1
         version: 9.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-map-gl:
-        specifier: 7.1.7
-        version: 7.1.7(maplibre-gl@4.7.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 7.1.8
+        version: 7.1.8(maplibre-gl@4.7.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-oidc-context:
         specifier: 3.2.0
         version: 3.2.0(oidc-client-ts@3.1.0)(react@18.3.1)
@@ -3106,8 +3106,8 @@ packages:
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
-  react-map-gl@7.1.7:
-    resolution: {integrity: sha512-mwjc0obkBJOXCcoXQr3VoLqmqwo9vS4bXfbGsdxXzEgVCv/PM0v+1QggL7W0d/ccIy+VCjbXNlGij+PENz6VNg==}
+  react-map-gl@7.1.8:
+    resolution: {integrity: sha512-zwF16XMOdOKH4py5ehS1bgQIChqW8UN3b1bXps+JnADbYLSbOoUPQ3tNw0EZ2OTBWArR5aaQlhlEqg4lE47T8A==}
     peerDependencies:
       mapbox-gl: '>=1.13.0'
       maplibre-gl: '>=1.13.0'
@@ -6566,7 +6566,7 @@ snapshots:
 
   react-is@17.0.2: {}
 
-  react-map-gl@7.1.7(maplibre-gl@4.7.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-map-gl@7.1.8(maplibre-gl@4.7.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@maplibre/maplibre-gl-style-spec': 19.3.3
       '@types/mapbox-gl': 3.4.1
