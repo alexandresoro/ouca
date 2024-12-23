@@ -3,7 +3,7 @@ import RequiredField from "./RequiredField";
 
 type TextInputProps = {
   textInputClassName?: string;
-  label?: string | JSX.Element;
+  label?: string | React.JSX.Element;
   hasError?: boolean;
   helperMessage?: string;
   suffix?: string;
