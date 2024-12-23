@@ -221,8 +221,8 @@ importers:
         specifier: 2.7.1
         version: 2.7.1
       jotai:
-        specifier: 2.9.3
-        version: 2.9.3(@types/react@18.3.18)(react@18.3.1)
+        specifier: 2.11.0
+        version: 2.11.0(@types/react@18.3.18)(react@18.3.1)
       lru-cache:
         specifier: 11.0.2
         version: 11.0.2
@@ -2403,8 +2403,8 @@ packages:
   jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
 
-  jotai@2.9.3:
-    resolution: {integrity: sha512-IqMWKoXuEzWSShjd9UhalNsRGbdju5G2FrqNLQJT+Ih6p41VNYe2sav5hnwQx4HJr25jq9wRqvGSWGviGG6Gjw==}
+  jotai@2.11.0:
+    resolution: {integrity: sha512-zKfoBBD1uDw3rljwHkt0fWuja1B76R7CjznuBO+mSX6jpsO1EBeWNRKpeaQho9yPI/pvCv4recGfgOXGxwPZvQ==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'
@@ -5929,7 +5929,7 @@ snapshots:
 
   jju@1.4.0: {}
 
-  jotai@2.9.3(@types/react@18.3.18)(react@18.3.1):
+  jotai@2.11.0(@types/react@18.3.18)(react@18.3.1):
     optionalDependencies:
       '@types/react': 18.3.18
       react: 18.3.1
