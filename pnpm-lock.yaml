@@ -233,8 +233,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0
       pmtiles:
-        specifier: 3.2.1
-        version: 3.2.1
+        specifier: 4.1.0
+        version: 4.1.0
       protomaps-themes-base:
         specifier: 4.3.0
         version: 4.3.0
@@ -1584,9 +1584,6 @@ packages:
   '@types/geojson@7946.0.15':
     resolution: {integrity: sha512-9oSxFzDCT2Rj6DfcHF8G++jxBKS7mBqXl5xrRW+Kbvjry6Uduya2iiwqHPhVXpasAVMBYKkEPGgKhd3+/HZ6xA==}
 
-  '@types/leaflet@1.9.15':
-    resolution: {integrity: sha512-7UuggAuAs+mva66gtf2OTB1nEhzU/9JED93TIaOEgvFMvG/dIGQaukHE7izHo1Zd+Ko1L4ETUw7TBc8yUxevpg==}
-
   '@types/mapbox-gl@3.4.1':
     resolution: {integrity: sha512-NsGKKtgW93B+UaLPti6B7NwlxYlES5DpV5Gzj9F75rK5ALKsqSk15CiEHbOnTr09RGbr6ZYiCdI+59NNNcAImg==}
 
@@ -2898,8 +2895,8 @@ packages:
     resolution: {integrity: sha512-B7+VDyb8Tl6oMJT9oSO2CW8XC/T4UcJGrwOVoNGwOQsQYhlpfajmrMj5xeejqaASq3V/EqThyOeATEOMuSEXiA==}
     engines: {node: '>=12'}
 
-  pmtiles@3.2.1:
-    resolution: {integrity: sha512-3R4fBwwoli5mw7a6t1IGwOtfmcSAODq6Okz0zkXhS1zi9sz1ssjjIfslwPvcWw5TNhdjNBUg9fgfPLeqZlH6ng==}
+  pmtiles@4.1.0:
+    resolution: {integrity: sha512-wymKYI61y3yI/iTzYHW18l6ViYBnF7TXbFnXb9q7RcWqkQ2EfgQVDzEIc5lImd3aAVkxu2tuWaoYhokov6N9VA==}
 
   point-in-polygon-hao@1.2.4:
     resolution: {integrity: sha512-x2pcvXeqhRHlNRdhLs/tgFapAbSSe86wa/eqmj1G6pWftbEs5aVRJhRGM6FYSUERKu0PjekJzMq0gsI2XyiclQ==}
@@ -5013,10 +5010,6 @@ snapshots:
 
   '@types/geojson@7946.0.15': {}
 
-  '@types/leaflet@1.9.15':
-    dependencies:
-      '@types/geojson': 7946.0.15
-
   '@types/mapbox-gl@3.4.1':
     dependencies:
       '@types/geojson': 7946.0.15
@@ -6380,9 +6373,8 @@ snapshots:
     dependencies:
       queue-lit: 1.5.2
 
-  pmtiles@3.2.1:
+  pmtiles@4.1.0:
     dependencies:
-      '@types/leaflet': 1.9.15
       fflate: 0.8.2
 
   point-in-polygon-hao@1.2.4:
