@@ -12,7 +12,12 @@ const Root = createRoot(document.getElementById("root")!);
 
 initApp()
   .then(({ sentryRouter, ErrorBoundary }) => {
-    const router = (sentryRouter ?? createBrowserRouter)(routes(ErrorBoundary));
+    const router = (sentryRouter ?? createBrowserRouter)(routes(ErrorBoundary), {
+      future: {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        v7_relativeSplatPath: true,
+      },
+    });
 
     Root.render(
       <StrictMode>
