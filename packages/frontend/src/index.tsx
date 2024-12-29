@@ -16,6 +16,14 @@ initApp()
       future: {
         // biome-ignore lint/style/useNamingConvention: <explanation>
         v7_relativeSplatPath: true,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        v7_fetcherPersist: true,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        v7_normalizeFormMethod: true,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        v7_partialHydration: true,
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        v7_skipActionErrorRevalidation: true,
       },
     });
 

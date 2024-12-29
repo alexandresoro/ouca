@@ -29,7 +29,13 @@ const App: FunctionComponent<AppProps> = ({ router }) => {
           window.history.replaceState({}, document.title, window.location.pathname);
         }}
       >
-        <RouterProvider router={router} />
+        <RouterProvider
+          future={{
+            // biome-ignore lint/style/useNamingConvention: <explanation>
+            v7_startTransition: true,
+          }}
+          router={router}
+        />
       </AuthProvider>
     </div>
   );
