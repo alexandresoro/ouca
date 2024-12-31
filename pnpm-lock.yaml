@@ -301,7 +301,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react':
         specifier: 4.3.4
-        version: 4.3.4(vite@6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.6.1))
+        version: 4.3.4(vite@6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0))
       autoprefixer:
         specifier: 10.4.20
         version: 10.4.20(postcss@8.4.49)
@@ -325,7 +325,7 @@ importers:
         version: 5.7.2
       vite:
         specifier: 6.0.6
-        version: 6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.6.1)
+        version: 6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0)
 
 packages:
 
@@ -3675,8 +3675,8 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
-  yaml@2.6.1:
-    resolution: {integrity: sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==}
+  yaml@2.7.0:
+    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
     engines: {node: '>= 14'}
     hasBin: true
 
@@ -5086,14 +5086,14 @@ snapshots:
     dependencies:
       '@types/node': 20.17.10
 
-  '@vitejs/plugin-react@4.3.4(vite@6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.6.1))':
+  '@vitejs/plugin-react@4.3.4(vite@6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.6.1)
+      vite: 6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6412,7 +6412,7 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.49):
     dependencies:
       lilconfig: 3.1.3
-      yaml: 2.6.1
+      yaml: 2.7.0
     optionalDependencies:
       postcss: 8.4.49
 
@@ -7059,7 +7059,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.6.1):
+  vite@6.0.6(@types/node@20.17.10)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0):
     dependencies:
       esbuild: 0.24.2
       postcss: 8.4.49
@@ -7069,7 +7069,7 @@ snapshots:
       fsevents: 2.3.3
       jiti: 1.21.7
       tsx: 4.19.2
-      yaml: 2.6.1
+      yaml: 2.7.0
 
   void-elements@3.1.0: {}
 
@@ -7122,7 +7122,7 @@ snapshots:
 
   yallist@4.0.0: {}
 
-  yaml@2.6.1: {}
+  yaml@2.7.0: {}
 
   yocto-queue@0.1.0: {}
 
