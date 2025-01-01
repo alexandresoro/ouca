@@ -1,5 +1,5 @@
 import type { FunctionComponent } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import Header from "./header/Header";
 import NotificationSnackbar from "./notifications/NotificationSnackbar";
 

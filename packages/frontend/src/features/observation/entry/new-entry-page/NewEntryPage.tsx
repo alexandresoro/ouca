@@ -1,7 +1,7 @@
 import StyledPanelHeader from "@layouts/StyledPanelHeader";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import NewEntryFormContainer from "../new-entry-form-container/NewEntryFormContainer";
 import NewEntryPageStepper from "./NewEntryPageStepper";
 import { type NewEntryStep, getNewEntryStepFromHash } from "./new-entry-hash-step-mapper";

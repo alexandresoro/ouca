@@ -3,7 +3,7 @@ import type { UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { useApiInventoryCreate } from "@services/api/inventory/api-inventory-queries";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 import { ENTRY_STEP, INVENTORY_STEP, type NewEntryStep } from "../new-entry-page/new-entry-hash-step-mapper";
 import EntryStepContainer from "../steps/entry-step-container/EntryStepContainer";
 import InventoryStepContainer from "../steps/inventory-step-container/InventoryStepContainer";

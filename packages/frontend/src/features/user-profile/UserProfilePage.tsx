@@ -5,7 +5,7 @@ import { generateUniqueNickname } from "@services/unique-name/unique-name";
 import stringToColor from "@utils/user-profile/stringToColor";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const UserProfilePage: FunctionComponent = () => {
   const { t } = useTranslation();

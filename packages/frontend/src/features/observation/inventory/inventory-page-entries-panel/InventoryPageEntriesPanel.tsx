@@ -5,7 +5,7 @@ import { useApiEntryDelete, useApiEntryUpdate } from "@services/api/entry/api-en
 import { Plus } from "@styled-icons/boxicons-regular";
 import { Fragment, type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import DeleteEntryConfirmationDialog from "../../entry/delete-entry-confirmation-dialog/DeleteEntryConfirmationDialog";
 import { ENTRY_STEP } from "../../entry/new-entry-page/new-entry-hash-step-mapper";
 import UpdateEntryDialogContainer from "../../entry/update-entry-dialog-container/UpdateEntryDialogContainer";

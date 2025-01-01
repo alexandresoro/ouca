@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { type ReactElement, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { hasAuthParams, useAuth } from "react-oidc-context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export const AuthHandler = ({ children }: { children: ReactElement }): ReactElement => {
   const { t } = useTranslation();

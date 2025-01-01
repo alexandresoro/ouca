@@ -4,7 +4,7 @@ import { addProtocol, removeProtocol } from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import { type FunctionComponent, useEffect } from "react";
 import { AuthProvider } from "react-oidc-context";
-import { RouterProvider, type createBrowserRouter } from "react-router-dom";
+import { RouterProvider, type createBrowserRouter } from "react-router";
 
 type AppProps = {
   router: ReturnType<typeof createBrowserRouter>;
@@ -29,13 +29,7 @@ const App: FunctionComponent<AppProps> = ({ router }) => {
           window.history.replaceState({}, document.title, window.location.pathname);
         }}
       >
-        <RouterProvider
-          future={{
-            // biome-ignore lint/style/useNamingConvention: <explanation>
-            v7_startTransition: true,
-          }}
-          router={router}
-        />
+        <RouterProvider router={router} />
       </AuthProvider>
     </div>
   );

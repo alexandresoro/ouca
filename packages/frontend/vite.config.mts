@@ -17,7 +17,7 @@ const injectEnvIntoHtmlPlugin = (mode: string): PluginOption => {
 // Dependencies that are set in their own chunk
 const CHUNKS_MAPPING = {
   react: ["react", "react-dom"],
-  reactrouter: ["react-router-dom"],
+  reactrouter: ["react-router"],
   reacthookform: ["react-hook-form", "@hookform/resolvers"],
   zod: ["zod"],
   maplibregl: ["maplibre-gl"],

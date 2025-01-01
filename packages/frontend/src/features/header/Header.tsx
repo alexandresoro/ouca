@@ -1,5 +1,5 @@
 import type { FunctionComponent } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Logo from "../../assets/img/logo.svg";
 import HeaderActions from "./HeaderActions";
 import HeaderSettings from "./HeaderSettings";

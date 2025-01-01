@@ -2,7 +2,7 @@ import { getMeResponse } from "@ou-ca/common/api/me";
 import { useApiMutation } from "@services/api/useApiMutation";
 import { type UseApiQuerySWROptions, useApiQuery } from "@services/api/useApiQuery";
 import { FetchError } from "@utils/fetch-api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import type { SWRMutationConfiguration } from "swr/dist/mutation";
 import type { z } from "zod";
 

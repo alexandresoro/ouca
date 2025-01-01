@@ -3,7 +3,7 @@ import { useApiCreateAccount } from "@services/api/user/api-user-queries";
 import { FetchError } from "@utils/fetch-api";
 import { type FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const NewAccount: FunctionComponent = () => {
   const { t } = useTranslation();

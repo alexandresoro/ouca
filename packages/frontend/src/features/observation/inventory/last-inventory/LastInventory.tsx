@@ -3,7 +3,7 @@ import { useApiFetch } from "@services/api/useApiFetch";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 
 const LastInventory: FunctionComponent = () => {
   const { t } = useTranslation();

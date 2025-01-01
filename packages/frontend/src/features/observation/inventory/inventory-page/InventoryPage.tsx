@@ -5,7 +5,7 @@ import { FetchError } from "@utils/fetch-api";
 import type { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import InventoryPageEntriesPanel from "../inventory-page-entries-panel/InventoryPageEntriesPanel";
 import InventoryPagePanel from "../inventory-page-panel/InventoryPagePanel";
 

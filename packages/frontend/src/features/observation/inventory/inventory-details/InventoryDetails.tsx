@@ -4,7 +4,7 @@ import { CopyAlt } from "@styled-icons/boxicons-regular";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
 type InventoryDetailsProps = {

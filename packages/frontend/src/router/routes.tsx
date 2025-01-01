@@ -1,6 +1,6 @@
 import type * as Sentry from "@sentry/react";
 import { Fragment } from "react";
-import { Navigate, Outlet, type RouteObject } from "react-router-dom";
+import { Navigate, Outlet, type RouteObject } from "react-router";
 import { AuthHandler } from "../features/AuthHandler";
 import ErrorBoundary from "../features/ErrorBoundary";
 import Layout from "../features/Layout";

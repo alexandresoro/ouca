@@ -8,7 +8,7 @@ import {
   matchRoutes,
   useLocation,
   useNavigationType,
-} from "react-router-dom";
+} from "react-router";
 
 // This will bundle the whole sentry package
 // Take care to dynamically load this entry so that it can be lazy loaded
