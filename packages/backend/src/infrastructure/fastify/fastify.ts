@@ -1,4 +1,3 @@
-import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import { fastifySensible } from "@fastify/sensible";
@@ -37,7 +36,6 @@ export const buildServer = async (
   // Middlewares
   await server.register(fastifySensible);
   await server.register(fastifyMultipart);
-  await server.register(fastifyCompress);
   await server.register(fastifyCors, {
     origin: true,
     credentials: true,
