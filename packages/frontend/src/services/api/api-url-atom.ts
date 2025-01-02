@@ -5,7 +5,7 @@ const API_PATH = "/api/v1";
 
 export const apiUrlAtom = atom((get) => {
   const config = get(configAtom);
-  const apiUrl = config.apiUrl ?? "";
+  const apiUrl = config.apiUrl;
 
   return `${apiUrl}${API_PATH}`;
 });
