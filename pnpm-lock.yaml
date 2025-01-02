@@ -72,8 +72,8 @@ importers:
         specifier: 4.29.0
         version: 4.29.0
       fastify-type-provider-zod:
-        specifier: 2.1.0
-        version: 2.1.0(fastify@4.29.0)(zod@3.24.1)
+        specifier: 4.0.2
+        version: 4.0.2(fastify@4.29.0)(zod@3.24.1)
       ioredis:
         specifier: 5.4.2
         version: 5.4.2
@@ -825,6 +825,9 @@ packages:
 
   '@fastify/error@3.4.1':
     resolution: {integrity: sha512-wWSvph+29GR783IhmvdwWnN4bUxTD01Vm5Xad4i7i1VuAOItLvbPAb69sb0IQ2N57yprvhNIwAP5B6xfKTmjmQ==}
+
+  '@fastify/error@4.0.0':
+    resolution: {integrity: sha512-OO/SA8As24JtT1usTUTKgGH7uLvhfwZPwlptRi2Dp5P4KKmJI3gvsZ8MIHnNwDs4sLf/aai5LzTyl66xr7qMxA==}
 
   '@fastify/etag@5.2.0':
     resolution: {integrity: sha512-8uFpxgMCH2Q91j6Ty5aMOTdfEy2azu+elLR9leMlYWrk5pN+NbM30riVjgr42jj0Mm6VOvtXhSMVLL7zVxaRXQ==}
@@ -2131,10 +2134,10 @@ packages:
   fastify-plugin@4.5.1:
     resolution: {integrity: sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==}
 
-  fastify-type-provider-zod@2.1.0:
-    resolution: {integrity: sha512-p0plQyrxVR1IxJaOVbKRkduYh74HAS6Pm2szhFrc/vFdfIEu8UWo/cPFZCrcKyeo8ICjWbHH1zkx8lWw/ivpqg==}
+  fastify-type-provider-zod@4.0.2:
+    resolution: {integrity: sha512-FDRzSL3ZuoZ+4YDevR1YOinmDKkxOdy3QB9dDR845sK+bQvDroPKhHAXLEAOObDxL7SMA0OZN/A4osrNBTdDTQ==}
     peerDependencies:
-      fastify: ^4.0.0
+      fastify: ^5.0.0
       zod: ^3.14.2
 
   fastify@4.29.0:
@@ -4048,6 +4051,8 @@ snapshots:
 
   '@fastify/error@3.4.1': {}
 
+  '@fastify/error@4.0.0': {}
+
   '@fastify/etag@5.2.0':
     dependencies:
       fastify-plugin: 4.5.1
@@ -5613,8 +5618,9 @@ snapshots:
 
   fastify-plugin@4.5.1: {}
 
-  fastify-type-provider-zod@2.1.0(fastify@4.29.0)(zod@3.24.1):
+  fastify-type-provider-zod@4.0.2(fastify@4.29.0)(zod@3.24.1):
     dependencies:
+      '@fastify/error': 4.0.0
       fastify: 4.29.0
       zod: 3.24.1
       zod-to-json-schema: 3.24.1(zod@3.24.1)
