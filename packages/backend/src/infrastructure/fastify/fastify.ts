@@ -13,6 +13,7 @@ import fastify, {
   type RawRequestDefaultExpression,
   type RawServerDefault,
 } from "fastify";
+import { createJsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import type { Logger } from "pino";
 import { logger as loggerParent } from "../../utils/logger.js";
 
@@ -35,6 +36,11 @@ export const buildServer = async (
     trustProxy: true,
   });
 
+  // Zod type provider
+  server.setValidatorCompiler(validatorCompiler);
+  server.setSerializerCompiler(serializerCompiler);
+
+  // OpenAPI spec
   server.register(fastifySwagger, {
     openapi: {
       openapi: "3.1.1",
@@ -43,8 +49,19 @@ export const buildServer = async (
         version: "1.0.0",
         description: "",
       },
+      components: {
+        securitySchemes: {
+          token: {
+            type: "http",
+            scheme: "bearer",
+          },
+        },
+      },
     },
     hideUntagged: true,
+    transform: createJsonSchemaTransform({
+      skipList: ["/healthz"],
+    }),
   });
   server.register(fastifySwaggerUI);
 
