@@ -5,7 +5,7 @@ import type { UserManagerSettings } from "oidc-client-ts";
 
 // Application configuration structure
 export type AppConfig = {
-  apiUrl?: string;
+  apiUrl: string;
   umami?: UmamiConfig;
   oidc: Pick<UserManagerSettings, "authority" | "client_id">;
   sentry?: Sentry.BrowserOptions;

@@ -31,8 +31,6 @@ const CHUNKS_MAPPING = {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
-  const apiServerUrl = env.API_SERVER_URL ?? "http://localhost:4000";
-
   const enableSentry = env.ENABLE_SENTRY?.toLowerCase() === "true";
 
   return {
@@ -66,12 +64,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       open: true,
-      proxy: {
-        "/api/v1": apiServerUrl,
-        "/download": apiServerUrl,
-        "/uploads": apiServerUrl,
-        "/import-status": apiServerUrl,
-      },
     },
     plugins: [
       injectEnvIntoHtmlPlugin(mode),
