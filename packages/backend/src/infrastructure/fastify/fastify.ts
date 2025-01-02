@@ -1,6 +1,8 @@
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import { fastifySensible } from "@fastify/sensible";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUI from "@fastify/swagger-ui";
 import fastifyUnderPressure from "@fastify/under-pressure";
 import { buildBullBoardAdapter } from "@infrastructure/bullmq/bullboard.js";
 import type { Queues } from "@infrastructure/bullmq/queues.js";
@@ -32,6 +34,19 @@ export const buildServer = async (
     bodyLimit: 1048576 * 10, // 10 MB
     trustProxy: true,
   });
+
+  server.register(fastifySwagger, {
+    openapi: {
+      openapi: "3.1.1",
+      info: {
+        title: "Ou ca API",
+        version: "1.0.0",
+        description: "",
+      },
+    },
+    hideUntagged: true,
+  });
+  server.register(fastifySwaggerUI);
 
   // Middlewares
   await server.register(fastifySensible);
