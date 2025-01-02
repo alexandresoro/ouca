@@ -15,14 +15,14 @@ This project also provides a web application that consumes the API and allows a 
 - _pnpm 8_ or later
 - PostgreSQL 15 or newer to store the data.
 - A Redis instance used as temporary cache.
-- An OIDC provider to provide authentication services. 
+- An OIDC provider to provide authentication services.
 
-Most of the app is independent of the OIDC provider as it follows standard claims except for roles that may be handled differently depending on the provider. 
+Most of the app is independent of the OIDC provider as it follows standard claims except for roles that may be handled differently depending on the provider.
 Hence, currently only [Zitadel](https://zitadel.com/) is supported, but additional providers can be easily added.
 
 ## API structure
 
-Backend is exposed via a REST API available under `/api/v1/`.
+Backend is exposed via a REST API available under `/v1/`.
 
 The application exposes a static path at `/download`, that is to be used for two use cases: database exports and imports report files. The exact file paths are returned by their respective REST actions.
 

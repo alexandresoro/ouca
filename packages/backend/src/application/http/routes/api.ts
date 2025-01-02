@@ -9,7 +9,7 @@ import { userController } from "../controllers/user-controller.js";
 
 const logger = loggerParent.child({ module: "fastify" });
 
-const API_V1_PREFIX = "/api/v1";
+const V1_PREFIX = "/v1";
 
 export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fastify, { services }) => {
   // Zod type provider
@@ -40,7 +40,7 @@ export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fast
   // OpenAPI spec for API
   await fastify.register(fastifySwaggerUi);
 
-  await fastify.register(apiV1Routes, { services, prefix: API_V1_PREFIX });
-  await fastify.register(userController, { services, prefix: `${API_V1_PREFIX}/user` });
+  await fastify.register(apiV1Routes, { services, prefix: V1_PREFIX });
+  await fastify.register(userController, { services, prefix: `${V1_PREFIX}/user` });
   logger.debug("Fastify API routes registered");
 };
