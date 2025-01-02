@@ -22,7 +22,7 @@ import { townsController } from "./controllers/towns-controller.js";
 import { weathersController } from "./controllers/weathers-controller.js";
 import { handleAuthorizationHook } from "./hooks/handle-authorization-hook.js";
 
-export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fastify, { services }) => {
+export const apiV1Routes: FastifyPluginAsync<{ services: Services }> = async (fastify, { services }) => {
   // API needs authentication/authorization
   fastify.decorateRequest("user", null);
   fastify.addHook("onRequest", async (request, reply) => {
