@@ -9,7 +9,7 @@ import { userController } from "../controllers/user-controller.js";
 
 const logger = loggerParent.child({ module: "fastify" });
 
-const API_V1_PREFIX = "api/v1";
+const API_V1_PREFIX = "/api/v1";
 
 export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fastify, { services }) => {
   // Zod type provider
