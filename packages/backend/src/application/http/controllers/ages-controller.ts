@@ -123,15 +123,7 @@ export const agesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertAgeInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const ageCreateResult = await ageService.createAge(input, req.user);
+      const ageCreateResult = await ageService.createAge(req.body, req.user);
 
       if (ageCreateResult.isErr()) {
         switch (ageCreateResult.error) {
@@ -158,15 +150,7 @@ export const agesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertAgeInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const ageUpdateResult = await ageService.updateAge(req.params.id, input, req.user);
+      const ageUpdateResult = await ageService.updateAge(req.params.id, req.body, req.user);
 
       if (ageUpdateResult.isErr()) {
         switch (ageUpdateResult.error) {

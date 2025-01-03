@@ -123,15 +123,7 @@ export const environmentsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const environmentResult = await environmentService.createEnvironment(input, req.user);
+      const environmentResult = await environmentService.createEnvironment(req.body, req.user);
 
       if (environmentResult.isErr()) {
         switch (environmentResult.error) {
@@ -158,15 +150,7 @@ export const environmentsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const environmentResult = await environmentService.updateEnvironment(req.params.id, input, req.user);
+      const environmentResult = await environmentService.updateEnvironment(req.params.id, req.body, req.user);
 
       if (environmentResult.isErr()) {
         switch (environmentResult.error) {

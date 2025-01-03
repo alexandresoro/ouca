@@ -123,15 +123,7 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const numberEstimateCreateResult = await numberEstimateService.createNumberEstimate(input, req.user);
+      const numberEstimateCreateResult = await numberEstimateService.createNumberEstimate(req.body, req.user);
 
       if (numberEstimateCreateResult.isErr()) {
         switch (numberEstimateCreateResult.error) {
@@ -158,17 +150,9 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
       const numberEstimateUpdateResult = await numberEstimateService.updateNumberEstimate(
         req.params.id,
-        input,
+        req.body,
         req.user,
       );
 

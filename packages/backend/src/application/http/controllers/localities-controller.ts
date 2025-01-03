@@ -144,15 +144,7 @@ export const localitiesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertLocalityInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const localityCreateResult = await localityService.createLocality(input, req.user);
+      const localityCreateResult = await localityService.createLocality(req.body, req.user);
 
       if (localityCreateResult.isErr()) {
         switch (localityCreateResult.error) {
@@ -179,15 +171,7 @@ export const localitiesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertLocalityInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const localityUpdateResult = await localityService.updateLocality(req.params.id, input, req.user);
+      const localityUpdateResult = await localityService.updateLocality(req.params.id, req.body, req.user);
 
       if (localityUpdateResult.isErr()) {
         switch (localityUpdateResult.error) {

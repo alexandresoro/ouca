@@ -127,15 +127,7 @@ export const departmentsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertDepartmentInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const departmentResult = await departmentService.createDepartment(input, req.user);
+      const departmentResult = await departmentService.createDepartment(req.body, req.user);
 
       if (departmentResult.isErr()) {
         switch (departmentResult.error) {
@@ -162,15 +154,7 @@ export const departmentsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertDepartmentInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const departmentResult = await departmentService.updateDepartment(req.params.id, input, req.user);
+      const departmentResult = await departmentService.updateDepartment(req.params.id, req.body, req.user);
 
       if (departmentResult.isErr()) {
         switch (departmentResult.error) {

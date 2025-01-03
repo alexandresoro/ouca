@@ -146,15 +146,7 @@ export const speciesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const speciesResult = await speciesService.createSpecies(input, req.user);
+      const speciesResult = await speciesService.createSpecies(req.body, req.user);
 
       if (speciesResult.isErr()) {
         switch (speciesResult.error) {
@@ -181,15 +173,7 @@ export const speciesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const speciesResult = await speciesService.updateSpecies(req.params.id, input, req.user);
+      const speciesResult = await speciesService.updateSpecies(req.params.id, req.body, req.user);
 
       if (speciesResult.isErr()) {
         switch (speciesResult.error) {

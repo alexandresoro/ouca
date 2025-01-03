@@ -114,15 +114,7 @@ export const entriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertEntryInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const entryResult = await entryService.createEntry(input, req.user);
+      const entryResult = await entryService.createEntry(req.body, req.user);
 
       if (entryResult.isErr()) {
         switch (entryResult.error.type) {
@@ -166,15 +158,7 @@ export const entriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertEntryInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const entryResult = await entryService.updateEntry(req.params.id, input, req.user);
+      const entryResult = await entryService.updateEntry(req.params.id, req.body, req.user);
 
       if (entryResult.isErr()) {
         switch (entryResult.error.type) {

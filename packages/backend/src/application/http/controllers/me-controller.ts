@@ -57,24 +57,16 @@ export const meController: FastifyPluginCallbackZod<{
         return await reply.status(401).send();
       }
 
-      const parsedInputResult = putMeInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
       const reshapedInput = {
-        defaultObserverId: input.defaultObserver ?? undefined,
-        defaultDepartmentId: input.defaultDepartment ?? undefined,
-        defaultAgeId: input.defaultAge ?? undefined,
-        defaultSexId: input.defaultSexe ?? undefined,
-        defaultNumberEstimateId: input.defaultEstimationNombre ?? undefined,
-        defaultNumber: input.defaultNombre ?? undefined,
-        displayAssociates: input.areAssociesDisplayed ?? undefined,
-        displayWeather: input.isMeteoDisplayed ?? undefined,
-        displayDistance: input.isDistanceDisplayed ?? undefined,
+        defaultObserverId: req.body.defaultObserver ?? undefined,
+        defaultDepartmentId: req.body.defaultDepartment ?? undefined,
+        defaultAgeId: req.body.defaultAge ?? undefined,
+        defaultSexId: req.body.defaultSexe ?? undefined,
+        defaultNumberEstimateId: req.body.defaultEstimationNombre ?? undefined,
+        defaultNumber: req.body.defaultNombre ?? undefined,
+        displayAssociates: req.body.areAssociesDisplayed ?? undefined,
+        displayWeather: req.body.isMeteoDisplayed ?? undefined,
+        displayDistance: req.body.isDistanceDisplayed ?? undefined,
       } satisfies User["settings"];
 
       const updatedUser = await userService.updateSettings(req.user.id, reshapedInput);

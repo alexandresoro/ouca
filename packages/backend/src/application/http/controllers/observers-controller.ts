@@ -124,15 +124,7 @@ export const observersController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertObserverInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const observerCreateResult = await observerService.createObserver(input, req.user);
+      const observerCreateResult = await observerService.createObserver(req.body, req.user);
 
       if (observerCreateResult.isErr()) {
         switch (observerCreateResult.error) {
@@ -159,15 +151,7 @@ export const observersController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertObserverInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const observerUpdateResult = await observerService.updateObserver(req.params.id, input, req.user);
+      const observerUpdateResult = await observerService.updateObserver(req.params.id, req.body, req.user);
 
       if (observerUpdateResult.isErr()) {
         switch (observerUpdateResult.error) {

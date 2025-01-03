@@ -123,15 +123,7 @@ export const sexesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertSexInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const sexCreateResult = await sexService.createSex(input, req.user);
+      const sexCreateResult = await sexService.createSex(req.body, req.user);
 
       if (sexCreateResult.isErr()) {
         switch (sexCreateResult.error) {
@@ -158,15 +150,7 @@ export const sexesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertSexInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const sexUpdateResult = await sexService.updateSex(req.params.id, input, req.user);
+      const sexUpdateResult = await sexService.updateSex(req.params.id, req.body, req.user);
 
       if (sexUpdateResult.isErr()) {
         switch (sexUpdateResult.error) {

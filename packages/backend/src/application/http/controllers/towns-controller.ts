@@ -131,15 +131,7 @@ export const townsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertTownInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const townCreateResult = await townService.createTown(input, req.user);
+      const townCreateResult = await townService.createTown(req.body, req.user);
 
       if (townCreateResult.isErr()) {
         switch (townCreateResult.error) {
@@ -166,15 +158,7 @@ export const townsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertTownInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const townUpdateResult = await townService.updateTown(req.params.id, input, req.user);
+      const townUpdateResult = await townService.updateTown(req.params.id, req.body, req.user);
 
       if (townUpdateResult.isErr()) {
         switch (townUpdateResult.error) {

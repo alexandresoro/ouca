@@ -141,15 +141,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertInventoryInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send(parsedInputResult.error);
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const inventoryResult = await inventoryService.createInventory(input, req.user);
+      const inventoryResult = await inventoryService.createInventory(req.body, req.user);
 
       // TODO handle duplicate inventory
       if (inventoryResult.isErr()) {
@@ -195,15 +187,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertInventoryInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send(parsedInputResult.error);
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const inventoryResult = await inventoryService.updateInventory(req.params.id, input, req.user);
+      const inventoryResult = await inventoryService.updateInventory(req.params.id, req.body, req.user);
 
       if (inventoryResult.isErr()) {
         switch (inventoryResult.error.type) {

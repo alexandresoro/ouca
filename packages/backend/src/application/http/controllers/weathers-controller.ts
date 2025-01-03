@@ -123,15 +123,7 @@ export const weathersController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertWeatherInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const weatherResult = await weatherService.createWeather(input, req.user);
+      const weatherResult = await weatherService.createWeather(req.body, req.user);
 
       if (weatherResult.isErr()) {
         switch (weatherResult.error) {
@@ -158,15 +150,7 @@ export const weathersController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertWeatherInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const weatherResult = await weatherService.updateWeather(req.params.id, input, req.user);
+      const weatherResult = await weatherService.updateWeather(req.params.id, req.body, req.user);
 
       if (weatherResult.isErr()) {
         switch (weatherResult.error) {

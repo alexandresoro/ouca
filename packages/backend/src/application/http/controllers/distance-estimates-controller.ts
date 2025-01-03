@@ -123,15 +123,7 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const distanceEstimateCreateResult = await distanceEstimateService.createDistanceEstimate(input, req.user);
+      const distanceEstimateCreateResult = await distanceEstimateService.createDistanceEstimate(req.body, req.user);
 
       if (distanceEstimateCreateResult.isErr()) {
         switch (distanceEstimateCreateResult.error) {
@@ -158,17 +150,9 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
       const distanceEstimateUpdateResult = await distanceEstimateService.updateDistanceEstimate(
         req.params.id,
-        input,
+        req.body,
         req.user,
       );
 

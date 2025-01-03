@@ -123,15 +123,7 @@ export const behaviorsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertBehaviorInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const behaviorResult = await behaviorService.createBehavior(input, req.user);
+      const behaviorResult = await behaviorService.createBehavior(req.body, req.user);
 
       if (behaviorResult.isErr()) {
         switch (behaviorResult.error) {
@@ -158,15 +150,7 @@ export const behaviorsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertBehaviorInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const behaviorResult = await behaviorService.updateBehavior(req.params.id, input, req.user);
+      const behaviorResult = await behaviorService.updateBehavior(req.params.id, req.body, req.user);
 
       if (behaviorResult.isErr()) {
         switch (behaviorResult.error) {

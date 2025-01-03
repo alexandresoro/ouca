@@ -125,15 +125,7 @@ export const classesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertClassInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const speciesClassCreateResult = await classService.createSpeciesClass(input, req.user);
+      const speciesClassCreateResult = await classService.createSpeciesClass(req.body, req.user);
 
       if (speciesClassCreateResult.isErr()) {
         switch (speciesClassCreateResult.error) {
@@ -160,15 +152,7 @@ export const classesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedInputResult = upsertClassInput.safeParse(req.body);
-
-      if (!parsedInputResult.success) {
-        return await reply.status(422).send();
-      }
-
-      const { data: input } = parsedInputResult;
-
-      const speciesClassUpdateResult = await classService.updateSpeciesClass(req.params.id, input, req.user);
+      const speciesClassUpdateResult = await classService.updateSpeciesClass(req.params.id, req.body, req.user);
 
       if (speciesClassUpdateResult.isErr()) {
         switch (speciesClassUpdateResult.error) {
