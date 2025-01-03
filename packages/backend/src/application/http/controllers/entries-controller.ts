@@ -68,21 +68,13 @@ export const entriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getEntriesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
-      if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+      if (req.query.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
         return await reply.status(403).send();
       }
 
       const paginatedResults = Result.combine([
-        await entryService.findPaginatedEntries(req.user, queryParams),
-        await entryService.getEntriesCount(req.user, queryParams),
+        await entryService.findPaginatedEntries(req.user, req.query),
+        await entryService.getEntriesCount(req.user, req.query),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -105,7 +97,7 @@ export const entriesController: FastifyPluginCallbackZod<{
 
       const response = getEntriesResponse.parse({
         data: enrichedEntries,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

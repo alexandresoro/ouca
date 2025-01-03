@@ -308,22 +308,14 @@ export const generateExportController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getSearchCriteriaParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
-      if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+      if (req.query.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
         return await reply.status(403).send();
       }
 
       // If we don't want to see all users' entries, we need to filter by ownerId
       const reshapedQueryParams = {
-        ...queryParams,
-        ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
+        ...req.query,
+        ownerId: req.query.fromAllUsers ? undefined : req.user?.id,
       };
 
       // TODO add search criteria

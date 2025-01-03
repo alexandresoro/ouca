@@ -72,17 +72,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getInventoryIndexParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const inventoryIndexResult = await inventoryService.findInventoryIndex(
-        req.params.id,
-        parsedQueryParamsResult.data,
-        req.user,
-      );
+      const inventoryIndexResult = await inventoryService.findInventoryIndex(req.params.id, req.query, req.user);
 
       if (inventoryIndexResult.isErr()) {
         switch (inventoryIndexResult.error) {
@@ -111,16 +101,8 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getInventoriesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await inventoryService.findPaginatedInventories(req.user, queryParams),
+        await inventoryService.findPaginatedInventories(req.user, req.query),
         await inventoryService.getInventoriesCount(req.user),
       ]);
 
@@ -142,7 +124,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
 
       const response = getInventoriesResponse.parse({
         data: enrichedInventoriesResults.map((enrichedInventoryResult) => enrichedInventoryResult._unsafeUnwrap()),
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

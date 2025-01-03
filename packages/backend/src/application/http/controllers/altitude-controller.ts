@@ -17,15 +17,7 @@ export const altitudeController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getAltitudeQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.unprocessableEntity();
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
-      const altitudeResult = await altitudeService.getAltitude(queryParams);
+      const altitudeResult = await altitudeService.getAltitude(req.query);
 
       if (altitudeResult.isErr()) {
         switch (altitudeResult.error) {

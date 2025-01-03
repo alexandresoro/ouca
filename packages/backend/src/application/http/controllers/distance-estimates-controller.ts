@@ -90,17 +90,9 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getDistanceEstimatesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await distanceEstimateService.findPaginatedDistanceEstimates(req.user, queryParams),
-        await distanceEstimateService.getDistanceEstimatesCount(req.user, queryParams.q),
+        await distanceEstimateService.findPaginatedDistanceEstimates(req.user, req.query),
+        await distanceEstimateService.getDistanceEstimatesCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -114,7 +106,7 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
 
       const response = getDistanceEstimatesResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

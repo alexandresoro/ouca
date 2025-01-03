@@ -90,17 +90,9 @@ export const agesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await ageService.findPaginatedAges(req.user, queryParams),
-        await ageService.getAgesCount(req.user, queryParams.q),
+        await ageService.findPaginatedAges(req.user, req.query),
+        await ageService.getAgesCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -114,7 +106,7 @@ export const agesController: FastifyPluginCallbackZod<{
 
       const response = getAgesResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

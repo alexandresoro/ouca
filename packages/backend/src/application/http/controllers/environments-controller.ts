@@ -90,17 +90,9 @@ export const environmentsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getEnvironmentsQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await environmentService.findPaginatedEnvironments(req.user, queryParams),
-        await environmentService.getEnvironmentsCount(req.user, queryParams.q),
+        await environmentService.findPaginatedEnvironments(req.user, req.query),
+        await environmentService.getEnvironmentsCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -114,7 +106,7 @@ export const environmentsController: FastifyPluginCallbackZod<{
 
       const response = getEnvironmentsResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

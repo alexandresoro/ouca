@@ -98,17 +98,9 @@ export const townsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getTownsQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await townService.findPaginatedTowns(req.user, queryParams),
-        await townService.getTownsCount(req.user, queryParams),
+        await townService.findPaginatedTowns(req.user, req.query),
+        await townService.getTownsCount(req.user, req.query),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -122,7 +114,7 @@ export const townsController: FastifyPluginCallbackZod<{
 
       const response = getTownsResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

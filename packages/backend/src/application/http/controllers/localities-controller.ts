@@ -111,17 +111,9 @@ export const localitiesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getLocalitiesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await localityService.findPaginatedLocalities(req.user, queryParams),
-        await localityService.getLocalitiesCount(req.user, queryParams),
+        await localityService.findPaginatedLocalities(req.user, req.query),
+        await localityService.getLocalitiesCount(req.user, req.query),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -135,7 +127,7 @@ export const localitiesController: FastifyPluginCallbackZod<{
 
       const response = getLocalitiesResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

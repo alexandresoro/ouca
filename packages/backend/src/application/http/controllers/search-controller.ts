@@ -19,22 +19,14 @@ export const searchController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getSpeciesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
-      if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+      if (req.query.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
         return await reply.status(403).send();
       }
 
       // If we don't want to see all users' species, we need to filter by ownerId
       const reshapedQueryParams = {
-        ...queryParams,
-        ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
+        ...req.query,
+        ownerId: req.query.fromAllUsers ? undefined : req.user?.id,
       };
 
       const paginatedResults = Result.combine([
@@ -53,7 +45,7 @@ export const searchController: FastifyPluginCallbackZod<{
 
       const response = getSpeciesPaginatedResponse.parse({
         data: speciesData,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

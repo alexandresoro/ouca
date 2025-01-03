@@ -91,17 +91,9 @@ export const observersController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getObserversQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await observerService.findPaginatedObservers(req.user, queryParams),
-        await observerService.getObserversCount(req.user, queryParams.q),
+        await observerService.findPaginatedObservers(req.user, req.query),
+        await observerService.getObserversCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -115,7 +107,7 @@ export const observersController: FastifyPluginCallbackZod<{
 
       const response = getObserversResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

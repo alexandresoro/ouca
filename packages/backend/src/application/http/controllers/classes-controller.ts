@@ -92,17 +92,9 @@ export const classesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getClassesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await classService.findPaginatedSpeciesClasses(req.user, queryParams),
-        await classService.getSpeciesClassesCount(req.user, queryParams.q),
+        await classService.findPaginatedSpeciesClasses(req.user, req.query),
+        await classService.getSpeciesClassesCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -116,7 +108,7 @@ export const classesController: FastifyPluginCallbackZod<{
 
       const response = getClassesResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

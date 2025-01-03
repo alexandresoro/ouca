@@ -59,16 +59,8 @@ export const speciesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = speciesInfoQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const speciesInfoResult = Result.combine([
-        await speciesService.getEntriesCountBySpecies(`${req.params.id}`, queryParams, req.user),
+        await speciesService.getEntriesCountBySpecies(`${req.params.id}`, req.query, req.user),
         await speciesService.isSpeciesUsed(`${req.params.id}`, req.user),
       ]);
 
@@ -84,7 +76,7 @@ export const speciesController: FastifyPluginCallbackZod<{
         // TODO: this should be better handled in the service
         const totalEntriesCountResult = await speciesService.getEntriesCountBySpecies(
           `${req.params.id}`,
-          queryParams,
+          req.query,
           req.user,
           true,
         );
@@ -121,17 +113,9 @@ export const speciesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getSpeciesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await speciesService.findPaginatedSpecies(req.user, queryParams),
-        await speciesService.getSpeciesCount(req.user, queryParams),
+        await speciesService.findPaginatedSpecies(req.user, req.query),
+        await speciesService.getSpeciesCount(req.user, req.query),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -145,7 +129,7 @@ export const speciesController: FastifyPluginCallbackZod<{
 
       const response = getSpeciesPaginatedResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

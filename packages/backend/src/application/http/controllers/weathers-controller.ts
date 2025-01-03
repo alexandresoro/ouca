@@ -90,17 +90,9 @@ export const weathersController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getWeathersQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await weatherService.findPaginatedWeathers(req.user, queryParams),
-        await weatherService.getWeathersCount(req.user, queryParams.q),
+        await weatherService.findPaginatedWeathers(req.user, req.query),
+        await weatherService.getWeathersCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -114,7 +106,7 @@ export const weathersController: FastifyPluginCallbackZod<{
 
       const response = getWeathersResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

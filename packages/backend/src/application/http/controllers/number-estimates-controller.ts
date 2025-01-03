@@ -90,17 +90,9 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getNumberEstimatesQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await numberEstimateService.findPaginatesNumberEstimates(req.user, queryParams),
-        await numberEstimateService.getNumberEstimatesCount(req.user, queryParams.q),
+        await numberEstimateService.findPaginatesNumberEstimates(req.user, req.query),
+        await numberEstimateService.getNumberEstimatesCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -114,7 +106,7 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
 
       const response = getNumberEstimatesResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

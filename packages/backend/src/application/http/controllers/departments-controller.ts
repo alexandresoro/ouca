@@ -94,17 +94,9 @@ export const departmentsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getDepartmentsQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await departmentService.findPaginatedDepartments(req.user, queryParams),
-        await departmentService.getDepartmentsCount(req.user, queryParams.q),
+        await departmentService.findPaginatedDepartments(req.user, req.query),
+        await departmentService.getDepartmentsCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -118,7 +110,7 @@ export const departmentsController: FastifyPluginCallbackZod<{
 
       const response = getDepartmentsResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);

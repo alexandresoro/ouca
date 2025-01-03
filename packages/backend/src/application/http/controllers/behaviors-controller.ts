@@ -90,17 +90,9 @@ export const behaviorsController: FastifyPluginCallbackZod<{
       },
     },
     async (req, reply) => {
-      const parsedQueryParamsResult = getBehaviorsQueryParamsSchema.safeParse(req.query);
-
-      if (!parsedQueryParamsResult.success) {
-        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-      }
-
-      const { data: queryParams } = parsedQueryParamsResult;
-
       const paginatedResults = Result.combine([
-        await behaviorService.findPaginatedBehaviors(req.user, queryParams),
-        await behaviorService.getBehaviorsCount(req.user, queryParams.q),
+        await behaviorService.findPaginatedBehaviors(req.user, req.query),
+        await behaviorService.getBehaviorsCount(req.user, req.query.q),
       ]);
 
       if (paginatedResults.isErr()) {
@@ -114,7 +106,7 @@ export const behaviorsController: FastifyPluginCallbackZod<{
 
       const response = getBehaviorsResponse.parse({
         data,
-        meta: getPaginationMetadata(count, queryParams),
+        meta: getPaginationMetadata(count, req.query),
       });
 
       return await reply.send(response);
