@@ -134,6 +134,7 @@ export const sexesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Sex"],
+        body: upsertSexInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const sexesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Sex"],
+        body: upsertSexInput,
       },
     },
     async (req, reply) => {

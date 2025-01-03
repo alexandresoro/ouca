@@ -142,6 +142,7 @@ export const townsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        body: upsertTownInput,
       },
     },
     async (req, reply) => {
@@ -180,6 +181,7 @@ export const townsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        body: upsertTownInput,
       },
     },
     async (req, reply) => {

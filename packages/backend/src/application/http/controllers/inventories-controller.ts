@@ -162,6 +162,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Inventory"],
+        body: upsertInventoryInput,
       },
     },
     async (req, reply) => {
@@ -219,6 +220,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Inventory"],
+        body: upsertInventoryInput,
       },
     },
     async (req, reply) => {

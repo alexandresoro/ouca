@@ -136,6 +136,7 @@ export const classesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Species"],
+        body: upsertClassInput,
       },
     },
     async (req, reply) => {
@@ -174,6 +175,7 @@ export const classesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Species"],
+        body: upsertClassInput,
       },
     },
     async (req, reply) => {

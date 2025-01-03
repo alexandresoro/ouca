@@ -135,6 +135,7 @@ export const observersController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Observer"],
+        body: upsertObserverInput,
       },
     },
     async (req, reply) => {
@@ -173,6 +174,7 @@ export const observersController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Observer"],
+        body: upsertObserverInput,
       },
     },
     async (req, reply) => {

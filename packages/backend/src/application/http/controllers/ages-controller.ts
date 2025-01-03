@@ -134,6 +134,7 @@ export const agesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Age"],
+        body: upsertAgeInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const agesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Age"],
+        body: upsertAgeInput,
       },
     },
     async (req, reply) => {

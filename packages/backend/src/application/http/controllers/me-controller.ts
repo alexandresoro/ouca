@@ -49,6 +49,7 @@ export const meController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["User"],
+        body: putMeInput,
       },
     },
     async (req, reply) => {

@@ -121,6 +121,7 @@ export const entriesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Entry"],
+        body: upsertEntryInput,
       },
     },
     async (req, reply) => {
@@ -176,6 +177,7 @@ export const entriesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Entry"],
+        body: upsertEntryInput,
       },
     },
     async (req, reply) => {

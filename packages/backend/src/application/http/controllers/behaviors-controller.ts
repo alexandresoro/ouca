@@ -134,6 +134,7 @@ export const behaviorsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Behavior"],
+        body: upsertBehaviorInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const behaviorsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Behavior"],
+        body: upsertBehaviorInput,
       },
     },
     async (req, reply) => {

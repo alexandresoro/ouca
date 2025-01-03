@@ -165,6 +165,7 @@ export const speciesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Species"],
+        body: upsertSpeciesInput,
       },
     },
     async (req, reply) => {
@@ -203,6 +204,7 @@ export const speciesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Species"],
+        body: upsertSpeciesInput,
       },
     },
     async (req, reply) => {

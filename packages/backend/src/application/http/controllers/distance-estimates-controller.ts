@@ -134,6 +134,7 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Distance"],
+        body: upsertDistanceEstimateInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Distance"],
+        body: upsertDistanceEstimateInput,
       },
     },
     async (req, reply) => {

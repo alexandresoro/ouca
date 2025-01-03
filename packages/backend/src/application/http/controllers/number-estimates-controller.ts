@@ -134,6 +134,7 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Quantity"],
+        body: upsertNumberEstimateInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Quantity"],
+        body: upsertNumberEstimateInput,
       },
     },
     async (req, reply) => {

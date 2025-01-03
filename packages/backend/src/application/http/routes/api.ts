@@ -2,6 +2,7 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import type { FastifyPluginAsync } from "fastify";
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+import { ZodError } from "zod";
 import { logger as loggerParent } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { apiV1Routes } from "../api-routes.js";
@@ -15,6 +16,20 @@ export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fast
   // Zod type provider
   fastify.setValidatorCompiler(validatorCompiler);
   fastify.setSerializerCompiler(serializerCompiler);
+
+  fastify.setErrorHandler((error, _, reply) => {
+    if (error instanceof ZodError) {
+      // Treat validation errors as HTTP 422
+      reply.status(422).send({
+        statusCode: fastify.httpErrors.unprocessableEntity().statusCode,
+        error: fastify.httpErrors.unprocessableEntity().message,
+        issues: error.issues,
+      });
+      return;
+    }
+
+    reply.send(error);
+  });
 
   // OpenAPI spec
   await fastify.register(fastifySwagger, {

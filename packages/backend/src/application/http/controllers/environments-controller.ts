@@ -134,6 +134,7 @@ export const environmentsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Environment"],
+        body: upsertEnvironmentInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const environmentsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Environment"],
+        body: upsertEnvironmentInput,
       },
     },
     async (req, reply) => {

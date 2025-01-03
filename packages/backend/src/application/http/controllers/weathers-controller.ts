@@ -134,6 +134,7 @@ export const weathersController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Weather"],
+        body: upsertWeatherInput,
       },
     },
     async (req, reply) => {
@@ -172,6 +173,7 @@ export const weathersController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Weather"],
+        body: upsertWeatherInput,
       },
     },
     async (req, reply) => {

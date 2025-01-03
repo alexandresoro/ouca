@@ -138,6 +138,7 @@ export const departmentsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        body: upsertDepartmentInput,
       },
     },
     async (req, reply) => {
@@ -176,6 +177,7 @@ export const departmentsController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        body: upsertDepartmentInput,
       },
     },
     async (req, reply) => {

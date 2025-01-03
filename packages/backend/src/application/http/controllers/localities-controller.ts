@@ -155,6 +155,7 @@ export const localitiesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        body: upsertLocalityInput,
       },
     },
     async (req, reply) => {
@@ -193,6 +194,7 @@ export const localitiesController: FastifyPluginCallbackZod<{
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        body: upsertLocalityInput,
       },
     },
     async (req, reply) => {
