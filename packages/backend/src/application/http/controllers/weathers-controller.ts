@@ -21,163 +21,223 @@ export const weathersController: FastifyPluginCallbackZod<{
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const weatherResult = await weatherService.findWeather(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (weatherResult.isErr()) {
-      switch (weatherResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Weather"],
+      },
+    },
+    async (req, reply) => {
+      const weatherResult = await weatherService.findWeather(req.params.id, req.user);
+
+      if (weatherResult.isErr()) {
+        switch (weatherResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const weather = weatherResult.value;
+      const weather = weatherResult.value;
 
-    if (!weather) {
-      return await reply.status(404).send();
-    }
+      if (!weather) {
+        return await reply.status(404).send();
+      }
 
-    const response = getWeatherResponse.parse(weather);
-    return await reply.send(response);
-  });
+      const response = getWeatherResponse.parse(weather);
+      return await reply.send(response);
+    },
+  );
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id/info", async (req, reply) => {
-    const weatherInfoResult = Result.combine([
-      await weatherService.getEntriesCountByWeather(`${req.params.id}`, req.user),
-      await weatherService.isWeatherUsed(`${req.params.id}`, req.user),
-    ]);
+  }>(
+    "/:id/info",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (weatherInfoResult.isErr()) {
-      switch (weatherInfoResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Weather"],
+      },
+    },
+    async (req, reply) => {
+      const weatherInfoResult = Result.combine([
+        await weatherService.getEntriesCountByWeather(`${req.params.id}`, req.user),
+        await weatherService.isWeatherUsed(`${req.params.id}`, req.user),
+      ]);
+
+      if (weatherInfoResult.isErr()) {
+        switch (weatherInfoResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const [ownEntriesCount, isWeatherUsed] = weatherInfoResult.value;
+      const [ownEntriesCount, isWeatherUsed] = weatherInfoResult.value;
 
-    const response = weatherInfoSchema.parse({
-      canBeDeleted: !isWeatherUsed,
-      ownEntriesCount,
-    });
+      const response = weatherInfoSchema.parse({
+        canBeDeleted: !isWeatherUsed,
+        ownEntriesCount,
+      });
 
-    return await reply.send(response);
-  });
+      return await reply.send(response);
+    },
+  );
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getWeathersQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Weather"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getWeathersQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const paginatedResults = Result.combine([
-      await weatherService.findPaginatedWeathers(req.user, queryParams),
-      await weatherService.getWeathersCount(req.user, queryParams.q),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const [data, count] = paginatedResults.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const response = getWeathersResponse.parse({
-      data,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      const paginatedResults = Result.combine([
+        await weatherService.findPaginatedWeathers(req.user, queryParams),
+        await weatherService.getWeathersCount(req.user, queryParams.q),
+      ]);
 
-    return await reply.send(response);
-  });
-
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertWeatherInput.safeParse(req.body);
-
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
-
-    const { data: input } = parsedInputResult;
-
-    const weatherResult = await weatherService.createWeather(input, req.user);
-
-    if (weatherResult.isErr()) {
-      switch (weatherResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const response = upsertWeatherResponse.parse(weatherResult.value);
-    return await reply.send(response);
-  });
+      const [data, count] = paginatedResults.value;
+
+      const response = getWeathersResponse.parse({
+        data,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Weather"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertWeatherInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const weatherResult = await weatherService.createWeather(input, req.user);
+
+      if (weatherResult.isErr()) {
+        switch (weatherResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertWeatherResponse.parse(weatherResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertWeatherInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Weather"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertWeatherInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const weatherResult = await weatherService.updateWeather(req.params.id, input, req.user);
-
-    if (weatherResult.isErr()) {
-      switch (weatherResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const response = upsertWeatherResponse.parse(weatherResult.value);
-    return await reply.send(response);
-  });
+      const { data: input } = parsedInputResult;
+
+      const weatherResult = await weatherService.updateWeather(req.params.id, input, req.user);
+
+      if (weatherResult.isErr()) {
+        switch (weatherResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertWeatherResponse.parse(weatherResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedWeatherResult = await weatherService.deleteWeather(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (deletedWeatherResult.isErr()) {
-      switch (deletedWeatherResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "isUsed":
-          return await reply.status(409).send();
+        tags: ["Weather"],
+      },
+    },
+    async (req, reply) => {
+      const deletedWeatherResult = await weatherService.deleteWeather(req.params.id, req.user);
+
+      if (deletedWeatherResult.isErr()) {
+        switch (deletedWeatherResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "isUsed":
+            return await reply.status(409).send();
+        }
       }
-    }
 
-    const deletedWeather = deletedWeatherResult.value;
+      const deletedWeather = deletedWeatherResult.value;
 
-    if (!deletedWeather) {
-      return await reply.status(404).send();
-    }
+      if (!deletedWeather) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedWeather.id });
-  });
+      return await reply.send({ id: deletedWeather.id });
+    },
+  );
 
   done();
 };

@@ -12,206 +12,346 @@ export const generateExportController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { exportService } = services;
 
-  fastify.post("/ages", async (req, reply) => {
-    const idResult = await exportService.generateAgesExport(req.user);
+  fastify.post(
+    "/ages",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Age"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateAgesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/classes", async (req, reply) => {
-    const idResult = await exportService.generateClassesExport(req.user);
+  fastify.post(
+    "/classes",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Species"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateClassesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/towns", async (req, reply) => {
-    const idResult = await exportService.generateTownsExport(req.user);
+  fastify.post(
+    "/towns",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Location"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateTownsExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/behaviors", async (req, reply) => {
-    const idResult = await exportService.generateBehaviorsExport(req.user);
+  fastify.post(
+    "/behaviors",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Behavior"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateBehaviorsExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/departments", async (req, reply) => {
-    const idResult = await exportService.generateDepartmentsExport(req.user);
+  fastify.post(
+    "/departments",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Location"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateDepartmentsExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/species", async (req, reply) => {
-    const idResult = await exportService.generateSpeciesExport(req.user);
+  fastify.post(
+    "/species",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Species"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateSpeciesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/distance-estimates", async (req, reply) => {
-    const idResult = await exportService.generateDistanceEstimatesExport(req.user);
+  fastify.post(
+    "/distance-estimates",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Distance"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateDistanceEstimatesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/number-estimates", async (req, reply) => {
-    const idResult = await exportService.generateNumberEstimatesExport(req.user);
+  fastify.post(
+    "/number-estimates",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateNumberEstimatesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/localities", async (req, reply) => {
-    const idResult = await exportService.generateLocalitiesExport(req.user);
+  fastify.post(
+    "/localities",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Location"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateLocalitiesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/weathers", async (req, reply) => {
-    const idResult = await exportService.generateWeathersExport(req.user);
+  fastify.post(
+    "/weathers",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Weather"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateWeathersExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/environments", async (req, reply) => {
-    const idResult = await exportService.generateEnvironmentsExport(req.user);
+  fastify.post(
+    "/environments",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Environment"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateEnvironmentsExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/observers", async (req, reply) => {
-    const idResult = await exportService.generateObserversExport(req.user);
+  fastify.post(
+    "/observers",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Observer"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateObserversExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/sexes", async (req, reply) => {
-    const idResult = await exportService.generateSexesExport(req.user);
+  fastify.post(
+    "/sexes",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Export", "Sex"],
+      },
+    },
+    async (req, reply) => {
+      const idResult = await exportService.generateSexesExport(req.user);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
-  fastify.post("/entries", async (req, reply) => {
-    const parsedQueryParamsResult = getSearchCriteriaParamsSchema.safeParse(req.query);
+  fastify.post(
+    "/entries",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Export", "Entry"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getSearchCriteriaParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
-      return await reply.status(403).send();
-    }
-
-    // If we don't want to see all users' entries, we need to filter by ownerId
-    const reshapedQueryParams = {
-      ...queryParams,
-      ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
-    };
-
-    // TODO add search criteria
-    const idResult = await exportService.generateEntriesExport(req.user, reshapedQueryParams);
-
-    if (idResult.isErr()) {
-      switch (idResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
-  });
+      const { data: queryParams } = parsedQueryParamsResult;
+
+      if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+        return await reply.status(403).send();
+      }
+
+      // If we don't want to see all users' entries, we need to filter by ownerId
+      const reshapedQueryParams = {
+        ...queryParams,
+        ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
+      };
+
+      // TODO add search criteria
+      const idResult = await exportService.generateEntriesExport(req.user, reshapedQueryParams);
+
+      if (idResult.isErr()) {
+        switch (idResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
+      }
+
+      return reply.header("Location", getExportUrl(req, idResult.value)).status(201).send();
+    },
+  );
 
   done();
 };

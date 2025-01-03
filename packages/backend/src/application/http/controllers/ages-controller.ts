@@ -21,163 +21,223 @@ export const agesController: FastifyPluginCallbackZod<{
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const ageResult = await ageService.findAge(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (ageResult.isErr()) {
-      switch (ageResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Age"],
+      },
+    },
+    async (req, reply) => {
+      const ageResult = await ageService.findAge(req.params.id, req.user);
+
+      if (ageResult.isErr()) {
+        switch (ageResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const age = ageResult.value;
+      const age = ageResult.value;
 
-    if (!age) {
-      return await reply.status(404).send();
-    }
+      if (!age) {
+        return await reply.status(404).send();
+      }
 
-    const response = getAgeResponse.parse(age);
-    return await reply.send(response);
-  });
+      const response = getAgeResponse.parse(age);
+      return await reply.send(response);
+    },
+  );
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id/info", async (req, reply) => {
-    const ageInfoResult = Result.combine([
-      await ageService.getEntriesCountByAge(`${req.params.id}`, req.user),
-      await ageService.isAgeUsed(`${req.params.id}`, req.user),
-    ]);
+  }>(
+    "/:id/info",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (ageInfoResult.isErr()) {
-      switch (ageInfoResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Age"],
+      },
+    },
+    async (req, reply) => {
+      const ageInfoResult = Result.combine([
+        await ageService.getEntriesCountByAge(`${req.params.id}`, req.user),
+        await ageService.isAgeUsed(`${req.params.id}`, req.user),
+      ]);
+
+      if (ageInfoResult.isErr()) {
+        switch (ageInfoResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const [ownEntriesCount, isAgeUsed] = ageInfoResult.value;
+      const [ownEntriesCount, isAgeUsed] = ageInfoResult.value;
 
-    const response = ageInfoSchema.parse({
-      canBeDeleted: !isAgeUsed,
-      ownEntriesCount,
-    });
+      const response = ageInfoSchema.parse({
+        canBeDeleted: !isAgeUsed,
+        ownEntriesCount,
+      });
 
-    return await reply.send(response);
-  });
+      return await reply.send(response);
+    },
+  );
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Age"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const paginatedResults = Result.combine([
-      await ageService.findPaginatedAges(req.user, queryParams),
-      await ageService.getAgesCount(req.user, queryParams.q),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const [data, count] = paginatedResults.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const response = getAgesResponse.parse({
-      data,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      const paginatedResults = Result.combine([
+        await ageService.findPaginatedAges(req.user, queryParams),
+        await ageService.getAgesCount(req.user, queryParams.q),
+      ]);
 
-    return await reply.send(response);
-  });
-
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertAgeInput.safeParse(req.body);
-
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
-
-    const { data: input } = parsedInputResult;
-
-    const ageCreateResult = await ageService.createAge(input, req.user);
-
-    if (ageCreateResult.isErr()) {
-      switch (ageCreateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const response = upsertAgeResponse.parse(ageCreateResult.value);
-    return await reply.send(response);
-  });
+      const [data, count] = paginatedResults.value;
+
+      const response = getAgesResponse.parse({
+        data,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Age"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertAgeInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const ageCreateResult = await ageService.createAge(input, req.user);
+
+      if (ageCreateResult.isErr()) {
+        switch (ageCreateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertAgeResponse.parse(ageCreateResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertAgeInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Age"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertAgeInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const ageUpdateResult = await ageService.updateAge(req.params.id, input, req.user);
-
-    if (ageUpdateResult.isErr()) {
-      switch (ageUpdateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const response = upsertAgeResponse.parse(ageUpdateResult.value);
-    return await reply.send(response);
-  });
+      const { data: input } = parsedInputResult;
+
+      const ageUpdateResult = await ageService.updateAge(req.params.id, input, req.user);
+
+      if (ageUpdateResult.isErr()) {
+        switch (ageUpdateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertAgeResponse.parse(ageUpdateResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedAgeResult = await ageService.deleteAge(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (deletedAgeResult.isErr()) {
-      switch (deletedAgeResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "isUsed":
-          return await reply.status(409).send();
+        tags: ["Age"],
+      },
+    },
+    async (req, reply) => {
+      const deletedAgeResult = await ageService.deleteAge(req.params.id, req.user);
+
+      if (deletedAgeResult.isErr()) {
+        switch (deletedAgeResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "isUsed":
+            return await reply.status(409).send();
+        }
       }
-    }
 
-    const deletedAge = deletedAgeResult.value;
+      const deletedAge = deletedAgeResult.value;
 
-    if (!deletedAge) {
-      return await reply.status(404).send();
-    }
+      if (!deletedAge) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedAge.id });
-  });
+      return await reply.send({ id: deletedAge.id });
+    },
+  );
 
   done();
 };

@@ -9,46 +9,56 @@ export const searchController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { speciesService } = services;
 
-  fastify.get("/species", async (req, reply) => {
-    const parsedQueryParamsResult = getSpeciesQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/species",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getSpeciesQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
-      return await reply.status(403).send();
-    }
-
-    // If we don't want to see all users' species, we need to filter by ownerId
-    const reshapedQueryParams = {
-      ...queryParams,
-      ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
-    };
-
-    const paginatedResults = Result.combine([
-      await speciesService.findPaginatedSpecies(req.user, reshapedQueryParams),
-      await speciesService.getSpeciesCount(req.user, reshapedQueryParams),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const [speciesData, count] = paginatedResults.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const response = getSpeciesPaginatedResponse.parse({
-      data: speciesData,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+        return await reply.status(403).send();
+      }
 
-    return await reply.send(response);
-  });
+      // If we don't want to see all users' species, we need to filter by ownerId
+      const reshapedQueryParams = {
+        ...queryParams,
+        ownerId: queryParams.fromAllUsers ? undefined : req.user?.id,
+      };
+
+      const paginatedResults = Result.combine([
+        await speciesService.findPaginatedSpecies(req.user, reshapedQueryParams),
+        await speciesService.getSpeciesCount(req.user, reshapedQueryParams),
+      ]);
+
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
+      }
+
+      const [speciesData, count] = paginatedResults.value;
+
+      const response = getSpeciesPaginatedResponse.parse({
+        data: speciesData,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
 
   done();
 };

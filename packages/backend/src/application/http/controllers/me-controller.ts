@@ -8,70 +8,90 @@ export const meController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { oidcService, userService } = services;
 
-  fastify.get("/", async (req, reply) => {
-    if (!req.user) {
-      return await reply.status(401).send();
-    }
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    const userResult = await oidcService.findLoggedUserFromProvider(
-      req.user.oidcUser.oidcProvider,
-      req.user.oidcUser.sub,
-    );
+        tags: ["User"],
+      },
+    },
+    async (req, reply) => {
+      if (!req.user) {
+        return await reply.status(401).send();
+      }
 
-    if (userResult.isErr()) {
-      return await reply.status(404).send("Internal user not found");
-    }
+      const userResult = await oidcService.findLoggedUserFromProvider(
+        req.user.oidcUser.oidcProvider,
+        req.user.oidcUser.sub,
+      );
 
-    const { id, settings } = userResult.value;
+      if (userResult.isErr()) {
+        return await reply.status(404).send("Internal user not found");
+      }
 
-    const responseBody = getMeResponse.parse({
-      id,
-      settings,
-      user: req.user.oidcUser,
-      permissions: req.user.permissions,
-    });
+      const { id, settings } = userResult.value;
 
-    return await reply.send(responseBody);
-  });
+      const responseBody = getMeResponse.parse({
+        id,
+        settings,
+        user: req.user.oidcUser,
+        permissions: req.user.permissions,
+      });
 
-  fastify.put("/", async (req, reply) => {
-    if (!req.user) {
-      return await reply.status(401).send();
-    }
+      return await reply.send(responseBody);
+    },
+  );
 
-    const parsedInputResult = putMeInput.safeParse(req.body);
+  fastify.put(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["User"],
+      },
+    },
+    async (req, reply) => {
+      if (!req.user) {
+        return await reply.status(401).send();
+      }
 
-    const { data: input } = parsedInputResult;
+      const parsedInputResult = putMeInput.safeParse(req.body);
 
-    const reshapedInput = {
-      defaultObserverId: input.defaultObserver ?? undefined,
-      defaultDepartmentId: input.defaultDepartment ?? undefined,
-      defaultAgeId: input.defaultAge ?? undefined,
-      defaultSexId: input.defaultSexe ?? undefined,
-      defaultNumberEstimateId: input.defaultEstimationNombre ?? undefined,
-      defaultNumber: input.defaultNombre ?? undefined,
-      displayAssociates: input.areAssociesDisplayed ?? undefined,
-      displayWeather: input.isMeteoDisplayed ?? undefined,
-      displayDistance: input.isDistanceDisplayed ?? undefined,
-    } satisfies User["settings"];
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
 
-    const updatedUser = await userService.updateSettings(req.user.id, reshapedInput);
+      const { data: input } = parsedInputResult;
 
-    const { id, settings } = updatedUser;
+      const reshapedInput = {
+        defaultObserverId: input.defaultObserver ?? undefined,
+        defaultDepartmentId: input.defaultDepartment ?? undefined,
+        defaultAgeId: input.defaultAge ?? undefined,
+        defaultSexId: input.defaultSexe ?? undefined,
+        defaultNumberEstimateId: input.defaultEstimationNombre ?? undefined,
+        defaultNumber: input.defaultNombre ?? undefined,
+        displayAssociates: input.areAssociesDisplayed ?? undefined,
+        displayWeather: input.isMeteoDisplayed ?? undefined,
+        displayDistance: input.isDistanceDisplayed ?? undefined,
+      } satisfies User["settings"];
 
-    const responseBody = getMeResponse.parse({
-      id,
-      settings,
-      user: req.user.oidcUser,
-      permissions: req.user.permissions,
-    });
+      const updatedUser = await userService.updateSettings(req.user.id, reshapedInput);
 
-    return await reply.send(responseBody);
-  });
+      const { id, settings } = updatedUser;
+
+      const responseBody = getMeResponse.parse({
+        id,
+        settings,
+        user: req.user.oidcUser,
+        permissions: req.user.permissions,
+      });
+
+      return await reply.send(responseBody);
+    },
+  );
 
   done();
 };

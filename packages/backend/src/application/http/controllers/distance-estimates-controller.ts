@@ -21,167 +21,230 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const distanceEstimateResult = await distanceEstimateService.findDistanceEstimate(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (distanceEstimateResult.isErr()) {
-      switch (distanceEstimateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Distance"],
+      },
+    },
+    async (req, reply) => {
+      const distanceEstimateResult = await distanceEstimateService.findDistanceEstimate(req.params.id, req.user);
+
+      if (distanceEstimateResult.isErr()) {
+        switch (distanceEstimateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const distanceEstimate = distanceEstimateResult.value;
+      const distanceEstimate = distanceEstimateResult.value;
 
-    if (!distanceEstimate) {
-      return await reply.status(404).send();
-    }
+      if (!distanceEstimate) {
+        return await reply.status(404).send();
+      }
 
-    const response = getDistanceEstimateResponse.parse(distanceEstimate);
-    return await reply.send(response);
-  });
+      const response = getDistanceEstimateResponse.parse(distanceEstimate);
+      return await reply.send(response);
+    },
+  );
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id/info", async (req, reply) => {
-    const distanceEstimateInfoResult = Result.combine([
-      await distanceEstimateService.getEntriesCountByDistanceEstimate(`${req.params.id}`, req.user),
-      await distanceEstimateService.isDistanceEstimateUsed(`${req.params.id}`, req.user),
-    ]);
+  }>(
+    "/:id/info",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (distanceEstimateInfoResult.isErr()) {
-      switch (distanceEstimateInfoResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Distance"],
+      },
+    },
+    async (req, reply) => {
+      const distanceEstimateInfoResult = Result.combine([
+        await distanceEstimateService.getEntriesCountByDistanceEstimate(`${req.params.id}`, req.user),
+        await distanceEstimateService.isDistanceEstimateUsed(`${req.params.id}`, req.user),
+      ]);
+
+      if (distanceEstimateInfoResult.isErr()) {
+        switch (distanceEstimateInfoResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const [ownEntriesCount, isDistanceEstimateUsed] = distanceEstimateInfoResult.value;
+      const [ownEntriesCount, isDistanceEstimateUsed] = distanceEstimateInfoResult.value;
 
-    const response = distanceEstimateInfoSchema.parse({
-      canBeDeleted: !isDistanceEstimateUsed,
-      ownEntriesCount,
-    });
+      const response = distanceEstimateInfoSchema.parse({
+        canBeDeleted: !isDistanceEstimateUsed,
+        ownEntriesCount,
+      });
 
-    return await reply.send(response);
-  });
+      return await reply.send(response);
+    },
+  );
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getDistanceEstimatesQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Distance"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getDistanceEstimatesQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const paginatedResults = Result.combine([
-      await distanceEstimateService.findPaginatedDistanceEstimates(req.user, queryParams),
-      await distanceEstimateService.getDistanceEstimatesCount(req.user, queryParams.q),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const [data, count] = paginatedResults.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const response = getDistanceEstimatesResponse.parse({
-      data,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      const paginatedResults = Result.combine([
+        await distanceEstimateService.findPaginatedDistanceEstimates(req.user, queryParams),
+        await distanceEstimateService.getDistanceEstimatesCount(req.user, queryParams.q),
+      ]);
 
-    return await reply.send(response);
-  });
-
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
-
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
-
-    const { data: input } = parsedInputResult;
-
-    const distanceEstimateCreateResult = await distanceEstimateService.createDistanceEstimate(input, req.user);
-
-    if (distanceEstimateCreateResult.isErr()) {
-      switch (distanceEstimateCreateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const response = upsertDistanceEstimateResponse.parse(distanceEstimateCreateResult.value);
-    return await reply.send(response);
-  });
+      const [data, count] = paginatedResults.value;
+
+      const response = getDistanceEstimatesResponse.parse({
+        data,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Distance"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const distanceEstimateCreateResult = await distanceEstimateService.createDistanceEstimate(input, req.user);
+
+      if (distanceEstimateCreateResult.isErr()) {
+        switch (distanceEstimateCreateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertDistanceEstimateResponse.parse(distanceEstimateCreateResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Distance"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertDistanceEstimateInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const distanceEstimateUpdateResult = await distanceEstimateService.updateDistanceEstimate(
-      req.params.id,
-      input,
-      req.user,
-    );
-
-    if (distanceEstimateUpdateResult.isErr()) {
-      switch (distanceEstimateUpdateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const response = upsertDistanceEstimateResponse.parse(distanceEstimateUpdateResult.value);
-    return await reply.send(response);
-  });
+      const { data: input } = parsedInputResult;
+
+      const distanceEstimateUpdateResult = await distanceEstimateService.updateDistanceEstimate(
+        req.params.id,
+        input,
+        req.user,
+      );
+
+      if (distanceEstimateUpdateResult.isErr()) {
+        switch (distanceEstimateUpdateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertDistanceEstimateResponse.parse(distanceEstimateUpdateResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedDistanceEstimateResult = await distanceEstimateService.deleteDistanceEstimate(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (deletedDistanceEstimateResult.isErr()) {
-      switch (deletedDistanceEstimateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "isUsed":
-          return await reply.status(409).send();
+        tags: ["Distance"],
+      },
+    },
+    async (req, reply) => {
+      const deletedDistanceEstimateResult = await distanceEstimateService.deleteDistanceEstimate(
+        req.params.id,
+        req.user,
+      );
+
+      if (deletedDistanceEstimateResult.isErr()) {
+        switch (deletedDistanceEstimateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "isUsed":
+            return await reply.status(409).send();
+        }
       }
-    }
 
-    const deletedDistanceEstimate = deletedDistanceEstimateResult.value;
+      const deletedDistanceEstimate = deletedDistanceEstimateResult.value;
 
-    if (!deletedDistanceEstimate) {
-      return await reply.status(404).send();
-    }
+      if (!deletedDistanceEstimate) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedDistanceEstimate.id });
-  });
+      return await reply.send({ id: deletedDistanceEstimate.id });
+    },
+  );
 
   done();
 };

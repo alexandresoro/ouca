@@ -7,32 +7,42 @@ export const altitudeController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { altitudeService } = services;
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getAltitudeQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.unprocessableEntity();
-    }
+        tags: ["Location"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getAltitudeQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const altitudeResult = await altitudeService.getAltitude(queryParams);
-
-    if (altitudeResult.isErr()) {
-      switch (altitudeResult.error) {
-        case "coordinatesNotSupported":
-          return await reply.notFound();
-        case "fetchError":
-          return await reply.internalServerError();
-        case "parseError":
-          return await reply.internalServerError();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.unprocessableEntity();
       }
-    }
 
-    const response = getAltitudeResponse.parse(altitudeResult.value);
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    return await reply.send(response);
-  });
+      const altitudeResult = await altitudeService.getAltitude(queryParams);
+
+      if (altitudeResult.isErr()) {
+        switch (altitudeResult.error) {
+          case "coordinatesNotSupported":
+            return await reply.notFound();
+          case "fetchError":
+            return await reply.internalServerError();
+          case "parseError":
+            return await reply.internalServerError();
+        }
+      }
+
+      const response = getAltitudeResponse.parse(altitudeResult.value);
+
+      return await reply.send(response);
+    },
+  );
 
   done();
 };

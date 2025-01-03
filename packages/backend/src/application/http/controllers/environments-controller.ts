@@ -21,163 +21,223 @@ export const environmentsController: FastifyPluginCallbackZod<{
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const environmentResult = await environmentService.findEnvironment(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (environmentResult.isErr()) {
-      switch (environmentResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Environment"],
+      },
+    },
+    async (req, reply) => {
+      const environmentResult = await environmentService.findEnvironment(req.params.id, req.user);
+
+      if (environmentResult.isErr()) {
+        switch (environmentResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const environment = environmentResult.value;
+      const environment = environmentResult.value;
 
-    if (!environment) {
-      return await reply.status(404).send();
-    }
+      if (!environment) {
+        return await reply.status(404).send();
+      }
 
-    const response = getEnvironmentResponse.parse(environment);
-    return await reply.send(response);
-  });
+      const response = getEnvironmentResponse.parse(environment);
+      return await reply.send(response);
+    },
+  );
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id/info", async (req, reply) => {
-    const environmentInfoResult = Result.combine([
-      await environmentService.getEntriesCountByEnvironment(`${req.params.id}`, req.user),
-      await environmentService.isEnvironmentUsed(`${req.params.id}`, req.user),
-    ]);
+  }>(
+    "/:id/info",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (environmentInfoResult.isErr()) {
-      switch (environmentInfoResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Environment"],
+      },
+    },
+    async (req, reply) => {
+      const environmentInfoResult = Result.combine([
+        await environmentService.getEntriesCountByEnvironment(`${req.params.id}`, req.user),
+        await environmentService.isEnvironmentUsed(`${req.params.id}`, req.user),
+      ]);
+
+      if (environmentInfoResult.isErr()) {
+        switch (environmentInfoResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const [ownEntriesCount, isEnvironmentUsed] = environmentInfoResult.value;
+      const [ownEntriesCount, isEnvironmentUsed] = environmentInfoResult.value;
 
-    const response = environmentInfoSchema.parse({
-      canBeDeleted: !isEnvironmentUsed,
-      ownEntriesCount,
-    });
+      const response = environmentInfoSchema.parse({
+        canBeDeleted: !isEnvironmentUsed,
+        ownEntriesCount,
+      });
 
-    return await reply.send(response);
-  });
+      return await reply.send(response);
+    },
+  );
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getEnvironmentsQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Environment"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getEnvironmentsQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const paginatedResults = Result.combine([
-      await environmentService.findPaginatedEnvironments(req.user, queryParams),
-      await environmentService.getEnvironmentsCount(req.user, queryParams.q),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const [data, count] = paginatedResults.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const response = getEnvironmentsResponse.parse({
-      data,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      const paginatedResults = Result.combine([
+        await environmentService.findPaginatedEnvironments(req.user, queryParams),
+        await environmentService.getEnvironmentsCount(req.user, queryParams.q),
+      ]);
 
-    return await reply.send(response);
-  });
-
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
-
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
-
-    const { data: input } = parsedInputResult;
-
-    const environmentResult = await environmentService.createEnvironment(input, req.user);
-
-    if (environmentResult.isErr()) {
-      switch (environmentResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const response = upsertEnvironmentResponse.parse(environmentResult.value);
-    return await reply.send(response);
-  });
+      const [data, count] = paginatedResults.value;
+
+      const response = getEnvironmentsResponse.parse({
+        data,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Environment"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const environmentResult = await environmentService.createEnvironment(input, req.user);
+
+      if (environmentResult.isErr()) {
+        switch (environmentResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertEnvironmentResponse.parse(environmentResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Environment"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertEnvironmentInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const environmentResult = await environmentService.updateEnvironment(req.params.id, input, req.user);
-
-    if (environmentResult.isErr()) {
-      switch (environmentResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const response = upsertEnvironmentResponse.parse(environmentResult.value);
-    return await reply.send(response);
-  });
+      const { data: input } = parsedInputResult;
+
+      const environmentResult = await environmentService.updateEnvironment(req.params.id, input, req.user);
+
+      if (environmentResult.isErr()) {
+        switch (environmentResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertEnvironmentResponse.parse(environmentResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedEnvironmentResult = await environmentService.deleteEnvironment(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (deletedEnvironmentResult.isErr()) {
-      switch (deletedEnvironmentResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "isUsed":
-          return await reply.status(409).send();
+        tags: ["Environment"],
+      },
+    },
+    async (req, reply) => {
+      const deletedEnvironmentResult = await environmentService.deleteEnvironment(req.params.id, req.user);
+
+      if (deletedEnvironmentResult.isErr()) {
+        switch (deletedEnvironmentResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "isUsed":
+            return await reply.status(409).send();
+        }
       }
-    }
 
-    const deletedEnvironment = deletedEnvironmentResult.value;
+      const deletedEnvironment = deletedEnvironmentResult.value;
 
-    if (!deletedEnvironment) {
-      return await reply.status(404).send();
-    }
+      if (!deletedEnvironment) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedEnvironment.id });
-  });
+      return await reply.send({ id: deletedEnvironment.id });
+    },
+  );
 
   done();
 };

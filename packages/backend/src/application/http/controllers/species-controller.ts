@@ -22,192 +22,252 @@ export const speciesController: FastifyPluginCallbackZod<{
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const speciesResult = await speciesService.findSpecies(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (speciesResult.isErr()) {
-      switch (speciesResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const speciesResult = await speciesService.findSpecies(req.params.id, req.user);
+
+      if (speciesResult.isErr()) {
+        switch (speciesResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const species = speciesResult.value;
+      const species = speciesResult.value;
 
-    if (!species) {
-      return await reply.status(404).send();
-    }
+      if (!species) {
+        return await reply.status(404).send();
+      }
 
-    const response = getSpeciesResponse.parse(species);
-    return await reply.send(response);
-  });
+      const response = getSpeciesResponse.parse(species);
+      return await reply.send(response);
+    },
+  );
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id/info", async (req, reply) => {
-    const parsedQueryParamsResult = speciesInfoQueryParamsSchema.safeParse(req.query);
+  }>(
+    "/:id/info",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = speciesInfoQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const speciesInfoResult = Result.combine([
-      await speciesService.getEntriesCountBySpecies(`${req.params.id}`, queryParams, req.user),
-      await speciesService.isSpeciesUsed(`${req.params.id}`, req.user),
-    ]);
-
-    if (speciesInfoResult.isErr()) {
-      switch (speciesInfoResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    let totalEntriesCount: number | undefined = undefined;
-    if (req.user?.permissions.canViewAllEntries) {
-      // TODO: this should be better handled in the service
-      const totalEntriesCountResult = await speciesService.getEntriesCountBySpecies(
-        `${req.params.id}`,
-        queryParams,
-        req.user,
-        true,
-      );
+      const { data: queryParams } = parsedQueryParamsResult;
 
-      if (totalEntriesCountResult.isErr()) {
-        switch (totalEntriesCountResult.error) {
+      const speciesInfoResult = Result.combine([
+        await speciesService.getEntriesCountBySpecies(`${req.params.id}`, queryParams, req.user),
+        await speciesService.isSpeciesUsed(`${req.params.id}`, req.user),
+      ]);
+
+      if (speciesInfoResult.isErr()) {
+        switch (speciesInfoResult.error) {
           case "notAllowed":
             return await reply.status(403).send();
         }
       }
 
-      totalEntriesCount = totalEntriesCountResult.value;
-    }
+      let totalEntriesCount: number | undefined = undefined;
+      if (req.user?.permissions.canViewAllEntries) {
+        // TODO: this should be better handled in the service
+        const totalEntriesCountResult = await speciesService.getEntriesCountBySpecies(
+          `${req.params.id}`,
+          queryParams,
+          req.user,
+          true,
+        );
 
-    const [ownEntriesCount, isSpeciesUsed] = speciesInfoResult.value;
+        if (totalEntriesCountResult.isErr()) {
+          switch (totalEntriesCountResult.error) {
+            case "notAllowed":
+              return await reply.status(403).send();
+          }
+        }
 
-    const response = speciesInfoSchema.parse({
-      canBeDeleted: !isSpeciesUsed,
-      ownEntriesCount,
-      totalEntriesCount,
-    });
-
-    return await reply.send(response);
-  });
-
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getSpeciesQueryParamsSchema.safeParse(req.query);
-
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
-
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const paginatedResults = Result.combine([
-      await speciesService.findPaginatedSpecies(req.user, queryParams),
-      await speciesService.getSpeciesCount(req.user, queryParams),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        totalEntriesCount = totalEntriesCountResult.value;
       }
-    }
 
-    const [data, count] = paginatedResults.value;
+      const [ownEntriesCount, isSpeciesUsed] = speciesInfoResult.value;
 
-    const response = getSpeciesPaginatedResponse.parse({
-      data,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      const response = speciesInfoSchema.parse({
+        canBeDeleted: !isSpeciesUsed,
+        ownEntriesCount,
+        totalEntriesCount,
+      });
 
-    return await reply.send(response);
-  });
+      return await reply.send(response);
+    },
+  );
 
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getSpeciesQueryParamsSchema.safeParse(req.query);
 
-    const { data: input } = parsedInputResult;
-
-    const speciesResult = await speciesService.createSpecies(input, req.user);
-
-    if (speciesResult.isErr()) {
-      switch (speciesResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const response = upsertSpeciesResponse.parse(speciesResult.value);
-    return await reply.send(response);
-  });
+      const { data: queryParams } = parsedQueryParamsResult;
+
+      const paginatedResults = Result.combine([
+        await speciesService.findPaginatedSpecies(req.user, queryParams),
+        await speciesService.getSpeciesCount(req.user, queryParams),
+      ]);
+
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
+      }
+
+      const [data, count] = paginatedResults.value;
+
+      const response = getSpeciesPaginatedResponse.parse({
+        data,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const speciesResult = await speciesService.createSpecies(input, req.user);
+
+      if (speciesResult.isErr()) {
+        switch (speciesResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertSpeciesResponse.parse(speciesResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertSpeciesInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const speciesResult = await speciesService.updateSpecies(req.params.id, input, req.user);
-
-    if (speciesResult.isErr()) {
-      switch (speciesResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const response = upsertSpeciesResponse.parse(speciesResult.value);
-    return await reply.send(response);
-  });
+      const { data: input } = parsedInputResult;
+
+      const speciesResult = await speciesService.updateSpecies(req.params.id, input, req.user);
+
+      if (speciesResult.isErr()) {
+        switch (speciesResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertSpeciesResponse.parse(speciesResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedSpeciesResult = await speciesService.deleteSpecies(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (deletedSpeciesResult.isErr()) {
-      switch (deletedSpeciesResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "isUsed":
-          return await reply.status(409).send();
+        tags: ["Species"],
+      },
+    },
+    async (req, reply) => {
+      const deletedSpeciesResult = await speciesService.deleteSpecies(req.params.id, req.user);
+
+      if (deletedSpeciesResult.isErr()) {
+        switch (deletedSpeciesResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "isUsed":
+            return await reply.status(409).send();
+        }
       }
-    }
 
-    const deletedSpecies = deletedSpeciesResult.value;
+      const deletedSpecies = deletedSpeciesResult.value;
 
-    if (!deletedSpecies) {
-      return await reply.status(404).send();
-    }
+      if (!deletedSpecies) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedSpecies.id });
-  });
+      return await reply.send({ id: deletedSpecies.id });
+    },
+  );
 
   done();
 };

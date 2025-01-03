@@ -21,163 +21,227 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const numberEstimateResult = await numberEstimateService.findNumberEstimate(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (numberEstimateResult.isErr()) {
-      switch (numberEstimateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const numberEstimateResult = await numberEstimateService.findNumberEstimate(req.params.id, req.user);
+
+      if (numberEstimateResult.isErr()) {
+        switch (numberEstimateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const numberEstimate = numberEstimateResult.value;
+      const numberEstimate = numberEstimateResult.value;
 
-    if (!numberEstimate) {
-      return await reply.status(404).send();
-    }
+      if (!numberEstimate) {
+        return await reply.status(404).send();
+      }
 
-    const response = getNumberEstimateResponse.parse(numberEstimate);
-    return await reply.send(response);
-  });
+      const response = getNumberEstimateResponse.parse(numberEstimate);
+      return await reply.send(response);
+    },
+  );
 
   fastify.get<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id/info", async (req, reply) => {
-    const numberEstimateInfoResult = Result.combine([
-      await numberEstimateService.getEntriesCountByNumberEstimate(`${req.params.id}`, req.user),
-      await numberEstimateService.isNumberEstimateUsed(`${req.params.id}`, req.user),
-    ]);
+  }>(
+    "/:id/info",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (numberEstimateInfoResult.isErr()) {
-      switch (numberEstimateInfoResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const numberEstimateInfoResult = Result.combine([
+        await numberEstimateService.getEntriesCountByNumberEstimate(`${req.params.id}`, req.user),
+        await numberEstimateService.isNumberEstimateUsed(`${req.params.id}`, req.user),
+      ]);
+
+      if (numberEstimateInfoResult.isErr()) {
+        switch (numberEstimateInfoResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const [ownEntriesCount, isNumberEstimateUsed] = numberEstimateInfoResult.value;
+      const [ownEntriesCount, isNumberEstimateUsed] = numberEstimateInfoResult.value;
 
-    const response = numberEstimateInfoSchema.parse({
-      canBeDeleted: !isNumberEstimateUsed,
-      ownEntriesCount,
-    });
+      const response = numberEstimateInfoSchema.parse({
+        canBeDeleted: !isNumberEstimateUsed,
+        ownEntriesCount,
+      });
 
-    return await reply.send(response);
-  });
+      return await reply.send(response);
+    },
+  );
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getNumberEstimatesQueryParamsSchema.safeParse(req.query);
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
+        tags: ["Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getNumberEstimatesQueryParamsSchema.safeParse(req.query);
 
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    const paginatedResults = Result.combine([
-      await numberEstimateService.findPaginatesNumberEstimates(req.user, queryParams),
-      await numberEstimateService.getNumberEstimatesCount(req.user, queryParams.q),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const [data, count] = paginatedResults.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const response = getNumberEstimatesResponse.parse({
-      data,
-      meta: getPaginationMetadata(count, queryParams),
-    });
+      const paginatedResults = Result.combine([
+        await numberEstimateService.findPaginatesNumberEstimates(req.user, queryParams),
+        await numberEstimateService.getNumberEstimatesCount(req.user, queryParams.q),
+      ]);
 
-    return await reply.send(response);
-  });
-
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
-
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
-
-    const { data: input } = parsedInputResult;
-
-    const numberEstimateCreateResult = await numberEstimateService.createNumberEstimate(input, req.user);
-
-    if (numberEstimateCreateResult.isErr()) {
-      switch (numberEstimateCreateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const response = upsertNumberEstimateResponse.parse(numberEstimateCreateResult.value);
-    return await reply.send(response);
-  });
+      const [data, count] = paginatedResults.value;
+
+      const response = getNumberEstimatesResponse.parse({
+        data,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const numberEstimateCreateResult = await numberEstimateService.createNumberEstimate(input, req.user);
+
+      if (numberEstimateCreateResult.isErr()) {
+        switch (numberEstimateCreateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertNumberEstimateResponse.parse(numberEstimateCreateResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertNumberEstimateInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const numberEstimateUpdateResult = await numberEstimateService.updateNumberEstimate(req.params.id, input, req.user);
-
-    if (numberEstimateUpdateResult.isErr()) {
-      switch (numberEstimateUpdateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "alreadyExists":
-          return await reply.status(409).send();
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const response = upsertNumberEstimateResponse.parse(numberEstimateUpdateResult.value);
-    return await reply.send(response);
-  });
+      const { data: input } = parsedInputResult;
+
+      const numberEstimateUpdateResult = await numberEstimateService.updateNumberEstimate(
+        req.params.id,
+        input,
+        req.user,
+      );
+
+      if (numberEstimateUpdateResult.isErr()) {
+        switch (numberEstimateUpdateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "alreadyExists":
+            return await reply.status(409).send();
+        }
+      }
+
+      const response = upsertNumberEstimateResponse.parse(numberEstimateUpdateResult.value);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedNumberEstimateResult = await numberEstimateService.deleteNumberEstimate(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (deletedNumberEstimateResult.isErr()) {
-      switch (deletedNumberEstimateResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "isUsed":
-          return await reply.status(409).send();
+        tags: ["Quantity"],
+      },
+    },
+    async (req, reply) => {
+      const deletedNumberEstimateResult = await numberEstimateService.deleteNumberEstimate(req.params.id, req.user);
+
+      if (deletedNumberEstimateResult.isErr()) {
+        switch (deletedNumberEstimateResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "isUsed":
+            return await reply.status(409).send();
+        }
       }
-    }
 
-    const deletedNumberEstimate = deletedNumberEstimateResult.value;
+      const deletedNumberEstimate = deletedNumberEstimateResult.value;
 
-    if (!deletedNumberEstimate) {
-      return await reply.status(404).send();
-    }
+      if (!deletedNumberEstimate) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedNumberEstimate.id });
-  });
+      return await reply.send({ id: deletedNumberEstimate.id });
+    },
+  );
 
   done();
 };

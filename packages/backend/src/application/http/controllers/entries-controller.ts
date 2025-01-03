@@ -21,191 +21,240 @@ export const entriesController: FastifyPluginCallbackZod<{
     Params: {
       id: string;
     };
-  }>("/:id", async (req, reply) => {
-    const entryResult = await entryService.findEntry(req.params.id, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (entryResult.isErr()) {
-      switch (entryResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+        tags: ["Entry"],
+      },
+    },
+    async (req, reply) => {
+      const entryResult = await entryService.findEntry(req.params.id, req.user);
+
+      if (entryResult.isErr()) {
+        switch (entryResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const entry = entryResult.value;
+      const entry = entryResult.value;
 
-    if (!entry) {
-      return await reply.status(404).send();
-    }
-
-    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
-
-    if (entryEnrichedResult.isErr()) {
-      switch (entryEnrichedResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "extendedDataNotFound":
-          return await reply.status(404).send();
+      if (!entry) {
+        return await reply.status(404).send();
       }
-    }
 
-    const response = getEntryResponse.parse(entryEnrichedResult.value);
-    return await reply.send(response);
-  });
+      const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
 
-  fastify.get("/", async (req, reply) => {
-    const parsedQueryParamsResult = getEntriesQueryParamsSchema.safeParse(req.query);
-
-    if (!parsedQueryParamsResult.success) {
-      return await reply.status(422).send(parsedQueryParamsResult.error.issues);
-    }
-
-    const { data: queryParams } = parsedQueryParamsResult;
-
-    if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
-      return await reply.status(403).send();
-    }
-
-    const paginatedResults = Result.combine([
-      await entryService.findPaginatedEntries(req.user, queryParams),
-      await entryService.getEntriesCount(req.user, queryParams),
-    ]);
-
-    if (paginatedResults.isErr()) {
-      switch (paginatedResults.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (entryEnrichedResult.isErr()) {
+        switch (entryEnrichedResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "extendedDataNotFound":
+            return await reply.status(404).send();
+        }
       }
-    }
 
-    const [entriesData, count] = paginatedResults.value;
+      const response = getEntryResponse.parse(entryEnrichedResult.value);
+      return await reply.send(response);
+    },
+  );
 
-    // TODO look to optimize this request
-    const enrichedEntriesResults = await Promise.all(
-      entriesData.map(async (entryData) => {
-        return enrichedEntry(services, entryData, req.user);
-      }),
-    );
+  fastify.get(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    const enrichedEntries = enrichedEntriesResults.map((enrichedEntryResult) => enrichedEntryResult._unsafeUnwrap());
+        tags: ["Entry"],
+      },
+    },
+    async (req, reply) => {
+      const parsedQueryParamsResult = getEntriesQueryParamsSchema.safeParse(req.query);
 
-    const response = getEntriesResponse.parse({
-      data: enrichedEntries,
-      meta: getPaginationMetadata(count, queryParams),
-    });
-
-    return await reply.send(response);
-  });
-
-  fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertEntryInput.safeParse(req.body);
-
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
-
-    const { data: input } = parsedInputResult;
-
-    const entryResult = await entryService.createEntry(input, req.user);
-
-    if (entryResult.isErr()) {
-      switch (entryResult.error.type) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "similarEntryAlreadyExists":
-          return await reply.status(409).send({
-            correspondingEntryFound: entryResult.error.correspondingEntryFound,
-          });
+      if (!parsedQueryParamsResult.success) {
+        return await reply.status(422).send(parsedQueryParamsResult.error.issues);
       }
-    }
 
-    const entry = entryResult.value;
+      const { data: queryParams } = parsedQueryParamsResult;
 
-    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
-
-    if (entryEnrichedResult.isErr()) {
-      switch (entryEnrichedResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "extendedDataNotFound":
-          return await reply.status(404).send();
+      if (queryParams.fromAllUsers && !req.user?.permissions.canViewAllEntries) {
+        return await reply.status(403).send();
       }
-    }
 
-    const entryEnriched = entryEnrichedResult.value;
+      const paginatedResults = Result.combine([
+        await entryService.findPaginatedEntries(req.user, queryParams),
+        await entryService.getEntriesCount(req.user, queryParams),
+      ]);
 
-    const response = upsertEntryResponse.parse(entryEnriched);
-    return await reply.send(response);
-  });
+      if (paginatedResults.isErr()) {
+        switch (paginatedResults.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
+      }
+
+      const [entriesData, count] = paginatedResults.value;
+
+      // TODO look to optimize this request
+      const enrichedEntriesResults = await Promise.all(
+        entriesData.map(async (entryData) => {
+          return enrichedEntry(services, entryData, req.user);
+        }),
+      );
+
+      const enrichedEntries = enrichedEntriesResults.map((enrichedEntryResult) => enrichedEntryResult._unsafeUnwrap());
+
+      const response = getEntriesResponse.parse({
+        data: enrichedEntries,
+        meta: getPaginationMetadata(count, queryParams),
+      });
+
+      return await reply.send(response);
+    },
+  );
+
+  fastify.post(
+    "/",
+    {
+      schema: {
+        security: [{ token: [] }],
+
+        tags: ["Entry"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertEntryInput.safeParse(req.body);
+
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
+      }
+
+      const { data: input } = parsedInputResult;
+
+      const entryResult = await entryService.createEntry(input, req.user);
+
+      if (entryResult.isErr()) {
+        switch (entryResult.error.type) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "similarEntryAlreadyExists":
+            return await reply.status(409).send({
+              correspondingEntryFound: entryResult.error.correspondingEntryFound,
+            });
+        }
+      }
+
+      const entry = entryResult.value;
+
+      const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+
+      if (entryEnrichedResult.isErr()) {
+        switch (entryEnrichedResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "extendedDataNotFound":
+            return await reply.status(404).send();
+        }
+      }
+
+      const entryEnriched = entryEnrichedResult.value;
+
+      const response = upsertEntryResponse.parse(entryEnriched);
+      return await reply.send(response);
+    },
+  );
 
   fastify.put<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: string;
     };
-  }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertEntryInput.safeParse(req.body);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
 
-    if (!parsedInputResult.success) {
-      return await reply.status(422).send();
-    }
+        tags: ["Entry"],
+      },
+    },
+    async (req, reply) => {
+      const parsedInputResult = upsertEntryInput.safeParse(req.body);
 
-    const { data: input } = parsedInputResult;
-
-    const entryResult = await entryService.updateEntry(req.params.id, input, req.user);
-
-    if (entryResult.isErr()) {
-      switch (entryResult.error.type) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "similarEntryAlreadyExists":
-          return await reply.status(409).send({
-            correspondingEntryFound: entryResult.error.correspondingEntryFound,
-          });
+      if (!parsedInputResult.success) {
+        return await reply.status(422).send();
       }
-    }
 
-    const entry = entryResult.value;
+      const { data: input } = parsedInputResult;
 
-    const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+      const entryResult = await entryService.updateEntry(req.params.id, input, req.user);
 
-    if (entryEnrichedResult.isErr()) {
-      switch (entryEnrichedResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
-        case "extendedDataNotFound":
-          return await reply.status(404).send();
+      if (entryResult.isErr()) {
+        switch (entryResult.error.type) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "similarEntryAlreadyExists":
+            return await reply.status(409).send({
+              correspondingEntryFound: entryResult.error.correspondingEntryFound,
+            });
+        }
       }
-    }
 
-    const entryEnriched = entryEnrichedResult.value;
+      const entry = entryResult.value;
 
-    const response = upsertEntryResponse.parse(entryEnriched);
-    return await reply.send(response);
-  });
+      const entryEnrichedResult = await enrichedEntry(services, entry, req.user);
+
+      if (entryEnrichedResult.isErr()) {
+        switch (entryEnrichedResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+          case "extendedDataNotFound":
+            return await reply.status(404).send();
+        }
+      }
+
+      const entryEnriched = entryEnrichedResult.value;
+
+      const response = upsertEntryResponse.parse(entryEnriched);
+      return await reply.send(response);
+    },
+  );
 
   fastify.delete<{
     // biome-ignore lint/style/useNamingConvention: <explanation>
     Params: {
       id: string | number;
     };
-  }>("/:id", async (req, reply) => {
-    const deletedEntryResult = await entryService.deleteEntry(`${req.params.id}`, req.user);
+  }>(
+    "/:id",
+    {
+      schema: {
+        security: [{ token: [] }],
+        tags: ["Entry"],
+      },
+    },
+    async (req, reply) => {
+      const deletedEntryResult = await entryService.deleteEntry(`${req.params.id}`, req.user);
 
-    if (deletedEntryResult.isErr()) {
-      switch (deletedEntryResult.error) {
-        case "notAllowed":
-          return await reply.status(403).send();
+      if (deletedEntryResult.isErr()) {
+        switch (deletedEntryResult.error) {
+          case "notAllowed":
+            return await reply.status(403).send();
+        }
       }
-    }
 
-    const deletedEntry = deletedEntryResult.value;
+      const deletedEntry = deletedEntryResult.value;
 
-    if (!deletedEntry) {
-      return await reply.status(404).send();
-    }
+      if (!deletedEntry) {
+        return await reply.status(404).send();
+      }
 
-    return await reply.send({ id: deletedEntry.id });
-  });
+      return await reply.send({ id: deletedEntry.id });
+    },
+  );
 
   done();
 };
