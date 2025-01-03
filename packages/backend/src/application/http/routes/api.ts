@@ -20,7 +20,7 @@ export const apiRoutes: FastifyPluginAsync<{ services: Services }> = async (fast
   fastify.setErrorHandler((error, _, reply) => {
     if (error instanceof ZodError) {
       // Treat validation errors as HTTP 422
-      reply.status(422).send({
+      reply.status(fastify.httpErrors.unprocessableEntity().statusCode).send({
         statusCode: fastify.httpErrors.unprocessableEntity().statusCode,
         error: fastify.httpErrors.unprocessableEntity().message,
         issues: error.issues,
