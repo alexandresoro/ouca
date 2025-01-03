@@ -59,7 +59,7 @@ jobs:
     runs-on: docker
 
     container:
-      image: node:20-bookworm@sha256:d17aaa2a2fd82e09bd6a6da7cc4a79741340d2a3e39d172d1b30f295b1a850ff
+      image: node:22-bookworm@sha256:0e910f435308c36ea60b4cfd7b80208044d77a074d16b768a81901ce938a62dc
       options: "--privileged --security-opt seccomp=unconfined"
 
     outputs:

@@ -27,7 +27,7 @@
     "lefthook": "1.10.1"
   },
   "engines": {
-    "node": "^20.16"
+    "node": "^22.0.0"
   },
   "packageManager": "pnpm@9.15.2"
 }
