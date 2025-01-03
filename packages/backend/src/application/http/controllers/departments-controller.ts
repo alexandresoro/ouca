@@ -9,6 +9,7 @@ import {
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
+import { idParamAsNumberSchema } from "./api-utils.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 export const departmentsController: FastifyPluginCallbackZod<{
@@ -16,17 +17,13 @@ export const departmentsController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { departmentService } = services;
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.get(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        params: idParamAsNumberSchema,
       },
     },
     async (req, reply) => {
@@ -50,17 +47,13 @@ export const departmentsController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.get(
     "/:id/info",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        params: idParamAsNumberSchema,
       },
     },
     async (req, reply) => {
@@ -166,17 +159,13 @@ export const departmentsController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.put<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.put(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        params: idParamAsNumberSchema,
         body: upsertDepartmentInput,
       },
     },
@@ -205,17 +194,13 @@ export const departmentsController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.delete<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.delete(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Location"],
+        params: idParamAsNumberSchema,
       },
     },
     async (req, reply) => {

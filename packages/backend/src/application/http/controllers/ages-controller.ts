@@ -9,6 +9,7 @@ import {
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
+import { idParamAsNumberSchema } from "./api-utils.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
 export const agesController: FastifyPluginCallbackZod<{
@@ -16,17 +17,13 @@ export const agesController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { ageService } = services;
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.get(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Age"],
+        params: idParamAsNumberSchema,
       },
     },
     async (req, reply) => {
@@ -50,17 +47,13 @@ export const agesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.get(
     "/:id/info",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Age"],
+        params: idParamAsNumberSchema,
       },
     },
     async (req, reply) => {
@@ -162,17 +155,13 @@ export const agesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.put<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.put(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Age"],
+        params: idParamAsNumberSchema,
         body: upsertAgeInput,
       },
     },
@@ -201,18 +190,13 @@ export const agesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.delete<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.delete(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Age"],
+        params: idParamAsNumberSchema,
       },
     },
     async (req, reply) => {

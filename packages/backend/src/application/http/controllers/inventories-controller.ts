@@ -11,6 +11,7 @@ import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
+import { idParamSchema } from "./api-utils.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedInventory } from "./inventories-enricher.js";
 
@@ -19,17 +20,13 @@ export const inventoriesController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { inventoryService } = services;
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: string;
-    };
-  }>(
+  fastify.get(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Inventory"],
+        params: idParamSchema,
       },
     },
     async (req, reply) => {
@@ -64,17 +61,13 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.get(
     "/:id/index",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Inventory"],
+        params: idParamSchema,
         querystring: getInventoryIndexParamsSchema,
       },
     },
@@ -86,7 +79,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
       }
 
       const inventoryIndexResult = await inventoryService.findInventoryIndex(
-        `${req.params.id}`,
+        req.params.id,
         parsedQueryParamsResult.data,
         req.user,
       );
@@ -209,17 +202,13 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.put<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: number;
-    };
-  }>(
+  fastify.put(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Inventory"],
+        params: idParamSchema,
         body: upsertInventoryInput,
       },
     },
@@ -232,7 +221,7 @@ export const inventoriesController: FastifyPluginCallbackZod<{
 
       const { data: input } = parsedInputResult;
 
-      const inventoryResult = await inventoryService.updateInventory(`${req.params.id}`, input, req.user);
+      const inventoryResult = await inventoryService.updateInventory(req.params.id, input, req.user);
 
       if (inventoryResult.isErr()) {
         switch (inventoryResult.error.type) {
@@ -271,17 +260,13 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.delete<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: string;
-    };
-  }>(
+  fastify.delete(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Inventory"],
+        params: idParamSchema,
       },
     },
     async (req, reply) => {

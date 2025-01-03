@@ -8,6 +8,7 @@ import {
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
+import { idParamSchema } from "./api-utils.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedEntry } from "./entries-enricher.js";
 
@@ -16,17 +17,13 @@ export const entriesController: FastifyPluginCallbackZod<{
 }> = (fastify, { services }, done) => {
   const { entryService } = services;
 
-  fastify.get<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: string;
-    };
-  }>(
+  fastify.get(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Entry"],
+        params: idParamSchema,
       },
     },
     async (req, reply) => {
@@ -166,17 +163,13 @@ export const entriesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.put<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: string;
-    };
-  }>(
+  fastify.put(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Entry"],
+        params: idParamSchema,
         body: upsertEntryInput,
       },
     },
@@ -222,21 +215,17 @@ export const entriesController: FastifyPluginCallbackZod<{
     },
   );
 
-  fastify.delete<{
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Params: {
-      id: string | number;
-    };
-  }>(
+  fastify.delete(
     "/:id",
     {
       schema: {
         security: [{ token: [] }],
         tags: ["Entry"],
+        params: idParamSchema,
       },
     },
     async (req, reply) => {
-      const deletedEntryResult = await entryService.deleteEntry(`${req.params.id}`, req.user);
+      const deletedEntryResult = await entryService.deleteEntry(req.params.id, req.user);
 
       if (deletedEntryResult.isErr()) {
         switch (deletedEntryResult.error) {
