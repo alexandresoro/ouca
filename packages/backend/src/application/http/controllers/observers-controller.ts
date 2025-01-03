@@ -27,7 +27,6 @@ export const observersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Observer"],
       },
     },
@@ -62,7 +61,6 @@ export const observersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Observer"],
       },
     },
@@ -95,8 +93,8 @@ export const observersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Observer"],
+        querystring: getObserversQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -136,7 +134,6 @@ export const observersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Observer"],
       },
     },
@@ -175,7 +172,6 @@ export const observersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Observer"],
       },
     },
@@ -214,7 +210,6 @@ export const observersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Observer"],
       },
     },

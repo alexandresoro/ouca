@@ -26,7 +26,6 @@ export const entriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Entry"],
       },
     },
@@ -67,8 +66,8 @@ export const entriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Entry"],
+        querystring: getEntriesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -121,7 +120,6 @@ export const entriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Entry"],
       },
     },
@@ -177,7 +175,6 @@ export const entriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Entry"],
       },
     },

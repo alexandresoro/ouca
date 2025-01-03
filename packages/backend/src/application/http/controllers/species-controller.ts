@@ -27,7 +27,6 @@ export const speciesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -62,8 +61,8 @@ export const speciesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
+        querystring: speciesInfoQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -124,8 +123,8 @@ export const speciesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
+        querystring: getSpeciesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -165,7 +164,6 @@ export const speciesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -204,7 +202,6 @@ export const speciesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -243,7 +240,6 @@ export const speciesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },

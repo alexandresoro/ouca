@@ -14,8 +14,8 @@ export const searchController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
+        querystring: getSpeciesQueryParamsSchema,
       },
     },
     async (req, reply) => {

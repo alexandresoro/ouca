@@ -26,7 +26,6 @@ export const departmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -61,7 +60,6 @@ export const departmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -98,8 +96,8 @@ export const departmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
+        querystring: getDepartmentsQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -139,7 +137,6 @@ export const departmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -178,7 +175,6 @@ export const departmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -217,7 +213,6 @@ export const departmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },

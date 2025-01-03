@@ -29,7 +29,6 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Inventory"],
       },
     },
@@ -75,8 +74,8 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Inventory"],
+        querystring: getInventoryIndexParamsSchema,
       },
     },
     async (req, reply) => {
@@ -114,8 +113,8 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Inventory"],
+        querystring: getInventoriesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -162,7 +161,6 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Inventory"],
       },
     },
@@ -220,7 +218,6 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Inventory"],
       },
     },
@@ -282,7 +279,6 @@ export const inventoriesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Inventory"],
       },
     },

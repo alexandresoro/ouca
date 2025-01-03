@@ -26,7 +26,6 @@ export const sexesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Sex"],
       },
     },
@@ -61,7 +60,6 @@ export const sexesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Sex"],
       },
     },
@@ -94,8 +92,8 @@ export const sexesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Sex"],
+        querystring: getSexesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const sexesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Sex"],
       },
     },
@@ -174,7 +171,6 @@ export const sexesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Sex"],
       },
     },
@@ -213,7 +209,6 @@ export const sexesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Sex"],
       },
     },

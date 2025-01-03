@@ -13,7 +13,6 @@ export const meController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["User"],
       },
     },
@@ -49,7 +48,6 @@ export const meController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["User"],
       },
     },

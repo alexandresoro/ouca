@@ -12,8 +12,8 @@ export const altitudeController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
+        querystring: getAltitudeQueryParamsSchema,
       },
     },
     async (req, reply) => {

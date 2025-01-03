@@ -26,7 +26,6 @@ export const weathersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Weather"],
       },
     },
@@ -61,7 +60,6 @@ export const weathersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Weather"],
       },
     },
@@ -94,8 +92,8 @@ export const weathersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Weather"],
+        querystring: getWeathersQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const weathersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Weather"],
       },
     },
@@ -174,7 +171,6 @@ export const weathersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Weather"],
       },
     },
@@ -213,7 +209,6 @@ export const weathersController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Weather"],
       },
     },

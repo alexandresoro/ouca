@@ -26,7 +26,6 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Quantity"],
       },
     },
@@ -61,7 +60,6 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Quantity"],
       },
     },
@@ -94,8 +92,8 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Quantity"],
+        querystring: getNumberEstimatesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Quantity"],
       },
     },
@@ -174,7 +171,6 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Quantity"],
       },
     },
@@ -217,7 +213,6 @@ export const numberEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Quantity"],
       },
     },

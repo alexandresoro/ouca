@@ -26,7 +26,6 @@ export const classesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -61,7 +60,6 @@ export const classesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -96,8 +94,8 @@ export const classesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
+        querystring: getClassesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -137,7 +135,6 @@ export const classesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -176,7 +173,6 @@ export const classesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },
@@ -215,7 +211,6 @@ export const classesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Species"],
       },
     },

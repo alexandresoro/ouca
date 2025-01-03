@@ -26,7 +26,6 @@ export const townsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -61,7 +60,6 @@ export const townsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -102,8 +100,8 @@ export const townsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
+        querystring: getTownsQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -143,7 +141,6 @@ export const townsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -182,7 +179,6 @@ export const townsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },
@@ -221,7 +217,6 @@ export const townsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Location"],
       },
     },

@@ -17,7 +17,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Age"],
       },
     },
@@ -40,7 +39,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Species"],
       },
     },
@@ -63,7 +61,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Location"],
       },
     },
@@ -86,7 +83,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Behavior"],
       },
     },
@@ -109,7 +105,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Location"],
       },
     },
@@ -132,7 +127,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Species"],
       },
     },
@@ -155,7 +149,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Distance"],
       },
     },
@@ -178,7 +171,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Quantity"],
       },
     },
@@ -201,7 +193,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Location"],
       },
     },
@@ -224,7 +215,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Weather"],
       },
     },
@@ -247,7 +237,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Environment"],
       },
     },
@@ -270,7 +259,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Observer"],
       },
     },
@@ -293,7 +281,6 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Sex"],
       },
     },
@@ -316,8 +303,8 @@ export const generateExportController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Export", "Entry"],
+        querystring: getSearchCriteriaParamsSchema,
       },
     },
     async (req, reply) => {

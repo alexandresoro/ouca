@@ -26,7 +26,6 @@ export const environmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Environment"],
       },
     },
@@ -61,7 +60,6 @@ export const environmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Environment"],
       },
     },
@@ -94,8 +92,8 @@ export const environmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Environment"],
+        querystring: getEnvironmentsQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const environmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Environment"],
       },
     },
@@ -174,7 +171,6 @@ export const environmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Environment"],
       },
     },
@@ -213,7 +209,6 @@ export const environmentsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Environment"],
       },
     },

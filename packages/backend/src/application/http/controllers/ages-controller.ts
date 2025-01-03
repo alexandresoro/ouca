@@ -26,7 +26,6 @@ export const agesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Age"],
       },
     },
@@ -61,7 +60,6 @@ export const agesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Age"],
       },
     },
@@ -94,8 +92,8 @@ export const agesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Age"],
+        querystring: getAgesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const agesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Age"],
       },
     },
@@ -174,7 +171,6 @@ export const agesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Age"],
       },
     },

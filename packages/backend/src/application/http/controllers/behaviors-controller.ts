@@ -26,7 +26,6 @@ export const behaviorsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Behavior"],
       },
     },
@@ -61,7 +60,6 @@ export const behaviorsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Behavior"],
       },
     },
@@ -94,8 +92,8 @@ export const behaviorsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Behavior"],
+        querystring: getBehaviorsQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const behaviorsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Behavior"],
       },
     },
@@ -174,7 +171,6 @@ export const behaviorsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Behavior"],
       },
     },
@@ -213,7 +209,6 @@ export const behaviorsController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Behavior"],
       },
     },

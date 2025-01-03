@@ -26,7 +26,6 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Distance"],
       },
     },
@@ -61,7 +60,6 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Distance"],
       },
     },
@@ -94,8 +92,8 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Distance"],
+        querystring: getDistanceEstimatesQueryParamsSchema,
       },
     },
     async (req, reply) => {
@@ -135,7 +133,6 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Distance"],
       },
     },
@@ -174,7 +171,6 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Distance"],
       },
     },
@@ -217,7 +213,6 @@ export const distanceEstimatesController: FastifyPluginCallbackZod<{
     {
       schema: {
         security: [{ token: [] }],
-
         tags: ["Distance"],
       },
     },
