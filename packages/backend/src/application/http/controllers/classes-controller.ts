@@ -6,12 +6,12 @@ import {
   upsertClassInput,
   upsertClassResponse,
 } from "@ou-ca/common/api/species-class";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-export const classesController: FastifyPluginCallback<{
+export const classesController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { classService } = services;

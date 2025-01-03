@@ -1,8 +1,8 @@
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import type { Services } from "../../services/services.js";
 import { getAccessToken } from "./access-token-utils.js";
 
-export const userController: FastifyPluginCallback<{
+export const userController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { userService, oidcService } = services;

@@ -6,12 +6,12 @@ import {
   upsertDepartmentInput,
   upsertDepartmentResponse,
 } from "@ou-ca/common/api/department";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-export const departmentsController: FastifyPluginCallback<{
+export const departmentsController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { departmentService } = services;

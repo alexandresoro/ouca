@@ -6,12 +6,12 @@ import {
   upsertBehaviorInput,
   upsertBehaviorResponse,
 } from "@ou-ca/common/api/behavior";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-export const behaviorsController: FastifyPluginCallback<{
+export const behaviorsController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { behaviorService } = services;

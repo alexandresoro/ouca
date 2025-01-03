@@ -7,14 +7,14 @@ import {
   upsertInventoryInput,
   upsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import { logger } from "../../../utils/logger.js";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedInventory } from "./inventories-enricher.js";
 
-export const inventoriesController: FastifyPluginCallback<{
+export const inventoriesController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { inventoryService } = services;

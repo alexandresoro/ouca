@@ -6,12 +6,12 @@ import {
   upsertLocalityInput,
   upsertLocalityResponse,
 } from "@ou-ca/common/api/locality";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-export const localitiesController: FastifyPluginCallback<{
+export const localitiesController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { localityService, townService, departmentService } = services;

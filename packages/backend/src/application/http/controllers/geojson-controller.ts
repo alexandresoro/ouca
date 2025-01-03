@@ -1,8 +1,8 @@
 import { fastifyEtag } from "@fastify/etag";
-import type { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import type { Services } from "../../services/services.js";
 
-export const geojsonController: FastifyPluginAsync<{
+export const geojsonController: FastifyPluginAsyncZod<{
   services: Services;
 }> = async (fastify, { services }) => {
   const { geojsonService } = services;

@@ -1,12 +1,13 @@
 import { getSearchCriteriaParamsSchema } from "@ou-ca/common/api/common/search-criteria";
-import type { FastifyPluginCallback, FastifyRequest } from "fastify";
+import type { FastifyRequest } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import type { Services } from "../../services/services.js";
 
 const getExportUrl = (req: FastifyRequest, exportId: string) => {
   return `${req.protocol}://${req.hostname}/download/${exportId}`;
 };
 
-export const generateExportController: FastifyPluginCallback<{
+export const generateExportController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { exportService } = services;

@@ -7,12 +7,12 @@ import {
   upsertObserverInput,
   upsertObserverResponse,
 } from "@ou-ca/common/api/observer";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 
-export const observersController: FastifyPluginCallback<{
+export const observersController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { observerService } = services;

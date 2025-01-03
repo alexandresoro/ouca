@@ -5,13 +5,13 @@ import {
   upsertEntryInput,
   upsertEntryResponse,
 } from "@ou-ca/common/api/entry";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { Result } from "neverthrow";
 import type { Services } from "../../services/services.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedEntry } from "./entries-enricher.js";
 
-export const entriesController: FastifyPluginCallback<{
+export const entriesController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { entryService } = services;

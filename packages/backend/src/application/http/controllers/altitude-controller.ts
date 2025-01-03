@@ -1,8 +1,8 @@
 import { getAltitudeQueryParamsSchema, getAltitudeResponse } from "@ou-ca/common/api/altitude";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import type { Services } from "../../services/services.js";
 
-export const altitudeController: FastifyPluginCallback<{
+export const altitudeController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { altitudeService } = services;

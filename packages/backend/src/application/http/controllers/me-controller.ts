@@ -1,9 +1,9 @@
 import type { User } from "@domain/user/user.js";
 import { getMeResponse, putMeInput } from "@ou-ca/common/api/me";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import type { Services } from "../../services/services.js";
 
-export const meController: FastifyPluginCallback<{
+export const meController: FastifyPluginCallbackZod<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { oidcService, userService } = services;
